@@ -3,7 +3,7 @@
 > Ce fichier est tenu à jour par Claude à chaque action.
 > En cas de plantage ou nouvelle session, lire ce fichier pour reprendre.
 
-**Dernière MAJ** : 2026-02-10 17:30
+**Dernière MAJ** : 2026-02-10 18:30
 
 > **RÈGLE IMPÉRATIVE** : ce fichier DOIT être mis à jour après CHAQUE tâche terminée,
 > pas en fin de session. En cas de crash ou de conversation fermée, c'est la seule
@@ -20,29 +20,45 @@
 | SUBLYM MVP | [x] pipeline créé | Photos-only, 0.29 EUR / 8 photos / 2 min |
 | **PIPELINE AGENCE** | [x] v1 construite | Orchestrateur autonome idée→prod, dispatcher/min, Brevo notifs |
 | **EURKAI refonte** | [x] structuré | Architecture fractale documentée, ancien archivé, workflow optimisé |
-| **TIP_CALCULATOR** | [~] en cours | Premier projet test workflow, brief validé, CDC en cours |
+| **TIP_CALCULATOR** | [x] terminé | Premier projet complet : brief → CDC → specs → code fonctionnel ✓ |
+| **PROCESS + STANDARDS** | [x] créés | Règles standardisées création projet + qualité code (HTML/CSS/JS/Python/modules) |
 
 ---
 
-## PIPELINE AGENCE
+## WORKFLOW OPTIMISÉ (remplace Pipeline Agence)
 
-> Système d'orchestration autonome : TODO/ → BRIEF → CDC → SPECS → BUILD → DEPLOY
-> Dispatcher toutes les 60s, API Anthropic + Brevo email/SMS
+> Workflow manuel mais efficace : idée → brief → CDC → specs → code → deploy
+> Claude Code (Sonnet) en session interactive, inclus dans abonnement Max, 0€ surcoût
 
-### Fait
-- [x] `config.py` — charge env.txt, résout les références de variables
-- [x] `parser.py` — parse JSON ChatGPT, génère brief via API Anthropic
-- [x] `notifier.py` — email + SMS via Brevo
-- [x] `orchestrator.py` — scan TODO/, transitions d'étapes, GATE, API Anthropic
-- [x] `dispatcher.py` — heartbeat/min, verrou anti-concurrent, lance orchestrateur si besoin
-- [x] Templates : brief, cdc, specs, gate
-- [x] LaunchAgent `com.bigboff.dispatcher` — toutes les 60s
-- [x] Projet enregistré dans _PROJETS.md, _HUB.md, _CRON.md
-- [x] Tests config OK, dispatcher détecte les 2 fichiers TODO/
+### Processus validé
+1. Export ChatGPT → `CLAUDE/TODO/<nom>.json`
+2. Claude génère BRIEF structuré → validation
+3. Claude génère CDC (fonctionnalités, contraintes, critères) → validation
+4. Claude génère SPECS (architecture, code détaillé) → validation
+5. Claude génère code complet (testé)
+6. Push GitHub → déploiement
 
-### En attente
-- [ ] Activation du LaunchAgent (2 fichiers dans TODO/ seront traités)
-- [ ] Test end-to-end avec un vrai projet
+### Premier projet test : TIP_CALCULATOR
+- [x] Brief → CDC → Specs → Code en ~2h
+- [x] 3 fichiers (HTML/CSS/JS), 7 Ko, fonctionne parfaitement
+- [x] Structure standard appliquée (_SUIVI, _IDEES, README, PIPELINE/)
+- [x] Proof of concept validé ✓
+
+### Standards créés
+- [x] **PROCESS.md** : workflow, structure, conventions
+- [x] **STANDARDS.md** : règles HTML/CSS/JS/Python, accessibilité, modules EURKAI
+
+## PIPELINE AGENCE (à refondre)
+
+> Version autonome avec API — mettre en pause, refondre selon architecture EURKAI fractale
+
+### État actuel
+- Construit mais buggé (boucle infinie 400 low credit)
+- Dispatcher stoppé (2 725 tentatives échouées)
+- À refondre : orchestrator/agents/validator selon structure fractale
+
+### Décision
+Workflow manuel optimisé (ci-dessus) suffit pour l'instant. Pipeline autonome = phase 2.
 
 ---
 
