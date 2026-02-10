@@ -401,7 +401,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-email"><i class="fa-solid fa-envelope"></i></span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="email" title="Supprimer cet email"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
           ${snippetHtml}
@@ -414,7 +416,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-note"><i class="fa-solid fa-note-sticky"></i></span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="note" title="Supprimer cette note"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
           <div class="result-meta">${r.date_modif || "?"}</div>
@@ -428,7 +432,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-video">${pIcon}</span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="video" title="Supprimer cette vidéo"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.platform || "")} · ${r.date_modif || "?"}</div>
         </div>`;
@@ -442,7 +448,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-event"><i class="fa-solid fa-calendar-days"></i></span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="event" title="Supprimer cet événement"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.date_fr || r.date_modif || "")}${recStr}</div>
           ${tagsStr}
@@ -455,7 +463,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-contact">${ctIcon}</span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="contact" title="Supprimer ce contact"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
         </div>`;
@@ -466,7 +476,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-lieu"><i class="fa-solid fa-location-dot"></i></span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="lieu" title="Supprimer ce lieu"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
         </div>`;
@@ -477,7 +489,9 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-vault"><i class="fa-solid fa-lock"></i></span>
             ${esc(r.nom)}
+            <span style="flex:1"></span>
             ${favHeart(r.id)}
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="vault" title="Supprimer cette entrée"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)} ${r.project ? "· " + esc(r.project) : ""}</div>
         </div>`;
@@ -495,6 +509,7 @@ function renderResults(results) {
           <span class="result-actions">
             <span class="action-btn open-btn" data-id="${r.id}" title="Ouvrir"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
             <span class="action-btn reveal-btn" data-id="${r.id}" title="Montrer dans Finder"><i class="fa-solid fa-folder-open"></i></span>
+            <button class="delete-btn" data-item-id="${r.id}" data-item-type="file" title="Supprimer ce fichier" style="margin-left:0"><i class="fa-solid fa-trash"></i></button>
           </span>
         </div>
         <div class="result-meta">${formatSize(r.taille)} · ${r.date_modif || "?"}</div>
@@ -531,6 +546,40 @@ function renderResults(results) {
   // Clic email → afficher contenu
   resultsList.querySelectorAll(".result-email").forEach(el => {
     el.addEventListener("click", () => toggleEmailView(el));
+  });
+  // Boutons suppression
+  resultsList.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const itemId = btn.dataset.itemId;
+      const itemType = btn.dataset.itemType;
+      const itemName = btn.closest(".result-item").querySelector(".result-name").textContent.trim();
+
+      // Afficher la modal de choix
+      const mode = await showDeleteModal(itemId, itemType, itemName);
+      if (!mode) return; // Annulé
+
+      try {
+        const resp = await fetch(`${API}/${itemType}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ item_id: parseInt(itemId), mode })
+        });
+        const result = await resp.json();
+
+        if (result.success) {
+          // Retirer l'élément de la liste
+          btn.closest(".result-item").remove();
+          // Mettre à jour le compteur
+          state.totalResults--;
+          renderResultsCount();
+        } else {
+          alert("Erreur : " + (result.error || "Suppression échouée"));
+        }
+      } catch (err) {
+        alert("Erreur réseau : " + err.message);
+      }
+    });
   });
   // Clic vault → afficher mot de passe
   resultsList.querySelectorAll(".result-vault").forEach(el => {
@@ -1794,25 +1843,199 @@ async function fetchJSON(url, method, body) {
   return resp.json();
 }
 
+// ── Modal de suppression ──────────────────────────────
+
+function showDeleteModal(itemId, itemType, itemName) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("delete-modal");
+    const nameEl = document.getElementById("delete-modal-name");
+    const dbOnlyBtn = document.getElementById("delete-db-only");
+    const permanentBtn = document.getElementById("delete-permanent");
+    const permanentDesc = document.getElementById("delete-permanent-desc");
+    const cancelBtn = document.getElementById("delete-cancel");
+
+    // Adapter le texte selon le type
+    const descriptions = {
+      email: "Supprimer du serveur IMAP",
+      file: "Mettre à la corbeille",
+      note: "Tout supprimer",
+      vault: "Tout supprimer",
+      event: "Tout supprimer",
+      contact: "Tout supprimer",
+      lieu: "Tout supprimer",
+      video: "Tout supprimer"
+    };
+
+    nameEl.textContent = itemName;
+    permanentDesc.textContent = descriptions[itemType] || "Tout supprimer";
+
+    modal.classList.add("active");
+
+    const cleanup = () => {
+      modal.classList.remove("active");
+      dbOnlyBtn.removeEventListener("click", handleDbOnly);
+      permanentBtn.removeEventListener("click", handlePermanent);
+      cancelBtn.removeEventListener("click", handleCancel);
+    };
+
+    const handleDbOnly = () => {
+      cleanup();
+      resolve("db_only");
+    };
+
+    const handlePermanent = () => {
+      cleanup();
+      resolve("permanent");
+    };
+
+    const handleCancel = () => {
+      cleanup();
+      resolve(null);
+    };
+
+    dbOnlyBtn.addEventListener("click", handleDbOnly);
+    permanentBtn.addEventListener("click", handlePermanent);
+    cancelBtn.addEventListener("click", handleCancel);
+
+    // Fermer au clic sur le fond
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) handleCancel();
+    });
+  });
+}
+
 // ── Gestion des tags ──────────────────────────────────
 
 async function renderItemTags(itemId, container) {
-  // Affiche les tags d'un item avec boutons de suppression
+  // Affiche les tags d'un item avec boutons de suppression + zone d'ajout
   try {
-    const resp = await fetch(`${API_URL}/api/tags/get?item_id=${itemId}`);
+    const resp = await fetch(`${API}/tags/get?item_id=${itemId}`);
     const data = await resp.json();
 
+    // Zone d'ajout de tag (toujours visible)
+    let html = `
+      <div class="add-tag-section" style="display:flex;gap:4px;margin-bottom:8px;">
+        <input type="text" class="add-tag-input" placeholder="Ajouter un tag..."
+               style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px;">
+        <button class="add-tag-btn" title="Ajouter ce tag"
+                style="width:24px;height:24px;border-radius:50%;border:2px solid #27ae60;background:#fff;color:#27ae60;font-size:16px;cursor:pointer;line-height:1;">+</button>
+        <div class="add-tag-dropdown" style="display:none;position:absolute;background:#fff;border:1px solid #ccc;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:1000;max-height:200px;overflow-y:auto;"></div>
+      </div>
+      <div class="tags-list">`;
+
     if (!data.tags || data.tags.length === 0) {
-      container.innerHTML = '<div style="color:#999;font-size:11px;font-style:italic">Aucun tag</div>';
-      return;
+      html += '<div style="color:#999;font-size:11px;font-style:italic">Aucun tag</div>';
+    } else {
+      html += data.tags.map(tag => `
+        <span class="item-tag" data-tag="${esc(tag)}">
+          ${esc(tag)}
+          <button class="tag-remove-btn" title="Supprimer ce tag">×</button>
+        </span>
+      `).join('');
     }
 
-    container.innerHTML = data.tags.map(tag => `
-      <span class="item-tag" data-tag="${tag}">
-        ${tag}
-        <button class="tag-remove-btn" title="Supprimer ce tag">×</button>
-      </span>
-    `).join('');
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Setup autocomplete pour l'ajout
+    const inputEl = container.querySelector('.add-tag-input');
+    const btnEl = container.querySelector('.add-tag-btn');
+    const dropdownEl = container.querySelector('.add-tag-dropdown');
+    let debounceTimer;
+
+    inputEl.addEventListener('input', async (e) => {
+      const q = e.target.value.trim();
+      clearTimeout(debounceTimer);
+
+      if (q.length < 2) {
+        dropdownEl.style.display = 'none';
+        return;
+      }
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          const acData = await apiFetch('autocomplete', { q });
+          const existing = new Set(data.tags || []);
+          const filtered = (acData.tags || []).filter(t => !existing.has(t.tag)).slice(0, 8);
+
+          let dropHtml = filtered.map(t =>
+            `<div class="ac-item" data-tag="${esc(t.tag)}" style="padding:6px 8px;cursor:pointer;font-size:11px;">
+              ${esc(t.tag)} <span style="color:#888;font-size:10px">(${t.count})</span>
+            </div>`
+          ).join('');
+
+          if (!filtered.some(t => t.tag === q.toLowerCase())) {
+            dropHtml += `<div class="ac-item create" data-tag="${esc(q.toLowerCase())}" style="padding:6px 8px;cursor:pointer;font-size:11px;border-top:1px solid #eee;">Créer "${esc(q)}"</div>`;
+          }
+
+          dropdownEl.innerHTML = dropHtml;
+          dropdownEl.style.display = dropHtml ? 'block' : 'none';
+
+          // Position dropdown
+          const rect = inputEl.getBoundingClientRect();
+          dropdownEl.style.position = 'absolute';
+          dropdownEl.style.top = (rect.bottom + 2) + 'px';
+          dropdownEl.style.left = rect.left + 'px';
+          dropdownEl.style.width = rect.width + 'px';
+
+          // Click handlers
+          dropdownEl.querySelectorAll('.ac-item').forEach(el => {
+            el.addEventListener('click', () => {
+              inputEl.value = el.dataset.tag;
+              dropdownEl.style.display = 'none';
+            });
+          });
+        } catch (err) {
+          console.error('Autocomplete error:', err);
+        }
+      }, 300);
+    });
+
+    // Hide dropdown on outside click
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target)) {
+        dropdownEl.style.display = 'none';
+      }
+    });
+
+    // Bouton + : ajouter le tag
+    btnEl.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const tagToAdd = inputEl.value.trim().toLowerCase();
+
+      if (!tagToAdd) {
+        alert('Entrez un tag à ajouter');
+        return;
+      }
+
+      try {
+        const addResp = await fetch(`${API}/tags/add`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item_id: itemId, tag: tagToAdd })
+        });
+        const addResult = await addResp.json();
+
+        if (addResult.success) {
+          inputEl.value = '';
+          dropdownEl.style.display = 'none';
+          // Rafraîchir la liste
+          renderItemTags(itemId, container);
+        } else {
+          alert('Erreur : ' + (addResult.error || 'Ajout échoué'));
+        }
+      } catch (err) {
+        alert('Erreur réseau : ' + err.message);
+      }
+    });
+
+    // Enter dans l'input = clic sur bouton +
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        btnEl.click();
+      }
+    });
 
     // Event listeners pour suppression
     container.querySelectorAll('.tag-remove-btn').forEach(btn => {
@@ -1824,7 +2047,7 @@ async function renderItemTags(itemId, container) {
         if (!confirm(`Supprimer le tag "${tag}" ?`)) return;
 
         try {
-          const resp = await fetch(`${API_URL}/api/tags/delete`, {
+          const resp = await fetch(`${API}/tags/delete`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ item_id: itemId, tag })
@@ -1832,11 +2055,8 @@ async function renderItemTags(itemId, container) {
           const result = await resp.json();
 
           if (result.success) {
-            tagEl.remove();
-            // Si plus de tags, afficher "Aucun tag"
-            if (container.querySelectorAll('.item-tag').length === 0) {
-              container.innerHTML = '<div style="color:#999;font-size:11px;font-style:italic">Aucun tag</div>';
-            }
+            // Rafraîchir la liste
+            renderItemTags(itemId, container);
           } else {
             alert('Erreur : ' + (result.error || 'Suppression échouée'));
           }
@@ -1862,5 +2082,10 @@ input.focus();
 // Pleine page
 document.getElementById("fullpage-btn").addEventListener("click", (e) => {
   e.preventDefault();
-  chrome.tabs.create({ url: "http://127.0.0.1:7777/" });
+  const params = new URLSearchParams();
+  if (state.includeTags.length > 0) params.set("include", state.includeTags.join(","));
+  if (state.excludeTags.length > 0) params.set("exclude", state.excludeTags.join(","));
+  if (state.activeTypes.length > 0) params.set("types", state.activeTypes.join(","));
+  const url = "http://127.0.0.1:7777/" + (params.toString() ? "?" + params.toString() : "");
+  chrome.tabs.create({ url });
 });

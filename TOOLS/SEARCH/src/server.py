@@ -20,7 +20,11 @@ import subprocess
 import urllib.parse
 from pathlib import Path
 
-from config import normalize_tag, is_valid_tag
+from config import (
+    normalize_tag, is_valid_tag,
+    ID_OFFSET_EMAIL, ID_OFFSET_NOTE, ID_OFFSET_VAULT,
+    ID_OFFSET_VIDEO, ID_OFFSET_EVENT, ID_OFFSET_CONTACT, ID_OFFSET_LIEU
+)
 
 DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
 DROPBOX_ROOT = "/Users/nathalie/Dropbox"
@@ -375,9 +379,55 @@ a:hover { text-decoration: underline; }
 .form-ac-dropdown .ac-item { padding: 6px 10px; cursor: pointer; font-size: 12px; }
 .form-ac-dropdown .ac-item:hover { background: #f0f4ff; }
 .form-ac-dropdown .ac-item.create { color: #27ae60; font-style: italic; }
+/* Tags modifiables */
+.tags-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.item-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px 3px 8px; background: #e8f4f8; border: 1px solid #b8dce8; border-radius: 12px; font-size: 11px; color: #2c5f7a; }
+.tag-remove-btn { background: none; border: none; color: #7a8e99; font-size: 16px; line-height: 1; cursor: pointer; padding: 0; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.15s ease; }
+.tag-remove-btn:hover { background: #c0392b; color: #fff; transform: scale(1.1); }
+/* Bouton suppression d'élément */
+.delete-btn { background: none; border: none; color: #95a5a6; font-size: 14px; cursor: pointer; padding: 4px 8px; margin-left: 8px; border-radius: 4px; transition: all 0.2s; opacity: 0.6; }
+.delete-btn:hover { background: #c0392b; color: #fff; opacity: 1; transform: scale(1.1); }
+
+/* Modal de suppression */
+.delete-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; align-items: center; justify-content: center; }
+.delete-modal.active { display: flex; }
+.delete-modal-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); }
+.delete-modal-content { position: relative; background: #fff; border-radius: 8px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+.delete-modal-title { font-size: 18px; font-weight: 600; color: #2c3e50; margin-bottom: 8px; }
+.delete-modal-name { font-size: 14px; color: #7f8c8d; margin-bottom: 20px; word-break: break-word; }
+.delete-modal-buttons { display: flex; gap: 12px; margin-bottom: 12px; }
+.delete-modal-btn { flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background: #fff; cursor: pointer; text-align: center; transition: all 0.2s; }
+.delete-modal-btn:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); }
+.delete-modal-btn.db-only { border-color: #3498db; color: #3498db; }
+.delete-modal-btn.db-only:hover { background: #3498db; color: #fff; }
+.delete-modal-btn.permanent { border-color: #e74c3c; color: #e74c3c; }
+.delete-modal-btn.permanent:hover { background: #e74c3c; color: #fff; }
+.delete-modal-desc { font-size: 11px; margin-top: 4px; opacity: 0.8; }
+.delete-modal-cancel { width: 100%; padding: 10px; background: #ecf0f1; border: none; border-radius: 6px; cursor: pointer; color: #7f8c8d; font-weight: 500; }
+.delete-modal-cancel:hover { background: #d5dbdb; }
 </style>
 </head>
 <body>
+<!-- Modal de suppression -->
+<div class="delete-modal" id="delete-modal">
+  <div class="delete-modal-overlay"></div>
+  <div class="delete-modal-content">
+    <div class="delete-modal-title">Supprimer cet \u00e9l\u00e9ment ?</div>
+    <div class="delete-modal-name" id="delete-modal-name"></div>
+    <div class="delete-modal-buttons">
+      <button class="delete-modal-btn db-only" id="delete-db-only">
+        <div style="font-weight:600">Base seule</div>
+        <div class="delete-modal-desc">Garder le fichier</div>
+      </button>
+      <button class="delete-modal-btn permanent" id="delete-permanent">
+        <div style="font-weight:600">D\u00e9finitive</div>
+        <div class="delete-modal-desc" id="delete-permanent-desc">Tout supprimer</div>
+      </button>
+    </div>
+    <button class="delete-modal-cancel" id="delete-cancel">Annuler</button>
+  </div>
+</div>
+
 <header>
   <h1>BIG_BOFF Search</h1>
   <span class="stats" id="stats"></span>
@@ -409,6 +459,21 @@ a:hover { text-decoration: underline; }
 <script>
 const API = window.location.origin + "/api";
 const state = { includeTags: [], excludeTags: [], autocompleteIndex: -1, autocompleteItems: [], currentOffset: 0, pageSize: 50, totalResults: 0, activeTypes: [] };
+
+// Restaurer l'état depuis les paramètres URL
+(function initFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("include")) {
+    state.includeTags = params.get("include").split(",").filter(t => t.trim());
+  }
+  if (params.has("exclude")) {
+    state.excludeTags = params.get("exclude").split(",").filter(t => t.trim());
+  }
+  if (params.has("types")) {
+    state.activeTypes = params.get("types").split(",").filter(t => t.trim());
+  }
+})();
+
 const input = document.getElementById("search-input");
 const autocompleteEl = document.getElementById("autocomplete");
 const selectedTagsEl = document.getElementById("selected-tags");
@@ -572,32 +637,40 @@ function renderResults(results) {
   resultsList.innerHTML = results.map(r => {
     if (r.type === "email") {
       var sn = r.snippet ? '<div class="result-snippet">' + esc(r.snippet) + '</div>' : '';
-      return '<div class="result-item result-email" data-id="' + r.id + '"><span class="result-icon icon-email"><i class="fa-solid fa-envelope"></i></span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.chemin) + '</div>' + sn + '<div class="result-meta">' + (r.date_modif || "?") + '</div></div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="email" title="Supprimer cet email" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-email" data-id="' + r.id + '"><span class="result-icon icon-email"><i class="fa-solid fa-envelope"></i></span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.chemin) + '</div>' + sn + '<div class="result-meta">' + (r.date_modif || "?") + '</div></div></div>';
     }
     if (r.type === "note") {
-      return '<div class="result-item result-note" data-id="' + r.id + '"><span class="result-icon icon-note"><i class="fa-solid fa-note-sticky"></i></span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.chemin) + '</div><div class="result-meta">' + (r.date_modif || "?") + '</div></div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="note" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-note" data-id="' + r.id + '"><span class="result-icon icon-note"><i class="fa-solid fa-note-sticky"></i></span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.chemin) + '</div><div class="result-meta">' + (r.date_modif || "?") + '</div></div></div>';
     }
     if (r.type === "video") {
       var pIcon = {"youtube":'<i class="fa-brands fa-youtube"></i>',"facebook":'<i class="fa-brands fa-facebook"></i>',"vimeo":'<i class="fa-brands fa-vimeo-v"></i>',"dailymotion":'<i class="fa-solid fa-play"></i>',"instagram":'<i class="fa-brands fa-instagram"></i>',"tiktok":'<i class="fa-brands fa-tiktok"></i>'}[r.platform] || '<i class="fa-solid fa-play"></i>';
-      return '<div class="result-item result-video" data-id="' + r.id + '" data-url="' + esc(r.url || r.chemin) + '"><span class="result-icon icon-video">' + pIcon + '</span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.platform || "") + ' \u00b7 ' + (r.date_modif || "?") + '</div><div class="result-meta" style="font-size:10px;color:#999;word-break:break-all">' + esc(r.url || r.chemin) + '</div></div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="video" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-video" data-id="' + r.id + '" data-url="' + esc(r.url || r.chemin) + '"><span class="result-icon icon-video">' + pIcon + '</span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.platform || "") + ' \u00b7 ' + (r.date_modif || "?") + '</div><div class="result-meta" style="font-size:10px;color:#999;word-break:break-all">' + esc(r.url || r.chemin) + '</div></div></div>';
     }
     if (r.type === "event") {
       var recStr = r.recurrence && r.recurrence !== "none" ? ' \u00b7 <i class="fa-solid fa-rotate"></i> ' + ({"daily":"chaque jour","weekly":"chaque semaine","monthly":"chaque mois","yearly":"chaque ann\u00e9e"}[r.recurrence] || "") : "";
       var tagsStr = r.tags_raw ? '<div class="result-meta" style="margin-top:2px">' + esc(r.tags_raw) + '</div>' : '';
-      return '<div class="result-item result-event" data-id="' + r.id + '"><span class="result-icon icon-event"><i class="fa-solid fa-calendar-days"></i></span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.date_fr || r.date_modif || "") + recStr + '</div>' + tagsStr + '</div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="event" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-event" data-id="' + r.id + '"><span class="result-icon icon-event"><i class="fa-solid fa-calendar-days"></i></span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.date_fr || r.date_modif || "") + recStr + '</div>' + tagsStr + '</div></div>';
     }
     if (r.type === "contact") {
       var ctIcon = r.contact_type === "entreprise" ? '<i class="fa-solid fa-building"></i>' : '<i class="fa-solid fa-user"></i>';
-      return '<div class="result-item result-contact" data-id="' + r.id + '"><span class="result-icon icon-contact">' + ctIcon + '</span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.chemin) + '</div></div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="contact" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-contact" data-id="' + r.id + '"><span class="result-icon icon-contact">' + ctIcon + '</span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.chemin) + '</div></div></div>';
     }
     if (r.type === "lieu") {
-      return '<div class="result-item result-lieu" data-id="' + r.id + '"><span class="result-icon icon-lieu"><i class="fa-solid fa-location-dot"></i></span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.chemin) + '</div></div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="lieu" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-lieu" data-id="' + r.id + '"><span class="result-icon icon-lieu"><i class="fa-solid fa-location-dot"></i></span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.chemin) + '</div></div></div>';
     }
     if (r.type === "vault") {
-      return '<div class="result-item result-vault" data-id="' + r.id + '"><span class="result-icon icon-vault"><i class="fa-solid fa-lock"></i></span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + esc(r.chemin) + (r.project ? ' \u00b7 ' + esc(r.project) : '') + '</div></div></div>';
+      var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="vault" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+      return '<div class="result-item result-vault" data-id="' + r.id + '"><span class="result-icon icon-vault"><i class="fa-solid fa-lock"></i></span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + esc(r.chemin) + (r.project ? ' \u00b7 ' + esc(r.project) : '') + '</div></div></div>';
     }
     var iconHtml = r.is_media ? '<img class="thumb" data-thumb-id="' + r.id + '" src="" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline\'" style="display:none"><span>' + (r.est_dossier ? '<i class="fa-solid fa-folder icon-file"></i>' : fileIcon(r.extension)) + '</span>' : '<span>' + (r.est_dossier ? '<i class="fa-solid fa-folder icon-file"></i>' : fileIcon(r.extension)) + '</span>';
-    return '<div class="result-item" data-id="' + r.id + '"><span class="result-icon">' + iconHtml + '</span><div class="result-body"><div class="result-name">' + esc(r.nom) + fh(r.id) + '</div><div class="result-meta">' + formatSize(r.taille) + ' \u00b7 ' + (r.date_modif || "?") + '</div></div><div class="result-actions"><span class="action-btn open-btn" data-id="' + r.id + '" title="Ouvrir"><i class="fa-solid fa-arrow-up-right-from-square"></i></span><span class="action-btn reveal-btn" data-id="' + r.id + '" title="Finder"><i class="fa-solid fa-folder-open"></i></span></div></div>';
+    var delBtn = '<button class="delete-btn" data-item-id="' + r.id + '" data-item-type="file" title="Supprimer" style="margin-left:auto"><i class="fa-solid fa-trash"></i></button>';
+    return '<div class="result-item" data-id="' + r.id + '"><span class="result-icon">' + iconHtml + '</span><div class="result-body"><div class="result-name" style="display:flex;align-items:center">' + esc(r.nom) + fh(r.id) + delBtn + '</div><div class="result-meta">' + formatSize(r.taille) + ' \u00b7 ' + (r.date_modif || "?") + '</div></div><div class="result-actions"><span class="action-btn open-btn" data-id="' + r.id + '" title="Ouvrir"><i class="fa-solid fa-arrow-up-right-from-square"></i></span><span class="action-btn reveal-btn" data-id="' + r.id + '" title="Finder"><i class="fa-solid fa-folder-open"></i></span></div></div>';
   }).join("");
   // Charger les miniatures en lazy
   resultsList.querySelectorAll("img.thumb[data-thumb-id]").forEach(function(img) {
@@ -619,6 +692,77 @@ function renderResults(results) {
   });
   resultsList.querySelectorAll(".result-email").forEach(el => {
     el.addEventListener("click", () => toggleEmailView(el));
+  });
+  // Fonction d'affichage du modal de suppression
+  function showDeleteModal(itemId, itemType, itemName) {
+    return new Promise((resolve) => {
+      var modal = document.getElementById("delete-modal");
+      var nameEl = document.getElementById("delete-modal-name");
+      var dbOnlyBtn = document.getElementById("delete-db-only");
+      var permanentBtn = document.getElementById("delete-permanent");
+      var permanentDesc = document.getElementById("delete-permanent-desc");
+      var cancelBtn = document.getElementById("delete-cancel");
+
+      var descriptions = {
+        email: "Supprimer du serveur IMAP",
+        file: "Mettre \u00e0 la corbeille",
+        note: "Tout supprimer",
+        vault: "Tout supprimer",
+        video: "Tout supprimer",
+        event: "Tout supprimer",
+        contact: "Tout supprimer",
+        lieu: "Tout supprimer"
+      };
+
+      nameEl.textContent = itemName;
+      permanentDesc.textContent = descriptions[itemType] || "Tout supprimer";
+      modal.classList.add("active");
+
+      var cleanup = () => {
+        modal.classList.remove("active");
+        dbOnlyBtn.removeEventListener("click", handleDbOnly);
+        permanentBtn.removeEventListener("click", handlePermanent);
+        cancelBtn.removeEventListener("click", handleCancel);
+      };
+
+      var handleDbOnly = () => { cleanup(); resolve("db_only"); };
+      var handlePermanent = () => { cleanup(); resolve("permanent"); };
+      var handleCancel = () => { cleanup(); resolve(null); };
+
+      dbOnlyBtn.addEventListener("click", handleDbOnly);
+      permanentBtn.addEventListener("click", handlePermanent);
+      cancelBtn.addEventListener("click", handleCancel);
+    });
+  }
+
+  resultsList.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      var itemId = btn.dataset.itemId;
+      var itemType = btn.dataset.itemType;
+      var itemName = btn.closest(".result-item").querySelector(".result-name").textContent.trim();
+
+      var mode = await showDeleteModal(itemId, itemType, itemName);
+      if (!mode) return;
+
+      try {
+        var resp = await fetch(API + "/" + itemType, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ item_id: parseInt(itemId), mode: mode })
+        });
+        var result = await resp.json();
+        if (result.success) {
+          btn.closest(".result-item").remove();
+          state.totalResults--;
+          renderResultsCount();
+        } else {
+          alert("Erreur : " + (result.error || "Suppression \u00e9chou\u00e9e"));
+        }
+      } catch (err) {
+        alert("Erreur r\u00e9seau : " + err.message);
+      }
+    });
   });
   resultsList.querySelectorAll(".result-vault").forEach(el => {
     el.addEventListener("click", () => toggleVaultView(el));
@@ -646,6 +790,110 @@ function linkifyBody(text) {
     return '<a href="' + url + '" target="_blank" class="' + cls + '" onclick="event.stopPropagation()">' + icon + url + '</a>';
   });
 }
+
+async function renderItemTags(itemId, container) {
+  try {
+    const resp = await fetch(API + '/tags/get?item_id=' + itemId);
+    const data = await resp.json();
+
+    let html = '<div class="add-tag-section" style="display:flex;gap:4px;margin:12px 0 8px 0;">';
+    html += '<input type="text" class="add-tag-input" placeholder="Ajouter un tag..." style="flex:1;padding:4px 8px;border:1px solid #ccc;border-radius:4px;font-size:11px;">';
+    html += '<button class="add-tag-btn" title="Ajouter ce tag" style="width:24px;height:24px;border-radius:50%;border:2px solid #27ae60;background:#fff;color:#27ae60;font-size:16px;cursor:pointer;line-height:1;">+</button>';
+    html += '<div class="add-tag-dropdown" style="display:none;position:absolute;background:#fff;border:1px solid #ccc;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:1000;max-height:200px;overflow-y:auto;"></div>';
+    html += '</div><div class="tags-list" style="margin-top:8px;">';
+
+    if (!data.tags || data.tags.length === 0) {
+      html += '<div style="color:#999;font-size:11px;font-style:italic">Aucun tag</div>';
+    } else {
+      html += data.tags.map(tag => '<span class="item-tag" data-tag="' + esc(tag) + '">' + esc(tag) + ' <button class="tag-remove-btn" title="Supprimer ce tag">×</button></span>').join('');
+    }
+    html += '</div>';
+    container.innerHTML = html;
+
+    const inputEl = container.querySelector('.add-tag-input');
+    const btnEl = container.querySelector('.add-tag-btn');
+    const dropdownEl = container.querySelector('.add-tag-dropdown');
+    let debounceTimer;
+
+    inputEl.addEventListener('input', async (e) => {
+      const q = e.target.value.trim();
+      clearTimeout(debounceTimer);
+      if (q.length < 2) { dropdownEl.style.display = 'none'; return; }
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          const acData = await apiFetch('autocomplete', { q });
+          const existing = new Set(data.tags || []);
+          const filtered = (acData.tags || []).filter(t => !existing.has(t.tag)).slice(0, 8);
+          let dropHtml = filtered.map(t => '<div class="ac-item" data-tag="' + esc(t.tag) + '" style="padding:6px 8px;cursor:pointer;font-size:11px;">' + esc(t.tag) + ' <span style="color:#888;font-size:10px">(' + t.count + ')</span></div>').join('');
+          if (!filtered.some(t => t.tag === q.toLowerCase())) {
+            dropHtml += '<div class="ac-item create" data-tag="' + esc(q.toLowerCase()) + '" style="padding:6px 8px;cursor:pointer;font-size:11px;border-top:1px solid #eee;">Créer "' + esc(q) + '"</div>';
+          }
+          dropdownEl.innerHTML = dropHtml;
+          dropdownEl.style.display = dropHtml ? 'block' : 'none';
+          const rect = inputEl.getBoundingClientRect();
+          dropdownEl.style.position = 'absolute';
+          dropdownEl.style.top = (rect.bottom + 2) + 'px';
+          dropdownEl.style.left = rect.left + 'px';
+          dropdownEl.style.width = rect.width + 'px';
+          dropdownEl.querySelectorAll('.ac-item').forEach(el => {
+            el.addEventListener('click', () => { inputEl.value = el.dataset.tag; dropdownEl.style.display = 'none'; });
+          });
+        } catch (err) { console.error('Autocomplete error:', err); }
+      }, 300);
+    });
+
+    document.addEventListener('click', (e) => { if (!container.contains(e.target)) { dropdownEl.style.display = 'none'; } });
+
+    btnEl.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const tagToAdd = inputEl.value.trim().toLowerCase();
+      if (!tagToAdd) { alert('Entrez un tag à ajouter'); return; }
+      try {
+        const addResp = await fetch(API + '/tags/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item_id: itemId, tag: tagToAdd })
+        });
+        const addResult = await addResp.json();
+        if (addResult.success) {
+          inputEl.value = '';
+          dropdownEl.style.display = 'none';
+          renderItemTags(itemId, container);
+        } else {
+          alert('Erreur : ' + (addResult.error || 'Ajout échoué'));
+        }
+      } catch (err) { alert('Erreur réseau : ' + err.message); }
+    });
+
+    inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnEl.click(); } });
+
+    container.querySelectorAll('.tag-remove-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const tagEl = e.target.parentElement;
+        const tag = tagEl.dataset.tag;
+        if (!confirm('Supprimer le tag "' + tag + '" ?')) return;
+        try {
+          const resp = await fetch(API + '/tags/delete', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_id: itemId, tag })
+          });
+          const result = await resp.json();
+          if (result.success) {
+            renderItemTags(itemId, container);
+          } else {
+            alert('Erreur : ' + (result.error || 'Suppression échouée'));
+          }
+        } catch (err) { alert('Erreur réseau : ' + err.message); }
+      });
+    });
+  } catch (err) {
+    container.innerHTML = '<div style="color:#c0392b;font-size:11px">Erreur chargement tags</div>';
+  }
+}
+
 async function toggleNoteView(el) {
   var id = el.dataset.id;
   var ex = el.nextElementSibling;
@@ -662,7 +910,9 @@ async function toggleNoteView(el) {
     var dt = document.createElement("div"); dt.className = "note-date"; dt.textContent = data.date || ""; div.appendChild(dt);
     var hr = document.createElement("hr"); hr.style.cssText = "border:none;border-top:1px solid #e0d5c0;margin:6px 0"; div.appendChild(hr);
     var body = document.createElement("div"); body.className = "note-body"; body.innerHTML = linkifyBody(data.body || "(vide)"); div.appendChild(body);
+    var tagsSection = document.createElement("div"); tagsSection.innerHTML = '<div style="margin-top:12px;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;">Tags</div><div class="tags-container"></div>'; div.appendChild(tagsSection);
     el.after(div);
+    renderItemTags(id, div.querySelector('.tags-container'));
   } catch { ld.remove(); }
 }
 let expandedEmailId = null;
@@ -688,7 +938,9 @@ async function toggleEmailView(el) {
       iframe.addEventListener("load", () => { try { const h = iframe.contentDocument.body.scrollHeight; iframe.style.height = Math.min(h + 20, 500) + "px"; } catch {} });
     } else if (data.body_text) { const pre = document.createElement("pre"); pre.textContent = data.body_text; div.appendChild(pre); }
     else { const em = document.createElement("div"); em.style.color = "#aaa"; em.textContent = "(contenu vide)"; div.appendChild(em); }
+    const tagsSection = document.createElement("div"); tagsSection.innerHTML = '<div style="margin-top:12px;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;">Tags</div><div class="tags-container"></div>'; div.appendChild(tagsSection);
     el.after(div);
+    renderItemTags(id, div.querySelector('.tags-container'));
   } catch { loading.remove(); const err = document.createElement("div"); err.className = "email-content"; err.innerHTML = '<div style="color:#c00">Impossible de charger</div>'; el.after(err); }
 }
 function refresh() { state.currentOffset = 0; renderTypeFilters(); renderSelectedTags(); fetchResults(); fetchCooccurrence(); }
@@ -755,7 +1007,9 @@ async function loadVaultEntry(el, id) {
     }
     if (d.url) h += '<div class="vp-row"><span class="vp-label">URL</span><span class="vp-value" style="font-size:11px">' + esc(d.url) + '</span></div>';
     if (d.notes) h += '<div class="vp-row"><span class="vp-label">Notes</span><span class="vp-value" style="font-size:11px">' + esc(d.notes) + '</span></div>';
+    h += '<div style="margin-top:12px;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;">Tags</div><div class="tags-container"></div>';
     div.innerHTML = h; el.after(div);
+    renderItemTags(id, div.querySelector('.tags-container'));
     const showB = div.querySelector("#vp-show"), pwdD = div.querySelector("#vp-pwd");
     if (showB && pwdD) { let vis = false; showB.addEventListener("click", () => { vis = !vis; pwdD.textContent = vis ? d.password : "\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF"; showB.textContent = vis ? "Masquer" : "Voir"; }); }
     const copyB = div.querySelector("#vp-copy");
@@ -786,7 +1040,9 @@ async function toggleEventView(el) {
       data.tags_raw.split(",").forEach(function(t) { t = t.trim(); if (t) h += '<span class="ev-tag">' + esc(t) + '</span>'; });
       h += '</div>';
     }
+    h += '<div style="margin-top:12px;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;">Tags</div><div class="tags-container"></div>';
     div.innerHTML = h; el.after(div);
+    renderItemTags(id, div.querySelector('.tags-container'));
   } catch(e) {}
 }
 function showEventForm() {
@@ -903,7 +1159,9 @@ async function toggleContactView(el) {
     }
     if (data.site_web) h += '<div class="ct-row"><span class="ct-label">Site web</span><a href="' + esc(data.site_web) + '" target="_blank">' + esc(data.site_web) + '</a></div>';
     if (data.commentaire) h += '<div class="ct-row"><span class="ct-label">Note</span>' + esc(data.commentaire) + '</div>';
+    h += '<div style="margin-top:12px;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;">Tags</div><div class="tags-container"></div>';
     div.innerHTML = h; el.after(div);
+    renderItemTags(id, div.querySelector('.tags-container'));
   } catch(e) {}
 }
 async function toggleLieuView(el) {
@@ -921,7 +1179,9 @@ async function toggleLieuView(el) {
       if (data.maps_url) h += '<a class="maps-btn" href="' + esc(data.maps_url) + '" target="_blank"><i class="fa-solid fa-map-location-dot"></i> Google Maps</a>';
     }
     if (data.description) h += '<div class="li-row" style="margin-top:6px"><span class="li-label">Description</span>' + esc(data.description) + '</div>';
+    h += '<div style="margin-top:12px;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;">Tags</div><div class="tags-container"></div>';
     div.innerHTML = h; el.after(div);
+    renderItemTags(id, div.querySelector('.tags-container'));
   } catch(e) {}
 }
 
@@ -1012,6 +1272,14 @@ function showAddForm() {
 document.getElementById("add-btn").addEventListener("click", showAddForm);
 
 checkServer(); checkVaultStatus(); input.focus();
+
+// Si des tags ont été chargés depuis l'URL, lancer la recherche
+if (state.includeTags.length > 0 || state.excludeTags.length > 0 || state.activeTypes.length > 0) {
+  renderTypeFilters();
+  renderSelectedTags();
+  fetchResults();
+  fetchCooccurrence();
+}
 </script>
 </body>
 </html>"""
@@ -1509,12 +1777,6 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         conn = get_db()
         c = conn.cursor()
 
-        # Vérifier que l'item existe
-        c.execute("SELECT id FROM items WHERE id = ?", (item_id,))
-        if not c.fetchone():
-            conn.close()
-            return {"error": "Item introuvable"}
-
         # Vérifier si le tag existe déjà pour cet item
         c.execute("SELECT 1 FROM tags WHERE item_id = ? AND tag = ?", (item_id, tag_normalized))
         if c.fetchone():
@@ -1619,6 +1881,176 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
 
         subprocess.Popen(["open", "-R", str(full_path)])
         return {"ok": True, "path": str(full_path)}
+
+    def delete_email_from_imap(self, account_email, folder, uid):
+        """Supprime un email sur le serveur IMAP."""
+        try:
+            # Charger les credentials
+            with open(ACCOUNTS_PATH) as f:
+                accounts = json.load(f)
+
+            account = None
+            for a in accounts:
+                if a["email"] == account_email:
+                    account = a
+                    break
+
+            if not account:
+                return {"success": False, "error": f"Compte {account_email} non configuré"}
+
+            # Connexion IMAP
+            imap = imaplib.IMAP4_SSL(account["imap_server"], account.get("imap_port", 993))
+            imap.login(account["email"], account["password"])
+
+            # Sélectionner le dossier en mode écriture
+            status, _ = imap.select(f'"{folder}"', readonly=False)
+            if status != "OK":
+                imap.logout()
+                return {"success": False, "error": f"Impossible de sélectionner le dossier {folder}"}
+
+            # Marquer l'email comme supprimé
+            status, _ = imap.uid("STORE", uid, "+FLAGS", "(\\Deleted)")
+            if status != "OK":
+                imap.logout()
+                return {"success": False, "error": "Impossible de marquer l'email comme supprimé"}
+
+            # Expunge pour supprimer définitivement
+            imap.expunge()
+            imap.logout()
+
+            return {"success": True}
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def handle_email_delete(self, data):
+        """Supprime un email (serveur IMAP + base locale + tags).
+
+        DELETE /api/email
+        Body: {"item_id": -100123, "mode": "db_only" | "permanent"}
+        """
+        item_id = data.get("item_id")
+        mode = data.get("mode", "permanent")
+        if not item_id:
+            return {"error": "item_id requis"}
+
+        # Convention : item_id = -(email_db_id + 100000)
+        email_db_id = -(item_id + 100000)
+
+        conn = get_db()
+        c = conn.cursor()
+
+        # Récupérer les infos de l'email
+        c.execute("SELECT account, folder, uid, subject FROM emails WHERE id = ?", (email_db_id,))
+        row = c.fetchone()
+
+        if not row:
+            conn.close()
+            return {"error": "Email introuvable en base"}
+
+        account_email, folder, uid, subject = row
+
+        # 1. Supprimer sur le serveur IMAP (si mode permanent)
+        if mode == "permanent":
+            result = self.delete_email_from_imap(account_email, folder, uid)
+            if not result["success"]:
+                conn.close()
+                return {"error": f"Échec suppression IMAP : {result['error']}"}
+
+        # 2. Supprimer les tags
+        c.execute("DELETE FROM tags WHERE item_id = ?", (item_id,))
+
+        # 3. Supprimer de la base
+        c.execute("DELETE FROM emails WHERE id = ?", (email_db_id,))
+
+        conn.commit()
+        conn.close()
+
+        return {"success": True, "message": f"Email '{subject}' supprimé"}
+
+    def handle_note_delete(self, data):
+        """Supprime une note (base + tags uniquement)."""
+        item_id = data.get("item_id")
+        if not item_id:
+            return {"error": "item_id requis"}
+
+        note_db_id = -(item_id + ID_OFFSET_NOTE)
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("SELECT title FROM notes WHERE id = ?", (note_db_id,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return {"error": "Note introuvable"}
+
+        c.execute("DELETE FROM tags WHERE item_id = ?", (item_id,))
+        c.execute("DELETE FROM notes WHERE id = ?", (note_db_id,))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+
+    def handle_vault_delete(self, data):
+        """Supprime une entrée vault (base + tags uniquement)."""
+        item_id = data.get("item_id")
+        if not item_id:
+            return {"error": "item_id requis"}
+
+        vault_db_id = -(item_id + ID_OFFSET_VAULT)
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("DELETE FROM tags WHERE item_id = ?", (item_id,))
+        c.execute("DELETE FROM vault WHERE id = ?", (vault_db_id,))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+
+    def handle_video_delete(self, data):
+        """Supprime une vidéo (base + tags uniquement)."""
+        item_id = data.get("item_id")
+        if not item_id:
+            return {"error": "item_id requis"}
+
+        video_db_id = -(item_id + ID_OFFSET_VIDEO)
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("DELETE FROM tags WHERE item_id = ?", (item_id,))
+        c.execute("DELETE FROM videos WHERE id = ?", (video_db_id,))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+
+    def handle_file_delete(self, data):
+        """Supprime un fichier (mode: db_only ou permanent=corbeille)."""
+        item_id = data.get("item_id")
+        mode = data.get("mode", "permanent")
+        if not item_id or item_id < 0:
+            return {"error": "item_id fichier requis"}
+
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("SELECT chemin FROM items WHERE id = ?", (item_id,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return {"error": "Fichier introuvable"}
+
+        file_path = Path(DROPBOX_ROOT) / row[0]
+
+        # Mode permanent : mettre à la corbeille
+        if mode == "permanent" and file_path.exists():
+            try:
+                import subprocess
+                subprocess.run(["osascript", "-e", f'tell application "Finder" to delete POSIX file "{file_path}"'], check=True)
+            except Exception as e:
+                conn.close()
+                return {"error": f"Échec mise à la corbeille : {str(e)}"}
+
+        # Supprimer de la base
+        c.execute("DELETE FROM tags WHERE item_id = ?", (item_id,))
+        c.execute("DELETE FROM items WHERE id = ?", (item_id,))
+        conn.commit()
+        conn.close()
+        return {"success": True}
 
     def handle_email(self, params):
         """Récupère le contenu complet d'un email via IMAP."""
@@ -2057,6 +2489,11 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             self._json_response(400, {"error": "JSON invalide"})
             return
         delete_routes = {
+            "/api/email": self.handle_email_delete,
+            "/api/note": self.handle_note_delete,
+            "/api/vault": self.handle_vault_delete,
+            "/api/video": self.handle_video_delete,
+            "/api/file": self.handle_file_delete,
             "/api/event": self.handle_event_delete,
             "/api/contact": self.handle_contact_delete,
             "/api/lieu": self.handle_lieu_delete,
@@ -2421,14 +2858,17 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         if item_id is None:
             return {"error": "id manquant"}
         item_id = int(item_id)
+
+        tag_normalized = normalize_tag("favori")  # "favor"
+
         conn = get_db()
         c = conn.cursor()
-        c.execute("SELECT COUNT(*) FROM tags WHERE item_id = ? AND tag = 'favori'", (item_id,))
+        c.execute("SELECT COUNT(*) FROM tags WHERE item_id = ? AND tag = ?", (item_id, tag_normalized))
         exists = c.fetchone()[0] > 0
         if exists:
-            c.execute("DELETE FROM tags WHERE item_id = ? AND tag = 'favori'", (item_id,))
+            c.execute("DELETE FROM tags WHERE item_id = ? AND tag = ?", (item_id, tag_normalized))
         else:
-            c.execute("INSERT INTO tags (item_id, tag) VALUES (?, 'favori')", (item_id,))
+            c.execute("INSERT INTO tags (item_id, tag, tag_display) VALUES (?, ?, 'favori')", (item_id, tag_normalized))
         conn.commit()
         conn.close()
         return {"ok": True, "favorited": not exists}
@@ -2444,10 +2884,13 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             return {"favorited": []}
         if not ids:
             return {"favorited": []}
+
+        tag_normalized = normalize_tag("favori")  # "favor"
+
         conn = get_db()
         c = conn.cursor()
         ph = ",".join("?" * len(ids))
-        c.execute(f"SELECT DISTINCT item_id FROM tags WHERE item_id IN ({ph}) AND tag = 'favori'", ids)
+        c.execute(f"SELECT DISTINCT item_id FROM tags WHERE item_id IN ({ph}) AND tag = ?", ids + [tag_normalized])
         fav_ids = [row[0] for row in c.fetchall()]
         conn.close()
         return {"favorited": fav_ids}

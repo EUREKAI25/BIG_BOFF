@@ -9,7 +9,7 @@
 
 **Statut** : 🟢 actif
 **Cree** : 2026-02-08
-**Derniere MAJ** : 2026-02-08 15:00
+**Derniere MAJ** : 2026-02-10 19:45
 
 ---
 
@@ -136,6 +136,11 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | `GET /api/relations?type=&id=` | Elements lies a un element |
 | `POST /api/relation` | Creer un lien entre elements |
 | `DELETE /api/relation` | Supprimer un lien |
+| `DELETE /api/email` | Supprimer email (mode: db_only/permanent, IMAP si permanent) |
+| `DELETE /api/note` | Supprimer note (mode: db_only/permanent) |
+| `DELETE /api/file` | Supprimer fichier (mode: db_only/permanent, corbeille si permanent) |
+| `DELETE /api/vault` | Supprimer entree vault (mode: db_only/permanent) |
+| `DELETE /api/video` | Supprimer video (mode: db_only/permanent) |
 | `GET /api/system-contacts/list` | Suggestion contacts systeme (lecture seule, connecteur optionnel) |
 | `/` | Page de recherche plein ecran |
 
@@ -215,6 +220,11 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | F29 | **Suggestion contacts systeme** | Connecteur macOS (SQLite), autocomplete formulaire contact | fait |
 | F30 | **Icones FontAwesome** | FA 6.5.1 local (extension) + CDN (fullpage), couleurs par type | fait |
 | F31 | **Nettoyage tags 3 lettres** | Whitelist 121 tags utiles, suppression 1 197 tags bruit | fait |
+| F32 | **Suppression avec modal** | Modal 2 options (DB seule/Définitive), tous types, IMAP pour emails | fait |
+| F33 | **Transfert état popup→fullpage** | Paramètres URL (include/exclude/types), restauration auto | fait |
+| F34 | **Fetch métadonnées URL** | BeautifulSoup, OpenGraph/meta tags, gratuit/scalable | fait |
+| F35 | **Cache métadonnées URL** | Table SQLite, évite refetch, 98% succès | fait |
+| F36 | **Nettoyage tags URL parasites** | Suppression fbclid/mibextid/utm_* (191 tags), STOP_WORDS étendu | fait |
 
 ### Fonctionnalites prevues
 
@@ -276,3 +286,11 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | 2026-02-08 | Réécriture connecteur contacts : SQLite directe (instantané), suppression import en masse |
 | 2026-02-08 | Nettoyage tags : whitelist 3 lettres (121 utiles), suppression 1 197 tags bruit (30 116 assoc.) |
 | 2026-02-08 | Migration icones : tous les emoji → FontAwesome 6.5.1 (local + CDN), couleurs par type |
+| 2026-02-10 | Modal suppression — 2 modes (DB seule/Définitive), tous types, IMAP emails, corbeille fichiers |
+| 2026-02-10 | Transfert état popup→fullpage — URL params (include/exclude/types), restauration automatique |
+| 2026-02-10 | Analyse origine tags parasites — fbclid, mibextid, utm_* extraits depuis corps notes |
+| 2026-02-10 | Suppression extraction tags depuis URLs — domaines principaux uniquement (facebook, youtube...) |
+| 2026-02-10 | Fetch métadonnées URL — BeautifulSoup, OpenGraph/Twitter/meta tags, gratuit/scalable |
+| 2026-02-10 | Cache métadonnées URL — Table SQLite, 49 URLs cachées, 98% succès, évite refetch |
+| 2026-02-10 | Nettoyage base existante — 191 tags URL parasites supprimés (campaign:128, mibextid:34...) |
+| 2026-02-10 | Extension STOP_WORDS — fbclid, mibextid, gclid, igshid, utm_* (config.py + index_notes.py) |

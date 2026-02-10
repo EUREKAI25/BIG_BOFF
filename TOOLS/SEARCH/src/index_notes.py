@@ -14,6 +14,15 @@ import urllib.parse
 from pathlib import Path
 from datetime import datetime
 
+try:
+    import requests
+    from bs4 import BeautifulSoup
+    METADATA_FETCH_AVAILABLE = True
+except ImportError:
+    METADATA_FETCH_AVAILABLE = False
+    print("⚠️  requests/beautifulsoup4 non installés - métadonnées URL désactivées")
+    print("   pip install requests beautifulsoup4")
+
 DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
 EXPORT_DIR = "/tmp/apple_notes_export"
 
@@ -26,6 +35,11 @@ STOP_WORDS = {
     "bon", "bien", "merci", "bonjour", "bonne",
     "http", "https", "www", "com", "org", "net", "fr",
     "big", "boff", "big_boff",
+    # Paramètres URL de tracking (Facebook, Google, Microsoft, etc.)
+    "fbclid", "mibextid", "igshid", "igsh",
+    "gclid", "gbraid", "wbraid", "msclkid",
+    "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
+    "ref", "source", "campaign", "medium",
 }
 
 
@@ -58,6 +72,25 @@ def setup_videos_table(conn):
         )
     """)
     c.execute("CREATE INDEX IF NOT EXISTS idx_videos_url ON videos(url)")
+    conn.commit()
+
+
+def setup_url_cache_table(conn):
+    """Table de cache pour les métadonnées d'URLs.
+
+    Évite de refetch les mêmes URLs à chaque indexation.
+    """
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS url_metadata_cache (
+            url TEXT PRIMARY KEY,
+            title TEXT,
+            description TEXT,
+            keywords TEXT,
+            fetched_at TEXT,
+            fetch_success INTEGER DEFAULT 1
+        )
+    """)
     conn.commit()
 
 
@@ -115,7 +148,148 @@ def fetch_youtube_title(url):
         return ""
 
 
-def extract_note_tags(title, folder, body):
+def fetch_url_metadata(url, conn=None, use_cache=True):
+    """Récupère les métadonnées d'une URL (title, description, keywords).
+
+    Args:
+        url: URL to fetch
+        conn: SQLite connection (optionnel, pour le cache)
+        use_cache: Si True, utilise le cache DB
+
+    Retourne un dict avec 'title', 'description', 'keywords'.
+    Gratuit, illimité, scalable.
+    """
+    if not METADATA_FETCH_AVAILABLE:
+        return {'title': '', 'description': '', 'keywords': ''}
+
+    # Chercher dans le cache
+    if use_cache and conn:
+        c = conn.cursor()
+        c.execute("SELECT title, description, keywords, fetch_success FROM url_metadata_cache WHERE url = ?", (url,))
+        row = c.fetchone()
+        if row:
+            # Déjà en cache
+            if row[3] == 0:  # fetch_success = 0 → échec précédent, ne pas réessayer
+                return {'title': '', 'description': '', 'keywords': ''}
+            return {'title': row[0] or '', 'description': row[1] or '', 'keywords': row[2] or ''}
+
+    try:
+        # Headers pour éviter les blocages bot
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml',
+            'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+        }
+
+        # Timeout court pour ne pas bloquer
+        resp = requests.get(url, headers=headers, timeout=5, allow_redirects=True)
+        if resp.status_code != 200:
+            return {'title': '', 'description': '', 'keywords': ''}
+
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        # Title : OpenGraph > Twitter Card > <title>
+        title = ''
+        og_title = soup.find('meta', property='og:title')
+        twitter_title = soup.find('meta', attrs={'name': 'twitter:title'})
+        html_title = soup.find('title')
+
+        if og_title and og_title.get('content'):
+            title = og_title.get('content')
+        elif twitter_title and twitter_title.get('content'):
+            title = twitter_title.get('content')
+        elif html_title and html_title.string:
+            title = html_title.string
+
+        # Description : OpenGraph > Twitter Card > meta description
+        description = ''
+        og_desc = soup.find('meta', property='og:description')
+        twitter_desc = soup.find('meta', attrs={'name': 'twitter:description'})
+        meta_desc = soup.find('meta', attrs={'name': 'description'})
+
+        if og_desc and og_desc.get('content'):
+            description = og_desc.get('content')
+        elif twitter_desc and twitter_desc.get('content'):
+            description = twitter_desc.get('content')
+        elif meta_desc and meta_desc.get('content'):
+            description = meta_desc.get('content')
+
+        # Keywords
+        keywords = ''
+        meta_keywords = soup.find('meta', attrs={'name': 'keywords'})
+        if meta_keywords and meta_keywords.get('content'):
+            keywords = meta_keywords.get('content')
+
+        result = {
+            'title': title.strip() if title else '',
+            'description': description.strip() if description else '',
+            'keywords': keywords.strip() if keywords else ''
+        }
+
+        # Sauvegarder dans le cache
+        if conn:
+            c = conn.cursor()
+            c.execute("""
+                INSERT OR REPLACE INTO url_metadata_cache (url, title, description, keywords, fetched_at, fetch_success)
+                VALUES (?, ?, ?, ?, ?, 1)
+            """, (url, result['title'], result['description'], result['keywords'], datetime.now().strftime("%Y-%m-%d %H:%M")))
+            conn.commit()
+
+        return result
+
+    except Exception as e:
+        # Sauvegarder l'échec dans le cache pour ne pas réessayer
+        if conn:
+            c = conn.cursor()
+            c.execute("""
+                INSERT OR REPLACE INTO url_metadata_cache (url, title, description, keywords, fetched_at, fetch_success)
+                VALUES (?, '', '', '', ?, 0)
+            """, (url, datetime.now().strftime("%Y-%m-%d %H:%M")))
+            conn.commit()
+        # Silencieux : ne pas bloquer l'indexation si une URL échoue
+        return {'title': '', 'description': '', 'keywords': ''}
+
+
+def extract_tags_from_metadata(metadata):
+    """Extrait des tags pertinents depuis les métadonnées d'une page.
+
+    Args:
+        metadata: dict avec 'title', 'description', 'keywords'
+
+    Returns:
+        set de tags
+    """
+    tags = set()
+
+    # Keywords (déjà des mots-clefs fournis par la page)
+    if metadata.get('keywords'):
+        for word in re.split(r'[,;]+', metadata['keywords']):
+            word = word.strip().lower()
+            if len(word) >= 3 and word not in STOP_WORDS and word.replace('-', '').replace('_', '').isalpha():
+                tags.add(word)
+
+    # Title
+    if metadata.get('title'):
+        for word in re.split(r'[\s\-_.,;:!?()\[\]{}"/\'|]+', metadata['title'].lower()):
+            if len(word) >= 3 and word not in STOP_WORDS and word.isalpha():
+                tags.add(word)
+
+    # Description - mots fréquents seulement
+    if metadata.get('description'):
+        words = re.findall(r'\b[a-zA-ZÀ-ÿ]{3,}\b', metadata['description'].lower())
+        freq = {}
+        for w in words:
+            if w not in STOP_WORDS:
+                freq[w] = freq.get(w, 0) + 1
+        # Top 10 mots (min 2 occurrences)
+        for word, count in sorted(freq.items(), key=lambda x: -x[1])[:10]:
+            if count >= 2:
+                tags.add(word)
+
+    return tags
+
+
+def extract_note_tags(title, folder, body, conn=None):
     tags = set()
     tags.add("note")
 
@@ -148,19 +322,26 @@ def extract_note_tags(title, folder, body):
             tags.add("youtube")
             tags.add("video")
 
-        # Détecter les URLs en général
+        # Détecter les URLs - extraire métadonnées de la page
         urls = re.findall(r'https?://[^\s]+', body)
         if urls:
             tags.add("lien")
             for url in urls:
-                # Extraire le domaine
-                match = re.search(r'://([^/]+)', url)
+                # Extraire uniquement le domaine principal (ex: facebook, youtube, instagram)
+                match = re.search(r'://(?:www\.)?([^./]+)', url)
                 if match:
-                    domain = match.group(1).lower()
-                    parts = domain.replace('www.', '').split('.')
-                    for p in parts:
-                        if len(p) >= 3 and p not in STOP_WORDS:
-                            tags.add(p)
+                    domain_main = match.group(1).lower()
+                    # Garder seulement les domaines connus/pertinents
+                    if domain_main in {'facebook', 'youtube', 'instagram', 'twitter', 'linkedin',
+                                      'github', 'medium', 'substack', 'notion', 'tiktok', 'vimeo'}:
+                        tags.add(domain_main)
+
+                # Fetch métadonnées de la page pour extraire les vrais tags
+                # (title, description, keywords de la page plutôt que parser l'URL)
+                metadata = fetch_url_metadata(url, conn=conn)
+                if metadata:
+                    url_tags = extract_tags_from_metadata(metadata)
+                    tags.update(url_tags)
 
     return tags
 
@@ -325,6 +506,7 @@ def main():
 
     conn = sqlite3.connect(DB_PATH)
     setup_notes_table(conn)
+    setup_url_cache_table(conn)
     c = conn.cursor()
 
     indexed = 0
@@ -351,7 +533,7 @@ def main():
             continue
 
         # Tags
-        tags = extract_note_tags(title, "", body)
+        tags = extract_note_tags(title, "", body, conn=conn)
         # Convention : note_id négatif = -(note.id + 200000)
         tag_id = -(note_id + 200000)
         for tag in tags:

@@ -17,6 +17,15 @@ except ImportError:
     _stemmer = None
     STEMMING_ENABLED = False
 
+# POS tagging pour filtrer les adjectifs
+try:
+    import spacy
+    _nlp = spacy.load('fr_core_news_sm', disable=['parser', 'ner'])  # On garde juste le tagger
+    POS_TAGGING_ENABLED = True
+except (ImportError, OSError):
+    _nlp = None
+    POS_TAGGING_ENABLED = False
+
 # ── Chemins ──────────────────────────────────────────
 
 DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
@@ -102,6 +111,11 @@ STOP_WORDS = {
     "string", "bool", "boolean", "float", "double", "list", "dict",
     "array", "object", "type", "interface", "enum", "struct",
     "error", "warning", "todo", "fixme", "hack", "note", "xxx",
+    # Paramètres URL de tracking (Facebook, Google, Microsoft, Instagram, etc.)
+    "fbclid", "mibextid", "igshid", "igsh",
+    "gclid", "gbraid", "wbraid", "msclkid",
+    "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
+    "utm", "source", "campaign", "medium",
 }
 
 # Tags de 3 lettres autorisés (tout autre mot de 3 lettres est ignoré)
@@ -210,23 +224,68 @@ def get_db(path=None):
     return conn
 
 
-def extract_keywords(text, min_len=3, stop_words=None):
-    """Extrait les mots-clés d'un texte via is_valid_tag() + stemming.
+def filter_adjectives(words):
+    """Filtre les adjectifs d'une liste de mots via POS tagging.
 
-    Retourne un set de mots uniques normalisés.
+    Retourne uniquement les mots qui ne sont PAS des adjectifs (ADJ).
+    Si POS tagging désactivé, retourne tous les mots.
     """
-    words = set()
+    if not POS_TAGGING_ENABLED or not _nlp or not words:
+        return words
+
+    # Traiter par batch (plus efficace)
+    text = " ".join(words)
+    doc = _nlp(text)
+
+    # Filtrer : garder tout SAUF les ADJ
+    filtered = []
+    for token in doc:
+        # ADJ = adjectif, DET = déterminant (le, la, un...)
+        if token.pos_ not in ('ADJ', 'DET'):
+            filtered.append(token.text)
+
+    return filtered
+
+
+def extract_keywords(text, min_len=3, stop_words=None):
+    """Extrait les mots-clés d'un texte via is_valid_tag() + stemming + filtrage adjectifs.
+
+    Retourne une liste de tuples (original, normalized).
+    Pour chaque forme normalisée, on garde la première occurrence originale.
+    """
+    # Étape 1 : Collecter tous les mots valides
+    valid_words = []
     for w in SPLIT_PATTERN.split(text.lower()):
         if is_valid_tag(w):
-            words.add(normalize_tag(w))
-    return words
+            valid_words.append(w)
+
+    # Étape 2 : Filtrer les adjectifs via POS tagging
+    filtered_words = filter_adjectives(valid_words)
+
+    # Étape 3 : Normaliser et dédupliquer
+    seen = {}  # normalized -> original
+    for w in filtered_words:
+        normalized = normalize_tag(w)
+        if normalized not in seen:
+            seen[normalized] = w
+
+    return [(original, normalized) for normalized, original in seen.items()]
 
 
 def extract_frequent_keywords(text, min_len=3, min_count=2, top_n=30, stop_words=None):
     """Extrait les mots-clés fréquents d'un texte long (transcription, body...).
 
-    Retourne une liste de mots normalisés triés par fréquence décroissante.
+    Retourne une liste de tuples (original, normalized) triés par fréquence décroissante.
+    Pour chaque forme normalisée, on garde la première occurrence originale.
     """
-    words = [normalize_tag(w) for w in SPLIT_PATTERN.split(text.lower()) if is_valid_tag(w)]
-    counts = Counter(words)
-    return [w for w, c in counts.most_common(top_n) if c >= min_count]
+    seen = {}  # normalized -> original
+    normalized_words = []
+    for w in SPLIT_PATTERN.split(text.lower()):
+        if is_valid_tag(w):
+            normalized = normalize_tag(w)
+            if normalized not in seen:
+                seen[normalized] = w
+            normalized_words.append(normalized)
+
+    counts = Counter(normalized_words)
+    return [(seen[normalized], normalized) for normalized, c in counts.most_common(top_n) if c >= min_count]

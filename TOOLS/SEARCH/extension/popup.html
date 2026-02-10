@@ -327,6 +327,10 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
 
     .result-name .icon {
@@ -394,6 +398,8 @@
       color: #aaa;
       margin-top: 1px;
       padding-left: 19px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     /* État vide */
@@ -1095,6 +1101,13 @@
     }
 
     /* Tags avec bouton suppression */
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
     .item-tag {
       display: inline-flex;
       align-items: center;
@@ -1105,7 +1118,7 @@
       border-radius: 12px;
       font-size: 11px;
       color: #2c5f7a;
-      margin: 2px 4px 2px 0;
+      margin: 0;
     }
 
     .tag-remove-btn {
@@ -1128,6 +1141,134 @@
     .tag-remove-btn:hover {
       background: #c0392b;
       color: #fff;
+    }
+
+    /* Bouton suppression d'élément */
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #95a5a6;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 8px;
+      margin-left: 8px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      opacity: 0.6;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+      color: #fff;
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* Modal de suppression */
+    .delete-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delete-modal.active {
+      display: flex;
+    }
+
+    .delete-modal-content {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .delete-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #2c3e50;
+    }
+
+    .delete-modal-name {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-style: italic;
+      color: #495057;
+      word-wrap: break-word;
+    }
+
+    .delete-modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .delete-modal-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .delete-modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .delete-modal-btn.db-only {
+      border-color: #3498db;
+      color: #3498db;
+    }
+
+    .delete-modal-btn.db-only:hover {
+      background: #3498db;
+      color: #fff;
+    }
+
+    .delete-modal-btn.permanent {
+      border-color: #c0392b;
+      color: #c0392b;
+    }
+
+    .delete-modal-btn.permanent:hover {
+      background: #c0392b;
+      color: #fff;
+    }
+
+    .delete-modal-cancel {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: #ecf0f1;
+      color: #7f8c8d;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .delete-modal-cancel:hover {
+      background: #bdc3c7;
+    }
+
+    .delete-modal-desc {
+      font-size: 11px;
+      color: #7f8c8d;
+      margin-top: 4px;
     }
   </style>
 </head>
@@ -1166,6 +1307,25 @@
   <div class="empty-state" id="empty-state">
     <div class="big"><i class="fa-solid fa-magnifying-glass"></i></div>
     <button class="add-btn" id="add-btn" title="Ajouter un élément" style="margin:14px auto 0;width:36px;height:36px;font-size:20px">+</button>
+  </div>
+
+  <!-- Modal de suppression -->
+  <div class="delete-modal" id="delete-modal">
+    <div class="delete-modal-content">
+      <div class="delete-modal-title">Supprimer cet élément ?</div>
+      <div class="delete-modal-name" id="delete-modal-name"></div>
+      <div class="delete-modal-buttons">
+        <button class="delete-modal-btn db-only" id="delete-db-only">
+          <div style="font-weight:600">Base seule</div>
+          <div class="delete-modal-desc">Garder le fichier</div>
+        </button>
+        <button class="delete-modal-btn permanent" id="delete-permanent">
+          <div style="font-weight:600">Définitive</div>
+          <div class="delete-modal-desc" id="delete-permanent-desc">Tout supprimer</div>
+        </button>
+      </div>
+      <button class="delete-modal-cancel" id="delete-cancel">Annuler</button>
+    </div>
   </div>
 
   <script src="popup.js"></script>
