@@ -1,0 +1,143 @@
+# ============================================================================
+# EURKAI - Navigation
+# seed/Navigation.s.gev
+# Modes et configuration de navigation
+# ============================================================================
+
+## ============================================
+## Object:Navigation:
+## Configuration de navigation pour un Product
+## ============================================
+
+Object:Navigation:
+  .name = {}
+  .description = {}
+  
+  ## Mode de navigation
+  .mode = {"type": "ref", "of": "Object:Navigation:Mode"}
+  
+  ## Configuration des routes
+  .routeList = {"type": "list", "of": "Object:Attribute:Route"}
+
+## ============================================
+## Object:Navigation:Mode:
+## Mode de navigation (server, spa, static)
+## ============================================
+
+Object:Navigation:Mode:
+  .name = {}
+  .description = {}
+  .value = {}
+
+## Mode: Server - Serveur ERK génère à la volée
+Object:Navigation:Mode:Server:
+  .name = "Server"
+  .description = "Serveur ERK génère les pages à la volée depuis les .gev"
+  .value = "server"
+  ## Avantages: URL propres, SSR, SEO friendly
+  ## Inconvénients: Nécessite serveur ERK actif
+  .requiresServer = true
+  .supportsSEO = true
+  .supportsSSR = true
+
+## Mode: SPA - Single Page Application avec routeur JS
+Object:Navigation:Mode:SPA:
+  .name = "SPA"
+  .description = "Navigation côté client avec routeur JavaScript"
+  .value = "spa"
+  ## Avantages: Fonctionne partout, pas de serveur requis, transitions fluides
+  ## Inconvénients: SEO plus complexe, JavaScript requis
+  .requiresServer = false
+  .supportsSEO = false
+  .supportsSSR = false
+  .routerType = {"default": "hash", "enum": ["hash", "history"]}
+  ## hash = /#/features (fonctionne partout)
+  ## history = /features (nécessite config serveur pour fallback)
+
+## Mode: Static - Pré-génération de tous les fichiers HTML
+Object:Navigation:Mode:Static:
+  .name = "Static"
+  .description = "Génère tous les fichiers .html à l'avance"
+  .value = "static"
+  ## Avantages: Simple, rapide, hébergement gratuit possible
+  ## Inconvénients: Regénérer à chaque modification
+  .requiresServer = false
+  .supportsSEO = true
+  .supportsSSR = false
+  .fileExtension = {"default": ".html"}
+
+## ============================================
+## Object:Navigation:Router:
+## Routeur JavaScript pour mode SPA
+## ============================================
+
+Object:Navigation:Router:
+  .name = {}
+  .mode = {"default": "hash", "enum": ["hash", "history"]}
+  ## hash: utilise location.hash (/#/page)
+  ## history: utilise History API (/page)
+  
+  .basePath = {"default": "/"}
+  ## Chemin de base pour les routes
+  
+  .defaultRoute = {"default": "/"}
+  ## Route par défaut (accueil)
+  
+  .notFoundRoute = {}
+  ## Route 404 (optionnel)
+  
+  .transitions = {"type": "boolean", "default": true}
+  ## Activer les transitions CSS entre pages
+  
+  .transitionDuration = {"default": 300}
+  ## Durée des transitions en ms
+
+## ============================================
+## Object:Navigation:Route:
+## Définition d'une route
+## ============================================
+
+Object:Navigation:Route:
+  .name = {}
+  .path = {}
+  ## Pattern de l'URL: /, /features, /user/:id
+  
+  .page = {"type": "ref", "of": "Object:Interface:PageInterface:HTMLPage"}
+  ## Page associée
+  
+  .title = {}
+  ## Titre de la page (pour document.title)
+  
+  .meta = {"type": "list"}
+  ## Meta tags spécifiques à cette route
+  
+  .guard = {}
+  ## Condition d'accès (auth, role, etc.)
+  
+  .redirect = {}
+  ## Redirection (si guard échoue)
+
+## ============================================
+## Object:Navigation:Link:
+## Lien de navigation (utilisé par le routeur SPA)
+## ============================================
+
+Object:Navigation:Link:
+  .name = {}
+  .to = {}
+  ## Destination: route path ou page ref
+  
+  .label = {}
+  ## Texte du lien
+  
+  .icon = {}
+  ## Icône (optionnel)
+  
+  .class = {}
+  ## Classes CSS
+  
+  .activeClass = {"default": "active"}
+  ## Classe quand la route est active
+  
+  .exact = {"type": "boolean", "default": false}
+  ## Match exact (/ ne matche pas /features)

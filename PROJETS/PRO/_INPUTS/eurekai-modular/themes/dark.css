@@ -1,0 +1,147 @@
+/* =============================================================================
+   EUREKAI Theme — Dark
+   Variables CSS pour le thème sombre
+   ============================================================================= */
+
+:root {
+  /* Background */
+  --bg-primary: #0f0f23;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #1a1a2e;
+  --bg-hover: #252540;
+  
+  /* Text */
+  --text-primary: #e6e6e6;
+  --text-secondary: #b3b3b3;
+  --text-muted: #666;
+  
+  /* Borders */
+  --border-subtle: #333;
+  --border-medium: #444;
+  
+  /* Accents */
+  --accent-owned: #2ed573;
+  --accent-inherited: #5b9eff;
+  --accent-injected: #bf6fff;
+  --accent-error: #ff6b6b;
+  --accent-warning: #ffa94d;
+  --accent-success: #2ed573;
+  --accent-info: #5b9eff;
+  
+  /* Glows */
+  --glow-owned: rgba(46, 213, 115, 0.15);
+  --glow-inherited: rgba(91, 158, 255, 0.15);
+  --glow-injected: rgba(191, 111, 255, 0.15);
+  
+  /* Fonts */
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
+  
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.25s ease;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-ui);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+#app {
+  height: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-medium);
+}
+
+/* Buttons reset */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Input reset */
+input, textarea, select {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-owned);
+  box-shadow: 0 0 0 3px var(--glow-owned);
+}
+
+/* Panels */
+.panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+/* Resizers */
+.resizer {
+  width: 4px;
+  background: var(--bg-tertiary);
+  cursor: col-resize;
+  transition: background var(--transition-fast);
+}
+
+.resizer:hover {
+  background: var(--accent-owned);
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 32px;
+  opacity: 0.5;
+}

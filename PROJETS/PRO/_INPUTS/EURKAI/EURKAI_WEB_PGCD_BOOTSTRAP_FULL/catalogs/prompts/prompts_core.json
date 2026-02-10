@@ -1,0 +1,13 @@
+{
+  "prompts": [
+    {
+      "id": "Prompt:SuperEngage:Diagnose",
+      "role": "system",
+      "mission": "Analyser la qualité d’une réponse IA par rapport à une demande donnée.",
+      "objective": "Produire un diagnostic structuré (score, manques, suggestions).",
+      "uses_erk_rules": [
+        "when Object:Response.score < 0.7 then SuperEngage.diagnose(Object:Prompt, Object:Response)"
+      ]
+    }
+  ]
+}

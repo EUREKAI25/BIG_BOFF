@@ -1,0 +1,50 @@
+{
+  "conversationMetadata": {
+    "platform": "chatgpt",
+    "extractedAt": "2025-09-07T22:04:04.615Z",
+    "extractorVersion": "1.1",
+    "url": "https://chatgpt.com/",
+    "title": "Note sur SuperLoad",
+    "conversationId": null,
+    "suggestedFilename": "chatgpt_note_sur_superload.json"
+  },
+  "conversation": {
+    "messageCount": 4,
+    "messages": [
+      {
+        "id": "chatgpt_0",
+        "role": "user",
+        "content": "fais moi une nnote expliqunt le fonctionnement de superload",
+        "timestamp": "2025-09-07T22:04:04.615Z"
+      },
+      {
+        "id": "chatgpt_1",
+        "role": "assistant",
+        "content": "Voici une note explicative claire et synthétique sur le fonctionnement de SuperLoad, en reprenant ce qu’on a défini ensemble dans l’architecture des SuperTools.\n\n📌 Note : Fonctionnement de SuperLoad\n🎯 Objectif\nSuperLoad est le SuperTool central chargé de charger, exécuter et orchestrer les différents éléments (méthodes, objets, prompts, fichiers, adapters…) dans l’écosystème.\nIl fournit une interface unique d’appel (call()), qui unifie toutes les autres variantes (get, load, execute, render, prompt) sous une seule logique.\n\n⚙️ Principes de fonctionnement\n1. Appel unique\n\n\nLa méthode principale est call().\n\n\nToutes les autres méthodes (get, load, execute, render, prompt) ne sont que des variantes paramétrées de call.\n\n\nExemple :\npythonCopier le codecall(\"method\", \"load_config_variables_from_json\", configpath)\n\n➡️ Ici on demande à SuperLoad d’appeler une méthode spécifique, avec ses paramètres.\n\n2. Cycle d’exécution\nChaque appel suit le même cycle standardisé, avec hooks avant et après :\n\n\nhook_before → prépare l’appel (logs, sécurité, adaptation…).\n\n\nExecution → exécution de la méthode / chargement de l’objet.\n\n\nhook_onsuccess → déclenché si succès (par ex. mise en cache, validation).\n\n\nhook_onfailure → déclenché si erreur (rollback, rapport d’erreur).\n\n\nhook_after → nettoyage, reporting.\n\n\n\n3. Types de chargement\nSuperLoad peut travailler sur plusieurs types de cibles :\n\n\nmethod → charge et exécute une méthode déclarée.\n\n\nobject → récupère un objet (classe, instance).\n\n\nfile → charge un fichier (JSON, config, code…).\n\n\nprompt → charge et exécute un prompt IA.\n\n\nadapter → passe par un LoadAdapter pour transformer les entrées/sorties.\n\n\n\n4. Adapters\n\n\nLes LoadAdapters sont des modules intermédiaires permettant à SuperLoad de s’adapter à différents formats (JSON, DB, API, fichiers locaux…).\n\n\nChaque adapter expose lui aussi une méthode call(), pour rester conforme au design global des SuperTools.\n\n\n\n5. Support des prompts\nSuperLoad gère également les prompts IA via :\npythonCopier le codecall(\"prompt\", prompt_name, agentIdent)\n\n\n\nprompt_name = nom du prompt stocké en base.\n\n\nagentIdent = identifiant de l’agent IA qui doit l’exécuter.\n➡️ Cela permet d’unifier le chargement d’un prompt avec le reste du système.\n\n\n\n6. Standardisation\n\n\nTous les fichiers JSON de méthodes doivent inclure un champ :\njsonCopier le code{ \"method\": \"get\" }\n\nou\njsonCopier le code{ \"method\": \"post\" }\n\n\n\nCela garantit une cohérence dans la manière dont SuperLoad lit et exécute les définitions.\n\n\n\n🔑 Résumé\n\n\nUn seul point d’entrée : call().\n\n\nHooks encadrent chaque appel pour robustesse et traçabilité.\n\n\nAdapters assurent la compatibilité universelle.\n\n\nPrompts IA intégrés au même niveau que les méthodes, objets et fichiers.\n\n\nJSON standardisés pour uniformiser la description des méthodes.\n\n\nEn clair, SuperLoad est la colonne vertébrale du système, garantissant que tout ce qui doit être exécuté (code, prompt, données, objets) passe par une seule mécanique cohérente et fractale.\n\nVeux-tu que je t’en fasse aussi une version JSON de spécification (comme on a fait pour les MetaObjects), pour l’intégrer directement dans ton catalogue d’objets, ou tu préfères garder ce format note explicative ?",
+        "timestamp": "2025-09-07T22:04:04.615Z"
+      },
+      {
+        "id": "chatgpt_2",
+        "role": "user",
+        "content": "Il me manque encore pas mal de fichiers. dans les méthodes, Je n'ai que Load. Je n'ai pas Metaloader, je n'ai pas Bootstrap.py",
+        "timestamp": "2025-09-07T22:04:04.615Z"
+      },
+      {
+        "id": "chatgpt_3",
+        "role": "assistant",
+        "content": "Top—je t’ai préparé un petit scaffold prêt à brancher qui ajoute exactement ce qu’il te manque :\n\n\nmeta_loader.py (récupération des meta-defs JSON),\n\n\nun bootstrap.py minimal (bootstrap_superload()),\n\n\nl’entrée unifiée call() + hooks,\n\n\nune méthode load de base,\n\n\nun shim report_actions (en attendant ton vrai Monitoring),\n\n\nun adapter JSON d’exemple.\n\n\nTélécharge et dézippe ici :\nsuperload_scaffold_v1.zip\nCe que ça contient (arbo rapide)\npgsqlCopier le codecore/superload/\n  __init__.py\n  bootstrap.py\n  call.py\n  hooks.py\n  meta_loader.py\n  methods/\n    load.py\n  adapters/\n    base_adapter.py\n    json_adapter.py\n  utils/\n    report_actions.py\n  resources/\n    methods/\n      load.json\n\nComment l’utiliser\n\n\nPlace le dossier core/superload dans ton repo.\n\n\n(Optionnel) Relie report_actions à ton vrai service logging dès que prêt.\n\n\nTest rapide dans Python :\n\n\npythonCopier le codefrom core.superload.bootstrap import bootstrap_superload\nfrom core.superload.call import call\n\nprint(bootstrap_superload())\nprint(call(\"method\", \"load\", 123, mode=\"test\"))\n\nChaque fichier respecte ta convention une fonction par fichier + métadonnées en tête (bloc :file_type: ...), et hooks before/onsuccess/onfailure/after sont déjà câblés.\nTu veux que je te génère aussi le squelette des prompts (côté resources) et un adapter DB de base (SQLite) pour que call(\"prompt\", ...) et call(\"adapter\",\"db\",...) soient opérationnels ?",
+        "timestamp": "2025-09-07T22:04:04.615Z"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 1768,
+      "bodyText": 152872
+    }
+  }
+}

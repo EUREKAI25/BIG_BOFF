@@ -1,0 +1,120 @@
+# ============================================================================
+# INSTANCES: Agents et entités instanciées
+# ============================================================================
+
+# --- Architectes ---
+
+Object:Entity:Agent:ArchitectAgent:MainArchitect:
+  .name = "MainArchitect"
+  .description = "Architecte principal du système EUREKAI"
+  .role = "architect"
+  .specialization = "system-design"
+  .model = V_Model
+  .temperature = 0.5
+  .maxTokens = V_MaxTokens
+  .permissions = ["read", "write", "execute", "admin"]
+
+Object:Entity:Agent:ArchitectAgent:DataArchitect:
+  .name = "DataArchitect"
+  .description = "Architecte spécialisé données et BDD"
+  .role = "architect"
+  .specialization = "data-modeling"
+  .model = V_Model
+  .temperature = 0.3
+  .maxTokens = 8192
+  .permissions = ["read", "write", "schema"]
+
+Object:Entity:Agent:ArchitectAgent:SecurityArchitect:
+  .name = "SecurityArchitect"
+  .description = "Architecte sécurité et conformité"
+  .role = "architect"
+  .specialization = "security"
+  .model = V_Model
+  .temperature = 0.2
+  .maxTokens = 4096
+  .permissions = ["read", "audit", "validate"]
+
+# --- Générateurs ---
+
+Object:Entity:Agent:GeneratorAgent:CodeGenerator:
+  .name = "CodeGenerator"
+  .description = "Génère du code source"
+  .role = "generator"
+  .outputType = "code"
+  .model = V_Model
+  .temperature = 0.4
+  .maxTokens = 16000
+  .languages = ["python", "typescript", "javascript"]
+
+Object:Entity:Agent:GeneratorAgent:DocGenerator:
+  .name = "DocGenerator"
+  .description = "Génère de la documentation"
+  .role = "generator"
+  .outputType = "markdown"
+  .model = V_Model
+  .temperature = 0.6
+  .maxTokens = 8192
+  .formats = ["md", "html", "pdf"]
+
+Object:Entity:Agent:GeneratorAgent:TestGenerator:
+  .name = "TestGenerator"
+  .description = "Génère des tests unitaires"
+  .role = "generator"
+  .outputType = "test"
+  .model = V_Model
+  .temperature = 0.3
+  .maxTokens = 8192
+  .frameworks = ["pytest", "jest", "mocha"]
+
+# --- Orchestrateurs ---
+
+Object:Entity:Agent:OrchestratorAgent:MainOrchestrator:
+  .name = "MainOrchestrator"
+  .description = "Orchestrateur principal des workflows"
+  .role = "orchestrator"
+  .model = V_Model
+  .temperature = 0.5
+  .maxTokens = 4096
+  .maxConcurrent = 5
+  .timeout = V_Timeout
+
+Object:Entity:Agent:OrchestratorAgent:PipelineOrchestrator:
+  .name = "PipelineOrchestrator"
+  .description = "Gère les pipelines GEVR"
+  .role = "orchestrator"
+  .model = V_Model
+  .temperature = 0.4
+  .maxTokens = 4096
+  .pipelineType = "gevr"
+
+# --- Validateurs ---
+
+Object:Entity:Agent:AIAgent:Validator:
+  .name = "Validator"
+  .description = "Agent de validation des outputs"
+  .role = "validator"
+  .model = V_Model
+  .temperature = 0.1
+  .maxTokens = 2048
+  .strictMode = true
+
+Object:Entity:Agent:AIAgent:Reviewer:
+  .name = "Reviewer"
+  .description = "Agent de revue de code"
+  .role = "reviewer"
+  .model = V_Model
+  .temperature = 0.3
+  .maxTokens = 8192
+  .checkStyle = true
+  .checkSecurity = true
+
+# --- Analyseurs ---
+
+Object:Entity:Agent:AIAgent:Analyzer:
+  .name = "Analyzer"
+  .description = "Agent d'analyse de données"
+  .role = "analyzer"
+  .model = V_Model
+  .temperature = 0.5
+  .maxTokens = 16000
+  .outputFormat = V_OutputFormat

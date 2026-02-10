@@ -1,0 +1,113 @@
+# ============================================================================
+# EURKAI - Menu
+# seed/Menu.gev
+# Menus de navigation avec items pointant vers des pages
+# ============================================================================
+
+## ============================================
+## Object:Menu:
+## Base de tous les menus
+## ============================================
+
+Object:Menu:
+  .name = {}
+  .description = {}
+  .menuItemList = {"type": "list", "of": "Object:Menu:MenuItem"}
+  ## Liste des éléments du menu
+
+## ============================================
+## Object:Menu:NavMenu:
+## Menu de navigation principal
+## ============================================
+
+Object:Menu:NavMenu:
+  .name = {}
+  .position = {"default": "header", "enum": ["header", "footer", "sidebar", "mobile"]}
+  ## Où le menu est affiché
+  
+  .orientation = {"default": "horizontal", "enum": ["horizontal", "vertical"]}
+  ## Orientation du menu
+  
+  .class = {}
+  ## Classes CSS
+  
+  .menuItemList = {"type": "list", "of": "Object:Menu:MenuItem"}
+  ## Éléments de premier niveau
+
+## ============================================
+## Object:Menu:MenuItem:
+## Élément de menu
+## ============================================
+
+Object:Menu:MenuItem:
+  .name = {}
+  ## Texte affiché
+  
+  .page = {"type": "ref", "of": "Object:Interface:PageInterface:HTMLPage"}
+  ## Page liée (si navigation interne)
+  
+  .href = {}
+  ## URL directe (si lien externe ou override)
+  
+  .target = {"default": "_self", "enum": ["_self", "_blank"]}
+  ## Target du lien
+  
+  .icon = {}
+  ## Icône (optionnel)
+  
+  .class = {}
+  ## Classes CSS
+  
+  .order = {"default": 0}
+  ## Ordre d'affichage
+  
+  .active = {"type": "boolean", "default": false}
+  ## État actif
+  
+  .disabled = {"type": "boolean", "default": false}
+  ## État désactivé
+  
+  .children = {"type": "list", "of": "Object:Menu:MenuItem"}
+  ## Sous-menu (pour menus imbriqués)
+
+## ============================================
+## Object:Menu:FooterMenu:
+## Menu de footer (souvent multi-colonnes)
+## ============================================
+
+Object:Menu:FooterMenu:
+  .name = {}
+  .columns = {"default": 1}
+  ## Nombre de colonnes
+  
+  .class = {}
+  .menuItemList = {"type": "list", "of": "Object:Menu:MenuItem"}
+
+## ============================================
+## Object:Menu:BreadcrumbMenu:
+## Fil d'Ariane
+## ============================================
+
+Object:Menu:BreadcrumbMenu:
+  .name = {}
+  .separator = {"default": "/"}
+  ## Séparateur entre les éléments
+  
+  .class = {}
+  .menuItemList = {"type": "list", "of": "Object:Menu:MenuItem"}
+
+## ============================================
+## Object:Menu:SidebarMenu:
+## Menu latéral
+## ============================================
+
+Object:Menu:SidebarMenu:
+  .name = {}
+  .collapsible = {"type": "boolean", "default": true}
+  ## Peut être replié
+  
+  .collapsed = {"type": "boolean", "default": false}
+  ## État initial
+  
+  .class = {}
+  .menuItemList = {"type": "list", "of": "Object:Menu:MenuItem"}

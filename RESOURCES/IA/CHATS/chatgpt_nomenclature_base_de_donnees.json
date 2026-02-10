@@ -1,0 +1,46 @@
+{
+  "conversationMetadata": {
+    "platform": "chatgpt",
+    "extractedAt": "2025-07-07T15:59:04.475Z",
+    "extractorVersion": "1.0",
+    "url": "https://chatgpt.com/c/6765bf8d-013c-8006-8f09-7fbcd6ae6e2e",
+    "title": "Nomenclature base de données",
+    "conversationId": "6765bf8d-013c-8006-8f09-7fbcd6ae6e2e",
+    "suggestedFilename": "chatgpt_nomenclature_base_de_donnees.json"
+  },
+  "conversation": {
+    "messageCount": 4,
+    "messages": [
+      {
+        "id": "chatgpt_0",
+        "role": "user",
+        "content": "je suis en train de définir une nomenclature pour m'assurer que l'intégralité du codesera homogène.\nque me recommandes tu concernant le nommage des tables, champs et noms de la bdd",
+        "timestamp": "2025-07-07T15:59:04.474Z"
+      },
+      {
+        "id": "chatgpt_1",
+        "role": "assistant",
+        "content": "Définir une nomenclature cohérente pour la base de données est essentiel pour garantir la lisibilité et la maintenabilité de votre code. Voici quelques bonnes pratiques et recommandations spécifiques pour le nommage des tables, champs et autres éléments dans votre base de données :\n\n1. Règles générales\n\n\nLangue unique : Utilisez une seule langue pour tous les noms (par exemple, tout en anglais ou tout en français).\n\n\nCase convention : Préférez une convention comme le snake_case pour le SQL (ex. : user_profiles) ou le camelCase si c’est compatible avec votre langage.\n\n\nÉvitez les abréviations ambigües : N’utilisez que des abréviations standardisées et compréhensibles (ex. : id pour identifier, qty pour quantity).\n\n\nNom descriptif : Le nom doit refléter précisément ce que représente l’entité ou le champ.\n\n\n\n2. Nommage des tables\n\n\nPluriel ou singulier : Choisissez entre le singulier (ex. : user) ou le pluriel (ex. : users), mais soyez constant.\n\n\nPluriel est souvent préféré pour des collections de données (ex. : users, orders).\n\n\n\n\nPréfixes : Ajoutez des préfixes uniquement si le contexte est ambigu (ex. : admin_users pour distinguer des utilisateurs administrateurs).\n\n\nRelations pivot : Pour les tables de relation, combinez les noms des entités liées en les classant alphabétiquement (ex. : user_roles plutôt que roles_users).\n\n\nHiérarchie : Si des tables dépendent d’une autre entité principale, explicitez cela dans le nom :\n\n\nExemple : orders et order_items.\n\n\n\n\n\n3. Nommage des champs\n\n\nid unique : Utilisez id comme clé primaire dans chaque table.\n\n\nRelation : Pour une clé étrangère, incluez la référence à la table associée :\n\n\nExemple : user_id dans la table orders.\n\n\n\n\nBoolean : Utilisez des préfixes comme is_ ou has_ pour indiquer des booléens :\n\n\nExemple : is_active, has_permission.\n\n\n\n\nDates : Pour les champs de date/heure, utilisez des noms explicites comme created_at, updated_at, deleted_at.\n\n\nUnités et formats : Spécifiez les unités ou les formats dans les noms si nécessaire :\n\n\nExemple : price_cents pour un prix stocké en centimes.\n\n\n\n\n\n4. Clés primaires et étrangères\n\n\nConvention standard :\n\n\nClés primaires : id\n\n\nClés étrangères : <table_name>_id (ex. : user_id dans une table orders).\n\n\n\n\nIndex : Pour les champs fréquemment recherchés ou triés, utilisez une convention descriptive pour les index :\n\n\nExemple : idx_users_email pour un index sur la colonne email de la table users.\n\n\n\n\n\n5. Nommage des contraintes\n\n\nContraintes uniques : uniq_<table>_<column> (ex. : uniq_users_email).\n\n\nContraintes de clé étrangère : fk_<from_table>_<to_table> (ex. : fk_orders_users).\n\n\nContraintes de check : chk_<table>_<column> (ex. : chk_products_price_positive).\n\n\n\n6. Nommage des bases de données et schémas\n\n\nUtilisez un nom descriptif mais concis pour la base de données :\n\n\nExemple : digital_alchemy pour votre projet.\n\n\n\n\nSi vous utilisez plusieurs schémas, définissez une hiérarchie logique :\n\n\nExemple : public pour les données partagées, analytics pour les données de reporting.\n\n\n\n\n\n7. Documentation et cohérence\n\n\nDocumenter les conventions : Créez un fichier expliquant vos règles de nommage (idéalement en markdown).\n\n\nAutomatiser les vérifications : Utilisez des outils ou scripts pour valider la cohérence des noms lors de la création/modification des tables.\n\n\n\nExemple global\nTableChampsusersid, first_name, last_name, email, created_at, updated_atordersid, user_id, status, total_price, created_at, updated_atorder_itemsid, order_id, product_id, quantity, price_centsproductsid, name, description, price_cents, stock, created_at, updated_at\nAvec ces conventions, votre système sera bien structuré, lisible et prêt à évoluer. Si vous avez des cas spécifiques, je peux affiner ces recommandations.",
+        "timestamp": "2025-07-07T15:59:04.474Z"
+      },
+      {
+        "id": "chatgpt_2",
+        "role": "user",
+        "content": "rédige-moi le document officiel que les agents ia et développeur s respecteront systématiquemenr. Sois exhaustf mais simple,  on fait une note pas unee encycloperdie",
+        "timestamp": "2025-07-07T15:59:04.474Z"
+      },
+      {
+        "id": "chatgpt_3",
+        "role": "assistant",
+        "content": "Le document officiel sur la nomenclature des bases de données a été rédigé. Vous pouvez y apporter des modifications ou l'utiliser tel quel pour vos équipes et agents IA. Si vous avez des ajustements ou des points spécifiques à ajouter, je suis à votre disposition !",
+        "timestamp": "2025-07-07T15:59:04.474Z"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null
+  }
+}

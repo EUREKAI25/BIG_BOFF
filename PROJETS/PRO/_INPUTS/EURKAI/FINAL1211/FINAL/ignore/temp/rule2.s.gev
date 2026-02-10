@@ -1,0 +1,60 @@
+# rule.s.gev
+
+Object:Rule:
+  .name = V_RuleName
+  .description = V_RuleDescription
+  .question = V_RuleQuestion
+  .severity = V_RuleSeverity
+  .constraint.level = V_RuleConstraintLevel
+  .scope = V_RuleScope
+  .condition = V_RuleCondition
+  .errorMessage = V_RuleErrorMessage
+  .erk = V_RuleErk
+
+Object:Rule:StructuralRule:
+  .erk = V_StructuralRuleErk
+
+Object:Rule:StructuralRule:SchemaRule:
+  .constraint.pattern = V_SchemaRuleConstraintPattern
+  .constraint.required_keyword = V_SchemaRuleRequiredKeyword
+  .constraint.required_slot = V_SchemaRuleRequiredSlot
+  .erk = V_SchemaRuleErk
+
+Object:Rule:StructuralRule:FormatRule:
+  .constraint.regex = V_FormatRuleRegex
+  .constraint.format = V_FormatRuleFormat
+  .erk = V_FormatRuleErk
+
+Object:Rule:StructuralRule:CardinalityRule:
+  .constraint.min = V_CardinalityRuleMin
+  .constraint.max = V_CardinalityRuleMax
+  .erk = V_CardinalityRuleErk
+
+Object:Rule:BehavioralRule:
+  .trigger = V_BehavioralRuleTrigger
+  .action = V_BehavioralRuleAction
+  .erk = V_BehavioralRuleErk
+
+Object:Rule:BehavioralRule:StateRule:
+  .fromState = V_StateRuleFromState
+  .toState = V_StateRuleToState
+  .allowedTransitions = V_StateRuleAllowedTransitions
+  .erk = V_StateRuleErk
+
+Object:Rule:BehavioralRule:PermissionRule:
+  .actor = V_PermissionRuleActor
+  .action = V_PermissionRuleAction
+  .resource = V_PermissionRuleResource
+  .erk = V_PermissionRuleErk
+
+Object:Rule:ValidationRule:
+  .validator = V_ValidationRuleValidator
+  .onSuccess = V_ValidationRuleOnSuccess
+  .onFailure = V_ValidationRuleOnFailure
+  .erk = V_ValidationRuleErk
+
+Object:Rule:ComputedRule:
+  .formula = V_ComputedRuleFormula
+  .dependencies = V_ComputedRuleDependencies
+  .cache = V_ComputedRuleCache
+  .erk = V_ComputedRuleErk

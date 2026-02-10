@@ -1,0 +1,156 @@
+# EUREKAI - Walker Agent
+# Premier agent du labo
+# Parcourt la fractale et exécute les méthodes scan
+
+# =============================================================================
+# VECTEURS
+# =============================================================================
+
+Object:Config:Vector:V_Start:
+  .name = "V_Start"
+  .description = "Object de départ du parcours"
+  .type = "lineage"
+  .default = "Object"
+
+Object:Config:Vector:V_Direction:
+  .name = "V_Directions"
+  .description = "Direction et scope du parcours (direction, AMRR)"
+  .type = "tuple"
+  .default = ("all", 1111)
+  .format = "(direction, AMRR)"
+  .direction_values = ["up", "down", "all", "siblings"]
+  .amrr_description = "A=Attributes, M=Methods, R=Relations, R=Rules"
+
+Object:Config:Vector:V_Depth:
+  .name = "V_Depth"
+  .description = "Nombre maximum de niveaux à parcourir"
+  .type = "integer"
+  .default = -1
+  .min = -1
+  .note = "-1 = illimité"
+
+Object:Config:Vector:V_Filter:
+  .name = "V_Filter"
+  .description = "Filtre définissant quels objets sont concernés par le scan"
+  .type = "rule"
+  .default = "all"
+
+Object:Config:V_UpdateScan:
+  .name = "V_UpdateScan"
+  .description = "Hook before - affecte les valeurs scan aux objets ciblés"
+  .type = "method"
+  .default = "pass"
+
+Object:Config:Vector:V_ResetScan:
+  .name = "V_ResetScan"
+  .description = "Hook after - remet les scan à leur valeur par défaut"
+  .type = "method"
+  .default = "pass"
+
+Object:Config:System:V_Scan:
+  .name = "V_Scan"
+  .description = "Méthode à exécuter lors du passage de Walker"
+  .type = "method"
+  .default = "pass"
+
+# =============================================================================
+# MÉTHODES DE SCAN
+# =============================================================================
+
+Object:Method:
+  .name = V_Name
+  .scan = V_Scan
+
+Object:Method:Pass:
+  .name = "pass"
+  .description = "Ignore complètement le noeud"
+  .effect = "none"
+
+Object:Method:Ghost:
+  .name = "ghost"
+  .description = "Exécute à vide - active hooks + logs sans conséquence"
+  .effect = "log_only"
+
+Object:Method:Visit:
+  .name = "visit"
+  .description = "Passage normal - exécute la méthode du noeud"
+  .effect = "execute"
+
+# =============================================================================
+# AGENT WALKER
+# =============================================================================
+
+Object:Agent:WalkerAgent:
+  .name = "Walker"
+  .description = "Agent de parcours de la fractale - Premier agent du labo"
+  .start = V_Start
+  .direction = V_Direction
+  .depth = V_Depth
+  .filter = V_Filter
+  .hook_before = V_UpdateScan
+  .hook_after = V_ResetScan
+  .method = "walk"
+
+# =============================================================================
+# MÉTHODE WALK (Scenario GEVR)
+# =============================================================================
+
+Object:Method:WalkerMethod:
+  .name = "walk"
+  .description = "Parcourt la fractale selon les paramètres de l'agent"
+  .belongs_to = WalkerAgent
+  .type = "scenario"
+  .gevr = true
+
+# GET - Récupère les objets à parcourir
+Object:Method:WalkerMethod:GetStep:
+  .name = "get"
+  .description = "Récupère les objets selon filter et start"
+  .parent = WalkMethod
+  .order = 1
+  .input = V_Filter
+  .output = "node_list"
+
+# EXECUTE - Parcourt et exécute scan
+Object:Method:WalkerMethod:ExecuteStep:
+  .name = "execute"
+  .description = "Parcourt selon direction/depth, exécute méthode scan à chaque noeud"
+  .parent = WalkMethod
+  .order = 2
+  .input = "node_list"
+  .process = "for each node: call(node.scan)"
+  .output = "visited_list"
+
+# VALIDATE - Vérifie le parcours
+Object:Method:WalkerMethod:ValidateStep:
+  .name = "validate"
+  .description = "Compare noeuds parcourus vs total objets attendus"
+  .parent = WalkMethod
+  .order = 3
+  .input = "visited_list"
+  .check = "count(visited) == count(expected)"
+  .output = "validation_result"
+
+# RENDER - Génère le rapport
+Object:Method:WalkerMethod:RenderStep:
+  .name = "render"
+  .description = "Génère le rapport de parcours"
+  .parent = WalkMethod
+  .order = 4
+  .input = "validation_result"
+  .output = "walk_report"
+
+# =============================================================================
+# AJOUT DE L'ATTRIBUT SCAN À OBJECT
+# =============================================================================
+
+Object:
+  .scan = V_Scan
+
+Object:Method:Scoo:
+  .attr1 = V_Attr1
+  .attr2 = V_Attr2
+
+Object:Agent:TestMethod:
+  .name = "Test"
+  .belongs_to = Agent

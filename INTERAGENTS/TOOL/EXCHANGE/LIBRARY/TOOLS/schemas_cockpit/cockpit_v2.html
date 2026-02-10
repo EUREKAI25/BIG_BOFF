@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>EUREKAI Cockpit</title>
+  <style>
+    :root { --bg:#f5f7fa; --surface:#fff; --border:#e1e5eb; --text:#1a1a2e; --muted:#6b7280; --accent:#4f46e5; --accent-light:#eef2ff; --danger:#dc2626; --radius:6px; 
+      --owned:#10b981; --inherited:#f59e0b; --injected:#3b82f6; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:system-ui,sans-serif; color:var(--text); background:var(--bg); height:100vh; overflow:hidden; }
+    .app { display:flex; height:100vh; }
+    
+    .resizer { width:4px; background:var(--border); cursor:col-resize; flex-shrink:0; }
+    .resizer:hover { background:var(--accent); }
+    
+    .left { width:260px; min-width:150px; max-width:400px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; }
+    .left-header { padding:12px; border-bottom:1px solid var(--border); }
+    .left-header h1 { font-size:14px; color:var(--accent); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+    .left-header input { width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius); font-size:12px; }
+    .refresh-btn { background:none; border:1px solid var(--border); border-radius:var(--radius); padding:2px 8px; font-size:11px; cursor:pointer; }
+    .refresh-btn:hover { background:var(--bg); }
+    .tree-container { flex:1; overflow-y:auto; padding:4px; }
+    .tree-row { display:flex; align-items:center; gap:4px; padding:4px 6px; border-radius:var(--radius); cursor:pointer; font-size:12px; }
+    .tree-row:hover { background:#f9fafb; }
+    .tree-row.selected { background:var(--accent-light); }
+    .tree-row.drag-over { outline:2px dashed var(--accent); background:var(--accent-light); }
+    .toggle { width:14px; font-size:9px; color:var(--muted); cursor:pointer; }
+    .toggle.none { visibility:hidden; }
+    .tree-label { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tree-count { font-size:10px; color:var(--muted); background:var(--bg); padding:1px 5px; border-radius:8px; }
+    .tree-kids { margin-left:14px; display:none; }
+    .tree-kids.open { display:block; }
+    
+    .quick-add { padding:8px; border-top:1px solid var(--border); background:var(--bg); }
+    .quick-add input { width:100%; padding:6px; border:1px solid var(--border); border-radius:var(--radius); font-family:monospace; font-size:11px; margin-bottom:6px; }
+    .quick-add button { width:100%; padding:6px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); cursor:pointer; font-size:12px; }
+    
+    .main { flex:1; display:flex; flex-direction:column; min-width:300px; }
+    .main-header { padding:12px 16px; background:var(--surface); border-bottom:1px solid var(--border); }
+    .breadcrumb { font-size:11px; color:var(--muted); margin-bottom:4px; }
+    .breadcrumb span { cursor:pointer; }
+    .breadcrumb span:hover { color:var(--accent); }
+    .title-row { display:flex; align-items:center; gap:8px; }
+    .main-title { font-size:18px; font-weight:700; border:none; background:transparent; flex:1; outline:none; }
+    .main-title:hover { background:var(--bg); }
+    .main-title:focus { background:var(--accent-light); }
+    .delete-btn { background:none; border:1px solid var(--danger); color:var(--danger); border-radius:var(--radius); padding:4px 10px; font-size:11px; cursor:pointer; }
+    .delete-btn:hover { background:var(--danger); color:#fff; }
+    .main-toolbar { display:flex; gap:8px; margin-top:8px; }
+    .main-toolbar button { background:none; border:1px solid var(--border); border-radius:var(--radius); padding:3px 8px; font-size:10px; cursor:pointer; }
+    .main-toolbar button:hover { background:var(--bg); }
+    
+    .legend { display:flex; gap:12px; padding:8px 16px; background:var(--bg); border-bottom:1px solid var(--border); font-size:11px; }
+    .legend-item { display:flex; align-items:center; gap:4px; }
+    .legend-dot { width:8px; height:8px; border-radius:50%; }
+    
+    .main-body { flex:1; overflow-y:auto; padding:12px; }
+    
+    .right { width:200px; min-width:120px; max-width:350px; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; }
+    .instances-header { padding:8px 12px; font-size:11px; font-weight:600; color:var(--muted); border-bottom:1px solid var(--border); background:var(--bg); }
+    .instances-list { flex:1; overflow-y:auto; padding:4px; }
+    .instance-item { padding:4px 8px; font-size:11px; font-family:monospace; border-radius:var(--radius); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .instance-item:hover { background:var(--accent-light); }
+    
+    .el-row { display:flex; align-items:center; gap:6px; padding:6px 10px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:4px; font-size:12px; }
+    .el-row:hover { background:#f9fafb; }
+    .el-row.drag-over { outline:2px dashed var(--accent); background:var(--accent-light); }
+    .el-row.dragging { opacity:0.5; }
+    .el-row.is-list { background:#fafafa; border-style:dashed; }
+    .el-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .el-toggle { width:16px; font-size:9px; color:var(--muted); cursor:pointer; flex-shrink:0; }
+    .el-name { flex:1; font-family:monospace; cursor:pointer; }
+    .el-name:hover { color:var(--accent); }
+    .el-source { font-size:10px; color:var(--muted); }
+    .el-count { font-size:10px; color:var(--muted); background:var(--bg); padding:1px 5px; border-radius:8px; }
+    .el-nav { background:none; border:none; color:var(--accent); cursor:pointer; padding:2px 6px; font-size:11px; }
+    .el-del { background:none; border:none; color:var(--danger); cursor:pointer; padding:2px 6px; font-size:11px; opacity:0; }
+    .el-row:hover .el-del { opacity:1; }
+    .el-del:disabled { opacity:0.3 !important; cursor:not-allowed; }
+    
+    .el-children { margin-left:20px; margin-top:4px; }
+    
+    .drop-zone { border:2px dashed var(--border); border-radius:var(--radius); padding:10px; text-align:center; color:var(--muted); font-size:11px; margin-bottom:6px; }
+    .drop-zone.active { border-color:var(--accent); background:var(--accent-light); }
+    
+    .trash { position:fixed; bottom:20px; right:220px; width:50px; height:50px; border-radius:50%; background:#fef2f2; border:2px dashed var(--danger); display:none; align-items:center; justify-content:center; font-size:20px; z-index:1000; }
+    .trash.visible { display:flex; }
+    .trash.active { background:var(--danger); color:#fff; }
+    
+    /* Tabs */
+    .tabs { display:flex; border-bottom:1px solid var(--border); background:var(--bg); }
+    .tab { padding:8px 16px; font-size:12px; cursor:pointer; border-bottom:2px solid transparent; color:var(--muted); }
+    .tab:hover { color:var(--text); }
+    .tab.active { color:var(--accent); border-bottom-color:var(--accent); background:var(--surface); }
+    .tab-content { display:none; flex:1; flex-direction:column; overflow:hidden; }
+    .tab-content.active { display:flex; }
+    
+    /* Console */
+    .console-container { flex:1; display:flex; flex-direction:column; }
+    .console-input { padding:12px; border-bottom:1px solid var(--border); background:var(--surface); }
+    .console-input label { font-size:11px; color:var(--muted); display:block; margin-bottom:4px; }
+    .console-input textarea { width:100%; height:80px; border:1px solid var(--border); border-radius:var(--radius); padding:8px; font-family:'Monaco','Consolas',monospace; font-size:12px; resize:vertical; }
+    .console-input textarea:focus { outline:none; border-color:var(--accent); }
+    .console-buttons { display:flex; gap:8px; margin-top:8px; }
+    .console-buttons button { padding:6px 12px; border-radius:var(--radius); font-size:11px; cursor:pointer; }
+    .btn-run { background:var(--accent); color:#fff; border:none; }
+    .btn-assign { background:#10b981; color:#fff; border:none; }
+    .btn-clear { background:none; border:1px solid var(--border); color:var(--muted); }
+    .console-output { flex:1; overflow-y:auto; padding:12px; background:#1e1e1e; }
+    .console-entry { margin-bottom:12px; font-family:'Monaco','Consolas',monospace; font-size:11px; }
+    .console-cmd { color:#9cdcfe; margin-bottom:4px; }
+    .console-cmd::before { content:'> '; color:#6a9955; }
+    .console-result { color:#ce9178; white-space:pre-wrap; padding:4px 8px; background:#2d2d2d; border-radius:4px; }
+    .console-result.error { color:#f48771; }
+    .console-result.success { color:#4ec9b0; }
+    .console-timestamp { color:#6a9955; font-size:10px; margin-bottom:2px; }
+    
+    /* Schema */
+    .schema-section { margin-bottom:16px; }
+    .schema-section-title { font-size:11px; font-weight:600; color:var(--accent); padding:8px 12px; background:var(--bg); border-bottom:1px solid var(--border); }
+    .schema-accordion { margin:2px 0; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .schema-accordion-header { padding:6px 10px; background:var(--bg); cursor:pointer; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; }
+    .schema-accordion-header:hover { background:var(--hover); }
+    .schema-count { color:var(--muted); font-weight:normal; }
+    .accordion-toggle { color:var(--muted); font-size:9px; width:10px; }
+    .schema-accordion-body { padding:6px 10px; background:var(--surface); border-top:1px solid var(--border); }
+    .schema-subsection { margin:4px 0; }
+    .schema-subsection-title { font-size:10px; font-weight:600; color:var(--muted); padding:4px 0; border-bottom:1px solid var(--border); margin-bottom:4px; }
+    .schema-prop-row { display:flex; align-items:center; gap:4px; padding:1px 0; font-size:10px; }
+    .schema-prop-name { font-family:monospace; color:var(--text); min-width:80px; font-size:10px; }
+    .schema-prop-eq { color:var(--muted); font-size:10px; }
+    .schema-prop-input { width:80px; padding:2px 4px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); font-size:10px; }
+    .schema-prop-input.owned { background:#fff; border-color:var(--owned); }
+    .schema-prop-input.notset { background:var(--bg); border-color:var(--border); }
+    .schema-prop-input.notset:focus { background:#fff; border-color:var(--accent); }
+    .schema-prop-input.inherited { background:var(--bg); color:var(--muted); cursor:pointer; }
+    .schema-prop-value { padding:2px 4px; font-size:10px; color:var(--muted); }
+    .schema-prop-value.notowned { background:var(--bg); border-radius:var(--radius); }
+    .schema-prop-inherited { padding:2px 4px; font-size:9px; color:var(--muted); background:var(--bg); border-radius:var(--radius); border-left:2px solid var(--inherited); }
+    .schema-prop-inherited.injected { border-left-color:var(--injected); }
+    .schema-prop-arrow { color:var(--accent); font-size:9px; }
+    .schema-add-btn { background:var(--accent); color:#fff; border:none; border-radius:var(--radius); width:14px; height:14px; font-size:10px; cursor:pointer; margin-left:auto; }
+    .schema-add-btn:hover { background:var(--accent-light); color:var(--accent); }
+    .schema-prop-input.inherited:hover { border-color:var(--accent); }
+    .schema-prop-input:focus { border-color:var(--accent); outline:none; }
+    .schema-empty { color:var(--muted); font-size:10px; font-style:italic; padding:4px 0; }
+    .schema-row { display:flex; align-items:center; gap:8px; padding:8px 12px; border-bottom:1px solid var(--border); }
+    .schema-row:hover { background:#f9fafb; }
+    .schema-row.inherited { opacity:0.7; }
+    .schema-row.inherited:hover { opacity:1; }
+    .schema-row.add-attr { background:var(--bg); }
+    .schema-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .schema-name { width:120px; font-family:monospace; font-size:12px; flex-shrink:0; }
+    .schema-name-input { width:120px; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius); font-family:monospace; font-size:12px; }
+    .schema-input { flex:1; padding:4px 8px; border:1px solid var(--border); border-radius:var(--radius); font-family:monospace; font-size:12px; }
+    .schema-input:disabled { background:var(--bg); color:var(--muted); cursor:pointer; }
+    .schema-input:focus { outline:none; border-color:var(--accent); }
+    .schema-source { font-size:10px; color:var(--muted); width:140px; text-align:right; flex-shrink:0; }
+    .schema-add-btn { background:var(--accent); color:#fff; border:none; border-radius:var(--radius); padding:4px 12px; cursor:pointer; font-size:12px; }
+    .schema-add-btn:hover { opacity:0.9; }
+    .schema-del-btn { background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px; padding:0 8px; opacity:0.3; }
+    .schema-row:hover .schema-del-btn { opacity:1; }
+    .schema-del-btn:hover { color:#fff; background:var(--danger); border-radius:var(--radius); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="left" id="leftPanel">
+    <div class="left-header">
+      <h1>
+        <span>◆ EUREKAI</span>
+        <button class="refresh-btn" onclick="refresh()">⟳ Refresh</button>
+      </h1>
+      <input type="text" id="search" placeholder="Rechercher..." oninput="filterTree()">
+    </div>
+    <div class="tree-container" id="tree"></div>
+    <div class="quick-add">
+      <input type="text" id="newOid" placeholder="Type:Name" onkeydown="if(event.key==='Enter')createObj()">
+      <button onclick="createObj()">+ Créer</button>
+    </div>
+  </div>
+  
+  <div class="resizer" id="leftResizer"></div>
+  
+  <div class="main">
+    <div class="main-header" id="mainHeader">
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="title-row">
+        <input type="text" class="main-title" id="mainTitle" onblur="renameObject()" onkeydown="if(event.key==='Enter')this.blur()">
+        <button class="delete-btn" onclick="deleteObject()">🗑 Supprimer</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('elements')">Elements</div>
+      <div class="tab" onclick="switchTab('schema')">Schema</div>
+      <div class="tab" onclick="switchTab('console')">Console</div>
+    </div>
+    <div class="tab-content active" id="tab-elements">
+      <div class="legend" style="padding:8px 12px; border-bottom:1px solid var(--border);">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--owned)"></div>owned</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--inherited)"></div>inherited</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--injected)"></div>injected</div>
+        <div style="margin-left:auto; display:flex; gap:8px;">
+          <button onclick="foldAll()" style="background:none; border:1px solid var(--border); border-radius:var(--radius); padding:3px 8px; font-size:10px; cursor:pointer;">▶ Tout fermer</button>
+          <button onclick="unfoldAll()" style="background:none; border:1px solid var(--border); border-radius:var(--radius); padding:3px 8px; font-size:10px; cursor:pointer;">▼ Tout ouvrir</button>
+        </div>
+      </div>
+      <div class="main-body" id="content"></div>
+    </div>
+    <div class="tab-content" id="tab-schema">
+      <div class="legend" style="padding:8px 12px; border-bottom:1px solid var(--border);">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--owned)"></div>owned (éditable)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--inherited)"></div>inherited (lecture seule)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--injected)"></div>injected (lecture seule)</div>
+      </div>
+      <div class="main-body" id="schemaContent"></div>
+    </div>
+    <div class="tab-content" id="tab-console">
+      <div class="console-container">
+        <div class="console-input">
+          <label>Commande ERK (sur <strong id="consoleTarget">Object</strong>)</label>
+          <textarea id="erkInput" placeholder="Ex: .name = &quot;Test&quot;&#10;Ex: NOW()&#10;Ex: ADD(1, 2)"></textarea>
+          <div class="console-buttons">
+            <button class="btn-run" onclick="runErk()">▶ Exécuter</button>
+            <button class="btn-assign" onclick="assignErk()">+ Affecter à l'objet</button>
+            <button class="btn-clear" onclick="clearConsole()">Effacer</button>
+          </div>
+        </div>
+        <div class="console-output" id="consoleOutput"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="resizer" id="rightResizer"></div>
+  
+  <div class="right" id="rightPanel">
+    <div class="instances-header">Instances (<span id="instancesCount">0</span>)</div>
+    <div class="instances-list" id="instancesList"></div>
+  </div>
+</div>
+<div class="trash" id="trash">🗑️</div>
+
+<script>
+let data = { objects: null, memberships: {}, declarations: {}, oids: [] };
+let selected = 'Object';
+let originalName = '';
+let expanded = new Set(['Object']);
+let elExpanded = new Set();
+let dragData = null;
+
+const $ = id => document.getElementById(id);
+const last = oid => (oid||'').split(':').pop() || oid;
+const chain = oid => {
+  const p = (oid||'').split(':').filter(Boolean), c = [];
+  for (let i = 1; i <= p.length; i++) c.push(p.slice(0,i).join(':'));
+  return c;
+};
+const ancestors = oid => {
+  const parts = (oid||'').split(':');
+  const anc = [];
+  for (let i = 0; i < parts.length - 1; i++) {
+    anc.push(parts.slice(0, i + 1).join(':'));
+  }
+  return anc;
+};
+const listFor = oid => last(oid) + 'ElementList';
+const colorFor = prov => prov === 'owned' ? 'var(--owned)' : prov === 'inherited' ? 'var(--inherited)' : 'var(--injected)';
+
+// Helpers pour drag data
+function getDragListName() {
+  if (!dragData) return null;
+  return dragData.listName || null;
+}
+
+function getDragFromList() {
+  if (!dragData) return null;
+  return dragData.fromList || null;
+}
+
+// Resizable panels
+function initResizers() {
+  initResizer('leftResizer', 'leftPanel', true);
+  initResizer('rightResizer', 'rightPanel', false);
+}
+
+function initResizer(resizerId, panelId, isLeft) {
+  const resizer = $(resizerId);
+  const panel = $(panelId);
+  let startX, startWidth;
+  
+  resizer.onmousedown = e => {
+    startX = e.clientX;
+    startWidth = panel.offsetWidth;
+    document.onmousemove = e => {
+      const diff = e.clientX - startX;
+      const newWidth = isLeft ? startWidth + diff : startWidth - diff;
+      panel.style.width = Math.max(120, Math.min(400, newWidth)) + 'px';
+    };
+    document.onmouseup = () => {
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+  };
+}
+
+async function api(path, body = null) {
+  const opts = body ? { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) } : {};
+  return (await fetch(path, opts)).json();
+}
+
+function foldAll() {
+  elExpanded.clear();
+  loadObject(selected);
+}
+
+function unfoldAll() {
+  function collectAll(list) {
+    (data.memberships[list] || []).forEach(el => {
+      elExpanded.add(el);
+      collectAll(el);
+    });
+  }
+  collectAll(listFor(selected));
+  ancestors(selected).forEach(anc => collectAll(listFor(anc)));
+  loadObject(selected);
+}
+
+function closeAllChildren(listName) {
+  elExpanded.delete(listName);
+  (data.memberships[listName] || []).forEach(el => closeAllChildren(el));
+}
+
+async function refresh() {
+  data = await api('/api/tree');
+  renderTree();
+  loadObject(selected || 'Object');
+}
+
+function renderTree() {
+  $('tree').innerHTML = '';
+  if (data.objects) renderNode(data.objects, $('tree'));
+}
+
+function renderNode(node, container) {
+  if (node.oid === '__ROOT__') {
+    (node.children || []).forEach(c => renderNode(c, container));
+    return;
+  }
+  
+  const div = document.createElement('div');
+  const kids = node.children || [];
+  const hasKids = kids.length > 0;
+  const isOpen = expanded.has(node.oid);
+  
+  const row = document.createElement('div');
+  row.className = 'tree-row' + (selected === node.oid ? ' selected' : '');
+  row.draggable = true;
+  row.innerHTML = `<span class="toggle ${hasKids?'':'none'}">${isOpen?'▼':'▶'}</span><span class="tree-label" title="${node.oid}">${last(node.oid)}</span>${hasKids?`<span class="tree-count">${kids.length}</span>`:''}`;
+  
+  row.querySelector('.toggle').onclick = e => { 
+    e.stopPropagation(); 
+    isOpen ? expanded.delete(node.oid) : expanded.add(node.oid); 
+    renderTree(); 
+  };
+  row.onclick = () => { 
+    selected = node.oid; 
+    if (hasKids) expanded.add(node.oid); 
+    loadObject(node.oid); 
+    renderTree(); 
+  };
+  
+  // Drag depuis l'arbre
+  row.ondragstart = e => { 
+    e.stopPropagation();
+    e.dataTransfer.setData('text/plain', node.oid);
+    e.dataTransfer.effectAllowed = 'move';
+    dragData = { type: 'tree', oid: node.oid, listName: listFor(node.oid), fromList: null }; 
+    row.style.opacity = '0.5'; 
+    $('trash').classList.add('visible');
+  };
+  row.ondragend = e => { 
+    e.stopPropagation();
+    row.style.opacity = '1'; 
+    $('trash').classList.remove('visible');
+    dragData = null; 
+  };
+  
+  // Drop sur l'arbre = reparenter (seulement si drag depuis arbre)
+  row.ondragover = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (dragData && dragData.type === 'tree' && dragData.oid !== node.oid) {
+      row.classList.add('drag-over');
+    }
+  };
+  row.ondragleave = e => {
+    e.stopPropagation();
+    row.classList.remove('drag-over');
+  };
+  row.ondrop = async e => {
+    e.preventDefault();
+    e.stopPropagation();
+    row.classList.remove('drag-over');
+    if (dragData && dragData.type === 'tree' && dragData.oid !== node.oid) {
+      const res = await api('/api/reparent', { oid: dragData.oid, newParent: node.oid });
+      if (res.ok) {
+        selected = res.new;
+        await refresh();
+      } else {
+        alert(res.error);
+      }
+    }
+  };
+  
+  div.appendChild(row);
+  if (hasKids) {
+    const kidsDiv = document.createElement('div');
+    kidsDiv.className = 'tree-kids' + (isOpen ? ' open' : '');
+    kids.forEach(c => renderNode(c, kidsDiv));
+    div.appendChild(kidsDiv);
+  }
+  container.appendChild(div);
+}
+
+async function loadObject(oid) {
+  selected = oid;
+  originalName = last(oid);
+  
+  const bc = $('breadcrumb');
+  bc.innerHTML = '';
+  chain(oid).forEach((p, i) => {
+    if (i > 0) bc.appendChild(document.createTextNode(' › '));
+    const s = document.createElement('span');
+    s.textContent = last(p);
+    s.onclick = () => { selected = p; loadObject(p); renderTree(); };
+    bc.appendChild(s);
+  });
+  
+  $('mainTitle').value = last(oid);
+  
+  const res = await api(`/api/object/${encodeURIComponent(oid)}`);
+  data.memberships = res.memberships || data.memberships;
+  data.declarations = res.declarations || data.declarations;
+  data.attributes = res.attributes || {};
+  
+  // Collecter les éléments une seule fois
+  currentElements = collectElements(oid);
+  
+  // Afficher selon l'onglet actif
+  renderElements(oid);
+  const schemaTabActive = $('tab-schema').classList.contains('active');
+  console.log('loadObject: tab-schema active?', schemaTabActive);
+  if (schemaTabActive) {
+    console.log('loadObject: calling renderSchema');
+    renderSchema(oid);
+  }
+  
+  renderInstances(res.instances || []);
+  renderTree();
+}
+
+// Variable globale pour les éléments collectés
+let currentElements = [];
+
+function collectElements(ownerOid) {
+  const myList = listFor(ownerOid);
+  const allElements = [];
+  const seen = new Set();
+  
+  // Owned
+  (data.memberships[myList] || []).forEach(el => {
+    if (!seen.has(el)) {
+      seen.add(el);
+      allElements.push({ element: el, provenance: 'owned', source: ownerOid, parentList: myList });
+    }
+  });
+  
+  // Inherited
+  ancestors(ownerOid).forEach(ancestor => {
+    const ancList = listFor(ancestor);
+    (data.memberships[ancList] || []).forEach(el => {
+      if (!seen.has(el)) {
+        seen.add(el);
+        allElements.push({ element: el, provenance: 'inherited', source: ancestor, parentList: ancList });
+      }
+    });
+  });
+  
+  return allElements;
+}
+
+function renderInstances(instances) {
+  $('instancesCount').textContent = instances.length;
+  const list = $('instancesList');
+  list.innerHTML = '';
+  instances.forEach(inst => {
+    const item = document.createElement('div');
+    item.className = 'instance-item';
+    item.textContent = inst;
+    item.title = inst;
+    item.onclick = () => { selected = inst; loadObject(inst); renderTree(); };
+    list.appendChild(item);
+  });
+}
+
+function createDropZone(listName, ownerOid) {
+  const zone = document.createElement('div');
+  zone.className = 'drop-zone';
+  zone.textContent = `Glissez ici → ${listName}`;
+  zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+  zone.ondragleave = () => zone.classList.remove('drag-over');
+  zone.ondrop = async e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const draggedOid = e.dataTransfer.getData('text/plain');
+    if (draggedOid) {
+      await api('/api/add-to-list', { element: draggedOid, list: listName });
+      await refresh();
+    }
+  };
+  return zone;
+}
+
+function renderElements(ownerOid) {
+  const content = $('content');
+  content.innerHTML = '';
+  
+  const myList = listFor(ownerOid);
+  
+  // Drop zone principale
+  content.appendChild(createDropZone(myList, ownerOid));
+  
+  // Éléments (utilise currentElements)
+  currentElements.forEach(item => {
+    renderElementRow(item.element, item.parentList, item.provenance, item.source, content, 0);
+  });
+}
+
+function renderSchema(ownerOid) {
+  const content = $('schemaContent');
+  content.innerHTML = '';
+  
+  // DEBUG
+  console.log('=== renderSchema DEBUG ===');
+  console.log('ownerOid:', ownerOid);
+  console.log('currentElements:', currentElements);
+  console.log('data.oids (10 premiers):', data.oids.slice(0, 10));
+  console.log('data.memberships keys:', Object.keys(data.memberships));
+  
+  let openAccordion = null;
+  const ownedAttrs = data.attributes[ownerOid] || {};
+  
+  // Trouver les propriétés depuis les OIDs
+  // Ex: pour "Attribute" -> cherche :Attribute:X$ -> retourne [Name, Description, ...]
+  function getPropsFromOids(categoryName) {
+    const props = [];
+    const pattern = new RegExp(':' + categoryName + ':([^:]+)$');
+    
+    data.oids.forEach(oid => {
+      const match = oid.match(pattern);
+      if (match && !props.includes(match[1])) {
+        props.push(match[1]);
+      }
+    });
+    console.log('getPropsFromOids(' + categoryName + '):', props);
+    return props.sort();
+  }
+  
+  // Créer une ligne de propriété
+  function createPropRow(propName) {
+    const row = document.createElement('div');
+    row.className = 'schema-prop-row';
+    const lowerName = propName.toLowerCase();
+    
+    const ancestorList = ancestors(ownerOid);
+    const isRoot = ancestorList.length === 0;
+    const hasOwnValue = ownedAttrs.hasOwnProperty(lowerName);
+    const currentValue = ownedAttrs[lowerName] || '';
+    
+    // Chercher valeur héritée
+    let inheritedValue = '';
+    for (const ancestor of ancestorList) {
+      const ancestorAttrs = data.attributes[ancestor] || {};
+      if (ancestorAttrs[lowerName]) {
+        inheritedValue = ancestorAttrs[lowerName];
+        break;
+      }
+    }
+    
+    if (isRoot) {
+      // Racine: input éditable simple
+      row.innerHTML = `
+        <span class="schema-prop-name">${propName}</span>
+        <span class="schema-prop-eq">=</span>
+        <input type="text" class="schema-prop-input owned" value="${currentValue}">
+      `;
+      const input = row.querySelector('input');
+      input.onblur = async () => {
+        const newValue = input.value.trim();
+        if (newValue !== currentValue) {
+          await api('/api/set-attr', { oid: ownerOid, attr: lowerName, value: newValue });
+          await refresh();
+        }
+      };
+      input.onkeydown = e => { if (e.key === 'Enter') input.blur(); };
+    } else if (hasOwnValue) {
+      // A un override: valeur héritée grisée + input owned
+      row.innerHTML = `
+        <span class="schema-prop-name">${propName}</span>
+        <span class="schema-prop-eq">=</span>
+        <span class="schema-prop-inherited">${inheritedValue || '...'}</span>
+        <span class="schema-prop-arrow">→</span>
+        <input type="text" class="schema-prop-input owned" value="${currentValue}">
+      `;
+      const input = row.querySelector('input');
+      input.onblur = async () => {
+        const newValue = input.value.trim();
+        if (newValue !== currentValue) {
+          await api('/api/set-attr', { oid: ownerOid, attr: lowerName, value: newValue });
+          await refresh();
+        }
+      };
+      input.onkeydown = e => { if (e.key === 'Enter') input.blur(); };
+    } else {
+      // Pas d'override: valeur héritée + bouton +
+      row.innerHTML = `
+        <span class="schema-prop-name">${propName}</span>
+        <span class="schema-prop-eq">=</span>
+        <span class="schema-prop-inherited">${inheritedValue || '...'}</span>
+        <button class="schema-add-btn" title="Ajouter override">+</button>
+      `;
+      row.querySelector('.schema-add-btn').onclick = () => {
+        row.innerHTML = `
+          <span class="schema-prop-name">${propName}</span>
+          <span class="schema-prop-eq">=</span>
+          <span class="schema-prop-inherited">${inheritedValue || '...'}</span>
+          <span class="schema-prop-arrow">→</span>
+          <input type="text" class="schema-prop-input owned" value="">
+        `;
+        const input = row.querySelector('input');
+        input.focus();
+        input.onblur = async () => {
+          const newValue = input.value.trim();
+          if (newValue) {
+            await api('/api/set-attr', { oid: ownerOid, attr: lowerName, value: newValue });
+            await refresh();
+          } else {
+            await refresh(); // Annuler si vide
+          }
+        };
+        input.onkeydown = e => { if (e.key === 'Enter') input.blur(); };
+      };
+    }
+    
+    return row;
+  }
+  
+  // Extraire les catégories depuis currentElements (récursivement)
+  const categories = new Set();
+  
+  function extractCategories(elements) {
+    elements.forEach(item => {
+      const el = item.element;
+      console.log('Processing element:', el);
+      if (el.endsWith('ElementList')) {
+        const catName = el.replace('ElementList', '');
+        categories.add(catName);
+        // Sous-listes
+        (data.memberships[el] || []).forEach(sub => {
+          if (sub.endsWith('ElementList')) {
+            extractCategories([{ element: sub }]);
+          }
+        });
+      }
+    });
+  }
+  
+  extractCategories(currentElements);
+  console.log('Categories found:', [...categories]);
+  
+  // Créer un accordéon pour chaque catégorie
+  [...categories].sort().forEach(catName => {
+    const props = getPropsFromOids(catName);
+    console.log('Creating accordion for', catName, 'with', props.length, 'props');
+    if (props.length === 0) return;
+    
+    const accordion = document.createElement('div');
+    accordion.className = 'schema-accordion';
+    
+    const header = document.createElement('div');
+    header.className = 'schema-accordion-header';
+    header.innerHTML = `<span class="accordion-toggle">▶</span> ${catName} <span class="schema-count">(${props.length})</span>`;
+    
+    const body = document.createElement('div');
+    body.className = 'schema-accordion-body';
+    body.style.display = 'none';
+    
+    props.forEach(propName => {
+      const isOwned = ownedAttrs.hasOwnProperty(propName.toLowerCase());
+      body.appendChild(createPropRow(propName, isOwned));
+    });
+    
+    header.onclick = () => {
+      const isOpen = body.style.display !== 'none';
+      if (openAccordion && openAccordion !== body) {
+        openAccordion.style.display = 'none';
+        openAccordion.previousElementSibling.querySelector('.accordion-toggle').textContent = '▶';
+      }
+      body.style.display = isOpen ? 'none' : 'block';
+      header.querySelector('.accordion-toggle').textContent = isOpen ? '▶' : '▼';
+      openAccordion = isOpen ? null : body;
+    };
+    
+    accordion.appendChild(header);
+    accordion.appendChild(body);
+    content.appendChild(accordion);
+  });
+  
+  if (content.children.length === 0) {
+    content.innerHTML = '<div class="schema-empty">Aucun schéma - catégories: ' + [...categories].join(', ') + '</div>';
+  }
+}
+
+function getOwnedListName(listName, ownerName) {
+  // Transforme "AttributeElementList" en "ObjectAttributeElementList" si owner est "Object"
+  if (listName.endsWith('ElementList')) {
+    return ownerName + listName;
+  }
+  if (listName.endsWith('ChildList')) {
+    return ownerName + listName;
+  }
+  return listName;
+}
+
+function renderElementRow(element, parentList, provenance, source, container, depth = 0) {
+  // Protection contre récursion infinie
+  if (depth > 20) {
+    console.error('Récursion trop profonde pour', element);
+    return;
+  }
+  
+  const isOpen = elExpanded.has(element);
+  const isList = element.endsWith('List') || element.endsWith('ElementList');
+  const isOwned = provenance === 'owned';
+  
+  // Collecter les sous-éléments : 
+  // - ceux de cette liste (inherited)
+  // - ceux de la liste préfixée par l'objet courant (owned)
+  let subElements = [...(data.memberships[element] || [])];
+  let ownedSubElements = [];
+  
+  // Si c'est une liste héritée, chercher aussi la version owned (préfixée)
+  const ownerName = last(selected);
+  const ownedListName = getOwnedListName(element, ownerName);
+  
+  if (ownedListName !== element) {
+    ownedSubElements = data.memberships[ownedListName] || [];
+  }
+  
+  // Total pour le count
+  const totalCount = subElements.length + ownedSubElements.length;
+  
+  const wrapper = document.createElement('div');
+  
+  const row = document.createElement('div');
+  row.className = 'el-row' + (isList ? ' is-list' : '');
+  row.draggable = true;
+  
+  row.innerHTML = `
+    <div class="el-dot" style="background:${colorFor(provenance)}" title="${provenance}"></div>
+    <span class="el-toggle">${isOpen ? '▼' : '▶'}</span>
+    <span class="el-name">${element}</span>
+    <span class="el-source">(${provenance} from ${last(source)})</span>
+    <span class="el-count">${totalCount}</span>
+    <button class="el-nav" title="Naviguer">→</button>
+    <button class="el-del" ${!isOwned ? 'disabled' : ''} title="Retirer">×</button>
+  `;
+  
+  // Toggle accordéon
+  const toggle = e => {
+    e.stopPropagation();
+    if (isOpen) closeAllChildren(element);
+    else elExpanded.add(element);
+    loadObject(selected);
+  };
+  row.querySelector('.el-toggle').onclick = toggle;
+  row.querySelector('.el-name').onclick = toggle;
+  
+  // Navigation
+  row.querySelector('.el-nav').onclick = e => {
+    e.stopPropagation();
+    const sourceOid = element.replace('ElementList', '').replace('List', '');
+    const found = data.oids.find(o => last(o) === sourceOid);
+    if (found) { selected = found; loadObject(found); renderTree(); }
+  };
+  
+  // Suppression
+  if (isOwned) {
+    row.querySelector('.el-del').onclick = async e => {
+      e.stopPropagation();
+      await api('/api/remove-from-list', { element, list: parentList });
+      await refresh();
+    };
+  }
+  
+  // Drag depuis panneau central
+  row.ondragstart = e => {
+    e.stopPropagation();
+    e.dataTransfer.setData('text/plain', element);
+    e.dataTransfer.effectAllowed = 'move';
+    dragData = { type: 'list', listName: element, fromList: isOwned ? parentList : null };
+    row.classList.add('dragging');
+    $('trash').classList.add('visible');
+  };
+  row.ondragend = e => {
+    e.stopPropagation();
+    row.classList.remove('dragging');
+    $('trash').classList.remove('visible');
+    dragData = null;
+  };
+  
+  // Drop sur cette ligne
+  row.ondragover = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const ln = getDragListName();
+    console.log('dragover row:', element, 'incoming:', ln, 'dragData:', dragData);
+    if (ln && ln !== element) row.classList.add('drag-over');
+  };
+  row.ondragleave = e => {
+    e.stopPropagation();
+    row.classList.remove('drag-over');
+  };
+  row.ondrop = async e => {
+    e.preventDefault();
+    e.stopPropagation();
+    row.classList.remove('drag-over');
+    const ln = getDragListName();
+    const from = getDragFromList();
+    console.log('DROP on row:', element, 'listName:', ln, 'from:', from);
+    
+    // Ne rien faire si on drop sur soi-même ou si la source est la même que la destination
+    if (!ln || ln === element || from === element) {
+      console.log('Drop annulé: même source/destination');
+      return;
+    }
+    
+    // Éviter les boucles : ne pas ajouter un parent dans son enfant
+    if (isDescendantOf(element, ln)) {
+      console.log('Drop annulé: créerait une boucle');
+      alert('Impossible: cela créerait une boucle');
+      return;
+    }
+    
+    if (from) {
+      console.log('Removing', ln, 'from', from);
+      await api('/api/remove-from-list', { element: ln, list: from });
+    }
+    console.log('Adding', ln, 'to', element);
+    await api('/api/add-to-list', { element: ln, list: element });
+    elExpanded.add(element);
+    await refresh();
+  };
+  
+  // Vérifie si potentialChild est un descendant de potentialParent
+  function isDescendantOf(potentialChild, potentialParent) {
+    const children = data.memberships[potentialParent] || [];
+    if (children.includes(potentialChild)) return true;
+    for (const child of children) {
+      if (isDescendantOf(potentialChild, child)) return true;
+    }
+    return false;
+  }
+  
+  wrapper.appendChild(row);
+  
+  // Enfants si ouvert
+  if (isOpen) {
+    const childrenDiv = document.createElement('div');
+    childrenDiv.className = 'el-children';
+    childrenDiv.appendChild(createDropZone(element, selected));
+    
+    // D'abord les éléments owned (de la liste préfixée)
+    ownedSubElements.forEach(sub => {
+      renderElementRow(sub, ownedListName, 'owned', selected, childrenDiv, depth + 1);
+    });
+    
+    // Puis les éléments inherited (de la liste originale)
+    subElements.forEach(sub => {
+      renderElementRow(sub, element, 'inherited', source, childrenDiv, depth + 1);
+    });
+    
+    wrapper.appendChild(childrenDiv);
+  }
+  
+  container.appendChild(wrapper);
+}
+
+async function renameObject() {
+  const newName = $('mainTitle').value.trim();
+  if (!newName || newName === originalName) {
+    $('mainTitle').value = originalName;
+    return;
+  }
+  const res = await api('/api/rename', { oid: selected, newName });
+  if (res.ok) {
+    selected = res.new;
+    originalName = last(res.new);
+    await refresh();
+  } else {
+    alert(res.error);
+    $('mainTitle').value = originalName;
+  }
+}
+
+async function deleteObject() {
+  if (!selected || selected === 'Object') {
+    alert('Impossible de supprimer Object');
+    return;
+  }
+  if (!confirm(`Supprimer ${selected} ?`)) return;
+  const res = await api('/api/delete', { oid: selected });
+  if (res.ok) {
+    selected = 'Object';
+    await refresh();
+  } else {
+    alert(res.error);
+  }
+}
+
+async function createObj() {
+  const oid = $('newOid').value.trim();
+  if (!oid) return;
+  const res = await api('/api/create', { oid });
+  if (res.ok) { $('newOid').value = ''; await refresh(); }
+  else alert(res.error);
+}
+
+function filterTree() {
+  const q = $('search').value.toLowerCase();
+  document.querySelectorAll('.tree-row').forEach(row => {
+    const label = row.querySelector('.tree-label');
+    row.style.display = (!q || label.textContent.toLowerCase().includes(q) || label.title.toLowerCase().includes(q)) ? '' : 'none';
+  });
+}
+
+const trash = $('trash');
+trash.ondragover = e => { e.preventDefault(); trash.classList.add('active'); };
+trash.ondragleave = () => trash.classList.remove('active');
+trash.ondrop = async e => {
+  e.preventDefault();
+  trash.classList.remove('active', 'visible');
+  const from = getDragFromList();
+  const ln = getDragListName();
+  if (from && ln) {
+    await api('/api/remove-from-list', { element: ln, list: from });
+    await refresh();
+  }
+};
+
+initResizers();
+refresh();
+
+// === TABS ===
+function switchTab(tabName) {
+  console.log('switchTab called:', tabName, 'selected:', selected);
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const tabIndex = tabName === 'elements' ? 1 : tabName === 'schema' ? 2 : 3;
+  document.querySelector(`.tab:nth-child(${tabIndex})`).classList.add('active');
+  $('tab-' + tabName).classList.add('active');
+  
+  // Rafraîchir le contenu selon l'onglet
+  if (tabName === 'elements') {
+    renderElements(selected);
+  } else if (tabName === 'schema') {
+    console.log('Calling renderSchema with:', selected, 'currentElements:', currentElements);
+    // S'assurer que currentElements est à jour
+    if (currentElements.length === 0 && selected) {
+      currentElements = collectElements(selected);
+    }
+    renderSchema(selected);
+  }
+}
+
+// === CONSOLE ERK ===
+function updateConsoleTarget() {
+  $('consoleTarget').textContent = selected || 'Object';
+}
+
+function runErk() {
+  const cmd = $('erkInput').value.trim();
+  if (!cmd) return;
+  
+  const timestamp = new Date().toLocaleTimeString();
+  
+  // Évaluer la commande ERK
+  let result;
+  try {
+    result = evaluateErk(cmd);
+    addConsoleEntry(cmd, result, 'success', timestamp);
+  } catch (e) {
+    addConsoleEntry(cmd, e.message, 'error', timestamp);
+  }
+}
+
+function evaluateErk(cmd) {
+  // Formules de base
+  if (cmd.toUpperCase().startsWith('NOW()')) {
+    return new Date().toISOString();
+  }
+  if (cmd.toUpperCase().startsWith('TODAY()')) {
+    return new Date().toISOString().split('T')[0];
+  }
+  
+  // ADD(a, b, ...)
+  const addMatch = cmd.match(/^ADD\((.+)\)$/i);
+  if (addMatch) {
+    const nums = addMatch[1].split(',').map(n => parseFloat(n.trim()));
+    return nums.reduce((a, b) => a + b, 0);
+  }
+  
+  // SUB(a, b)
+  const subMatch = cmd.match(/^SUB\((.+),(.+)\)$/i);
+  if (subMatch) {
+    return parseFloat(subMatch[1]) - parseFloat(subMatch[2]);
+  }
+  
+  // MUL(a, b, ...)
+  const mulMatch = cmd.match(/^MUL\((.+)\)$/i);
+  if (mulMatch) {
+    const nums = mulMatch[1].split(',').map(n => parseFloat(n.trim()));
+    return nums.reduce((a, b) => a * b, 1);
+  }
+  
+  // DIV(a, b)
+  const divMatch = cmd.match(/^DIV\((.+),(.+)\)$/i);
+  if (divMatch) {
+    return parseFloat(divMatch[1]) / parseFloat(divMatch[2]);
+  }
+  
+  // LEN(str)
+  const lenMatch = cmd.match(/^LEN\(["'](.*)["']\)$/i);
+  if (lenMatch) {
+    return lenMatch[1].length;
+  }
+  
+  // UPPER(str)
+  const upperMatch = cmd.match(/^UPPER\(["'](.*)["']\)$/i);
+  if (upperMatch) {
+    return upperMatch[1].toUpperCase();
+  }
+  
+  // LOWER(str)
+  const lowerMatch = cmd.match(/^LOWER\(["'](.*)["']\)$/i);
+  if (lowerMatch) {
+    return lowerMatch[1].toLowerCase();
+  }
+  
+  // CONCAT(a, b, ...)
+  const concatMatch = cmd.match(/^CONCAT\((.+)\)$/i);
+  if (concatMatch) {
+    const parts = concatMatch[1].split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+    return parts.join('');
+  }
+  
+  // IF(cond, then, else)
+  const ifMatch = cmd.match(/^IF\((.+),(.+),(.+)\)$/i);
+  if (ifMatch) {
+    const cond = ifMatch[1].trim();
+    const thenVal = ifMatch[2].trim().replace(/^["']|["']$/g, '');
+    const elseVal = ifMatch[3].trim().replace(/^["']|["']$/g, '');
+    // Simple eval de la condition
+    try {
+      return eval(cond) ? thenVal : elseVal;
+    } catch {
+      return 'Condition invalide';
+    }
+  }
+  
+  // Affectation .attr = value ou .path.attr = value
+  const attrMatch = cmd.match(/^\.([a-zA-Z_][a-zA-Z0-9_.]*)\s*=\s*(.+)$/);
+  if (attrMatch) {
+    const fullPath = attrMatch[1];
+    const value = attrMatch[2];
+    const pathParts = fullPath.split('.');
+    const attr = pathParts.pop();
+    if (pathParts.length > 0) {
+      const segments = pathParts.map(p => p.charAt(0).toUpperCase() + p.slice(1));
+      return `Attribut "${attr}" sur ${selected}:${segments.join(':')} = ${value} (prêt à affecter)`;
+    }
+    return `Attribut "${attr}" = ${value} (prêt à affecter)`;
+  }
+  
+  // Relation IN
+  const inMatch = cmd.match(/^(\w+)\s+IN\s+(\w+)$/i);
+  if (inMatch) {
+    return `Relation: ${inMatch[1]} IN ${inMatch[2]} (prêt à affecter)`;
+  }
+  
+  return `Commande non reconnue: ${cmd}`;
+}
+
+async function assignErk() {
+  const cmd = $('erkInput').value.trim();
+  if (!cmd || !selected) return;
+  
+  const timestamp = new Date().toLocaleTimeString();
+  
+  // Affectation .attr = value ou .path.to.attr = value
+  const attrMatch = cmd.match(/^\.([a-zA-Z_][a-zA-Z0-9_.]*)\s*=\s*(.+)$/);
+  if (attrMatch) {
+    const fullPath = attrMatch[1];
+    const value = attrMatch[2];
+    
+    // Si le chemin contient des points, construire l'oid cible
+    // Ex: .attribute.value.default sur Object:Property
+    //     -> oid = Object:Property:Attribute:Value, attr = default
+    const pathParts = fullPath.split('.');
+    const attr = pathParts.pop(); // Le dernier est l'attribut
+    
+    let targetOid = selected;
+    if (pathParts.length > 0) {
+      // Construire le chemin : chaque partie devient un segment du lineage
+      // Ex: attribute.value -> :Attribute:Value
+      const segments = pathParts.map(p => p.charAt(0).toUpperCase() + p.slice(1));
+      targetOid = selected + ':' + segments.join(':');
+    }
+    
+    try {
+      const res = await api('/api/set-attr', { oid: targetOid, attr, value });
+      if (res.ok) {
+        addConsoleEntry(cmd, `✓ ${targetOid}.${attr} = ${value}`, 'success', timestamp);
+        await refresh();
+      } else {
+        addConsoleEntry(cmd, res.error || 'Erreur', 'error', timestamp);
+      }
+    } catch (e) {
+      addConsoleEntry(cmd, e.message, 'error', timestamp);
+    }
+    return;
+  }
+  
+  // Relation IN
+  const inMatch = cmd.match(/^(\w+)\s+IN\s+(\w+)$/i);
+  if (inMatch) {
+    const element = inMatch[1];
+    const list = inMatch[2];
+    try {
+      const res = await api('/api/add-to-list', { element, list });
+      if (res.ok) {
+        addConsoleEntry(cmd, `✓ ${element} IN ${list}`, 'success', timestamp);
+        await refresh();
+      } else {
+        addConsoleEntry(cmd, res.error || 'Erreur', 'error', timestamp);
+      }
+    } catch (e) {
+      addConsoleEntry(cmd, e.message, 'error', timestamp);
+    }
+    return;
+  }
+  
+  addConsoleEntry(cmd, 'Syntaxe non reconnue pour affectation', 'error', timestamp);
+}
+
+function addConsoleEntry(cmd, result, type, timestamp) {
+  const output = $('consoleOutput');
+  const entry = document.createElement('div');
+  entry.className = 'console-entry';
+  entry.innerHTML = `
+    <div class="console-timestamp">${timestamp} - ${selected}</div>
+    <div class="console-cmd">${escapeHtml(cmd)}</div>
+    <div class="console-result ${type}">${escapeHtml(String(result))}</div>
+  `;
+  output.insertBefore(entry, output.firstChild);
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function clearConsole() {
+  $('consoleOutput').innerHTML = '';
+}
+
+// Mettre à jour le target quand on change d'objet
+const originalLoadObject = loadObject;
+loadObject = async function(oid) {
+  await originalLoadObject(oid);
+  updateConsoleTarget();
+};
+</script>
+</body>
+</html>

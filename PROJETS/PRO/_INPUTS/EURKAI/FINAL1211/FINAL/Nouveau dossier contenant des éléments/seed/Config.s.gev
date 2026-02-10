@@ -1,0 +1,94 @@
+# ============================================================================
+# EURKAI - Config
+# seed/Config.s.gev
+# Configuration des produits et routing
+# ============================================================================
+
+## ============================================
+## Object:Config:
+## Base de toutes les configurations
+## ============================================
+
+Object:Config:
+  .name = {}
+  .description = {}
+
+## ============================================
+## Object:Config:ProductConfig:
+## Configuration d'un produit (Website, API, App...)
+## ============================================
+
+Object:Config:ProductConfig:
+  .name = {}
+  
+  ## URLs de base
+  .baseUrl = {"default": "/"}
+  ## URL de base pour le front (ex: "/", "https://www.eurkai.com")
+  
+  .apiBaseUrl = {"default": "/api"}
+  ## URL de base pour l'API (ex: "/api", "https://api.eurkai.com")
+  
+  ## Environnement
+  .env = {"default": "dev", "enum": ["dev", "staging", "production"]}
+  
+  ## Routes
+  .routeList = {"type": "list", "of": "Object:Attribute:Route"}
+
+## ============================================
+## Object:Attribute:Route:
+## Pattern de route dynamique (front et API)
+## ============================================
+
+Object:Attribute:Route:
+  .name = {}
+  
+  ## Pattern front: /<PageAlias>?<params>
+  ## Ex: /features, /contact, /user/123
+  .pattern = {}
+  
+  ## Pattern API: /api/<type>/<method>?<params>&<token>
+  ## Ex: /api/user/get?id=123&token=xxx
+  .apiPattern = {}
+  
+  ## Alias de l'objet cible (pour résolution dynamique)
+  .targetAlias = {}
+  
+  ## Type d'objet cible (pour API)
+  .targetType = {}
+  
+  ## Méthode (pour API)
+  .method = {}
+  
+  ## Paramètres attendus
+  .params = {"type": "list"}
+  
+  ## Authentification requise
+  .authRequired = {"type": "boolean", "default": false}
+  
+  ## Token requis (pour API)
+  .tokenRequired = {"type": "boolean", "default": false}
+
+## ============================================
+## FICHIERS GEV - Définitions des types de fichiers
+## ============================================
+
+## Object:File:VectorFile:
+## Fichier .v.gev contenant les vecteurs (traductions, constantes)
+Object:File:VectorFile:
+  .extension = ".v.gev"
+  .description = "Fichier de vecteurs - valeurs multilingues et constantes"
+  .content = {"type": "list", "of": "Object:Structure:Fractal:Vector"}
+
+## Object:File:SeedFile:
+## Fichier .s.gev contenant les définitions de types (schémas)
+Object:File:SeedFile:
+  .extension = ".s.gev"
+  .description = "Fichier seed - définitions de types/schémas (classes)"
+  .content = {"type": "list", "of": "Object"}
+
+## Object:File:ManifestFile:
+## Fichier .m.gev contenant les instances concrètes
+Object:File:ManifestFile:
+  .extension = ".m.gev"
+  .description = "Fichier manifest - instances concrètes (objets instanciés)"
+  .content = {"type": "list", "of": "Object"}

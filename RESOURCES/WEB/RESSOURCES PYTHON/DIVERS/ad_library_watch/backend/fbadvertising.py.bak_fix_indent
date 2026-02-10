@@ -1,0 +1,117 @@
+import requests
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+from bs4 import BeautifulSoup
+from backend.thumb_playwright import render_snapshot_thumbnail
+
+GRAPH = "https://graph.facebook.com/v24.0/ads_archive"
+
+def build_params(token, keyword, countries, limit):
+    # Graph API: ad_reached_countries doit être répété (pas une string JSON)
+    params = [
+        ("access_token", token),
+        ("search_terms", keyword),
+        ("limit", str(int(limit))),
+        ("fields", "id,page_name,ad_delivery_start_time,ad_delivery_stop_time,ad_snapshot_url"),
+    ]
+    for c in countries:
+        c = c.strip().upper()
+        if c:
+            params.append(("ad_reached_countries", c))
+    return params
+
+
+
+def parse_date(s):
+    return datetime.strptime(s[:10], "%Y-%m-%d").date() if s else None
+
+
+def human_delta(start, end):
+    r = relativedelta(end, start)
+    return f"{r.years} ans {r.months} mois {r.days} jours", (end - start).days
+
+
+def is_active(start, stop, today):
+    if not start:
+        return False
+    if stop is None:
+        return True
+    return start <= today <= stop
+
+
+def extract_image(snapshot_url):
+    try:
+        r = requests.get(
+            snapshot_url,
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=15,
+        )
+        if r.status_code != 200:
+            return None
+
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        og = soup.find("meta", property="og:image")
+        if og and og.get("content"):
+            return og["content"]
+
+        img = soup.find("img")
+        if img and img.get("src"):
+            return img["src"]
+
+        video = soup.find("video")
+        if video and video.get("poster"):
+            return video["poster"]
+
+    except Exception:
+        pass
+
+    return None
+
+
+def collect_ads(token, keyword, countries, limit=200, active_only=True, use_playwright_thumbs=False, thumbs_dir='cache/thumbs', thumb_max=30):
+    params = build_params(token, keyword, countries, limit)
+today = date.today()
+    ads = []
+    url = GRAPH
+
+    while url:
+        r = requests.get(url, params=params)
+        r.raise_for_status()
+        payload = r.json()
+
+        for ad in payload.get("data", []):
+            start = parse_date(ad.get("ad_delivery_start_time"))
+            stop = parse_date(ad.get("ad_delivery_stop_time"))
+
+            active = is_active(start, stop, today)
+            if active_only and not active:
+                continue
+
+            end = today if active else stop
+            human, days = human_delta(start, end)
+
+            ad["start_mm_yy"] = f"{start.month:02d}/{str(start.year)[-2:]}"
+            ad["longevity_human"] = human
+            ad["longevity_days"] = days
+            ad["status"] = "ACTIVE" if active else "STOPPED"
+            ad["image_url"] = extract_image(ad["ad_snapshot_url"])
+            ad["thumb_path"] = None
+
+
+            ads.append(ad)
+
+        url = payload.get("paging", {}).get("next")
+        params = None
+
+    ads_sorted = sorted(ads, key=lambda x: x["longevity_days"], reverse=True)
+
+    # Playwright UNIQUEMENT sur les top X (sinon c'est trop lent)
+    if use_playwright_thumbs:
+        for ad in ads_sorted[:max(0, int(thumb_max or 0))]:
+            try:
+                ad["thumb_path"] = render_snapshot_thumbnail(ad["ad_snapshot_url"], thumbs_dir, ad["id"])
+            except Exception:
+                ad["thumb_path"] = None
+
+    return ads_sorted

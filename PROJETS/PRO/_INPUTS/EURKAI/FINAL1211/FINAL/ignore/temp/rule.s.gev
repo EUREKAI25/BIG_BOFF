@@ -1,0 +1,136 @@
+# ============================================================================
+# EURKAI Seed - Rules v0.10.5
+# seed/rule.s.gev
+# Types de règles ERK
+# ============================================================================
+
+#region === RULE ===
+
+Object:Rule:
+  .name = V_RuleName
+  .description = V_RuleDescription
+
+#endregion
+
+#region === RULE TYPES ===
+
+# --- Obligation ---
+Object:Rule:Must:
+  .name = V_MustName
+  .action = "must"
+  .description = V_MustDescription
+  .effect = "BLOCK + ERROR"
+  .syntax = V_MustSyntax
+  .example = V_MustExample
+
+Object:Rule:MustNot:
+  .name = V_MustNotName
+  .action = "must_not"
+  .description = V_MustNotDescription
+  .effect = "BLOCK + ERROR"
+  .syntax = V_MustNotSyntax
+  .example = V_MustNotExample
+
+# --- Permission ---
+Object:Rule:Allow:
+  .name = V_AllowName
+  .action = "allow"
+  .description = V_AllowDescription
+  .effect = "DENY si false"
+  .syntax = V_AllowSyntax
+  .example = V_AllowExample
+
+Object:Rule:Deny:
+  .name = V_DenyName
+  .action = "deny"
+  .description = V_DenyDescription
+  .effect = "DENY toujours"
+  .syntax = V_DenySyntax
+  .example = V_DenyExample
+
+# --- Prérequis ---
+Object:Rule:Require:
+  .name = V_RequireName
+  .action = "require"
+  .description = V_RequireDescription
+  .effect = "BLOCK si absent"
+  .syntax = V_RequireSyntax
+  .example = V_RequireExample
+
+Object:Rule:Forbid:
+  .name = V_ForbidName
+  .action = "forbid"
+  .description = V_ForbidDescription
+  .effect = "BLOCK + CRITICAL"
+  .syntax = V_ForbidSyntax
+  .example = V_ForbidExample
+
+# --- Activation ---
+Object:Rule:Enable:
+  .name = V_EnableName
+  .action = "enable"
+  .description = V_EnableDescription
+  .effect = "Désactivé si false"
+  .syntax = V_EnableSyntax
+  .example = V_EnableExample
+
+Object:Rule:Disable:
+  .name = V_DisableName
+  .action = "disable"
+  .description = V_DisableDescription
+  .effect = "Désactivé si true"
+  .syntax = V_DisableSyntax
+  .example = V_DisableExample
+
+# --- Vérification ---
+Object:Rule:Check:
+  .name = V_CheckRuleName
+  .action = "check"
+  .description = V_CheckRuleDescription
+  .effect = "Retourne bool sans bloquer"
+  .syntax = V_CheckRuleSyntax
+  .example = V_CheckRuleExample
+
+Object:Rule:Validate:
+  .name = V_ValidateName
+  .action = "validate"
+  .description = V_ValidateDescription
+  .effect = "WARN si false"
+  .syntax = V_ValidateSyntax
+  .example = V_ValidateExample
+
+Object:Rule:Warn:
+  .name = V_WarnName
+  .action = "warn"
+  .description = V_WarnDescription
+  .effect = "Log warning"
+  .syntax = V_WarnSyntax
+  .example = V_WarnExample
+
+Object:Rule:Suggest:
+  .name = V_SuggestName
+  .action = "suggest"
+  .description = V_SuggestDescription
+  .effect = "Suggestion IA"
+  .syntax = V_SuggestSyntax
+  .example = V_SuggestExample
+
+#endregion
+
+#region === RULE PATTERNS ===
+
+# Règle générique d'attribut requis
+Object:Rule:RequiredAttribute:
+  .name = V_RequiredAttributeName
+  .type = "Must"
+  .attribute = V_RuleAttribute
+  .message = V_RequiredAttributeMessage
+
+# Règle générique de pattern
+Object:Rule:Pattern:
+  .name = V_PatternRuleName
+  .type = "Validate"
+  .pattern = V_RulePattern
+  .message = V_PatternRuleMessage
+
+#endregion

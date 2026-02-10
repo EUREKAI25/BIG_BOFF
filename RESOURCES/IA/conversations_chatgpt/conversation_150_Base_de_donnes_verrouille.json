@@ -1,0 +1,28 @@
+{
+  "name": "Base de données verrouillée",
+  "created_at": "2024-01-07T05:00:00.000Z",
+  "tags": [],
+  "project": "",
+  "messages": [
+    {
+      "author": "user",
+      "message": "(venv) nathalie@Nathalies-MacBook-Pro _LNS8 % python3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS8/tests/init_core.py\ntest dvb database.db\nCréation des types fondamentaux...\nCréation des relations fondamentales...\nTraceback (most recent call last):\n  File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS8/tests/init_core.py\", line 147, in <module>\n    init_core_objects()  # Puis on crée les objets fondamentaux\n    ~~~~~~~~~~~~~~~~~^^\n  File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS8/tests/init_core.py\", line 89, in init_core_objects\n    create_relation(conn, objects[relation_name], objects[\"RelationType\"], objects[\"type_of\"])\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS8/tests/init_core.py\", line 18, in create_relation\n    cursor.execute(\n    ~~~~~~~~~~~~~~^\n        \"INSERT INTO Relations (src_id, target_id, relation_id) VALUES (?, ?, ?)\",\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        (src_id, target_id, relation_id)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\nsqlite3.OperationalError: database is locked\n(venv) nathalie@Nathalies-MacBook-Pro _LNS8",
+      "order": 0
+    },
+    {
+      "author": "ChatGPT",
+      "message": "L’erreur **`sqlite3.OperationalError: database is locked`** signifie que la base de données SQLite est déjà utilisée par un autre processus ou une autre connexion qui ne l’a pas encore libérée, empêchant ainsi l’insertion actuelle.\n\n### Voici les causes fréquentes et leurs solutions :\n\n---\n\n### 🔄 1. **Connexion non fermée ailleurs**\nVérifie que **toutes les connexions à la base sont bien fermées** (avec `conn.close()`) après usage. Sinon, le fichier `.db` reste verrouillé.\n\n---\n\n### 🔁 2. **Plusieurs accès concurrents**\nSQLite ne gère pas bien les écritures simultanées. Assure-toi que :\n\n- Tu ne lances **pas deux scripts en même temps** qui écrivent sur la base.\n- Aucune **autre application** (comme un éditeur SQLite ou un outil d'indexation) n'est ouverte sur `database.db`.\n\n---\n\n### 🧹 3. **Utilisation d’un `cursor` ou `conn` non propre**\nSi tu appelles `create_relation(...)` plusieurs fois, assure-toi que :\n\n- Tu ne réutilises pas le **même curseur** (`cursor = conn.cursor()`) sans `commit()`.\n- Tu fais bien `conn.commit()` **avant** de relancer un accès concurrent.\n\n---\n\n### ✅ 4. **Solution de contournement (test)**\nAjoute un léger délai avant l’appel en question pour voir si ça débloque :\n\n```python\nimport time\ntime.sleep(0.1)  # Ajoute un délai de 100 ms\n```\n\n---\n\n### 🧪 5. **Mode WAL (Write-Ahead Logging)**\nTu peux essayer d’activer le mode WAL (meilleure gestion des accès concurrents) :\n\n```python\nconn.execute(\"PRAGMA journal_mode=WAL;\")\n```\n\n---\n\n### 🔎 Pour t’aider à traquer l’erreur :\nAjoute des logs ou des prints pour voir où la base est encore utilisée :\n\n```python\nprint(\"Connexion ouverte\")\n# ...\nprint(\"Création de relation entre\", src_id, target_id)\n# ...\n```\n\nSouhaites-tu que je t’aide à identifier dans ton code où tu pourrais avoir oublié un `commit()` ou un `close()` ?",
+      "order": 1
+    },
+    {
+      "author": "ChatGPT",
+      "message": "All the files uploaded by the user have been fully loaded. Searching won't provide additional information.",
+      "order": 2
+    },
+    {
+      "author": "ChatGPT",
+      "message": "Merci pour les fichiers. L'erreur `sqlite3.OperationalError: database is locked` vient d’un **conflit d'accès à la base de données** dans `init_core.py`, plus précisément ici :\n\n```python\nconn = sqlite3.connect(db_path)\ncursor = conn.cursor()\n```\n\nPuis plus loin dans la fonction `init_core_objects` :\n\n```python\nconn = sqlite3.connect(db_path)\n```\n\nDonc **tu ouvres deux connexions à la même base** :\n\n- une fois **au niveau global du fichier** (`conn = sqlite3.connect(...)` en haut)\n- une seconde fois **dans la fonction `init_core_objects`**\n\nEt dans `create_bdd.py`, tu appelles :\n\n```python\ninit_core_objects(db_path)\n```\n\nDonc au moment de l'appel, tu as **deux connexions ouvertes en même temps** sur `database.db`, sans forcément les avoir fermées avant de réutiliser la base.\n\n---\n\n### ✅ Solution recommandée : supprimer la connexion globale dans `init_core.py`\n\nSupprime ces deux lignes du haut de `init_core.py` :\n\n```python\ndb_path = \"database.db\"\nconn = sqlite3.connect(db_path)\ncursor = conn.cursor()\n```\n\nElles ne sont **pas utilisées globalement**, mais elles verrouillent la base inutilement.\n\nTu peux aussi supprimer la variable `cursor` globale, car chaque appel dans `create_object` et `create_relation` crée déjà son propre curseur via `conn.cursor()`.\n\n---\n\n### ✔ Bonus : bonne pratique\n\nSi tu veux éviter les verrous dans le futur :\n\n- utilise `with sqlite3.connect(...) as conn:` pour assurer une fermeture automatique.\n- active WAL si tu prévois des lectures/écritures en parallèle :\n\n```python\nconn.execute(\"PRAGMA journal_mode=WAL;\")\n```\n\nSouhaites-tu que je te propose une version nettoyée et corrigée de `init_core.py` ?",
+      "order": 3
+    }
+  ]
+}

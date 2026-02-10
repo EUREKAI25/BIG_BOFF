@@ -1,0 +1,685 @@
+#region === OBJECT ===
+Object:
+  .name = V_ObjectName
+  .elementList = V_ObjectElementList
+  .description = V_ObjectDescription
+  .createdBy= V_OBjectCreatedBy
+  .createdAt= V_OBjectCreatedAt
+  .udatedBy= V_OBjectUpdatedBy
+  .updatedBy= V_OBjectUpdatedBy
+  .version= V_OBjectVersion
+  .level = V_Object
+  .mode = V_Object
+  .nature = V_Object
+  .count = V_ObjectCount
+  .automated = true
+  .scan = V_ObjectScan   
+
+
+#endregion
+
+#region === ATTRIBUTE ===
+Object:Attribute:
+  .name = V_ObjectName
+  .description =V_AttributeDescription
+  .multiple = V_ElementCardinality
+  Attribute IN Object.AttributeList
+
+Object:Attribute:Filter:
+  .scope = ""
+
+
+Object:Attribute:AttributeList:
+  AttributeList IN ElementList
+
+Object:Attribute:MethodList:
+  AttributeList IN ElementList AND IDPlane
+
+Object:Attribute:RuleList:
+  AttributeList IN ElementList AND Plane
+
+Object:Attribute:RelationList:
+  RelationList IN ElementList AND IDPlane
+
+Object:Attribute:OptionList:
+  OptionList IN ElementList AND IOPlane
+
+Object:Attribute:AliasList:
+  AliasList IN AttributeList AND IOPlane
+
+
+
+Object:Attribute:Property:
+
+Object:Attribute:Autonomous:
+
+Object:Attribute:FName:
+  .name = V_FNameAttribute # "fname"
+  FName IN AttributeList
+  
+Object:Attribute:LName:
+  .name = V_LNameAttribute # "lname"
+  LName IN AttributeList
+  
+Object:Attribute:Automated:
+  .name = "Automated"
+  .description.FR = "Attribut pour objets auto-générés"
+  .description.EN = "Attribute for auto-generated objects"
+  .automated = true
+  Automated IN Attribute.ChildList
+
+Object:Attribute:Description:
+  .name = "Description"
+  Description IN AttributeList
+Object:Question:
+
+Object:Attribute:
+Object:Schema:
+Object:Attribute:
+
+Object:Attribute:
+  .name = "Attribute"
+  .multiple = "undefined"
+ 
+Object:Attribute:LName:
+
+
+Object:Attribute:Automated:
+Object:Attribute:Tag:
+Object:Attribute:Tag:Category:
+Object:Attribute:Level:
+Object:Attribute:Status:
+Object:Attribute:Priority:
+Object:Attribute:FName:
+Object:Attribute:LName:
+Object:Attribute:Birthdate:
+Object:Attribute:Adress:
+Object:Attribute:City:
+Object:Attribute:Region:
+Object:Attribute:Country:
+Object:Attribute:Zipcode:
+Object:Attribute:Email:
+Object:Attribute:Phone:
+Object:Attribute:LName:
+Object:Attribute:Gender:
+Object:Attribute:Token:
+Object:Attribute:Password:
+Object:Attribute:Name:
+Object:Attribute:Status:
+
+
+#endregion
+   
+#region === STRUCTURE ===
+Object:Structure:
+  .name = "Structure"
+  .description.FR = "Définit comment un objet est structuré"
+  .description.EN = "Defines how an object is structured"
+  related_to Object
+
+Object:Structure:Dict:
+  .name = "Dict"
+  .description.FR = "Tout objet est un dictionnaire clé-valeur"
+  .description.EN = "Every object is a key-value dictionary"
+  Dict IN ObjectAttributeList
+  .coucou = "coucou"
+
+Object:Structure:List:
+  .name = "List"
+  .description.FR = "Dictionnaire avec clés sans impact"
+  .description.EN = "Dictionary with irrelevant keys"
+  List IN DictList
+
+Object:Structure:List:OrderedList:
+  .name = "OrderedList"
+  .description.FR = "Liste avec clés classées selon une règle de tri"
+  .description.EN = "List with keys sorted by a rule"
+  .sortRule = V_SortRule
+
+Object:Structure:Element:
+  .name = "Element"
+  .description.FR = "Objet faisant partie d'une liste"
+  .description.EN = "Object that belongs to a list"
+  .cardinality = "undefined"
+  Element IN ElementList.*
+
+Object:Structure:List:ObjectList:
+  .name = V_ObjectList #"ObjectList"
+  .description.FR = "Liste des éléments d'un objet"
+  .description.EN = "List of element of an object"
+  ElementList IN ObjectList
+  
+Object:Structure:List:ElementList:
+  .name = V_ElementList #"ElementList"
+  .description.FR = "Liste des listes d'éléments d'un objet"
+  .description.EN = "List of element lists of an object"
+  ElementList IN ObjectList
+
+Object:Structure:List:RuleList:
+  AttributeList IN ElementList
+
+Object:Structure:List:ChildList:
+  .name = "ChildList"
+  .description = {"FR": "Liste des enfants directs (déduite du lineage)", "EN": "List of direct children (inferred from lineage)"}
+  ChildList IN Object.ElementList
+
+Object:Structure:Dataset:Planning:
+  Planning related_to Time
+
+Object:Structure:Dataset:
+  .name = V_ElementList #"ElementList"
+
+Object:Structure:Dataset:Catalog:
+  .name = "Catalog"
+
+Object:Structure:Dataset:VectorCatalog:
+  .name = "VectorCatalog"
+
+Object:Structure:Dataset:Table:
+  .name = "Table"
+
+Object:Structure:Fractal:
+
+Object:Structure:Fractal:Vector:
+
+Object:Structure:Fractal:Plane:
+
+Object:Structure:Fractal:Plane:ExternalPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:
+
+Object:Structure:Fractal:Plane:TransversalPlane:IDPlane:
+
+Object:Structure:Fractal:Plane:TransversalPlane:IRPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:IOPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:VDPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:VRPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:VOPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:CDPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:CRPlane:
+Object:Structure:Fractal:Plane:TransversalPlane:COPlane:
+
+Object:Structure:Container:
+  .name = "Container"
+
+Object:Structure:Container:Wrapper:
+  .name = "Wrapper" # je voudrais un fascia généralisé mais les lists nesont pas des containers - relation assemble possible ? souhaiable ?
+  .description = 
+  .format = V_WrapperFormat
+  Wrapper related_to Container
+#endregion
+
+#region === RULE ===
+Object:Rule:
+
+Object:Rule:ResolutionRule:
+  .name = "ResolutionRule"
+  .description = "définit comment Get "
+  .direction = V_TraverseDirection        # up | down | global
+  .depth = V_TraverseDepth
+  .order = V_TraverseOrder                # DFS | BFS
+  .stopCondition = V_TraverseStopCondition
+  .depends_on = GetStep
+
+
+Object:Rule:ResolutionRule:Recursive:
+  .name = "RecursiveRule"
+  .description = "définit comment Get construit un dict de nodes par parcours récursif"
+
+
+#endregion
+#region === ENTITY ===
+Object:Entity:
+
+Object:Entity:User:
+
+Object:Entity:Prospect:
+
+Object:Entity:Client:Subscriber:
+
+Object:Entity:Client:Visitor:
+
+Object:Entity:Client:Client:
+
+Object:Entity:Client:Company:
+
+Object:Entity:Client:Company:Provider:
+
+Object:Entity:Client:Company:Provider:AIProvider:
+
+Object:Entity:Client:Subscriber:
+
+Object:Entity:Agent:
+  .name= "Agent"
+
+Object:Entity:Agent:AIAgent:
+  .name= "AIAgent"
+
+Object:Entity:Agent:AIAgent:Walker:
+  .name= "Walker"
+  .description = {"FR": "Parcourt la fractale et exécute .scan", "EN": "Traverses fractal and executes .scan"}
+
+
+
+Object:Entity:Avatar:
+
+
+#endregion
+
+#region === LOGIC ===
+Object:Logic:
+
+#endregion
+
+#region === LANGAGE ===
+Object:Language:
+
+Object:Language:NaturalLanguage:
+
+Object:Language:SystemLanguage:ERKLanguage:
+
+Object:Language:SystemLanguage:JSONLanguage:
+
+Object:Language:SystemLanguage:JSLanguage:
+
+Object:Language:SystemLanguage:PYLanguage:
+
+Object:Language:SystemLanguage:PHPLanguage:
+
+Object:Language:SystemLanguage:REACTLanguage:
+
+Object:Language:SystemLanguage:HTMLLanguage:
+
+Object:Language:SystemLanguage:CSSLanguage:
+
+Object:Language:SystemLanguage:SCSSLanguage:
+
+
+
+
+
+#endregion
+
+#region === MODEL ===
+Object:Model:
+
+Object:Model:Template:
+
+Object:Model:Template:HTMLTemplate:
+
+Object:Model:Template:Seed:
+
+Object:Model:AIModel:
+
+
+
+
+
+#endregion
+
+#region === METHOD ===
+Object:Function:
+  .name = "Function"
+  .input = V_FunctionInput
+  .output = V_FunctionOutput
+
+Object:Function:Method:
+  .name = "Method"
+  .hookBeforeList = V_MethodHookBeforeList
+  .hookAfterList = V_MethodHookAfterList
+
+Object:Method:CentralMethod:
+  .name = "CentralMethod"
+  .description = "Méthode centrale du système"
+  .layer = 2-METHODS
+
+Object:Method:CentralMethod:Create:
+  .name = "Create"
+  .description = "Méthode centrale Create"
+  Create depends_on Object
+
+Object:Method:CentralMethod:Read:
+  .name = "Read"
+  .description = "Méthode centrale Read"
+  Read depends_on Object
+
+Object:Method:CentralMethod:Update:
+  .name = "Update"
+  .description = "Méthode centrale Update"
+  Update depends_on Object
+
+Object:Method:CentralMethod:Delete:
+  .name = "Delete"
+  .description = "Méthode centrale Delete"
+  Delete depends_on Object
+
+Object:Method:CentralMethod:Orchestrate:
+  .name = "Orchestrate"
+  .description = "Coordonne l’exécution des scénarios et des hooks""
+  Orchestrate IN Object.MethodList
+
+Object:Method:CentralMethod:Engage:
+  .name = "Engage"
+  .description = "Méthode centrale Engage"
+  Engage depends_on Object
+
+Object:Method:SecondaryMethod:
+  .name = "SecondaryMethod"
+  .description = "Méthode secondaire déclinée d'une méthode centrale"
+  SecondaryMethod IN CentralMethod.DependencyList
+
+Object:Method:SecondaryMethod:Generate:
+  .name = "Generate"
+  Generate IN Automated.MethodList
+  Generate depends_on Create
+
+Object:Method:SecondaryMethod:GlobalRecursiveMethod:
+  .name = "GlobalRecursiveMethod"
+  .description = "construit un dict de nodes par parcours récursif"
+  GlobalRecursiveMethod depends_on Orchestrate
+
+Object:Method:SecondaryMethod:Validate:
+  .name = "Validate"
+
+Object:Method:SecondaryMethod:Walk:
+  .name= "Walk" 
+  .description = {"FR": "Parcourt un objet et ses enfants", "EN": "Traverses an object and its children"}
+  Walk IN Walker.MethodList
+  .input = V_WalkInput
+  .output = V_WalkOutput
+  .hooks = V_WalkHookAfterList
+  Walk depends_on Read
+
+Object:Method:SecondaryMethod:Count:
+  .name = "Count"
+  .description = "Retourne le nombre d'éléments / la taille de l'objet"
+  Count IN ObjectMethodList
+  Count depends_on Read
+
+Object:Method:SecondaryMethod:Reset:
+  .name = "Reset"
+  .description = "Restaure les objets à leur état default"
+  Reset depends_on Update
+ 
+Object:Method:SecondaryMethod:Count:
+  .name = "Count"
+  .description = "Retourne le nombre d'éléments / la taille de l'objet"
+  Count IN ObjectMethodList
+
+
+
+Object:Method:Scenario:
+  .name = V_ScenarioName
+  .description = V_ScenarioDescription
+  .milestoneList = V_MilestoneList
+  .goal = V_ScenarioGoal
+  .inputList = V_ScenarioInputList
+  .outputList = V_ScenarioOutputList
+  .validationRule = V_ScenarioValidationRule
+
+
+
+
+Object:Method:Scenario:Step:
+  .name = V_StepName
+  .order = V_StepOrder
+  .method = V_StepMethod
+  Step IN StepList
+  StepList IN Milestone.ElementList
+
+Object:Method:Scenario:Step:GetStep:
+  .name = "GetStep"
+  .description = "applique TraverseBehavior et retourne les cibles"
+
+  .order = 1
+
+Object:Method:Scenario:Step:ExecuteStep:
+  .name = "ExecuteStep"
+  .description = "applique LoopBehavior et déclenche scan.value depuis chaque noeud"
+  .order = 2
+
+
+Object:Method:Scenario:Step:ValidateStep:
+  .name = "ValidateStep"
+  .description = "Valide les résultats"
+  .order = 3
+
+Object:Method:Scenario:Step:RenderStep:
+  .name = "RenderStep"
+  .description = "rend/présente/serialise les résultats"
+  .order = 4
+
+
+Object:Method:Scenario:Milestone:
+  .name = V_MilestoneName
+  .order = V_MilestoneOrder
+  .stepList = V_StepList
+  Milestone IN MilestoneList
+  MilestoneList IN Scenario.ElementList
+
+
+
+Object:Method:Scenario:BootstrapScenario:
+Object:Method:Scenario:GhostScenario:
+  .name = "GhostScenario"
+  .description = ""
+
+Object:Method:Formula:
+  name: "Formulas"
+  Formula depends_on Logic 
+
+  #endregion
+
+#region === RULE ===
+
+Object:Rule:
+  .name = "Rule"
+  .condition = V_RuleCondition
+
+Object:Rule:ValidationRule:
+  .name = "ValidationRule"
+
+Object:Rule:CreateRule:
+  .name = "CreateRule"
+
+Object:Rule:FormatRule:
+  .name = "FormatRule"
+  .pattern = V_FormatPattern
+#endregion
+
+#region === RELATION ===
+
+
+Object:Alias:Relation:
+  .name = "Relation"
+  Relation IN Object.RelationList
+
+
+
+#endregion
+
+#region ===  CONFIG ==========
+
+Object:Config:
+  .name = "Config"
+
+Object:Config:Vector:
+  .name = "Vector"
+  .automated = true
+
+#endregion
+
+#region ===  ALIAS ==========
+
+Object:Alias:
+  .name = "Alias"
+  .automated = true
+  .description = V_AliasDescription
+  .target = V_AliasTarget       # ce que l'alias désigne
+  Alias IN Object.AttributeList.AliasList
+
+Object:Alias:SyntaxAlias:
+  .name = "SyntaxAlias"
+  .description = V_SyntaxAlias
+  .target = V_SyntaxAliasTarget
+
+Object:Alias:SyntaxAlias:Relation:
+  .name = "Relation"
+  .description = V_RelationDescription
+  .target = V_AliasTarget
+  Relation IN SyntaxAlias.ChildList
+
+Object.ChildList.Element IN
+
+Object:Alias:SyntaxAlias:Relation:DependsOn:
+  .name = "depends_on"
+  .query = "{{source}} IN {{target}}.DependencyList"
+
+Object:Alias:SyntaxAlias:Relation:RelatedTo:
+  .name = "related_to"
+  .query = "{{source}} IN {{target}}.RelatedList"
+
+Object:Alias:SyntaxAlias:Relation:InheritsFrom:
+  .name = "inherits_from"
+  .query = "{{source}} IN {{target}}.ChildList"
+
+Object:Alias:QueryAlias:
+  .name = "QueryAlias"
+  .description = {"FR": "Alias retournant un résultat de requête", "EN": "Alias returning a query result"}
+  .target = V_QueryAliasTarget
+  .method = V_QueryMethod
+
+#endregion
+
+#region === CONTENT ===
+Object:Content:TextContent:
+
+Object:Content:TextContent:Prompt:
+
+Object:Content:TextContent:Prompt:MasterPrompt:
+  MasterPrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:ProfilePrompt:
+  ProfilePrompt IN PromptPipeline
+  
+Object:Content:TextContent:Prompt:ContextPrompt:
+  ContextPrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:RolePrompt:
+  RolePrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:MissionPrompt:
+  MissionPrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:RulePrompt:
+  RulePrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:ResourcePrompt:
+  ResourcePrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:GoalPrompt:
+  GoalPrompt IN PromptPipeline
+
+Object:Content:TextContent:Prompt:DuePrompt:
+  DuePrompt IN PromptPipeline
+
+
+Object:Content:TextContent:Message:
+
+Object:Content:TextContent:Message:InstantMessage:
+
+Object:Content:TextContent:Message:Email:
+
+Object:Content:TextContent:Message:SMS:
+
+Object:Content:TextContent:Post:
+
+Object:Content:TextContent:Message:
+
+
+Object:Content:Media:Video:
+
+Object:Content:Media:Image:
+
+Object:Content:Media:Audio:
+
+#endregion
+
+#region === TAXONOMY ===
+Object:Tag:
+automation, recursive
+
+Object:Tag:Category:
+
+Object:Placeholder:
+
+Object:Field:
+
+#endregion
+
+#region === BEHAVIOR ===
+Object:Behavior:
+  .name: "Behavior"
+  .description: "Comportement appliqué à un scenario"
+  .Behavior depends_on Scenario
+
+
+
+Object:Behavior:LoopBehavior:
+  LoopBehavior depends_on ExecuteStep**
+
+Object:Behavior:LoopBehavior:SequentialLoopBehavior:
+    .description: "Exécution des scénarios strictement séquentielles"
+
+Object:Behavior:LoopBehavior:ParallelLoopBehavior:
+  .description: "Exécution des scénarios en parallèle"
+
+Object:Behavior:LoopBehavior:BatchLoopBehavior:
+  .description: "Exécution des scénarios par lots"
+
+Object:Behavior:LoopBehavior:ThrottledLoopBehavior:
+  .description: "Exécution des scénarios avec débit maximal (rate_limit)"
+  RateLimitRule 
+
+
+Object:Behavior:RunBehavior:
+  .name: "RunBehavior"
+  .description:  RunBehavior depends_on Step
+
+Object:Behavior:TraverseBehavior:
+  .name: "TraverseBehavior"
+  .description:
+  TraverseBehavior depends_on GetStep
+
+
+#endregion
+
+#region === ROLE ===
+Object:Role:
+
+#endregion
+
+#region === ACTIVITY ===
+Object:Project:
+Object:Project:Task:
+
+#endregion
+
+#region === PERMISSION ===
+Objet:Permission:
+  Permission related_to CentralMethod
+  Permission related_to CentralMethod
+
+#endregion
+
+#region === STRUCTURE ===
+#endregion
+
+cron 
+pulse 
+hook 
+trigger 
+event 
+calendar 
+agenda
+appointment
+ 

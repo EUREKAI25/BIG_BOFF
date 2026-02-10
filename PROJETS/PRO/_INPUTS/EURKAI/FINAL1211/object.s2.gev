@@ -1,0 +1,278 @@
+Object:
+  .name = V_ObjectName
+  .elementList = V_ObjectElementList
+  .description = V_ObjectDescription
+  .createdBy= V_OBjectCreatedBy
+  .createdAt= V_OBjectCreatedAt
+  .udatedBy= V_OBjectUpdatedBy
+  .updatedBy= V_OBjectUpdatedBy
+  .version= V_OBjectVersion
+  .level = V_Object
+  .mode = V_Object
+  .nature = V_Object
+
+
+#region === ATTRIBUTE ===
+Object:Attribute:
+  .name = V_ObjectName
+  .description =V_AttributeDescription
+  .multiple = V_ElementCardinality
+  Attribute IN Object.AttributeList
+
+
+Object:Attribute:FName:
+  .fname = V_FNameAttribute # "fname"
+  FName IN AttributeList
+  
+Object:Attribute:LName:
+  .lname = V_LNameAttribute # "lname"
+  LName IN AttributeList
+  
+Object:Attribute:Automated:
+  .name = "Automated"
+  .description.FR = "Attribut pour objets auto-générés"
+  .description.EN = "Attribute for auto-generated objects"
+  .automated = true
+  Automated IN Attribute.ChildList
+
+Object:Attribute:
+  .name = "Attribute"
+
+Object:Attribute:
+  .name = "Attribute"
+  .multiple = "undefined"
+
+
+Object:Attribute:Automated:
+  .name = "Automated"
+  .automated = true
+#endregion
+   
+#region === RELATION ===
+Object:Relation:
+  .name = "Relation"
+  Relation IN Object.RelationList
+
+Object:Relation:InheritsFrom:
+  .name = "inherits_from"
+
+Object:Relation:DependsOn:
+  .name = "depends_on"
+
+Object:Relation:RelatedTo:
+  .name = "related_to"
+
+Object:Relation:
+  .name = "Relation"
+  Relation IN Object.RelationList
+
+Object:Relation:InheritsFrom:
+  .name = "inherits_from"
+
+Object:Relation:DependsOn:
+  .name = "depends_on"
+
+Object:Relation:RelatedTo:
+  .name = "related_to"
+
+#endregion
+
+#region === STRUCTURE ===
+
+Object:Structure:
+  .name = "Structure"
+  .description.FR = "Définit comment un objet est structuré"
+  .description.EN = "Defines how an object is structured"
+  related_to Object
+
+Object:Structure:Dict:
+  .name = "Dict"
+  .description.FR = "Tout objet est un dictionnaire clé-valeur"
+  .description.EN = "Every object is a key-value dictionary"
+
+
+Object:Structure:List:
+  .name = "List"
+  .description.FR = "Dictionnaire avec clés sans impact"
+  .description.EN = "Dictionary with irrelevant keys"
+
+Object:Structure:List:OrderedList:
+  .name = "OrderedList"
+  .description.FR = "Liste avec clés classées selon une règle de tri"
+  .description.EN = "List with keys sorted by a rule"
+  .sortRule = V_SortRule
+
+Object:Structure:Element:
+  .name = "Element"
+  .description.FR = "Objet faisant partie d'une liste"
+  .description.EN = "Object that belongs to a list"
+  .cardinality = "undefined"
+#endregion
+
+Object:Structure:
+  .name = V_StructureName 
+  .description.FR = "Définit comment un objet est structuré"
+  .description.EN = "Defines how an object is structured"
+  related_to Object
+
+Object:Structure:Dict:
+  .name = "Dict"
+  .description.FR = "Tout objet est un dictionnaire clé-valeur"
+  .description.EN = "Every object is a key-value dictionary"
+
+
+Object:Structure:List:
+  .name = "List"
+  .description.FR = "Dictionnaire avec clés sans impact"
+  .description.EN = "Dictionary with irrelevant keys"
+
+Object:Structure:List:OrderedList:
+  .name = "OrderedList"
+  .description.FR = "Liste avec clés classées selon une règle de tri"
+  .description.EN = "List with keys sorted by a rule"
+  .sortRule = V_SortRule
+
+Object:Structure:Element:
+  .name = "Element"
+  .description.FR = "Objet faisant partie d'une liste"
+  .description.EN = "Object that belongs to a list"
+  .cardinality = "undefined"
+
+Object:Structure:List:ElementList:
+  .name = V_ElementList #"ElementList"
+  .description.FR = "Liste des listes d'éléments d'un objet"
+  .description.EN = "List of element lists of an object"
+  ElementList IN ObjectList
+
+#region === METHOD ===
+Object:Function:
+  .name = "Function"
+  .input = V_FunctionInput
+  .output = V_FunctionOutput
+
+
+Object:Function:Method:
+  .name = "Method"
+  .hookBeforeList = V_MethodHookBeforeList
+  .hookAfterList = V_MethodHookAfterList
+
+Object:Method:CentralMethod:
+  .name = "CentralMethod"
+  .description = "Méthode centrale du système"
+  .layer = 2-METHODS
+
+Object:Method:CentralMethod:Create:
+  .name = "Create"
+  .description = "Méthode centrale Create"
+  Create depends_on Object
+
+Object:Method:CentralMethod:Read:
+  .name = "Read"
+  .description = "Méthode centrale Read"
+  Read depends_on Object
+
+
+Object:Method:CentralMethod:Update:
+  .name = "Update"
+  .description = "Méthode centrale Update"
+  Update depends_on Object
+
+Object:Method:CentralMethod:Delete:
+  .name = "Delete"
+  .description = "Méthode centrale Delete"
+  Delete depends_on Object
+
+Object:Method:SecondaryMethod:
+  .name = "SecondaryMethod"
+  .description = "Méthode secondaire déclinée d'une méthode centrale"
+
+
+Object:Method:SecondaryMethod:Generate:
+  .name = "Generate"
+  Generate IN Automated.MethodList
+
+Object:Method:SecondaryMethod:Validate:
+  .name = "Validate"
+
+Object:Method:Scenario:
+  .name = "Scenario"
+  .milestoneList = V_ScenarioMilestoneList
+
+Object:Method:Scenario:Step:
+  .name = "Step"
+  .method = V_StepMethod
+
+Object:Method:Scenario:Step:GetStep:
+  .name = "GetStep"
+  .order = 1
+
+Object:Method:Scenario:Step:ExecuteStep:
+  .name = "ExecuteStep"
+  .order = 2
+
+Object:Method:Scenario:Step:ValidateStep:
+  .name = "ValidateStep"
+  .order = 3
+
+Object:Method:Scenario:Step:RenderStep:
+  .name = "RenderStep"
+  .order = 4
+
+Object:Method:Scenario:Milestone:
+  .name = "Milestone"
+  .order = V_MilestoneOrder
+  .stepList = V_MilestoneStepList
+#endregion
+
+#region === RULE ===
+
+Object:Rule:
+  .name = "Rule"
+  .condition = V_RuleCondition
+
+Object:Rule:ValidationRule:
+  .name = "ValidationRule"
+
+Object:Rule:CreateRule:
+  .name = "CreateRule"
+
+Object:Rule:FormatRule:
+  .name = "FormatRule"
+  .pattern = V_FormatPattern
+#endregion
+
+#region ===  RELATION ==========
+
+Object:Relation:
+  .name = "Relation"
+
+Object:Relation:InheritsFrom:
+  .name = "inherits_from"
+
+Object:Relation:DependsOn:
+  .name = "depends_on"
+
+Object:Relation:RelatedTo:
+  .name = "related_to"
+
+Object:Relation:In:
+  .name = "IN"
+#endregion
+
+#region ===  CONFIG ==========
+
+Object:Config:
+  .name = "Config"
+
+Object:Config:Vector:
+  .name = "Vector"
+  .automated = true
+
+Object:Config:Alias:
+  .name = "Alias"
+  .automated = true
+
+#endregion
+
+#region === STRUCTURE ===
+#endregion

@@ -1,0 +1,80 @@
+# ================================================================
+# VECTORS: Agent
+# Définitions des V_ avec types, ranges, formules, sources
+# ================================================================
+
+# === VECTEURS GÉNÉRIQUES ===
+Object:Vector:Name:
+  .name = "V_Name"
+  .type = string
+  .minLength = 1
+  .maxLength = 100
+  .source = input.user
+
+Object:Vector:Description:
+  .name = "V_Description"
+  .type = string
+  .maxLength = 500
+  .source = input.user
+
+# === VECTEURS AGENT ===
+Object:Vector:Temperature:
+  .name = "V_Temperature"
+  .type = number
+  .range = [0..1]
+  .default = 0.7
+  .source = context.config
+
+Object:Vector:Role:
+  .name = "V_Role"
+  .type = enum
+  .options = architect,orchestrator,generator,executor,reviewer
+  .source = context.config
+
+Object:Vector:Model:
+  .name = "V_Model"
+  .type = enum
+  .options = claude-3-opus,claude-3-sonnet,claude-3-haiku,gpt-4,gpt-4-turbo
+  .default = claude-3-sonnet
+  .source = context.config
+
+Object:Vector:MaxTokens:
+  .name = "V_MaxTokens"
+  .type = number
+  .range = [100..32000]
+  .default = 4096
+  .source = context.config
+
+Object:Vector:Provider:
+  .name = "V_Provider"
+  .type = enum
+  .options = anthropic,openai,google,local
+  .default = anthropic
+  .source = context.config
+
+Object:Vector:Permissions:
+  .name = "V_Permissions"
+  .type = array
+  .formula = read Permission.@role=V_Role --fields=id
+  .source = context.session
+
+Object:Vector:Specialization:
+  .name = "V_Specialization"
+  .type = enum
+  .options = schema,rules,scenarios,prompts
+  .default = schema
+  .source = input.user
+
+Object:Vector:MaxConcurrent:
+  .name = "V_MaxConcurrent"
+  .type = number
+  .range = [1..10]
+  .default = 3
+  .source = context.config
+
+Object:Vector:OutputFormat:
+  .name = "V_OutputFormat"
+  .type = enum
+  .options = json,html,markdown,erk
+  .default = json
+  .source = input.user

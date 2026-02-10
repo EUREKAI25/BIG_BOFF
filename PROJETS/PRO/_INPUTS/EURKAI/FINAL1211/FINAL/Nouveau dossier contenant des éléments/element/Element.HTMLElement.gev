@@ -1,0 +1,151 @@
+## Object:Element:HTMLElement:
+## Élément HTML avec attributs complets
+## Hérite de Object:Element:
+
+Object:Element:HTMLElement:
+  .vector = {"required": true}
+  
+  ## ============================================
+  ## Attributs HTML natifs
+  ## ============================================
+  
+  .id = {}
+  ## id HTML (optionnel, erkId suffit généralement)
+  
+  .tag = {"default": "div"}
+  ## Tag HTML: div, section, nav, header, footer, main, article, aside,
+  ##           span, p, h1-h6, a, button, input, form, ul, ol, li, etc.
+  
+  ## ============================================
+  ## Attributs EURKAI
+  ## ============================================
+  
+  .BEMList = {"type": "list", "of": "Object:Attribute:BEM"}
+  ## Classes CSS en convention BEM
+  
+  .AriaAttributeList = {"type": "list", "of": "Object:Attribute:Aria"}
+  ## Accessibilité ARIA
+  
+  .HTMLDataList = {"type": "list", "of": "Object:Attribute:Data:HTMLData"}
+  ## Attributs data-erk-*
+  
+  .TabList = {"type": "list", "of": "Object:Attribute:Tab"}
+  ## Navigation clavier
+  
+  ## ============================================
+  ## Récursivité
+  ## ============================================
+  
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+  ## Enfants HTML
+
+## ============================================
+## Spécialisations HTMLElement
+## ============================================
+
+Object:Element:HTMLElement:Head:
+  .tag = {"default": "head"}
+  .metaList = {"type": "list"}
+  .title = {}
+  .linkList = {"type": "list"}
+  .scriptList = {"type": "list"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Body:
+  .tag = {"default": "body"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Header:
+  .tag = {"default": "header"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Nav:
+  .tag = {"default": "nav"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Main:
+  .tag = {"default": "main"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Section:
+  .tag = {"default": "section"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Article:
+  .tag = {"default": "article"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Aside:
+  .tag = {"default": "aside"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Footer:
+  .tag = {"default": "footer"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Div:
+  .tag = {"default": "div"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Span:
+  .tag = {"default": "span"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Link:
+  .tag = {"default": "a"}
+  .href = {}
+  .target = {}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Button:
+  .tag = {"default": "button"}
+  .type = {"default": "button"}
+  .disabled = {"type": "boolean", "default": false}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Image:
+  .tag = {"default": "img"}
+  .src = {"required": true}
+  .alt = {"required": true}
+  .width = {}
+  .height = {}
+  .loading = {"default": "lazy"}
+
+Object:Element:HTMLElement:Text:
+  .tag = {"default": "p"}
+  .content = {}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Heading:
+  .tag = {"default": "h2"}
+  .level = {"default": 2}
+  .content = {}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:List:
+  .tag = {"default": "ul"}
+  .ordered = {"type": "boolean", "default": false}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:ListItem:
+  .tag = {"default": "li"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Form:
+  .tag = {"default": "form"}
+  .action = {}
+  .method = {"default": "post"}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}
+
+Object:Element:HTMLElement:Input:
+  .tag = {"default": "input"}
+  .type = {"default": "text"}
+  .name = {}
+  .placeholder = {}
+  .required = {"type": "boolean", "default": false}
+  .disabled = {"type": "boolean", "default": false}
+
+Object:Element:HTMLElement:Modal:
+  .tag = {"default": "dialog"}
+  .open = {"type": "boolean", "default": false}
+  .HTMLElementList = {"type": "list", "of": "Object:Element:HTMLElement"}

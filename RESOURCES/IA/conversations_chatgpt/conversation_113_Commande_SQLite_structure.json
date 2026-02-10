@@ -1,0 +1,28 @@
+{
+  "name": "Commande SQLite structure",
+  "created_at": "2024-01-05T16:00:00.000Z",
+  "tags": [],
+  "project": "",
+  "messages": [
+    {
+      "author": "user",
+      "message": "Donne-moi la ligne de commande pour récupérer la structure de la base de données /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db",
+      "order": 0
+    },
+    {
+      "author": "ChatGPT",
+      "message": "Voici la ligne de commande pour **afficher la structure de la base de données SQLite** située à ce chemin :\n\n```bash\nsqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".schema\"\n```\n\n---\n\n### 📌 Détails :\n- `sqlite3` : commande pour interagir avec une base de données SQLite.\n- `\".schema\"` : instruction interne à SQLite qui affiche les requêtes SQL de création de toutes les tables, index et vues de la base.\n\n---\n\n### 💡 Pour exporter la structure dans un fichier :\n```bash\nsqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".schema\" > structure.sql\n```\n\nSouhaites-tu également une commande pour inspecter le contenu des tables (`.tables`, `SELECT * FROM nom_table`, etc.) ?",
+      "order": 1
+    },
+    {
+      "author": "user",
+      "message": "Non, ça ne fonctionne pas. Donne-moi la ligne de commande pour faire un dump.",
+      "order": 2
+    },
+    {
+      "author": "ChatGPT",
+      "message": "Voici la ligne de commande correcte pour faire un **dump complet** de la base de données SQLite :\n\n```bash\nsqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".dump\"\n```\n\n---\n\n### 🔁 Pour **sauvegarder ce dump dans un fichier** :\n\n```bash\nsqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".dump\" > dump.sql\n```\n\n---\n\nCela inclura :\n- la structure (`CREATE TABLE`, `CREATE INDEX`, etc.),\n- le contenu (`INSERT INTO`),\n- et tout autre objet défini dans la base.\n\nSouhaites-tu une version limitée à la structure uniquement (sans les données) ?",
+      "order": 3
+    }
+  ]
+}

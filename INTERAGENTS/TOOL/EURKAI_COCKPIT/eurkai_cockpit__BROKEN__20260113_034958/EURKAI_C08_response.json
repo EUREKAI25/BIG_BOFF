@@ -1,0 +1,68 @@
+{
+  "preflight": {
+    "ready": true,
+    "certainty": 1.0,
+    "missing_info": [],
+    "assumptions": [
+      "C02, C03, C05, C06, C07 présents et fonctionnels",
+      "C04 (frontend) optionnel, détecté dynamiquement",
+      "Python >= 3.11 disponible sur la machine cible",
+      "Git optionnel pour backups"
+    ]
+  },
+  "role": "tester",
+  "mode": "deliverable",
+  "summary": "C08 Install/Validate ALL - Livré avec: (1) scripts/install_all.sh idempotent one-shot, (2) docs/INSTALL.md guide complet, (3) docs/VALIDATION_REPORT_TEMPLATE.md template de rapport, (4) tests/test_e2e_smoke.py tests E2E, (5) README.md mis à jour. Le script installe backend+frontend(si présent), exécute tests, génère rapport de validation. Supporte --target, --skip-tests, --dry-run.",
+  "files": [
+    {
+      "path": "scripts/install_all.sh",
+      "content": "# [voir fichier complet] - Script bash idempotent ~450 lignes"
+    },
+    {
+      "path": "docs/INSTALL.md",
+      "content": "# [voir fichier complet] - Guide installation ~200 lignes"
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_TEMPLATE.md",
+      "content": "# [voir fichier complet] - Template rapport ~150 lignes"
+    },
+    {
+      "path": "tests/test_e2e_smoke.py",
+      "content": "# [voir fichier complet] - Tests E2E pytest ~300 lignes"
+    },
+    {
+      "path": "README.md",
+      "content": "# [voir fichier complet] - Documentation principale ~350 lignes"
+    }
+  ],
+  "commands": [
+    "bash scripts/install_all.sh --help",
+    "bash scripts/install_all.sh --dry-run",
+    "bash scripts/install_all.sh --target ~/.eurkai_cockpit",
+    "python -m pytest tests/test_e2e_smoke.py -v"
+  ],
+  "acceptance": {
+    "passes_in_a_row": 2,
+    "max_iters": 8,
+    "criteria": [
+      "install_all.sh --help affiche l'aide",
+      "install_all.sh --dry-run complète sans erreur",
+      "install_all.sh crée ~/.eurkai_cockpit/ avec structure complète",
+      "Tests pytest passent (exit 0)",
+      "VALIDATION_REPORT.md généré automatiquement",
+      "Script idempotent (peut être relancé)"
+    ]
+  },
+  "versioning": {
+    "current_version": "1.0.0",
+    "bump_required": false,
+    "notes": "Pas de changement de contrat public. Ajout de scripts et docs uniquement (PATCH niveau)."
+  },
+  "deliverables_checklist": {
+    "scripts/install_all.sh": true,
+    "docs/INSTALL.md": true,
+    "docs/VALIDATION_REPORT_TEMPLATE.md": true,
+    "tests/test_e2e_smoke.py": true,
+    "README.md": true
+  }
+}

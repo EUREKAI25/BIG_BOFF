@@ -1,0 +1,18 @@
+{
+  "name": "Problème de cache Python",
+  "created_at": "2024-01-04T07:00:00.000Z",
+  "tags": [],
+  "project": "",
+  "messages": [
+    {
+      "author": "user",
+      "message": "J'ai un problème de cache. J'ai mis un print pour faire un test, c'est qu'il s'affichait. Je l'ai supprimé, mais il s'affiche encore. J'ai beau redémarrer et relancer, ça ne change rien. Qu'est-ce que je peux faire ?",
+      "order": 0
+    },
+    {
+      "author": "ChatGPT",
+      "message": "Si ton `print()` supprimé continue de s'afficher malgré un redémarrage, c’est presque sûr que tu fais face à un **problème de cache** au niveau du **compilateur, de l’environnement virtuel, ou du système d’import Python**. Voici les étapes pour le résoudre, dans l’ordre :\n\n---\n\n### ✅ Étapes à suivre\n\n#### 1. **Vérifie que tu modifies le bon fichier**\n- Parfois tu modifies une copie ou un lien symbolique. Assure-toi que :\n  - Tu modifies le bon fichier.\n  - Le chemin exact correspond à celui exécuté.\n  - Tu peux mettre temporairement un `print(\"CHECKPOINT\")` unique pour en être sûr.\n\n#### 2. **Supprime les fichiers `.pyc` et le répertoire `__pycache__`**\n- Ce sont les fichiers de cache Python compilés.\n```bash\nfind . -name \"__pycache__\" -exec rm -r {} + -o -name \"*.pyc\" -delete\n```\n\n#### 3. **Relance complètement l’environnement Python**\n- Si tu es dans un venv :\n```bash\ndeactivate\nsource venv/bin/activate  # ou le chemin de ton venv\n```\n\n- Tu peux aussi tout redémarrer avec :\n```bash\npython -m pip uninstall <ton_module>  # si c'est un module installé localement\n```\n\n#### 4. **Supprime les fichiers temporaires ou installés dans `site-packages`**\n- Si tu exécutes un script qui importe un module installé (`pip install -e .` ou autre), il se peut qu’un ancien fichier soit gardé en cache dans `site-packages`.\n\n#### 5. **Ajoute un test clair pour confirmer**\nDans le fichier en question, mets une ligne temporaire unique :\n```python\nprint(\"TEST UNIQUE 23789\")\n```\net regarde si ça s’affiche. Si ce n’est pas le cas, c’est que le fichier exécuté n’est pas celui que tu modifies.\n\n#### 6. **Redémarre ton interpréteur**\n- Si tu utilises Jupyter, redémarre le noyau.\n- Si tu utilises un IDE (comme VS Code ou PyCharm), ferme complètement le projet et rouvre-le.\n- En ligne de commande, quitte bien l’interpréteur Python (`exit()` ou `Ctrl-D`) puis relance le script.\n\n---\n\n### 🔍 Si rien ne marche\nDis-moi :\n- Comment tu exécutes ton script (`python fichier.py` ? un run depuis un IDE ?).\n- Si tu utilises un venv, Docker, ou autre.\n- Le chemin exact du fichier où était le `print`.\n\nEt je t’aide à tracer le chemin d’exécution réel.",
+      "order": 1
+    }
+  ]
+}

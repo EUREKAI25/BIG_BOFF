@@ -1,0 +1,227 @@
+# ============================================================================
+# EURKAI - GEVR Scenario: Template.Generate
+# scenario/template_generate.s.gev
+# Génère le HTML récursif depuis les objets PageTemplate
+# ============================================================================
+
+#region === SCENARIO PRINCIPAL ===
+
+Object:Scenario:GEVR:TemplateGenerate:
+  .name = V_TemplateGenerateName
+  .description = V_TemplateGenerateDescription
+  .version = "1.0.0"
+  
+  ## Étapes GEVR
+  .get = Object:Scenario:GEVR:TemplateGenerate:Get
+  .execute = Object:Scenario:GEVR:TemplateGenerate:Execute
+  .validate = Object:Scenario:GEVR:TemplateGenerate:Validate
+  .render = Object:Scenario:GEVR:TemplateGenerate:Render
+  
+  ## Input requis
+  .input = V_TemplateName
+  
+  ## Output produit
+  .output = V_GeneratedHtmlPath
+
+#endregion
+
+#region === GET - Récupération du template ===
+
+Object:Scenario:GEVR:TemplateGenerate:Get:
+  .name = "Get"
+  .description = "Récupère le template et toute sa structure récursive"
+  
+  ## Query principale
+  .query = V_PageTemplateRecursive
+  
+  ## Queries secondaires (chargées en parallèle)
+  .queries = [
+    V_HeadComplete,
+    V_BodyComplete,
+    V_NavComplete,
+    V_SidebarComplete,
+    V_SectionList,
+    V_FooterComplete,
+    V_ModalList,
+    V_ScriptEndList
+  ]
+  
+  ## Résolution des vecteurs
+  .resolveVectors = true
+  .depth = 15
+  
+  ## Output
+  .outputKey = "templateData"
+
+#endregion
+
+#region === EXECUTE - Génération HTML récursive ===
+
+Object:Scenario:GEVR:TemplateGenerate:Execute:
+  .name = "Execute"
+  .description = "Transforme la structure en HTML récursif"
+  
+  ## Méthode d'exécution
+  .method = Object:Function:Method:SecondaryMethod:RenderHtml
+  
+  ## Configuration du rendu
+  .config = {
+    "indent": 2,
+    "minify": false,
+    "bemNaming": true,
+    "ariaAttributes": true,
+    "dataAttributes": true
+  }
+  
+  ## Ordre de rendu (depth-first)
+  .renderOrder = [
+    "doctype",
+    "html",
+    "head",
+    "body"
+  ]
+  
+  ## Input (depuis Get)
+  .inputKey = "templateData"
+  
+  ## Output
+  .outputKey = "htmlContent"
+
+#endregion
+
+#region === VALIDATE - Vérification du HTML ===
+
+Object:Scenario:GEVR:TemplateGenerate:Validate:
+  .name = "Validate"
+  .description = "Vérifie la validité du HTML généré"
+  
+  ## Règles de validation
+  .rules = [
+    Object:Rule:Validation:HtmlStructure,
+    Object:Rule:Validation:HtmlTags,
+    Object:Rule:Validation:RequiredElements,
+    Object:Rule:Validation:AccessibilityBasic
+  ]
+  
+  ## Éléments requis
+  .requiredElements = [
+    "<!DOCTYPE html>",
+    "<html",
+    "<head>",
+    "<title>",
+    "<body>",
+    "</html>"
+  ]
+  
+  ## Seuil d'erreurs acceptables
+  .maxErrors = 0
+  .maxWarnings = 10
+  
+  ## Input
+  .inputKey = "htmlContent"
+  
+  ## Output
+  .outputKey = "validationResult"
+
+#endregion
+
+#region === RENDER - Écriture du fichier ===
+
+Object:Scenario:GEVR:TemplateGenerate:Render:
+  .name = "Render"
+  .description = "Écrit le fichier HTML et retourne le résultat"
+  
+  ## Destination
+  .outputDir = "output/"
+  .fileExtension = ".html"
+  .fileNameSource = "templateName"
+  
+  ## Options d'écriture
+  .overwrite = true
+  .createDir = true
+  .encoding = "utf-8"
+  
+  ## Actions post-écriture
+  .postActions = [
+    "logSuccess",
+    "updateManifest",
+    "notifyCockpit"
+  ]
+  
+  ## Input
+  .inputKey = "htmlContent"
+  .validationKey = "validationResult"
+  
+  ## Output final
+  .outputKey = "result"
+
+#endregion
+
+#region === MÉTHODE RENDERHTML ===
+
+Object:Function:Method:SecondaryMethod:RenderHtml:
+  .name = V_RenderHtmlName
+  .description = "Génère le HTML depuis une structure d'objets"
+  .scan = "pass"
+  
+  ## Signature
+  .input = "templateData"
+  .output = "htmlString"
+  
+  ## Hooks
+  .beforeHookList = [Log]
+  .afterHookList = [Log]
+
+#endregion
+
+#region === RÈGLES DE VALIDATION ===
+
+Object:Rule:Validation:HtmlStructure:
+  .name = "HtmlStructure"
+  .description = "Vérifie la structure HTML de base"
+  .target = "htmlContent"
+  .condition = "CONTAINS('<!DOCTYPE html>') AND CONTAINS('<html') AND CONTAINS('</html>')"
+  .message = "Structure HTML invalide: DOCTYPE, html ouvrante ou fermante manquante"
+  .severity = "error"
+
+Object:Rule:Validation:HtmlTags:
+  .name = "HtmlTags"
+  .description = "Vérifie que toutes les balises sont fermées"
+  .target = "htmlContent"
+  .condition = "BALANCED_TAGS()"
+  .message = "Balises HTML non équilibrées"
+  .severity = "error"
+
+Object:Rule:Validation:RequiredElements:
+  .name = "RequiredElements"
+  .description = "Vérifie les éléments obligatoires"
+  .target = "htmlContent"
+  .condition = "CONTAINS('<head>') AND CONTAINS('<title>') AND CONTAINS('<body>')"
+  .message = "Éléments requis manquants: head, title ou body"
+  .severity = "error"
+
+Object:Rule:Validation:AccessibilityBasic:
+  .name = "AccessibilityBasic"
+  .description = "Vérifie l'accessibilité de base"
+  .target = "htmlContent"
+  .condition = "CONTAINS('lang=') AND ALL_IMAGES_HAVE_ALT()"
+  .message = "Attribut lang manquant ou images sans alt"
+  .severity = "warning"
+
+#endregion
+
+#region === VECTEURS DU SCENARIO ===
+
+Object:Structure:Fractal:Vector:V_TemplateGenerateName:
+  .default = {"FR": "Générer Template", "EN": "Generate Template"}
+
+Object:Structure:Fractal:Vector:V_TemplateGenerateDescription:
+  .default = {"FR": "Génère le HTML récursif depuis un PageTemplate", "EN": "Generates recursive HTML from a PageTemplate"}
+
+Object:Structure:Fractal:Vector:V_RenderHtmlName:
+  .default = {"FR": "Rendu HTML", "EN": "Render HTML"}
+
+Object:Structure:Fractal:Vector:V_GeneratedHtmlPath:
+  .default = ""
+
+#endregion

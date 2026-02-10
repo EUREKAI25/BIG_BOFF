@@ -1,0 +1,90 @@
+# ============================================================================
+# EURKAI - Product
+# seed/Product.s.gev
+# Un Product est un livrable associé à un Project
+# ============================================================================
+
+## ============================================
+## Object:Product:
+## Base de tous les produits/livrables
+## ============================================
+
+Object:Product:
+  .name = {}
+  .description = {}
+  .version = {"default": "1.0.0"}
+  .status = {"default": "draft", "enum": ["draft", "dev", "staging", "production"]}
+  .project = {"type": "ref", "of": "Object:Project"}
+  ## Lien vers le projet parent
+  
+  .config = {"type": "ref", "of": "Object:Config:ProductConfig"}
+  ## Configuration du produit (URLs, routes, env)
+
+## ============================================
+## Object:Product:Website:
+## Site web avec arborescence de pages
+## ============================================
+
+Object:Product:Website:
+  .name = {}
+  .description = {}
+  .domain = {}
+  ## Domaine principal (ex: "www.eurkai.com")
+  
+  .config = {"type": "ref", "of": "Object:Config:ProductConfig"}
+  ## Configuration (baseUrl, apiBaseUrl, routes)
+  
+  .navigation = {"type": "ref", "of": "Object:Navigation"}
+  ## Configuration de navigation
+  
+  .navigationMode = {"default": "spa", "enum": ["server", "spa", "static"]}
+  ## Mode de navigation:
+  ## - server: Serveur ERK génère à la volée
+  ## - spa: Single Page App avec routeur JS
+  ## - static: Pré-génère tous les .html
+  
+  .defaultLang = {"default": "fr"}
+  ## Langue par défaut
+  
+  .navMenu = {"type": "ref", "of": "Object:Menu:NavMenu"}
+  ## Menu de navigation principal
+  
+  .footerMenu = {"type": "ref", "of": "Object:Menu:NavMenu"}
+  ## Menu du footer (optionnel)
+  
+  .homePage = {"type": "ref", "of": "Object:Interface:PageInterface:HTMLPage"}
+  ## Page d'accueil
+  
+  .pageList = {"type": "list", "of": "Object:Interface:PageInterface:HTMLPage"}
+  ## Liste de toutes les pages du site
+  
+  .template = {"type": "ref", "of": "Object:Template:PageTemplate"}
+  ## Template par défaut pour les pages
+
+## ============================================
+## Object:Product:MobileApp:
+## Application mobile
+## ============================================
+
+Object:Product:MobileApp:
+  .name = {}
+  .description = {}
+  .platform = {"enum": ["ios", "android", "both"]}
+  .bundleId = {}
+  ## ex: "com.eurkai.app"
+  
+  .config = {"type": "ref", "of": "Object:Config:ProductConfig"}
+
+## ============================================
+## Object:Product:API:
+## API REST/GraphQL
+## ============================================
+
+Object:Product:API:
+  .name = {}
+  .description = {}
+  .version = {"default": "v1"}
+  .type = {"default": "rest", "enum": ["rest", "graphql"]}
+  
+  .config = {"type": "ref", "of": "Object:Config:ProductConfig"}
+  ## Configuration (apiBaseUrl, routes, auth)

@@ -1,0 +1,290 @@
+/* =============================================================================
+   EUREKAI Cockpit — GEVR Runtime Styles
+   ============================================================================= */
+
+.gevr-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.gevr-header {
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gevr-header h2 {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.gevr-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.gevr-btn {
+  padding: 6px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 12px;
+  transition: all var(--transition-fast);
+}
+
+.gevr-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+.gevr-btn.primary {
+  background: var(--accent-owned);
+  border-color: var(--accent-owned);
+  color: var(--bg-primary);
+}
+
+.gevr-btn.primary:hover {
+  filter: brightness(1.1);
+}
+
+.gevr-btn.small {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.gevr-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.gevr-sidebar {
+  width: 280px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-subtle);
+  overflow: auto;
+  padding: 12px;
+}
+
+.gevr-section {
+  margin-bottom: 20px;
+}
+
+.gevr-section h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.gevr-file-list {
+  min-height: 60px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.gevr-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.gevr-file-name {
+  font-family: var(--font-mono);
+  color: var(--accent-owned);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.gevr-file-size {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.gevr-file-delete {
+  color: var(--accent-error);
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.gevr-file-delete:hover {
+  opacity: 1;
+}
+
+.gevr-file-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.gevr-file-actions button {
+  flex: 1;
+  padding: 4px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.gevr-file-actions button:hover {
+  background: var(--bg-hover);
+}
+
+.gevr-scenario-list {
+  max-height: 200px;
+  overflow: auto;
+}
+
+.gevr-scenario-item {
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.gevr-scenario-item:hover {
+  border-color: var(--accent-owned);
+}
+
+.gevr-scenario-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-inherited);
+}
+
+.gevr-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gevr-status > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.gevr-status span:first-child {
+  color: var(--text-muted);
+}
+
+.gevr-status span:last-child {
+  font-family: var(--font-mono);
+  color: var(--accent-owned);
+}
+
+.gevr-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gevr-log {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-primary);
+}
+
+.gevr-log-entry {
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.gevr-log-time {
+  color: var(--text-muted);
+  min-width: 70px;
+}
+
+.gevr-log-level {
+  min-width: 50px;
+  font-weight: 500;
+}
+
+.gevr-log-level.info { color: var(--accent-inherited); }
+.gevr-log-level.success { color: var(--accent-owned); }
+.gevr-log-level.warn { color: var(--accent-warning); }
+.gevr-log-level.error { color: var(--accent-error); }
+
+.gevr-log-message {
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.gevr-console {
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gevr-prompt {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-owned);
+  font-weight: 600;
+}
+
+.gevr-console input {
+  flex: 1;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.gevr-console input:focus {
+  border-color: var(--accent-owned);
+  outline: none;
+}
+
+.gevr-console button {
+  padding: 8px 12px;
+  background: var(--accent-owned);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--bg-primary);
+  font-weight: 500;
+}
+
+.gevr-empty {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px;
+}

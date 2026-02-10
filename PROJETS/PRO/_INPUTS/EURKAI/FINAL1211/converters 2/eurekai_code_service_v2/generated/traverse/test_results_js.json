@@ -1,0 +1,273 @@
+{
+  "test1_ancestors": [
+    "Object:Entity:Agent",
+    "Object:Entity",
+    "Object"
+  ],
+  "test2_descendants": [
+    "Object:Entity:Agent:AIAgent",
+    "Object:Entity:Agent:HumanAgent"
+  ],
+  "test3_collect_up": [
+    {
+      "obj": {
+        "name": "AIAgent",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "model",
+              "type": "string"
+            },
+            {
+              "name": "temperature",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity:Agent:AIAgent"
+    },
+    {
+      "obj": {
+        "name": "Agent",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "status",
+              "type": "enum"
+            },
+            {
+              "name": "capabilities",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity:Agent"
+    },
+    {
+      "obj": {
+        "name": "Entity",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "label",
+              "type": "string"
+            },
+            {
+              "name": "description",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity"
+    },
+    {
+      "obj": {
+        "name": "Object",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "createdAt",
+              "type": "date"
+            }
+          ]
+        }
+      },
+      "level": "Object"
+    }
+  ],
+  "test4_collect_down": [
+    {
+      "obj": {
+        "name": "Object",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "createdAt",
+              "type": "date"
+            }
+          ]
+        }
+      },
+      "level": "Object"
+    },
+    {
+      "obj": {
+        "name": "Entity",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "label",
+              "type": "string"
+            },
+            {
+              "name": "description",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity"
+    },
+    {
+      "obj": {
+        "name": "Agent",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "status",
+              "type": "enum"
+            },
+            {
+              "name": "capabilities",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity:Agent"
+    },
+    {
+      "obj": {
+        "name": "AIAgent",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "model",
+              "type": "string"
+            },
+            {
+              "name": "temperature",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity:Agent:AIAgent"
+    }
+  ],
+  "test5_inherited": [
+    {
+      "name": "status",
+      "type": "enum",
+      "source": "inherited",
+      "from": "Object:Entity:Agent"
+    },
+    {
+      "name": "capabilities",
+      "type": "array",
+      "source": "inherited",
+      "from": "Object:Entity:Agent"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "source": "inherited",
+      "from": "Object:Entity"
+    },
+    {
+      "name": "description",
+      "type": "text",
+      "source": "inherited",
+      "from": "Object:Entity"
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "source": "inherited",
+      "from": "Object"
+    },
+    {
+      "name": "createdAt",
+      "type": "date",
+      "source": "inherited",
+      "from": "Object"
+    }
+  ],
+  "test6_skipSelf": [
+    {
+      "obj": {
+        "name": "Entity",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "label",
+              "type": "string"
+            },
+            {
+              "name": "description",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity"
+    },
+    {
+      "obj": {
+        "name": "Object",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "createdAt",
+              "type": "date"
+            }
+          ]
+        }
+      },
+      "level": "Object"
+    }
+  ],
+  "test7_noRoot": [
+    {
+      "obj": {
+        "name": "Agent",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "status",
+              "type": "enum"
+            },
+            {
+              "name": "capabilities",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity:Agent"
+    },
+    {
+      "obj": {
+        "name": "Entity",
+        "attributeBundle": {
+          "owned": [
+            {
+              "name": "label",
+              "type": "string"
+            },
+            {
+              "name": "description",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "level": "Object:Entity"
+    }
+  ]
+}

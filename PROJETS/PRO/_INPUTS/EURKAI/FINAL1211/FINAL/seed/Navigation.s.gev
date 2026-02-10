@@ -1,0 +1,39 @@
+# ============================================================================
+# EURKAI Seed - Navigation
+# seed/Navigation.s.gev
+# ============================================================================
+
+Object:Navigation:
+  .name = V_NavigationName
+  .description = V_NavigationDescription
+  .mode = V_NavigationMode
+  .routeList = V_NavigationRouteList
+
+Object:Navigation:Mode:
+  .name = V_NavigationModeName
+  .description = V_NavigationModeDescription
+  .value = V_NavigationModeValue
+
+Object:Navigation:Mode:Server:
+  .name = "Server"
+  .description = V_NavigationServerDescription
+  .value = "server"
+  .requiresServer = true
+  .supportsSEO = true
+  .supportsSSR = true
+
+Object:Navigation:Mode:SPA:
+  .name = "SPA"
+  .description = V_NavigationSPADescription
+  .value = "spa"
+  .requiresServer = false
+  .supportsSEO = false
+  .supportsSSR = false
+
+Object:Navigation:Mode:Static:
+  .name = "Static"
+  .description = V_NavigationStaticDescription
+  .value = "static"
+  .requiresServer = false
+  .supportsSEO = true
+  .supportsSSR = false

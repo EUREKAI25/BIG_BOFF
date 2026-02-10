@@ -1,0 +1,53 @@
+{
+  "project": "INTERAGENTS",
+  "timezone": "Europe/Rome",
+  "created_utc": "2026-01-11T17:28:42Z",
+  "execution_model": {
+    "groups": [
+      {
+        "id": "G1",
+        "mode": "sequential",
+        "steps": [
+          "C01",
+          "C02"
+        ]
+      },
+      {
+        "id": "G2",
+        "mode": "sequential",
+        "steps": [
+          "C03",
+          "C04",
+          "C05"
+        ]
+      },
+      {
+        "id": "G3",
+        "mode": "parallel",
+        "steps": [
+          "C06",
+          "C07"
+        ]
+      }
+    ]
+  },
+  "contracts": {
+    "agent_response_json_only": true,
+    "preflight_mandatory": true,
+    "modes": [
+      "deliverable",
+      "fix",
+      "ask_orchestrator"
+    ],
+    "ask_policy": [
+      "Agents ask the orchestrator first.",
+      "Orchestrator answers only if 100% certain.",
+      "Escalate to user only if orchestrator is not 100% certain."
+    ],
+    "preflight_rules": [
+      "Every agent response MUST include preflight object.",
+      "Proceed only if preflight.ready=true and preflight.certainty==1.0",
+      "If missing info: mode=ask_orchestrator with 1–5 minimal questions"
+    ]
+  }
+}

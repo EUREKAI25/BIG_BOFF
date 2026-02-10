@@ -1,0 +1,65 @@
+{
+  "preflight": {
+    "ready": true,
+    "certainty": 1.0,
+    "missing_info": [],
+    "assumptions": []
+  },
+  "role": "coder",
+  "mode": "deliverable",
+  "summary": "Frontend cockpit minimal créé avec Vite + React. 6 écrans fonctionnels: Projects, Project Detail, Briefs, Brief Detail/Runs, Config, Secrets (copy gated), Modules Registry. Build et tests passent.",
+  "questions": [],
+  "files": [
+    "EURKAI_C04_frontend.zip contient:",
+    "- frontend/package.json",
+    "- frontend/vite.config.js",
+    "- frontend/index.html",
+    "- frontend/.env.example",
+    "- frontend/README.md",
+    "- frontend/src/main.jsx",
+    "- frontend/src/App.jsx (routing + layout)",
+    "- frontend/src/api/client.js (API client C03)",
+    "- frontend/src/styles/global.css",
+    "- frontend/src/pages/ProjectsPage.jsx",
+    "- frontend/src/pages/ProjectDetailPage.jsx",
+    "- frontend/src/pages/BriefsPage.jsx",
+    "- frontend/src/pages/BriefDetailPage.jsx",
+    "- frontend/src/pages/RunsPage.jsx",
+    "- frontend/src/pages/ConfigPage.jsx",
+    "- frontend/src/pages/SecretsPage.jsx",
+    "- frontend/src/pages/ModulesPage.jsx",
+    "- frontend/src/test/App.test.jsx",
+    "- frontend/public/favicon.svg"
+  ],
+  "commands": [
+    "cd frontend && npm install",
+    "cp .env.example .env",
+    "npm run build",
+    "npm test"
+  ],
+  "acceptance": {
+    "passes_in_a_row": 2,
+    "max_iters": 8
+  },
+  "notes": {
+    "screens_implemented": [
+      "1. /projects - Projects list/create ✓",
+      "2. /projects/:id - Project detail + briefs list/create ✓",
+      "3. /briefs - All briefs list ✓",
+      "4. /briefs/:id - Brief editor + run trigger + runs history ✓",
+      "5. /runs - Global runs history ✓",
+      "6. /config - System configuration ✓",
+      "7. /secrets - Secrets with copy gated UI (password per-copy) ✓",
+      "8. /modules - Module registry + compatibility checker + manifest view ✓"
+    ],
+    "api_integration": "All endpoints from C03 API.md integrated via frontend/src/api/client.js",
+    "design": "Industrial terminal aesthetic, dark theme, JetBrains Mono + Outfit fonts",
+    "testing": "5 tests passing (navigation, API mocking, smoke tests)",
+    "build": "Vite production build: 217KB JS, 9.6KB CSS"
+  },
+  "versioning": {
+    "version": "1.0.0",
+    "breaking_changes": false,
+    "migration_notes": null
+  }
+}

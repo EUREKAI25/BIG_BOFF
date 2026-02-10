@@ -1,0 +1,48 @@
+{
+  "preflight": {
+    "ready": true,
+    "certainty": 1.0,
+    "missing_info": [],
+    "assumptions": []
+  },
+  "role": "coder",
+  "mode": "deliverable",
+  "summary": "Backend API C03 complet. FastAPI server local-first avec CRUD pour projects/briefs/runs/config/secrets/modules. Auth token optionnel (X-EURKAI-TOKEN). Secrets chiffrés AES-256 via Fernet avec unlock/copy gated. Module registry avec vérification compatibilité i/o. 16 smoke tests OK (2 passes consécutives).",
+  "questions": [],
+  "files": [
+    {"path": "backend/__init__.py", "content": "/* See delivered files */"},
+    {"path": "backend/app.py", "content": "/* See delivered files */"},
+    {"path": "backend/models.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/__init__.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/deps.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_projects.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_briefs.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_runs.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_config.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_secrets.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_modules.py", "content": "/* See delivered files */"},
+    {"path": "backend/api/routes_backups.py", "content": "/* See delivered files */"},
+    {"path": "backend/storage/__init__.py", "content": "/* See delivered files */"},
+    {"path": "backend/storage/schema.sql", "content": "/* See delivered files */"},
+    {"path": "backend/storage/storage.py", "content": "/* See delivered files */"},
+    {"path": "backend/storage/migrations.py", "content": "/* See delivered files */"},
+    {"path": "tests/__init__.py", "content": "/* See delivered files */"},
+    {"path": "tests/test_api_smoke.py", "content": "/* See delivered files */"},
+    {"path": "docs/API.md", "content": "/* See delivered files */"},
+    {"path": "requirements.txt", "content": "/* See delivered files */"}
+  ],
+  "commands": [
+    "pip install fastapi uvicorn pydantic cryptography pytest httpx",
+    "python -m pytest tests/test_api_smoke.py -v",
+    "uvicorn backend.app:app --reload --host 127.0.0.1 --port 8000"
+  ],
+  "acceptance": {
+    "passes_in_a_row": 2,
+    "max_iters": 8
+  },
+  "versioning": {
+    "bump": "MINOR",
+    "new_version": "1.1.0",
+    "notes": "Added Backend API layer (C03). No breaking changes to C01/C02 contracts."
+  }
+}

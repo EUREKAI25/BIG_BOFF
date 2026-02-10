@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object Fractal Tool — Lineage Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Industrial/Terminal aesthetic */
+      --bg-primary: #0a0a0b;
+      --bg-secondary: #111113;
+      --bg-tertiary: #1a1a1d;
+      --bg-hover: #222226;
+      --bg-selected: #2a2a30;
+      
+      --border-subtle: #2a2a2e;
+      --border-medium: #3a3a40;
+      --border-accent: #4a4a52;
+      
+      --text-primary: #e8e8eb;
+      --text-secondary: #a0a0a8;
+      --text-muted: #606068;
+      
+      --accent-owned: #22c55e;
+      --accent-inherited: #3b82f6;
+      --accent-injected: #a855f7;
+      --accent-warning: #f59e0b;
+      --accent-error: #ef4444;
+      
+      --glow-owned: rgba(34, 197, 94, 0.15);
+      --glow-inherited: rgba(59, 130, 246, 0.15);
+      --glow-injected: rgba(168, 85, 247, 0.15);
+      
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'IBM Plex Sans', sans-serif;
+      
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      
+      --transition-fast: 120ms ease;
+      --transition-medium: 200ms ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+    }
+
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo::before {
+      content: '◈';
+      color: var(--accent-owned);
+      font-size: 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .breadcrumb-item {
+      padding: 4px 10px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .breadcrumb-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+    }
+
+    .breadcrumb-item.active {
+      background: var(--bg-selected);
+      color: var(--accent-owned);
+      border-color: var(--accent-owned);
+    }
+
+    .lineage-input-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .lineage-input {
+      width: 100%;
+      padding: 8px 14px 8px 36px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+
+    .lineage-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .lineage-input:focus {
+      border-color: var(--accent-owned);
+      box-shadow: 0 0 0 3px var(--glow-owned);
+    }
+
+    .lineage-input.invalid {
+      border-color: var(--accent-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .lineage-input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .lineage-input-hint {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      overflow: hidden;
+    }
+
+    /* Tree Panel */
+    .tree-panel {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-size: 14px;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-subtle);
+      color: var(--text-primary);
+    }
+
+    .tree-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .tree-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .tree-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .tree-container::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 4px;
+    }
+
+    .tree-container::-webkit-scrollbar-thumb:hover {
+      background: var(--border-medium);
+    }
+
+    /* Tree Node */
+    .tree-node {
+      user-select: none;
+    }
+
+    .tree-node-content {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+    }
+
+    .tree-node-content:hover {
+      background: var(--bg-hover);
+    }
+
+    .tree-node-content.selected {
+      background: var(--bg-selected);
+      border-color: var(--border-medium);
+    }
+
+    .tree-node-content.drag-over {
+      background: var(--glow-owned);
+      border-color: var(--accent-owned);
+    }
+
+    .tree-node-content.dragging {
+      opacity: 0.5;
+    }
+
+    .tree-toggle {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 10px;
+      flex-shrink: 0;
+      transition: transform var(--transition-fast);
+    }
+
+    .tree-toggle.expanded {
+      transform: rotate(90deg);
+    }
+
+    .tree-toggle.empty {
+      visibility: hidden;
+    }
+
+    .tree-icon {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .tree-icon.root { color: var(--accent-owned); }
+    .tree-icon.branch { color: var(--accent-inherited); }
+    .tree-icon.leaf { color: var(--text-muted); }
+
+    .tree-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-primary);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tree-node-content.to-finalize .tree-label {
+      color: var(--accent-warning);
+      font-style: italic;
+    }
+
+    .tree-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 1px 5px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      color: var(--text-muted);
+    }
+
+    .tree-children {
+      margin-left: 16px;
+      border-left: 1px solid var(--border-subtle);
+      padding-left: 4px;
+    }
+
+    /* Fractal Panel */
+    .fractal-panel {
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .fractal-header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+    }
+
+    .fractal-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fractal-title::before {
+      content: '⬡';
+      color: var(--accent-inherited);
+    }
+
+    .depth-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .depth-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .depth-slider {
+      width: 100px;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border-subtle);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .depth-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--accent-inherited);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+    }
+
+    .depth-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .depth-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-inherited);
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .fractal-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .fractal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .fractal-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .fractal-content::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 4px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 40px;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .empty-state-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      max-width: 300px;
+    }
+
+    /* Lineage Chain */
+    .lineage-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lineage-step {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .lineage-connector {
+      width: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .lineage-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-inherited);
+      border: 2px solid var(--bg-primary);
+      z-index: 1;
+      flex-shrink: 0;
+      margin-top: 10px;
+    }
+
+    .lineage-step.current .lineage-dot {
+      background: var(--accent-owned);
+      width: 14px;
+      height: 14px;
+      margin-top: 8px;
+    }
+
+    .lineage-step.to-finalize .lineage-dot {
+      background: var(--accent-warning);
+    }
+
+    .lineage-line {
+      flex: 1;
+      width: 2px;
+      background: var(--border-subtle);
+      margin-top: 4px;
+    }
+
+    .lineage-step:last-child .lineage-line {
+      display: none;
+    }
+
+    .lineage-card {
+      flex: 1;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .lineage-step.current .lineage-card {
+      border-color: var(--accent-owned);
+      box-shadow: 0 0 0 3px var(--glow-owned);
+    }
+
+    .lineage-step.to-finalize .lineage-card {
+      border-color: var(--accent-warning);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .lineage-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .lineage-card-name {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .lineage-card-lineage {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .lineage-card-elements {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .element-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .element-group-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      width: 70px;
+      flex-shrink: 0;
+    }
+
+    .element-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .element-tag.owned {
+      background: var(--glow-owned);
+      color: var(--accent-owned);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .element-tag.inherited {
+      background: var(--glow-inherited);
+      color: var(--accent-inherited);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .element-tag.injected {
+      background: var(--glow-injected);
+      color: var(--accent-injected);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .element-tag-source {
+      font-size: 9px;
+      opacity: 0.7;
+    }
+
+    /* Depth Limit Notice */
+    .depth-limit-notice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-md);
+      margin-top: 16px;
+    }
+
+    .depth-limit-icon {
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .depth-limit-text {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .depth-limit-action {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 12px;
+      background: var(--bg-hover);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .depth-limit-action:hover {
+      background: var(--bg-selected);
+      border-color: var(--accent-inherited);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 16px;
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.owned { background: var(--accent-owned); }
+    .legend-dot.inherited { background: var(--accent-inherited); }
+    .legend-dot.injected { background: var(--accent-injected); }
+    .legend-dot.to-finalize { background: var(--accent-warning); }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+    }
+
+    .toast {
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.success {
+      border-color: var(--accent-owned);
+    }
+
+    .toast.error {
+      border-color: var(--accent-error);
+    }
+
+    .toast.warning {
+      border-color: var(--accent-warning);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .loading {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">Object Fractal Tool</div>
+        <div class="breadcrumb" id="breadcrumb">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="lineage-input-wrapper">
+        <span class="lineage-input-icon">⌘</span>
+        <input 
+          type="text" 
+          class="lineage-input" 
+          id="lineageInput"
+          placeholder="Saisir un lineage... (ex: Entity:Agent:AIAgent)"
+          spellcheck="false"
+          autocomplete="off"
+        >
+        <span class="lineage-input-hint">Enter ↵</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Tree Panel -->
+      <aside class="tree-panel">
+        <div class="panel-header">
+          <span class="panel-title">ObjectTypes</span>
+          <div class="panel-actions">
+            <button class="icon-btn" title="Tout replier" onclick="collapseAll()">−</button>
+            <button class="icon-btn" title="Tout déplier" onclick="expandAll()">+</button>
+          </div>
+        </div>
+        <div class="tree-container" id="treeContainer">
+          <!-- Tree rendered here -->
+        </div>
+      </aside>
+
+      <!-- Fractal Panel -->
+      <section class="fractal-panel">
+        <div class="fractal-header">
+          <div class="fractal-title" id="fractalTitle">
+            Sélectionner un ObjectType
+          </div>
+          <div class="depth-control">
+            <span class="depth-label">Profondeur</span>
+            <input 
+              type="range" 
+              class="depth-slider" 
+              id="depthSlider"
+              min="1" 
+              max="10" 
+              value="5"
+            >
+            <span class="depth-value" id="depthValue">5</span>
+          </div>
+        </div>
+        <div class="fractal-content" id="fractalContent">
+          <div class="empty-state">
+            <div class="empty-state-icon">◇</div>
+            <div class="empty-state-text">
+              Sélectionnez un ObjectType dans l'arbre pour voir sa vue fractale, ou saisissez un nouveau lineage dans la barre de recherche.
+            </div>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item">
+            <span class="legend-dot owned"></span>
+            owned
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot inherited"></span>
+            inherited
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot injected"></span>
+            injected
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot to-finalize"></span>
+            toFinalize
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // =============================================================================
+    // CONFIGURATION & CONSTANTS
+    // =============================================================================
+    
+    const LINEAGE_REGEX = /^([A-Z][A-Za-z0-9]*)(:[A-Z][A-Za-z0-9]*)*$/;
+    const CANONICAL_RELATIONS = ['inherits_from', 'depends_on', 'related_to'];
+    const PRIORITY_ORDER = ['owned', 'injected', 'inherited'];
+
+    // =============================================================================
+    // DATA STORE (In-Memory JSON)
+    // =============================================================================
+    
+    let store = {
+      objectTypes: {},
+      lineageIndex: {
+        index: {},
+        roots: []
+      },
+      selectedLineage: null,
+      expandedNodes: new Set(),
+      maxDepth: 5
+    };
+
+    // Initial sample data
+    const INITIAL_DATA = {
+      objectTypes: {
+        'uuid-core': {
+          id: 'uuid-core',
+          lineage: 'Core',
+          name: 'Core',
+          parent: null,
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'version', type: 'string', source: 'owned' },
+                { name: 'priority', type: 'string', source: 'owned', default: 'natural' }
+              ]
+            },
+            RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+            MethodList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'initialize', signature: 'initialize(): void', source: 'owned' }
+              ]
+            },
+            RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+          }
+        },
+        'uuid-entity': {
+          id: 'uuid-entity',
+          lineage: 'Entity',
+          name: 'Entity',
+          parent: null,
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'id', type: 'uuid', source: 'owned' },
+                { name: 'name', type: 'string', source: 'owned' },
+                { name: 'createdAt', type: 'datetime', source: 'owned' }
+              ]
+            },
+            RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+            MethodList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'create', signature: 'create(data): Entity', source: 'owned' },
+                { name: 'update', signature: 'update(data): Entity', source: 'owned' }
+              ]
+            },
+            RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+          }
+        },
+        'uuid-agent': {
+          id: 'uuid-agent',
+          lineage: 'Entity:Agent',
+          name: 'Agent',
+          parent: 'Entity',
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [
+                { name: 'id', type: 'uuid', source: 'inherited', from: 'Entity' },
+                { name: 'name', type: 'string', source: 'inherited', from: 'Entity' },
+                { name: 'createdAt', type: 'datetime', source: 'inherited', from: 'Entity' }
+              ],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'status', type: 'enum', source: 'owned' },
+                { name: 'capabilities', type: 'array', source: 'owned' }
+              ]
+            },
+            RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+            MethodList: {
+              inherited_bundle: [
+                { name: 'create', signature: 'create(data): Entity', source: 'inherited', from: 'Entity' },
+                { name: 'update', signature: 'update(data): Entity', source: 'inherited', from: 'Entity' }
+              ],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'execute', signature: 'execute(task): Result', source: 'owned' }
+              ]
+            },
+            RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+          }
+        },
+        'uuid-ai-agent': {
+          id: 'uuid-ai-agent',
+          lineage: 'Entity:Agent:AIAgent',
+          name: 'AIAgent',
+          parent: 'Entity:Agent',
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [
+                { name: 'id', type: 'uuid', source: 'inherited', from: 'Entity' },
+                { name: 'name', type: 'string', source: 'inherited', from: 'Entity' },
+                { name: 'createdAt', type: 'datetime', source: 'inherited', from: 'Entity' },
+                { name: 'status', type: 'enum', source: 'inherited', from: 'Entity:Agent' },
+                { name: 'capabilities', type: 'array', source: 'inherited', from: 'Entity:Agent' }
+              ],
+              injected_bundle: [
+                { name: 'logLevel', type: 'string', source: 'injected', from: 'Provider:Logging' }
+              ],
+              owned_bundle: [
+                { name: 'model', type: 'string', source: 'owned' },
+                { name: 'temperature', type: 'float', source: 'owned' }
+              ]
+            },
+            RelationList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { type: 'depends_on', target: 'Core:Config', source: 'owned' }
+              ]
+            },
+            MethodList: {
+              inherited_bundle: [
+                { name: 'create', signature: 'create(data): Entity', source: 'inherited', from: 'Entity' },
+                { name: 'update', signature: 'update(data): Entity', source: 'inherited', from: 'Entity' },
+                { name: 'execute', signature: 'execute(task): Result', source: 'inherited', from: 'Entity:Agent' }
+              ],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'prompt', signature: 'prompt(input): Response', source: 'owned' },
+                { name: 'stream', signature: 'stream(input): AsyncIterator', source: 'owned' }
+              ]
+            },
+            RuleList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { id: 'rule-001', type: 'ERK', condition: 'this.model != null', action: 'enable', target: 'this.prompt', source: 'owned' }
+              ]
+            }
+          }
+        },
+        'uuid-human-agent': {
+          id: 'uuid-human-agent',
+          lineage: 'Entity:Agent:HumanAgent',
+          name: 'HumanAgent',
+          parent: 'Entity:Agent',
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [
+                { name: 'id', type: 'uuid', source: 'inherited', from: 'Entity' },
+                { name: 'name', type: 'string', source: 'inherited', from: 'Entity' },
+                { name: 'status', type: 'enum', source: 'inherited', from: 'Entity:Agent' }
+              ],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'email', type: 'string', source: 'owned' },
+                { name: 'role', type: 'string', source: 'owned' }
+              ]
+            },
+            RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+            MethodList: {
+              inherited_bundle: [
+                { name: 'execute', signature: 'execute(task): Result', source: 'inherited', from: 'Entity:Agent' }
+              ],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'assign', signature: 'assign(task): void', source: 'owned' }
+              ]
+            },
+            RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+          }
+        },
+        'uuid-resource': {
+          id: 'uuid-resource',
+          lineage: 'Entity:Resource',
+          name: 'Resource',
+          parent: 'Entity',
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [
+                { name: 'id', type: 'uuid', source: 'inherited', from: 'Entity' },
+                { name: 'name', type: 'string', source: 'inherited', from: 'Entity' }
+              ],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'url', type: 'string', source: 'owned' },
+                { name: 'mimeType', type: 'string', source: 'owned' }
+              ]
+            },
+            RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+            MethodList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'fetch', signature: 'fetch(): Buffer', source: 'owned' }
+              ]
+            },
+            RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+          }
+        },
+        'uuid-schema': {
+          id: 'uuid-schema',
+          lineage: 'Schema',
+          name: 'Schema',
+          parent: null,
+          toFinalize: false,
+          elementList: {
+            AttributeList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'appliesTo', type: 'pattern', source: 'owned' },
+                { name: 'constraints', type: 'object', source: 'owned' }
+              ]
+            },
+            RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+            MethodList: {
+              inherited_bundle: [],
+              injected_bundle: [],
+              owned_bundle: [
+                { name: 'validate', signature: 'validate(object): boolean', source: 'owned' }
+              ]
+            },
+            RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+          }
+        }
+      }
+    };
+
+    // =============================================================================
+    // LINEAGE UTILITIES
+    // =============================================================================
+    
+    /**
+     * Validates a lineage string against the canonical regex
+     */
+    function validateLineage(lineage) {
+      return LINEAGE_REGEX.test(lineage);
+    }
+
+    /**
+     * Parses a lineage string into segments
+     */
+    function parseLineage(lineage) {
+      if (!validateLineage(lineage)) return null;
+      return lineage.split(':');
+    }
+
+    /**
+     * Gets parent lineage from a full lineage
+     */
+    function getParentLineage(lineage) {
+      const segments = parseLineage(lineage);
+      if (!segments || segments.length <= 1) return null;
+      return segments.slice(0, -1).join(':');
+    }
+
+    /**
+     * Gets the name (last segment) from a lineage
+     */
+    function getNameFromLineage(lineage) {
+      const segments = parseLineage(lineage);
+      if (!segments) return null;
+      return segments[segments.length - 1];
+    }
+
+    /**
+     * Builds the lineage index from objectTypes
+     */
+    function buildLineageIndex() {
+      const index = {};
+      const roots = [];
+
+      // First pass: create index entries
+      Object.values(store.objectTypes).forEach(obj => {
+        const segments = parseLineage(obj.lineage);
+        const depth = segments ? segments.length : 0;
+        
+        index[obj.lineage] = {
+          id: obj.id,
+          parent: obj.parent,
+          children: [],
+          depth: depth,
+          toFinalize: obj.toFinalize || false
+        };
+
+        if (!obj.parent) {
+          roots.push(obj.lineage);
+        }
+      });
+
+      // Second pass: populate children
+      Object.values(store.objectTypes).forEach(obj => {
+        if (obj.parent && index[obj.parent]) {
+          index[obj.parent].children.push(obj.lineage);
+        }
+      });
+
+      // Sort children alphabetically
+      Object.values(index).forEach(entry => {
+        entry.children.sort((a, b) => a.localeCompare(b));
+      });
+
+      // Sort roots alphabetically
+      roots.sort((a, b) => a.localeCompare(b));
+
+      store.lineageIndex = { index, roots };
+    }
+
+    /**
+     * Gets all ancestors of a lineage (from root to parent)
+     */
+    function getAncestors(lineage) {
+      const ancestors = [];
+      const segments = parseLineage(lineage);
+      if (!segments) return ancestors;
+
+      for (let i = 1; i < segments.length; i++) {
+        ancestors.push(segments.slice(0, i).join(':'));
+      }
+      return ancestors;
+    }
+
+    /**
+     * Gets all descendants of a lineage
+     */
+    function getDescendants(lineage) {
+      const descendants = [];
+      const entry = store.lineageIndex.index[lineage];
+      if (!entry) return descendants;
+
+      function collectChildren(lin) {
+        const e = store.lineageIndex.index[lin];
+        if (e && e.children) {
+          e.children.forEach(child => {
+            descendants.push(child);
+            collectChildren(child);
+          });
+        }
+      }
+      collectChildren(lineage);
+      return descendants;
+    }
+
+    // =============================================================================
+    // OBJECT TYPE MANAGEMENT
+    // =============================================================================
+    
+    /**
+     * Creates a new ObjectType from a lineage
+     */
+    function createObjectType(lineage, toFinalize = false) {
+      if (!validateLineage(lineage)) {
+        showToast('Lineage invalide: ' + lineage, 'error');
+        return null;
+      }
+
+      if (store.objectTypes[lineage]) {
+        return store.objectTypes[lineage];
+      }
+
+      const id = 'uuid-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+      const name = getNameFromLineage(lineage);
+      const parent = getParentLineage(lineage);
+
+      const newObj = {
+        id,
+        lineage,
+        name,
+        parent,
+        toFinalize,
+        elementList: {
+          AttributeList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+          RelationList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+          MethodList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] },
+          RuleList: { inherited_bundle: [], injected_bundle: [], owned_bundle: [] }
+        }
+      };
+
+      store.objectTypes[id] = newObj;
+      return newObj;
+    }
+
+    /**
+     * Creates ObjectType and all missing ancestors from a lineage
+     */
+    function createLineageWithAncestors(lineage) {
+      if (!validateLineage(lineage)) {
+        showToast('Lineage invalide: ' + lineage, 'error');
+        return null;
+      }
+
+      const segments = parseLineage(lineage);
+      const created = [];
+
+      for (let i = 1; i <= segments.length; i++) {
+        const partialLineage = segments.slice(0, i).join(':');
+        const exists = Object.values(store.objectTypes).find(o => o.lineage === partialLineage);
+        
+        if (!exists) {
+          const isLast = i === segments.length;
+          const obj = createObjectType(partialLineage, true);
+          if (obj) created.push(obj);
+        }
+      }
+
+      buildLineageIndex();
+      return created;
+    }
+
+    /**
+     * Updates an ObjectType's parent (re-parenting)
+     */
+    function reparentObjectType(lineage, newParentLineage) {
+      const obj = Object.values(store.objectTypes).find(o => o.lineage === lineage);
+      if (!obj) return false;
+
+      // Validate new parent exists (or is null for root)
+      if (newParentLineage && !Object.values(store.objectTypes).find(o => o.lineage === newParentLineage)) {
+        showToast('Parent cible introuvable: ' + newParentLineage, 'error');
+        return false;
+      }
+
+      // Prevent circular reference
+      if (newParentLineage && (newParentLineage === lineage || newParentLineage.startsWith(lineage + ':'))) {
+        showToast('Référence circulaire détectée', 'error');
+        return false;
+      }
+
+      const oldLineage = obj.lineage;
+      const name = obj.name;
+      const newLineage = newParentLineage ? `${newParentLineage}:${name}` : name;
+
+      // Validate new lineage
+      if (!validateLineage(newLineage)) {
+        showToast('Nouveau lineage invalide: ' + newLineage, 'error');
+        return false;
+      }
+
+      // Check for conflicts
+      if (newLineage !== oldLineage && Object.values(store.objectTypes).find(o => o.lineage === newLineage)) {
+        showToast('Un ObjectType existe déjà avec ce lineage: ' + newLineage, 'error');
+        return false;
+      }
+
+      // Update the object and all its descendants
+      const descendants = getDescendants(oldLineage);
+      
+      // Update main object
+      obj.lineage = newLineage;
+      obj.parent = newParentLineage;
+
+      // Update all descendants
+      descendants.forEach(descLineage => {
+        const descObj = Object.values(store.objectTypes).find(o => o.lineage === descLineage);
+        if (descObj) {
+          descObj.lineage = descLineage.replace(oldLineage, newLineage);
+          descObj.parent = descObj.lineage.includes(':') 
+            ? descObj.lineage.split(':').slice(0, -1).join(':')
+            : null;
+        }
+      });
+
+      buildLineageIndex();
+      showToast(`Déplacé: ${oldLineage} → ${newLineage}`, 'success');
+      return true;
+    }
+
+    /**
+     * Gets an ObjectType by lineage
+     */
+    function getObjectTypeByLineage(lineage) {
+      return Object.values(store.objectTypes).find(o => o.lineage === lineage);
+    }
+
+    // =============================================================================
+    // XFRACTAL COMPUTATION
+    // =============================================================================
+    
+    /**
+     * Computes XFractal for a given lineage with depth limit
+     */
+    function computeXFractal(lineage, maxDepth = 5) {
+      const obj = getObjectTypeByLineage(lineage);
+      if (!obj) return null;
+
+      const ancestors = getAncestors(lineage);
+      const chain = [...ancestors, lineage].slice(-(maxDepth));
+      
+      const result = {
+        lineage,
+        chain: [],
+        depthLimited: ancestors.length + 1 > maxDepth
+      };
+
+      chain.forEach((lin, idx) => {
+        const o = getObjectTypeByLineage(lin);
+        if (!o) return;
+
+        const isCurrentObject = lin === lineage;
+        
+        result.chain.push({
+          lineage: lin,
+          name: o.name,
+          isCurrent: isCurrentObject,
+          toFinalize: o.toFinalize,
+          elements: {
+            attributes: collectElements(o.elementList.AttributeList, isCurrentObject),
+            methods: collectElements(o.elementList.MethodList, isCurrentObject),
+            relations: o.elementList.RelationList.owned_bundle,
+            rules: o.elementList.RuleList.owned_bundle
+          }
+        });
+      });
+
+      return result;
+    }
+
+    /**
+     * Collects elements from bundles with priority resolution
+     */
+    function collectElements(elementList, showAll = false) {
+      const elements = [];
+      
+      // If showing all (for current object), include all bundles
+      if (showAll) {
+        elementList.owned_bundle.forEach(e => elements.push({ ...e, source: 'owned' }));
+        elementList.injected_bundle.forEach(e => elements.push({ ...e, source: 'injected' }));
+        elementList.inherited_bundle.forEach(e => elements.push({ ...e, source: 'inherited' }));
+      } else {
+        // For ancestors, only show owned
+        elementList.owned_bundle.forEach(e => elements.push({ ...e, source: 'owned' }));
+      }
+
+      return elements;
+    }
+
+    // =============================================================================
+    // TREE RENDERING
+    // =============================================================================
+    
+    /**
+     * Renders the complete tree
+     */
+    function renderTree() {
+      const container = document.getElementById('treeContainer');
+      container.innerHTML = '';
+
+      store.lineageIndex.roots.forEach(rootLineage => {
+        const node = renderTreeNode(rootLineage);
+        if (node) container.appendChild(node);
+      });
+    }
+
+    /**
+     * Renders a single tree node and its children
+     */
+    function renderTreeNode(lineage) {
+      const entry = store.lineageIndex.index[lineage];
+      const obj = getObjectTypeByLineage(lineage);
+      if (!entry || !obj) return null;
+
+      const node = document.createElement('div');
+      node.className = 'tree-node';
+      node.dataset.lineage = lineage;
+
+      const hasChildren = entry.children.length > 0;
+      const isExpanded = store.expandedNodes.has(lineage);
+      const isSelected = store.selectedLineage === lineage;
+      const isRoot = !obj.parent;
+
+      // Node content
+      const content = document.createElement('div');
+      content.className = 'tree-node-content';
+      if (isSelected) content.classList.add('selected');
+      if (obj.toFinalize) content.classList.add('to-finalize');
+
+      // Make draggable
+      content.draggable = true;
+      content.addEventListener('dragstart', (e) => handleDragStart(e, lineage));
+      content.addEventListener('dragend', handleDragEnd);
+      content.addEventListener('dragover', (e) => handleDragOver(e, content));
+      content.addEventListener('dragleave', (e) => handleDragLeave(e, content));
+      content.addEventListener('drop', (e) => handleDrop(e, lineage, content));
+
+      // Toggle
+      const toggle = document.createElement('span');
+      toggle.className = 'tree-toggle' + (isExpanded ? ' expanded' : '') + (!hasChildren ? ' empty' : '');
+      toggle.textContent = '▶';
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleNode(lineage);
+      });
+
+      // Icon
+      const icon = document.createElement('span');
+      icon.className = 'tree-icon ' + (isRoot ? 'root' : hasChildren ? 'branch' : 'leaf');
+      icon.textContent = isRoot ? '◈' : hasChildren ? '◇' : '○';
+
+      // Label
+      const label = document.createElement('span');
+      label.className = 'tree-label';
+      label.textContent = obj.name;
+
+      // Badge (child count)
+      if (hasChildren) {
+        const badge = document.createElement('span');
+        badge.className = 'tree-badge';
+        badge.textContent = entry.children.length;
+        content.appendChild(toggle);
+        content.appendChild(icon);
+        content.appendChild(label);
+        content.appendChild(badge);
+      } else {
+        content.appendChild(toggle);
+        content.appendChild(icon);
+        content.appendChild(label);
+      }
+
+      content.addEventListener('click', () => selectNode(lineage));
+
+      node.appendChild(content);
+
+      // Children
+      if (hasChildren && isExpanded) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'tree-children';
+        entry.children.forEach(childLineage => {
+          const childNode = renderTreeNode(childLineage);
+          if (childNode) childrenContainer.appendChild(childNode);
+        });
+        node.appendChild(childrenContainer);
+      }
+
+      return node;
+    }
+
+    /**
+     * Toggles a node's expanded state
+     */
+    function toggleNode(lineage) {
+      if (store.expandedNodes.has(lineage)) {
+        store.expandedNodes.delete(lineage);
+      } else {
+        store.expandedNodes.add(lineage);
+      }
+      renderTree();
+    }
+
+    /**
+     * Expands all nodes
+     */
+    function expandAll() {
+      Object.keys(store.lineageIndex.index).forEach(lineage => {
+        store.expandedNodes.add(lineage);
+      });
+      renderTree();
+    }
+
+    /**
+     * Collapses all nodes
+     */
+    function collapseAll() {
+      store.expandedNodes.clear();
+      renderTree();
+    }
+
+    /**
+     * Selects a node
+     */
+    function selectNode(lineage) {
+      store.selectedLineage = lineage;
+      
+      // Expand ancestors to make selection visible
+      const ancestors = getAncestors(lineage);
+      ancestors.forEach(a => store.expandedNodes.add(a));
+      
+      renderTree();
+      renderFractal();
+      updateBreadcrumb();
+    }
+
+    // =============================================================================
+    // DRAG & DROP
+    // =============================================================================
+    
+    let draggedLineage = null;
+
+    function handleDragStart(e, lineage) {
+      draggedLineage = lineage;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', lineage);
+      e.target.classList.add('dragging');
+    }
+
+    function handleDragEnd(e) {
+      draggedLineage = null;
+      e.target.classList.remove('dragging');
+      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    }
+
+    function handleDragOver(e, content) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      content.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e, content) {
+      content.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, targetLineage, content) {
+      e.preventDefault();
+      content.classList.remove('drag-over');
+
+      if (!draggedLineage || draggedLineage === targetLineage) return;
+
+      // Don't allow dropping onto a descendant
+      if (targetLineage.startsWith(draggedLineage + ':')) {
+        showToast('Impossible de déplacer un objet sous son propre descendant', 'error');
+        return;
+      }
+
+      // Perform reparenting
+      if (reparentObjectType(draggedLineage, targetLineage)) {
+        renderTree();
+        if (store.selectedLineage && store.selectedLineage.startsWith(draggedLineage)) {
+          // Update selection if it was affected
+          const obj = Object.values(store.objectTypes).find(o => o.name === getNameFromLineage(draggedLineage));
+          if (obj) {
+            store.selectedLineage = obj.lineage;
+          }
+        }
+        renderFractal();
+      }
+    }
+
+    // =============================================================================
+    // FRACTAL RENDERING
+    // =============================================================================
+    
+    function renderFractal() {
+      const container = document.getElementById('fractalContent');
+      const title = document.getElementById('fractalTitle');
+
+      if (!store.selectedLineage) {
+        title.textContent = 'Sélectionner un ObjectType';
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">◇</div>
+            <div class="empty-state-text">
+              Sélectionnez un ObjectType dans l'arbre pour voir sa vue fractale.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const fractal = computeXFractal(store.selectedLineage, store.maxDepth);
+      if (!fractal) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-text">ObjectType non trouvé</div></div>';
+        return;
+      }
+
+      title.textContent = fractal.lineage;
+
+      let html = '<div class="lineage-chain">';
+
+      fractal.chain.forEach((step, idx) => {
+        const stepClass = step.isCurrent ? 'current' : (step.toFinalize ? 'to-finalize' : '');
+        
+        html += `
+          <div class="lineage-step ${stepClass}">
+            <div class="lineage-connector">
+              <div class="lineage-dot"></div>
+              <div class="lineage-line"></div>
+            </div>
+            <div class="lineage-card">
+              <div class="lineage-card-header">
+                <span class="lineage-card-name">${step.name}</span>
+                <span class="lineage-card-lineage">${step.lineage}</span>
+              </div>
+              <div class="lineage-card-elements">
+                ${renderElementGroup('Attrs', step.elements.attributes)}
+                ${renderElementGroup('Methods', step.elements.methods)}
+                ${step.elements.relations.length ? renderRelationGroup(step.elements.relations) : ''}
+                ${step.elements.rules.length ? renderRuleGroup(step.elements.rules) : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      if (fractal.depthLimited) {
+        html += `
+          <div class="depth-limit-notice">
+            <span class="depth-limit-icon">⋯</span>
+            <span class="depth-limit-text">
+              Vue limitée à ${store.maxDepth} niveaux. ${getAncestors(store.selectedLineage).length + 1 - store.maxDepth} ancêtre(s) masqué(s).
+            </span>
+            <button class="depth-limit-action" onclick="increaseDepth()">
+              Voir plus
+            </button>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderElementGroup(label, elements) {
+      if (!elements || elements.length === 0) return '';
+
+      const tags = elements.map(el => {
+        const name = el.name || el.signature?.split('(')[0] || 'unnamed';
+        const sourceClass = el.source || 'owned';
+        const fromInfo = el.from ? `<span class="element-tag-source">← ${el.from}</span>` : '';
+        return `<span class="element-tag ${sourceClass}">${name}${fromInfo}</span>`;
+      }).join('');
+
+      return `
+        <div class="element-group">
+          <span class="element-group-label">${label}</span>
+          ${tags}
+        </div>
+      `;
+    }
+
+    function renderRelationGroup(relations) {
+      const tags = relations.map(rel => {
+        return `<span class="element-tag owned">${rel.type} → ${rel.target}</span>`;
+      }).join('');
+
+      return `
+        <div class="element-group">
+          <span class="element-group-label">Rels</span>
+          ${tags}
+        </div>
+      `;
+    }
+
+    function renderRuleGroup(rules) {
+      const tags = rules.map(rule => {
+        return `<span class="element-tag owned">${rule.action}: ${rule.target}</span>`;
+      }).join('');
+
+      return `
+        <div class="element-group">
+          <span class="element-group-label">Rules</span>
+          ${tags}
+        </div>
+      `;
+    }
+
+    function increaseDepth() {
+      store.maxDepth = Math.min(store.maxDepth + 3, 20);
+      document.getElementById('depthSlider').value = store.maxDepth;
+      document.getElementById('depthValue').textContent = store.maxDepth;
+      renderFractal();
+    }
+
+    // =============================================================================
+    // BREADCRUMB
+    // =============================================================================
+    
+    function updateBreadcrumb() {
+      const container = document.getElementById('breadcrumb');
+      const roots = store.lineageIndex.roots;
+
+      container.innerHTML = roots.map(root => {
+        const isActive = store.selectedLineage && (store.selectedLineage === root || store.selectedLineage.startsWith(root + ':'));
+        return `<span class="breadcrumb-item ${isActive ? 'active' : ''}" onclick="selectNode('${root}')">${root}</span>`;
+      }).join('');
+    }
+
+    // =============================================================================
+    // LINEAGE INPUT
+    // =============================================================================
+    
+    function setupLineageInput() {
+      const input = document.getElementById('lineageInput');
+
+      input.addEventListener('input', (e) => {
+        const value = e.target.value.trim();
+        if (value && !validateLineage(value)) {
+          input.classList.add('invalid');
+        } else {
+          input.classList.remove('invalid');
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const value = input.value.trim();
+          if (!value) return;
+
+          if (!validateLineage(value)) {
+            showToast('Lineage invalide. Format attendu: Parent:Child:GrandChild', 'error');
+            return;
+          }
+
+          // Check if already exists
+          const existing = getObjectTypeByLineage(value);
+          if (existing) {
+            selectNode(value);
+            input.value = '';
+            showToast('ObjectType existant sélectionné: ' + value, 'success');
+            return;
+          }
+
+          // Create with ancestors
+          const created = createLineageWithAncestors(value);
+          if (created && created.length > 0) {
+            renderTree();
+            selectNode(value);
+            input.value = '';
+            showToast(`${created.length} ObjectType(s) créé(s) (toFinalize: true)`, 'warning');
+          }
+        }
+      });
+    }
+
+    // =============================================================================
+    // DEPTH CONTROL
+    // =============================================================================
+    
+    function setupDepthControl() {
+      const slider = document.getElementById('depthSlider');
+      const value = document.getElementById('depthValue');
+
+      slider.addEventListener('input', (e) => {
+        store.maxDepth = parseInt(e.target.value);
+        value.textContent = store.maxDepth;
+        renderFractal();
+      });
+    }
+
+    // =============================================================================
+    // TOAST NOTIFICATIONS
+    // =============================================================================
+    
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+      };
+
+      toast.innerHTML = `<span>${icons[type] || 'ℹ'}</span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // =============================================================================
+    // INITIALIZATION
+    // =============================================================================
+    
+    function initialize() {
+      // Load initial data
+      store.objectTypes = INITIAL_DATA.objectTypes;
+      
+      // Build index
+      buildLineageIndex();
+      
+      // Expand first level by default
+      store.lineageIndex.roots.forEach(root => store.expandedNodes.add(root));
+      
+      // Setup UI
+      setupLineageInput();
+      setupDepthControl();
+      
+      // Initial render
+      renderTree();
+      updateBreadcrumb();
+      
+      console.log('Object Fractal Tool initialized');
+      console.log('Store:', store);
+    }
+
+    // =============================================================================
+    // EXPORTS (for debugging)
+    // =============================================================================
+    
+    window.OFT = {
+      store,
+      validateLineage,
+      parseLineage,
+      getAncestors,
+      getDescendants,
+      createObjectType,
+      createLineageWithAncestors,
+      reparentObjectType,
+      computeXFractal,
+      selectNode,
+      renderTree,
+      renderFractal
+    };
+
+    // Start
+    document.addEventListener('DOMContentLoaded', initialize);
+  </script>
+</body>
+</html>

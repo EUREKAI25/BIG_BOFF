@@ -1,0 +1,84 @@
+# ============================================================================
+# EURKAI - Placeholder
+# seed/Placeholder.s.gev
+# Placeholder récursif pour templates - format {{content}}
+# ============================================================================
+
+## ============================================
+## Object:Placeholder:
+## Placeholder générique - résolu récursivement
+## Format: {{content}}
+## ============================================
+
+Object:Placeholder:
+  .name = {}
+  .description = {}
+  
+  ## Contenu du placeholder - peut être:
+  ## - Un lineage: Object:Element:HTMLElement:Body:TestBody
+  ## - Un alias: @MainNav
+  ## - Une expression ERK: this.title | UPPER(this.name)
+  ## - Un vecteur: V_PageTitle
+  .content = {}
+  
+  ## Type de contenu (pour optimisation de résolution)
+  .contentType = {"default": "auto", "enum": ["auto", "lineage", "alias", "erk", "vector", "literal"]}
+  
+  ## Valeur par défaut si résolution échoue
+  .default = {}
+  
+  ## Échapper le HTML (sécurité)
+  .escape = {"type": "boolean", "default": true}
+
+## ============================================
+## Object:Placeholder:PagePlaceholder:
+## Placeholder racine pour une page entière
+## {{page}} → résout vers la structure complète
+## ============================================
+
+Object:Placeholder:PagePlaceholder:
+  .name = {}
+  .page = {"type": "ref", "of": "Object:Interface:PageInterface:HTMLPage"}
+  ## Page à résoudre
+  
+  .template = {"type": "ref", "of": "Object:Template:PageTemplate"}
+  ## Template de structure (optionnel, peut venir de la page)
+
+## ============================================
+## Object:Placeholder:ElementPlaceholder:
+## Placeholder pour un élément HTML
+## {{body}}, {{header}}, {{nav}}, etc.
+## ============================================
+
+Object:Placeholder:ElementPlaceholder:
+  .name = {}
+  .element = {"type": "ref", "of": "Object:Element:HTMLElement"}
+  ## Élément à résoudre
+
+## ============================================
+## Object:Placeholder:VectorPlaceholder:
+## Placeholder pour un vecteur (multilingue)
+## {{V_PageTitle}}
+## ============================================
+
+Object:Placeholder:VectorPlaceholder:
+  .name = {}
+  .vector = {"type": "ref", "of": "Object:Structure:Fractal:Vector"}
+  ## Vecteur à résoudre
+  
+  .lang = {"default": "fr"}
+  ## Langue de résolution
+
+## ============================================
+## Object:Placeholder:ExpressionPlaceholder:
+## Placeholder pour une expression ERK
+## {{this.title | UPPER(this.name)}}
+## ============================================
+
+Object:Placeholder:ExpressionPlaceholder:
+  .name = {}
+  .expression = {}
+  ## Expression ERK à évaluer
+  
+  .context = {}
+  ## Contexte d'évaluation (this)

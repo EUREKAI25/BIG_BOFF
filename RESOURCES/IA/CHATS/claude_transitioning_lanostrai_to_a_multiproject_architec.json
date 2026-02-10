@@ -1,0 +1,202 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T12:37:03.278Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/bb5ddbef-014c-4b5d-8695-12abc103cf17",
+    "title": "Transitioning LaNostr'AI to a Multi-Project Architecture - Claude",
+    "conversationId": "bb5ddbef-014c-4b5d-8695-12abc103cf17",
+    "suggestedFilename": "claude_transitioning_lanostrai_to_a_multiproject_architec_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 22,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "user",
+        "content": "Projet LaNostr'AI : Transition vers une architecture multi-projets Ce que nous avons fait 1. Restructuration de l'architecture : Nous avons transformé l'architecture monolithique en une structure multi-projets où chaque projet est organisé par utilisateur (<user_ident>_<project_ident>). 2. Configuration centralisée : Création d'un fichier projects/config.py qui remplace l'ancien projects/agency/config.py. Ce fichier détecte automatiquement le projet actif via des variables d'environnement. 3. Environnements multiples : Implémentation d'un système d'environnements multiples (local, preprod, prod, backup) avec des fichiers .env spécifiques par environnement. 4. Résolution des problèmes de compatibilité Flask : Correction du problème avec before_first_request qui n'existe plus dans les versions récentes de Flask. 5. Mise à jour des références de configuration : Les références à l'ancienne structure projects.agency.config ont été remplacées par projects.config. État actuel Le système est en cours de transition. Nous avons mis à jour les références de configuration, mais il pourrait y avoir d'autres ajustements nécessaires dans les chemins et les importations. Actuellement, le système crée correctement la structure de répertoires pour le projet par défaut (default_core). Ce qui reste à faire 1. Finalisation des migrations : S'assurer que tous les modules fonctionnent correctement avec la nouvelle structure. 2. Base de données : Assurer que l'initialisation de la base de données fonctionne avec la nouvelle structure. Le fichier JSON contenant les données initiales doit être placé dans le répertoire approprié du projet. 3. Script de création de projets : Implémenter et tester le script create_project.py pour faciliter la création de nouveaux projets. 4. Documentation : Créer une documentation détaillée pour la nouvelle architecture multi-projets. 5. Tests complets : Tester l'application avec différents utilisateurs, projets et environnements. Pour redémarrer notre travail ultérieurement 1. Vérifier l'état de la migration :bashpython run.py --user default --project core --env localMigration des fichiers de données :bash# Créer le répertoire pour le fichier JSON si nécessaire mkdir -p projects/default_core/resources/ # Copier le fichier JSON de données dans le nouveau répertoire cp models/Organismus_Regulans/Truncus_Fundamentalis/resources/default_project_data.json projects/default_core/resources/Compléter la migration de code : Explorer les autres fichiers du système pour s'assurer qu'ils sont compatibles avec la nouvelle structure. Cette nouvelle architecture apportera une meilleure gestion multi-projets, facilitera le déploiement dans différents environnements et permettra d'isoler proprement les données entre les projets.---- actuellement j'obtiens : (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % run [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [2025-04-28 19:11:07] [INFO] 🚀 Démarrage de LaNostr'AI pour default/core (local)... [2025-04-28 19:11:07] [DEBUG] ✅ Environnement virtuel actif. [2025-04-28 19:11:07] [INFO] ✅ Builtins initialisés avec succès [2025-04-28 19:11:07] [INFO] 🔧 Création de l'application Flask... [2025-04-28 19:11:07] [DEBUG] ✅ Configuration chargée depuis Config [2025-04-28 19:11:07] [WARNING] ⚠️ Routes principales non trouvées [2025-04-28 19:11:07] [DEBUG] ✅ Marqueur d'installation trouvé [2025-04-28 19:11:07] [INFO] 🚀 Démarrage du serveur Flask avec debug=ON sur le port 8080 * Serving Flask app 'app' * Debug mode: on WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on all addresses (0.0.0.0) * Running on http://127.0.0.1:8080 * Running on http://192.168.1.6:8080 Press CTRL+C to quit * Restarting with stat [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [2025-04-28 19:11:08] [INFO] 🚀 Démarrage de LaNostr'AI pour default/core (local)... [2025-04-28 19:11:08] [DEBUG] ✅ Environnement virtuel actif. [2025-04-28 19:11:08] [INFO] ✅ Builtins initialisés avec succès [2025-04-28 19:11:08] [INFO] 🔧 Création de l'application Flask... [2025-04-28 19:11:08] [DEBUG] ✅ Configuration chargée depuis Config [2025-04-28 19:11:08] [WARNING] ⚠️ Routes principales non trouvées [2025-04-28 19:11:08] [DEBUG] ✅ Marqueur d'installation trouvé [2025-04-28 19:11:08] [INFO] 🚀 Démarrage du serveur Flask avec debug=ON sur le port 8080 * Debugger is active! * Debugger PIN: 103-091-922et la bdd n'est pas installée",
+        "timestamp": "2025-07-08T12:37:03.276Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "assistant",
+        "content": "non, j'ai mis à jour tous les chemins. où est-ce que je mets default_core/routes ?",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "assistant",
+        "content": "voici les. routes qu'il faut respecter (et eventuellement optiser)",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "user",
+        "content": "est-ce pertinent d'avoir deux bp ? en faudrait-il davantage ?",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 3,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "user",
+        "content": "ce sont les api qui méritent probablement d'être splitées. dans mon projet, tout est objet et toutes est aussi potentiellement api. Le fonctionnement du système est conçu d'après une logique biologique (organes, flux vitaux, systèmes) il y a des microservices de tout type mais ils peuvent etre liés à une famille de fonctions par exemple comme Cognition. Mais je ne sis pas si ça a de l'intérêt de les regropuper dans des bp spécifiques ou non. Sinon ça peut être des bp qui sépare tout ce qui est biologique / utilitaire / ai... qu'en penses-tu ?",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_5",
+        "role": "assistant",
+        "content": "j'imagine que les bp ne peuvent pas se chevaucher ? de toutes façon les routes seront parlantes, oui",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 5,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_6",
+        "role": "user",
+        "content": "ok allons-y comme ça. de quoi as-tu besoin pour préparer les fichiers ?",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 6,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_7",
+        "role": "assistant",
+        "content": "les routes les plus importantes pour le moment sont celles de projects/lanostrai/<produit>/routes. celles des autres seront générées dynamiquement (une classe sera à prévoir pour ça mais pour le moment j'ai surtout besoin d'avoir une première version simple du site pour pouvoir avancer). Seul lanostrai est concernée (a priori) par cette gestion biologique mais ça sera qd même la logique par défaut (qui pourra être écrasée par une autre par le système de classes dérivant les unes des autres. Toutes les actions et tous les scenarios sont des routes d'api. mais je veux que toutes les méthodes de tous les objets soient aussi potentiellement des routes d'api (publiques ou non) afin de partager l'api et le code en open source. Ces méthodes seront définies sur la bdd. és",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 7,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_8",
+        "role": "user",
+        "content": "normalement le script d'installation crée l'environnement virtuel. ce n'est plus le cas ?",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 10,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_9",
+        "role": "assistant",
+        "content": "oui j'ai fait un bash pou run. venvnathalie@Nathalies-MacBook-Pro _LNS4 % python run.py zsh: command not found: python venvnathalie@Nathalies-MacBook-Pro _LNS4 % source venv/bin/activate (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % run [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [2025-04-28 20:01:25] [INFO] 🚀 Démarrage de LaNostr'AI pour default/core (local)... [2025-04-28 20:01:25] [DEBUG] ✅ Environnement virtuel actif. ❌ Erreur lors de l'initialisation des builtins: type object 'Config' has no attribute 'PRODUCT_NAME' [2025-04-28 20:01:25] [ERROR] ❌ L'initialisation des builtins a échoué. (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 %",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 11,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_10",
+        "role": "user",
+        "content": "(venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % run [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [2025-04-29 02:02:06] [INFO] 🚀 Démarrage de LaNostr'AI pour default/core (local)... [2025-04-29 02:02:06] [DEBUG] ✅ Environnement virtuel actif. [2025-04-29 02:02:06] [INFO] ✅ Builtins initialisés avec succès [2025-04-29 02:02:06] [INFO] 🔧 Création de l'application Flask... [2025-04-29 02:02:06] [DEBUG] ✅ Configuration chargée depuis Config [2025-04-29 02:02:06] [DEBUG] ✅ Routes principales enregistrées [2025-04-29 02:02:06] [DEBUG] ✅ Marqueur d'installation trouvé [2025-04-29 02:02:06] [INFO] 🚀 Démarrage du serveur Flask avec debug=ON sur le port 8080 * Serving Flask app 'app' * Debug mode: on WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on all addresses (0.0.0.0) * Running on http://127.0.0.1:8080 * Running on http://192.168.1.6:8080 Press CTRL+C to quit * Restarting with stat [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [2025-04-29 02:02:07] [INFO] 🚀 Démarrage de LaNostr'AI pour default/core (local)... [2025-04-29 02:02:07] [DEBUG] ✅ Environnement virtuel actif. [2025-04-29 02:02:07] [INFO] ✅ Builtins initialisés avec succès [2025-04-29 02:02:07] [INFO] 🔧 Création de l'application Flask... [2025-04-29 02:02:07] [DEBUG] ✅ Configuration chargée depuis Config [2025-04-29 02:02:07] [DEBUG] ✅ Routes principales enregistrées [2025-04-29 02:02:07] [DEBUG] ✅ Marqueur d'installation trouvé [2025-04-29 02:02:07] [INFO] 🚀 Démarrage du serveur Flask avec debug=ON sur le port 8080 * Debugger is active! * Debugger PIN: 103-091-922il n'y a pas d'erreur mais la bdd n'eest pas installée",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 12,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_11",
+        "role": "assistant",
+        "content": "ça fonctionne mais la bdd n'est pas installée",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 13,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_12",
+        "role": "user",
+        "content": "il ne se passe rien venvnathalie@Nathalies-MacBook-Pro _LNS4 % source venv/bin/activate (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % >.... print(f\"✅ Base de données initialisée avec succès: {Config.DB_PATH}\") return True except Exception as e: print(f\"❌ Erreur lors de l'initialisation de la base de données: {e}\") traceback.print_exc() return False if name == \"main\": init_database() EOF # Étape 2: Rendre le script exécutable chmod +x init_database.py # Étape 3: Exécuter le script pour initialiser la base de données # (Assurez-vous que l'environnement virtuel est activé) python init_database.py # Étape 4: Vérifier que la base de données a été créée ls -la projects/default_core/database/default_core.db quote>",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 15,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_13",
+        "role": "assistant",
+        "content": "très bien mais l'installation de la bdd doit etre intégrée à la mise n route de l'app comme initialement",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 16,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_14",
+        "role": "user",
+        "content": "oui ça fonctionne. il faut maintenant ajouter les enregistrements par défaut issusdu fichier json",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 17,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_15",
+        "role": "assistant",
+        "content": "non on ne déplace rien, le json doit rester là où il est. et donne moi la procéduure nno car bash semble poser problème",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 18,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_16",
+        "role": "user",
+        "content": "je t'ai demandé la procédure nano",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 19,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_17",
+        "role": "assistant",
+        "content": "ça fonctionne mais l'insertion des données doit se faire avec l'installation de l'app",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 20,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_18",
+        "role": "assistant",
+        "content": "j'ai du réorganiser le serveur. voici la nouvelle structure. j'ai besoin que tu me donnes les fichiers à jour avec. les nouveaux chemins",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 21,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_19",
+        "role": "user",
+        "content": "c'est models qui a changé, j'ai ajouté deux niveaux suplémentaires au système biologique (Organismus et Ectoderme/endoderme dans organismus_regulans) pour le reste c'est comme avant. il n'y a pas des fichiers à supprimer avant de créer les nouveaux ?",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 23,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_20",
+        "role": "assistant",
+        "content": "je n'avais pas activé venv. j'ai ceci (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % run [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [ERROR] ❌ Erreur critique lors de l'initialisation: No module named 'models.Cognition' Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/run.py\", line 63, in <module> from models.Cognition.Memoria_Reflexa.actions.log import log ModuleNotFoundError: No module named 'models.Cognition' (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % models.Cognition est devenu models.Organismus.Cognition",
+        "timestamp": "2025-07-08T12:37:03.277Z",
+        "originalIndex": 25,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_21",
+        "role": "user",
+        "content": "maintenant j'ai (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % run [INFO] 📦 Package python-dotenv non trouvé, installation automatique... Requirement already satisfied: python-dotenv in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS2/venv/lib/python3.13/site-packages (1.1.0) [notice] A new release of pip is available: 24.3.1 -> 25.0.1 [notice] To update, run: pip install --upgrade pip [SUCCESS] ✅ Package python-dotenv installé avec succès PROJECT_ROOT: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4 PROJECT_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core DB_PATH: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/database/default_core.db LOGS_DIR: /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/resources/logs ✅ Variables d'environnement chargées depuis /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/projects/default_core/config/local.env [ERROR] ❌ Erreur critique lors de l'initialisation: No module named 'models.Organismus.Cognition.Memoria_Reflexa.actions' Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNS4/run.py\", line 63, in <module> from models.Organismus.Cognition.Memoria_Reflexa.actions.log import log ModuleNotFoundError: No module named 'models.Organismus.Cognition.Memoria_Reflexa.actions' (venv) venvnathalie@Nathalies-MacBook-Pro _LNS4 % compare run avec la structure que je t'ai envoyée. plusieurs chemins vont etre à modifier dans run",
+        "timestamp": "2025-07-08T12:37:03.278Z",
+        "originalIndex": 26,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 23324,
+      "bodyText": 838527
+    }
+  }
+}

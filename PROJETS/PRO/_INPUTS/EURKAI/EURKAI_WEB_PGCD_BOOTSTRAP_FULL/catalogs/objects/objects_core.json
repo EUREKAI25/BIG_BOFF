@@ -1,0 +1,49 @@
+{
+  "objects": [
+    {
+      "id": "Object",
+      "description": "Métatype racine de tous les objets Eurkai.",
+      "attrs": [
+        "name",
+        "description"
+      ],
+      "methods": [],
+      "rels": []
+    },
+    {
+      "id": "Object:Prompt",
+      "inherits_from": "Object",
+      "description": "Représente un prompt structuré pour agent IA ou humain.",
+      "attrs": [
+        "role",
+        "context",
+        "mission",
+        "objective",
+        "constraints"
+      ],
+      "methods": [
+        "build()",
+        "to_text()"
+      ],
+      "rels": [
+        "depends_on:ERKScript"
+      ]
+    },
+    {
+      "id": "Object:Response",
+      "inherits_from": "Object",
+      "description": "Réponse produite par un agent IA ou humain.",
+      "attrs": [
+        "content",
+        "score",
+        "flags"
+      ],
+      "methods": [
+        "summarize()"
+      ],
+      "rels": [
+        "related_to:Object:Prompt"
+      ]
+    }
+  ]
+}

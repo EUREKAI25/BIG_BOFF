@@ -1,0 +1,46 @@
+{
+  "conversationMetadata": {
+    "platform": "chatgpt",
+    "extractedAt": "2025-07-07T16:55:55.058Z",
+    "extractorVersion": "1.0",
+    "url": "https://chatgpt.com/c/683354b4-f678-8006-9e03-02f2464435a9",
+    "title": "Commande SQLite structure",
+    "conversationId": "683354b4-f678-8006-9e03-02f2464435a9",
+    "suggestedFilename": "chatgpt_commande_sqlite_structure.json"
+  },
+  "conversation": {
+    "messageCount": 4,
+    "messages": [
+      {
+        "id": "chatgpt_0",
+        "role": "user",
+        "content": "Donne-moi la ligne de commande pour récupérer la structure de la base de données /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db",
+        "timestamp": "2025-07-07T16:55:55.058Z"
+      },
+      {
+        "id": "chatgpt_1",
+        "role": "assistant",
+        "content": "Voici la ligne de commande pour afficher la structure de la base de données SQLite située à ce chemin :\nbashCopierModifiersqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".schema\"\n\n\n📌 Détails :\n\n\nsqlite3 : commande pour interagir avec une base de données SQLite.\n\n\n\".schema\" : instruction interne à SQLite qui affiche les requêtes SQL de création de toutes les tables, index et vues de la base.\n\n\n\n💡 Pour exporter la structure dans un fichier :\nbashCopierModifiersqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".schema\" > structure.sql\n\nSouhaites-tu également une commande pour inspecter le contenu des tables (.tables, SELECT * FROM nom_table, etc.) ?",
+        "timestamp": "2025-07-07T16:55:55.058Z"
+      },
+      {
+        "id": "chatgpt_2",
+        "role": "user",
+        "content": "Non, ça ne fonctionne pas. Donne-moi la ligne de commande pour faire un dump.",
+        "timestamp": "2025-07-07T16:55:55.058Z"
+      },
+      {
+        "id": "chatgpt_3",
+        "role": "assistant",
+        "content": "Voici la ligne de commande correcte pour faire un dump complet de la base de données SQLite :\nbashCopierModifiersqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".dump\"\n\n\n🔁 Pour sauvegarder ce dump dans un fichier :\nbashCopierModifiersqlite3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db \".dump\" > dump.sql\n\n\nCela inclura :\n\n\nla structure (CREATE TABLE, CREATE INDEX, etc.),\n\n\nle contenu (INSERT INTO),\n\n\net tout autre objet défini dans la base.\n\n\nSouhaites-tu une version limitée à la structure uniquement (sans les données) ?",
+        "timestamp": "2025-07-07T16:55:55.058Z"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null
+  }
+}

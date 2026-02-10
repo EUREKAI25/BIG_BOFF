@@ -1,0 +1,66 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T11:16:32.562Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/6d59c5c5-2a12-4212-acdb-993b97ec1f61",
+    "title": "Debugging Controller Type Mismatch - Claude",
+    "conversationId": "6d59c5c5-2a12-4212-acdb-993b97ec1f61",
+    "suggestedFilename": "claude_debugging_controller_type_mismatch_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 5,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro controllers % tree . ├── init.py ├── pycache │ ├── init.cpython-313.pyc │ ├── admin_controller.cpython-313.pyc │ ├── firstconfig_controller.cpython-313.pyc │ ├── home_controller.cpython-313.pyc │ └── main_controller.cpython-313.pyc ├── admin_controller.py ├── api_controller.py ├── firstconfig_controller.py ├── home_controller.py └── main_controller.py 2 directories, 11 files venvnathalie@Nathalies-MacBook-Pro controllers % tous les controllers doivent être de type controller mais home et main sont de type \"action\". aide moi à débugger. ils ont bien le bon identifiant (home par exemple : controllers_home-controller ) mais ont pourtant la meta type action. pourquoi et surtout pourquoi uniquement ces deux là ?",
+        "timestamp": "2025-07-08T11:16:32.561Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "assistant",
+        "content": "tout se passe normalement dans scan_and_register_objects, du moins au départ",
+        "timestamp": "2025-07-08T11:16:32.561Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "user",
+        "content": "SELECT * FROM objects_metas WHERE object_id IN (21, 22) AND meta_key_id = 1 ORDER BY updated_at; me sort plein de résultats y compris des resultats où meta_key_id ne vaut pas 1 et object_id ne vaut pas 21 ou 22. pourquoi ?",
+        "timestamp": "2025-07-08T11:16:32.561Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "assistant",
+        "content": "j'exécute cette requete directement dans l'editeur sql de vscode",
+        "timestamp": "2025-07-08T11:16:32.561Z",
+        "originalIndex": 3,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "user",
+        "content": "ok, je n'ai plus que 21 et 22 en résultats et les deux ont type action. mais penche toi sur le fait que ce sont les deux seuls à poser pb",
+        "timestamp": "2025-07-08T11:16:32.561Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 1955,
+      "bodyText": 651769
+    }
+  }
+}

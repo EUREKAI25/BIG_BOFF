@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EUREKAI Cockpit v46 — Modular</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/gevr.css">
+  <link rel="stylesheet" href="css/creation.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="explorer" onclick="switchTab('explorer')">
+        <span class="tab-icon">◇</span>Explorer
+      </button>
+      <button class="nav-tab" data-tab="create" onclick="switchTab('create')">
+        <span class="tab-icon">✚</span>Créer
+      </button>
+      <button class="nav-tab" data-tab="console" onclick="switchTab('console')">
+        <span class="tab-icon">⌘</span>Console
+      </button>
+      <button class="nav-tab" data-tab="gevr" onclick="switchTab('gevr')">
+        <span class="tab-icon">⚡</span>GEVR
+      </button>
+      <button class="nav-tab" data-tab="json" onclick="switchTab('json')">
+        <span class="tab-icon">{}</span>JSON
+      </button>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">EUREKAI Cockpit <span class="version">v46</span></div>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="lineage-input-wrapper">
+        <div class="lineage-input-container">
+          <span class="lineage-input-icon">◈</span>
+          <input type="text" class="lineage-input" id="lineageInput" 
+                 placeholder="Object:Entity:Agent:MyAgent.attr=value depends_on Object:Target">
+          <button class="lineage-submit" id="lineageSubmit" title="Créer">+</button>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn" onclick="importData()" title="Importer">📁</button>
+        <button class="action-btn" onclick="exportData()" title="Exporter">💾</button>
+        <button class="action-btn primary" onclick="runBootstrap()" title="Bootstrap">▶</button>
+      </div>
+    </header>
+
+    <!-- Tab: Explorer -->
+    <main class="tab-content active" id="tab-explorer">
+      <!-- Tree Panel -->
+      <aside class="panel tree-panel" id="treePanel">
+        <div class="panel-header">
+          <span class="panel-title">Objects</span>
+          <span class="object-count" id="objectCount">0</span>
+        </div>
+        <div class="tree-search">
+          <input type="text" id="treeSearchInput" placeholder="🔍 Rechercher..." oninput="searchTree(this.value)">
+        </div>
+        <div class="panel-content" id="treeContainer"></div>
+      </aside>
+
+      <div class="resizer" id="resizerLeft"></div>
+
+      <!-- Fractal Panel -->
+      <section class="panel fractal-panel">
+        <div class="fractal-header">
+          <div class="fractal-title" id="fractalTitle">Sélectionner un objet</div>
+          <div class="depth-control">
+            <span>Profondeur</span>
+            <input type="range" id="depthSlider" min="1" max="10" value="5">
+            <span id="depthValue">5</span>
+          </div>
+        </div>
+        <div class="fractal-content" id="fractalContent">
+          <div class="empty-state">
+            <div class="empty-icon">◇</div>
+            <div>Sélectionnez un objet dans l'arbre</div>
+          </div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="dot owned"></span>owned</span>
+          <span class="legend-item"><span class="dot inherited"></span>inherited</span>
+          <span class="legend-item"><span class="dot injected"></span>injected</span>
+        </div>
+      </section>
+
+      <div class="resizer" id="resizerRight"></div>
+
+      <!-- Tags Panel -->
+      <aside class="panel tags-panel" id="tagsPanel">
+        <div class="panel-header">
+          <span class="panel-title">Tags</span>
+          <button class="icon-btn" id="clearTagFilters" onclick="clearTagFilters()" style="display:none">✕</button>
+        </div>
+        <div class="tag-create">
+          <input type="text" id="tagCreateInput" placeholder="Nouveau tag...">
+          <button onclick="createTag()">+</button>
+        </div>
+        <div class="panel-content" id="tagsContainer"></div>
+      </aside>
+    </main>
+
+    <!-- Tab: Create -->
+    <main class="tab-content" id="tab-create">
+      <div class="create-container">
+        <!-- Sidebar gauche : sélection du type -->
+        <div class="create-sidebar">
+          <div class="create-section">
+            <h3>Type à créer</h3>
+            <div id="typePicker"></div>
+            <div class="create-or">ou</div>
+            <input type="text" id="createTypeInput" placeholder="Object:Entity:Agent:MonAgent" list="typesList">
+            <datalist id="typesList"></datalist>
+            <button class="create-start-btn" onclick="startCreation()">Démarrer</button>
+          </div>
+          
+          <div class="create-section">
+            <h3>Sources détectées</h3>
+            <div class="source-indicators" id="sourceIndicators">
+              <div class="source-indicator" data-source="inherited">
+                <span class="source-dot"></span>
+                <span class="source-label">Hérité</span>
+              </div>
+              <div class="source-indicator" data-source="catalog">
+                <span class="source-dot"></span>
+                <span class="source-label">Catalog</span>
+              </div>
+              <div class="source-indicator" data-source="seed">
+                <span class="source-dot"></span>
+                <span class="source-label">Fichiers</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="create-section">
+            <h3>Fichiers</h3>
+            <div class="create-upload-zone" id="createUploadZone">
+              <span>📄 Glisser ou cliquer</span>
+              <input type="file" id="createFileInput" multiple style="display:none" onchange="handleCreateUpload(this)">
+            </div>
+            <div class="create-files-list" id="createFilesList"></div>
+          </div>
+          
+          <div class="create-section">
+            <h3>Autonomie</h3>
+            <div class="autonomy-slider">
+              <span>👤</span>
+              <input type="range" id="autonomySlider" min="0" max="100" value="50" oninput="updateAutonomy(this.value)">
+              <span>🤖</span>
+            </div>
+            <div class="autonomy-label" id="autonomyLabel">Assisté</div>
+          </div>
+        </div>
+        
+        <!-- Zone principale : vues -->
+        <div class="create-main">
+          <div class="create-view-tabs">
+            <button class="view-tab active" data-view="form" onclick="switchCreateView('form')">📝 Formulaire</button>
+            <button class="view-tab" data-view="chat" onclick="switchCreateView('chat')">💬 Chat</button>
+            <button class="view-tab" data-view="recap" onclick="switchCreateView('recap')">📋 Récap</button>
+          </div>
+          
+          <!-- Vue Formulaire -->
+          <div class="create-view active" id="createViewForm">
+            <div class="form-sections" id="formSections">
+              <div class="create-empty">
+                Sélectionnez un type ci-contre ou entrez un lineage
+              </div>
+            </div>
+            <div class="form-navigation">
+              <button onclick="previousSection()" id="btnPrevSection" disabled>← Précédent</button>
+              <span class="section-indicator" id="sectionIndicator">-</span>
+              <button onclick="nextSection()" id="btnNextSection" disabled>Suivant →</button>
+            </div>
+          </div>
+          
+          <!-- Vue Chat -->
+          <div class="create-view" id="createViewChat">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-row">
+              <input type="text" id="chatInput" placeholder="Décrivez ce que vous voulez créer..." onkeydown="if(event.key==='Enter')sendChatMessage()">
+              <button onclick="sendChatMessage()">Envoyer</button>
+            </div>
+          </div>
+          
+          <!-- Vue Récap -->
+          <div class="create-view" id="createViewRecap">
+            <div class="recap-content" id="recapContent">
+              <div class="create-empty">Aucune donnée à afficher</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Actions finales -->
+        <div class="create-footer">
+          <button class="create-cancel-btn" onclick="cancelCreation()">Annuler</button>
+          <button class="create-submit-btn" onclick="finalizeCreation()" id="btnFinalize" disabled>Créer l'objet</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Tab: Console -->
+    <main class="tab-content" id="tab-console">
+      <div class="console-view">
+        <div class="console-header">
+          <h2>Console de Test</h2>
+          <div class="console-actions">
+            <button onclick="copyConsoleOutput()" title="Copier">📋</button>
+            <button onclick="downloadConsoleOutput()" title="Télécharger">💾</button>
+            <button onclick="clearConsoleOutput()" title="Effacer">🗑</button>
+          </div>
+        </div>
+        <div class="console-body">
+          <div class="console-expression">
+            <input type="text" id="consoleInput" placeholder="Store.get('Object:Entity')" onkeydown="if(event.key==='Enter')runConsoleCommand()">
+            <button onclick="runConsoleCommand()">▶</button>
+          </div>
+          <div class="console-output" id="consoleOutput">
+            <pre>// Entrez une expression JavaScript</pre>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Tab: GEVR -->
+    <main class="tab-content" id="tab-gevr">
+      <div class="gevr-container">
+        <div class="gevr-header">
+          <h2>⚡ GEVR Runtime</h2>
+          <div class="gevr-actions">
+            <button class="gevr-btn" onclick="gevrScan()">🔍 Scanner</button>
+            <button class="gevr-btn primary" onclick="gevrBootstrap()">▶ Bootstrap</button>
+            <button class="gevr-btn" onclick="gevrClear()">🗑 Clear</button>
+            <button class="gevr-btn" onclick="gevrCopyLogs()">📋 Copy</button>
+          </div>
+        </div>
+        <div class="gevr-content">
+          <div class="gevr-sidebar">
+            <div class="gevr-section">
+              <h3>📁 Files</h3>
+              <div id="gevrFileList" class="gevr-file-list"></div>
+              <div class="gevr-file-actions">
+                <button onclick="gevrUpload()">+ Upload</button>
+                <button onclick="gevrClearFiles()">Clear</button>
+              </div>
+              <input type="file" id="gevrFileInput" style="display:none" onchange="gevrProcessUpload(this)" multiple>
+            </div>
+            <div class="gevr-section">
+              <h3>📋 Scénarios</h3>
+              <div id="gevrScenarioList"></div>
+            </div>
+            <div class="gevr-section">
+              <h3>📊 Status</h3>
+              <div class="gevr-status">
+                <div><span>Objects</span><span id="gevrObjectCount">0</span></div>
+                <div><span>Scenarios</span><span id="gevrScenarioCount">0</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="gevr-main">
+            <div class="gevr-log" id="gevrLog"></div>
+            <div class="gevr-console">
+              <span class="gevr-prompt">GEVR&gt;</span>
+              <input type="text" id="gevrConsoleInput" placeholder="Commande..." onkeydown="gevrConsoleKeydown(event)">
+              <button onclick="gevrExecuteCommand()">▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Tab: JSON -->
+    <main class="tab-content" id="tab-json">
+      <div class="json-view">
+        <div class="json-header">
+          <h2>Export JSON</h2>
+          <div class="json-actions">
+            <button onclick="copyJSON()">📋 Copier</button>
+            <button onclick="downloadJSON()">💾 Télécharger</button>
+          </div>
+        </div>
+        <pre class="json-content" id="jsonContent">{}</pre>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modals & Overlays -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle">Confirmation</div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="modalCancel">Annuler</button>
+        <button class="modal-btn primary" id="modalConfirm">Confirmer</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Core Scripts -->
+  <script src="js/core/config.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/traverse.js"></script>
+  <script src="js/core/lineage.js"></script>
+  <script src="js/core/objects.js"></script>
+  <script src="js/core/supertools.js"></script>
+  
+  <!-- Modules (avant UI pour les dépendances) -->
+  <script src="modules/history/logger.js"></script>
+  <script src="modules/schema/schema.js"></script>
+  <script src="modules/picker/picker.js"></script>
+  <script src="modules/creation/apiDetector.js"></script>
+  <script src="modules/tasks/taskGenerator.js"></script>
+  <script src="modules/creation/getCreate.js"></script>
+  <script src="modules/creation/formBuilder.js"></script>
+  <script src="modules/views/viewManager.js"></script>
+  
+  <!-- UI Scripts -->
+  <script src="js/ui/tree.js"></script>
+  <script src="js/ui/fractal.js"></script>
+  <script src="js/ui/tags.js"></script>
+  <script src="js/ui/tabs.js"></script>
+  <script src="js/ui/resizers.js"></script>
+  <script src="js/ui/modals.js"></script>
+  <script src="js/ui/creation.js"></script>
+  
+  <!-- GEVR Runtime -->
+  <script src="js/gevr/runtime.js"></script>
+  <script src="js/gevr/handlers.js"></script>
+  <script src="js/gevr/console.js"></script>
+  
+  <!-- Utils -->
+  <script src="js/utils/toast.js"></script>
+  <script src="js/utils/export.js"></script>
+  
+  <!-- Init -->
+  <script src="js/init.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agency_objects"
+version = "0.2.0"
+description = "EURKAI Agency Objects – Step 3: Object + Method + Scenario + MRG + Walker + CLI"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+agency-objects = "agency_objects.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

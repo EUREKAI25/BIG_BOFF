@@ -1,0 +1,75 @@
+## Object:Interface:
+## Base de toutes les interfaces
+
+Object:Interface:
+  .vector = {"required": true}
+  .InterfaceList = {"type": "list", "of": "Object:Interface"}
+
+## ============================================
+## Object:Interface:PageInterface:
+## Interface de page web
+## ============================================
+
+Object:Interface:PageInterface:
+  .vector = {"required": true}
+  
+  ## ============================================
+  ## Template associé
+  ## ============================================
+  
+  .template = {"type": "ref", "of": "Object:Template:PageTemplate"}
+  ## Template de structure
+  
+  ## ============================================
+  ## Métadonnées
+  ## ============================================
+  
+  .title = {"required": true}
+  .description = {}
+  .keywords = {"type": "list"}
+  .canonical = {}
+  .lang = {"default": "fr"}
+  
+  ## ============================================
+  ## Récursivité
+  ## ============================================
+  
+  .PageInterfaceList = {"type": "list", "of": "Object:Interface:PageInterface"}
+
+## ============================================
+## Object:Interface:PageInterface:HTMLPage:
+## Page HTML standard
+## ============================================
+
+Object:Interface:PageInterface:HTMLPage:
+  .vector = {"required": true}
+  .template = {"type": "ref", "of": "Object:Template:PageTemplate"}
+  .title = {"required": true}
+  .description = {}
+  .HTMLPageList = {"type": "list", "of": "Object:Interface:PageInterface:HTMLPage"}
+
+## ============================================
+## Spécialisations de HTMLPage
+## ============================================
+
+Object:Interface:PageInterface:HTMLPage:HomePage:
+  .vector = {"required": true}
+  .heroSection = {"type": "ref", "of": "Object:Element:HTMLElement:Section"}
+
+Object:Interface:PageInterface:HTMLPage:ContactPage:
+  .vector = {"required": true}
+  .formElement = {"type": "ref", "of": "Object:Element:HTMLElement:Form"}
+
+Object:Interface:PageInterface:HTMLPage:LoginPage:
+  .vector = {"required": true}
+  .loginForm = {"type": "ref", "of": "Object:Element:HTMLElement:Form"}
+
+Object:Interface:PageInterface:HTMLPage:AdminPage:
+  .vector = {"required": true}
+  .dashboardSection = {"type": "ref", "of": "Object:Element:HTMLElement:Section"}
+
+Object:Interface:PageInterface:HTMLPage:Backoffice:
+  .vector = {"required": true}
+  .cockpitSection = {"type": "ref", "of": "Object:Element:HTMLElement:Section"}
+  .consoleSection = {"type": "ref", "of": "Object:Element:HTMLElement:Section"}
+  .librarySection = {"type": "ref", "of": "Object:Element:HTMLElement:Section"}

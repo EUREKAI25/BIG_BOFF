@@ -1,0 +1,314 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T10:57:36.366Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/4f87f3b1-6c30-4139-94e6-dfd55a50efef",
+    "title": "Investigating Duplicate Meta Registration in Debug Logs - Claude",
+    "conversationId": "4f87f3b1-6c30-4139-94e6-dfd55a50efef",
+    "suggestedFilename": "claude_investigating_duplicate_meta_registration_in_debug_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 36,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "user",
+        "content": "analyse le fichier de debug et dis moi pourquoi certaines metas cerchent à s'ebnregistrer deux fois. je ne veux pas de solution de compensation mais comprendre pourquoi ça se produit",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "assistant",
+        "content": "pourquoi ? peut-on éviter ça ? 2.",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "user",
+        "content": "j'ai l'impression que ce code ne retourne pas toutes les metas vec les objets retournés. avec un print dans la boucle des resultats j'obtiens ceci: filefetc {'id': 17, 'name': 'admin_controller', 'description': '', 'ident': 'controllers_app-controllers-admin-controller-py', 'created_at': '1741712760', 'created_by': 1, 'updated_at': '1741712760', 'updated_by': 1, 'object_id': 17, 'meta_key_id': 1, 'meta_value': 'link', 'scope': None, 'meta_key': 'type', 'allowed_values': \"{'project':'Un projet global','website':'Un site web','page':'Une page unique','section':'Une section spécifique','module':'Un module fonctionnel','type_section':'Type d’une section'}\", 'object_src_id': 17, 'relation_id': 1, 'object_target_id': 1, 'source_type': '', 'target_type': '', 'cardinality': 'many_to_one'}",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "user",
+        "content": "je ne cherche pas à ajouter des metas, je veux que lorsque superquery retourne des objets, ceux-ci soient retournés avec la liste des metas, des relations et des tags associés. ou bien penses-tu que ça ferait une requete trop lourde ?",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 3,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "user",
+        "content": "c'est beaucoup trop lourd comme code, je veux quelque chose de plus modulaire, il faudrait faire appel à des fonctions comme get_metas_by_object_id, get_tags_by_object_id, get_relations_by_object_id et je voudrais que ces fonctions utilisent superquery. c'est posible ?",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_5",
+        "role": "assistant",
+        "content": "voilà un exemple d'objet retourné : filefetc {'id': 17, 'name': 'admin_controller', 'description': '', 'ident': 'controllers_app-controllers-admin-controller-py', 'created_at': '1741713845', 'created_by': 1, 'updated_at': '1741713845', 'updated_by': 1, 'object_id': 17, 'meta_key_id': 1, 'meta_value': 'link', 'scope': None, 'meta_key': 'type', 'allowed_values': \"{'project':'Un projet global','website':'Un site web','page':'Une page unique','section':'Une section spécifique','module':'Un module fonctionnel','type_section':'Type d’une section'}\", 'object_src_id': 17, 'relation_id': 1, 'object_target_id': 1, 'source_type': '', 'target_type': '', 'cardinality': 'many_to_one', 'metas': {'type': 'link', 'status': 'fetched', 'url': 'app/controllers/admin_controller.py', 'filetype': 'controllers'}, 'tags': [], 'relations': {'as_source': {'depends_on': [{'id': 1, 'name': 'Agence initiale', 'ident': 'initial_project'}]}, 'as_target': {}}}mets ce resultat en forme pour que je voie ce qu'il contient",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 5,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_6",
+        "role": "assistant",
+        "content": "voici le code d'origine. comment faire pour récupérer la valeur de la meta filetype ? j'en ai besoin ici : print(f\"filefetc {link}\") filetype = <valeur de la meeta filetype> file = f.process_file(link)",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 6,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_7",
+        "role": "user",
+        "content": "j'obtiens {'total': {'à traiter': 428, 'traité': 0}, 'models': {'listed': 95, 'processed': 95, 'registered': 0}, 'actions': {'listed': 0, 'processed': 0, 'registered': 0}, 'modules': {'listed': 10, 'processed': 10, 'registered': 0}, 'success': {'listed': 0, 'processed': 0, 'registered': 0}, 'departments': {'listed': 265, 'processed': 265, 'registered': 0}, 'templates': {'listed': 17, 'processed': 17, 'registered': 0}, 'errors': {'listed': 0, 'processed': 0, 'registered': 0}, 'routes': {'listed': 2, 'processed': 2, 'registered': 0}, 'static': {'listed': 5, 'processed': 5, 'registered': 0}, 'tests': {'listed': 8, 'processed': 8, 'registered': 0}, 'autres': {'listed': 0, 'processed': 0, 'registered': 0}, 'controllers': {'listed': 5, 'processed': 5, 'registered': 0}, 'database': {'listed': 1, 'processed': 1, 'registered': 0}, 'utils': {'listed': 20, 'processed': 20, 'registered': 0}}donc il y a bien des fichiers de type departments qui ont été traités (processed), mais pour autant, je ne vois rien dans les logs pour print (f\" departments { filepath } tags { tags } name { name }\")",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 7,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_8",
+        "role": "assistant",
+        "content": "il n'y a. rien dans les logs pourtant il y a forcément des elements correspondant puisque stats['departments'] est incrémenté, j'ai 'departments': {'listed': 265, 'processed': 265, 'registered': 0},",
+        "timestamp": "2025-07-08T10:57:36.363Z",
+        "originalIndex": 8,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_9",
+        "role": "user",
+        "content": "print (f\" departments { filepath } tags { tags } name { name }\") donne departments app/departments/Technology_Department/tests/resources/test_security_checks.py tags ['app', 'departments', 'Technology_Department', 'tests', 'resources'] name test_security_checks je veux définir department = 'Technology_Department', comment faire ? on aura toujours la même structure",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 9,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_10",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE 4 % flask run [INFO] Récupération et enregistrement des données depuis l'arborescence. Nombre d'enregistrements dans fetched_pathlinks: 428 filefetc {'id': 17, 'name': 'admin_controller', 'description': '', 'ident': 'controllers_app-controllers-admin-controller-py', 'created_at': '1741721670', 'created_by': 1, 'updated_at': '1741721670', 'updated_by': 1, 'object_id': 17, 'meta_key_id': 1, 'meta_value': 'link', 'scope': None, 'meta_key': 'type', 'allowed_values': \"{'project':'Un projet global','website':'Un site web','page':'Une page unique','section':'Une section spécifique','module':'Un module fonctionnel','type_section':'Type d’une section'}\", 'object_src_id': 17, 'relation_id': 1, 'object_target_id': 1, 'source_type': '', 'target_type': '', 'cardinality': 'many_to_one', 'metas': {'type': 'link', 'status': 'fetched', 'url': 'app/controllers/admin_controller.py', 'filetype': 'controllers'}, 'tags': [], 'relations': {'as_source': {'depends_on': [{'id': 1, 'name': 'Agence initiale', 'ident': 'initial_project'}]}, 'as_target': {}}} [ERREUR] Une erreur est survenue : cannot access local variable 'f' where it is not associated with a value",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 10,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_11",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE 4 % flask run [INFO] Récupération et enregistrement des données depuis l'arborescence. Nombre d'enregistrements dans fetched_pathlinks: 428 filefetc {'id': 17, 'name': 'admin_controller', 'description': '', 'ident': 'controllers_app-controllers-admin-controller-py', 'created_at': '1741721965', 'created_by': 1, 'updated_at': '1741721965', 'updated_by': 1, 'object_id': 17, 'meta_key_id': 1, 'meta_value': 'link', 'scope': None, 'meta_key': 'type', 'allowed_values': \"{'project':'Un projet global','website':'Un site web','page':'Une page unique','section':'Une section spécifique','module':'Un module fonctionnel','type_section':'Type d’une section'}\", 'object_src_id': 17, 'relation_id': 1, 'object_target_id': 1, 'source_type': '', 'target_type': '', 'cardinality': 'many_to_one', 'metas': {'type': 'link', 'status': 'fetched', 'url': 'app/controllers/admin_controller.py', 'filetype': 'controllers'}, 'tags': [], 'relations': {'as_source': {'depends_on': [{'id': 1, 'name': 'Agence initiale', 'ident': 'initial_project'}]}, 'as_target': {}}} [ERREUR] Une erreur est survenue lors de la création de l'objet : generate_unique_ident() takes 1 positional argument but 2 were given [ERREUR] Une erreur est survenue : Meta.create_meta() missing 1 required positional argument: 'value' [INFO] L'application Flask a été initialisée avec succès ! * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 11,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_12",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE 4 % flask run [INFO] Récupération et enregistrement des données depuis l'arborescence. Nombre d'enregistrements dans fetched_pathlinks: 428 objet 445 [ERREUR] Une erreur est survenue : cannot access local variable 'parent_id' where it is not associated with a value [INFO] L'application Flask a été initialisée avec succès ! * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 12,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_13",
+        "role": "user",
+        "content": "maintenant j'ai ça venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE 4 % flask run [INFO] Récupération et enregistrement des données depuis l'arborescence. Nombre d'enregistrements dans fetched_pathlinks: 428 [ERREUR] Impossible de créer une relation avec des IDs invalides: src=445, target=None, type=4 [ERREUR] Impossible de créer une relation avec des IDs invalides: src=446, target=None, type=4 [ERREUR] Impossible de créer une relation avec des IDs invalides: src=447, target=None, type=4 [ERREUR] Impossible de créer une relation avec des IDs invalides: src=448, target=None, type=4 [ERREUR] Impossible de créer une relation avec des IDs invalides: src=449, target=None, type=4 [ERREUR] Impossible de créer une relation avec des IDs invalides: src=450, target=None, type=4 dept AI_Department [ERREUR] Une erreur est survenue : Object.generate_object_ident() takes 2 positional arguments but 3 were given [INFO] L'application Flask a été initialisée avec succès ! * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 13,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_14",
+        "role": "user",
+        "content": "comment dit-on \"responsable de\" en anglais ?",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 14,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_15",
+        "role": "assistant",
+        "content": "je préfère faire en sorte qu'on n'essaie pas de l'ajouter deux fois. ensuite j'ajouterai un filtre par sécurité donne moi le code pour connaitre le type de parent_id",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 16,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_16",
+        "role": "user",
+        "content": "je te dis que je veux eviter que le code essaye d'ajouter l'extension deux fois pour le moment on ne compense pas le pb, on le règle",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 17,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_17",
+        "role": "assistant",
+        "content": "c'est impossible qu'il y ait des doublons dans cette liste, surtout avec le même id",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 18,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_18",
+        "role": "user",
+        "content": "veriifie si l'erreur ne viendrait pas de là",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 19,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_19",
+        "role": "user",
+        "content": "je veux comprendre pourquoi la meta eextension est envoy\" deux fois, je te l'ai déjà dit ! de plus les autres metas ne posent pas de pb",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 20,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_20",
+        "role": "assistant",
+        "content": "non, le code a du canger, regarde",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 21,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_21",
+        "role": "assistant",
+        "content": "oui, extension est dans o.create_object(datas) mais où est-elle ailleurs ?",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 22,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_22",
+        "role": "user",
+        "content": "on n'utilise pas extension retournée par process_file, verifie mieux",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 24,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_23",
+        "role": "user",
+        "content": "j'ai supprimé la valeur extension des retours de process_file et j'ai venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE 4 % flask run [INFO] Récupération et enregistrement des données depuis l'arborescence. Nombre d'enregistrements dans fetched_pathlinks: 428 reçu py pour app/controllers/admin_controller.py [ERREUR] Une erreur est survenue : name 'extension' is not defined [INFO] L'application Flask a été initialisée avec succès ! * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 25,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_24",
+        "role": "assistant",
+        "content": "l'erreur ne se produit plus que sur un objet mais je ne comprends absolument pas ce qu'il a de particulier",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 26,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_25",
+        "role": "user",
+        "content": "AVANT CREATION: ID=621, Nom=analyze_styles, Filetype=actions, URL=app/departments/Technology_Department/frontend_development/actions/analyze_styles.py METAS DETAILLÉES: {'extension': 'py', 'type': 'actions', 'url': 'app/departments/Technology_Department/frontend_development/actions/analyze_styles.py', 'status': 'processing'} [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta extension pour objet 570: Échec de la création de l'object_meta {'object_id': 570, 'meta_key_id': 11, 'meta_value': 'py'} [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta type pour objet 570: Échec de la création de l'object_meta {'object_id': 570, 'meta_key_id': 1, 'meta_value': 'actions'} [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta status pour objet 570: Échec de la création de l'object_meta {'object_id': 570, 'meta_key_id': 2, 'meta_value': 'processing'} APRES CREATION: ID=570",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 27,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_26",
+        "role": "assistant",
+        "content": "il ne peut pas y avoir deux identifiants identiques",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 28,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_27",
+        "role": "user",
+        "content": "j'ai compris d'où venit le problème : if \"departments\" in url: j'ai besoin, lorsque l'action figure dans le service d'un departement, qu'on crée l'objet departement pour y associer l'action concernée, d'où le décalage car je crée le département en pleine opération . en fait il vaudrait mieux créer le département au moment du scan initial des urls puis en récupérer l'id lorsqu'on enregistre l'action pour pouvoir l'associer",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 29,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_28",
+        "role": "assistant",
+        "content": "print (f\"dept { url }\") donne des urls de ce type : ept app/departments/Technology_Department/security/actions/form_data_validation.pyj'ai besoiin de récupérer service = security, department = Technology_Department, les enregistrer en tant qu'objets de types department et service puis d'ajouter la relation service depends_on department_id. bien sûr tu dois utiliser les fonctions prévues pour ça, le code reste modulaire",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 30,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_29",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE 4 % flask run [INFO] Récupération et enregistrement des données depuis l'arborescence. [ERREUR] Une erreur est survenue : Object.create_object() missing 1 required positional argument: 'data' [INFO] L'application Flask a été initialisée avec succès ! * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T10:57:36.364Z",
+        "originalIndex": 31,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_30",
+        "role": "user",
+        "content": "j'ai ces logs mais c'est normal car les mêmes départements et service se représentent souvent. comment adapter mon code pour qu'ils ne soient enregistrés qu'une fois ?",
+        "timestamp": "2025-07-08T10:57:36.365Z",
+        "originalIndex": 32,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_31",
+        "role": "user",
+        "content": "tu es sûr que \"list index out of range\" correspond à cette recherche ?",
+        "timestamp": "2025-07-08T10:57:36.365Z",
+        "originalIndex": 35,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_32",
+        "role": "assistant",
+        "content": "j'ai du revenir à ident = Object.generate_object_ident(name, object_type) mais du coup j'ai de nouveau ce type d'erreur :",
+        "timestamp": "2025-07-08T10:57:36.365Z",
+        "originalIndex": 37,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_33",
+        "role": "user",
+        "content": "l'objet existe déjà [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta url pour objet 460: Échec de la création de l'object_meta {'object_id': 460, 'meta_key_id': 8, 'meta_value': 'app/utils/globals/get_file_content.py'} l'objet existe déjà [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta url pour objet 461: Échec de la création de l'object_meta {'object_id': 461, 'meta_key_id': 8, 'meta_value': 'app/utils/globals/get_parts_from_path.py'} l'objet existe déjà [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta url pour objet 462: Échec de la création de l'object_meta {'object_id': 462, 'meta_key_id': 8, 'meta_value': 'app/utils/setup/import_element_from_db.py'}",
+        "timestamp": "2025-07-08T10:57:36.365Z",
+        "originalIndex": 38,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_34",
+        "role": "assistant",
+        "content": "ça m'embête, je préfèrerais vraiment résoudre ce doule ajout injustifié",
+        "timestamp": "2025-07-08T10:57:36.365Z",
+        "originalIndex": 39,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_35",
+        "role": "user",
+        "content": "c'est un peu mieux mais on contourne toujours le problème",
+        "timestamp": "2025-07-08T10:57:36.365Z",
+        "originalIndex": 40,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 13160,
+      "bodyText": 745610
+    }
+  }
+}

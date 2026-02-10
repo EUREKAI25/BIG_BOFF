@@ -1,0 +1,356 @@
+# ============================================================================
+# EURKAI - Template Generate (ERK Pur - Corrigé)
+# scenario/template_generate.s.gev
+# GET = récupère fractale | EXECUTE = Walker + Deploy sur chaque nœud
+# ============================================================================
+
+#region === SCÉNARIO GEVR PRINCIPAL ===
+
+Object:Scenario:GEVR:Template:Generate:
+  .name = V_TemplateGenerateName
+  .description = "Génère un fichier HTML depuis un PageTemplate via Walker"
+  .version = "1.0.0"
+  
+  ## Input
+  .input = V_TemplateLineage
+  
+  ## Étapes GEVR
+  .get = Object:Scenario:GEVR:Template:Generate:Get
+  .execute = Object:Scenario:GEVR:Template:Generate:Execute
+  .validate = Object:Scenario:GEVR:Template:Generate:Validate
+  .render = Object:Scenario:GEVR:Template:Generate:Render
+
+#endregion
+
+#region === GET - Récupère la fractale ===
+
+Object:Scenario:GEVR:Template:Generate:Get:
+  .name = "Get"
+  .description = "Récupère la fractale du template (données exposées)"
+  
+  ## La fractale est déjà disponible dans le store
+  ## On récupère juste la référence + résolution des vecteurs
+  .source = "{V_TemplateLineage}"
+  .resolve = true
+  .includeChildren = true
+  .depth = 15
+  
+  ## Output
+  .outputKey = "templateFractal"
+
+#endregion
+
+#region === EXECUTE - Walker + Deploy ===
+
+Object:Scenario:GEVR:Template:Generate:Execute:
+  .name = "Execute"
+  .description = "Walker parcourt la fractale et exécute Deploy sur chaque nœud"
+  
+  ## Utilise le Walker existant
+  .method = Object:Function:Method:SecondaryMethod:Walk
+  
+  ## Configuration du Walk
+  .config = {
+    "dict": "{templateFractal}",
+    "scenario": "Object:Scenario:Walk:Deploy",
+    "direction": "down",
+    "depth": 15,
+    "mode": "execute"
+  }
+  
+  ## Le Walker collecte les résultats de chaque Deploy
+  .collectResults = true
+  .joinWith = ""
+  
+  ## Output
+  .outputKey = "htmlContent"
+
+#endregion
+
+#region === VALIDATE - Vérifie le HTML ===
+
+Object:Scenario:GEVR:Template:Generate:Validate:
+  .name = "Validate"
+  .description = "Vérifie la validité du HTML généré"
+  
+  .input = "{htmlContent}"
+  
+  .rules = [
+    Object:Rule:Validation:HtmlHasDoctype,
+    Object:Rule:Validation:HtmlHasStructure,
+    Object:Rule:Validation:HtmlHasLang,
+    Object:Rule:Validation:ImagesHaveAlt
+  ]
+  
+  .maxErrors = 0
+  .maxWarnings = 10
+  
+  .outputKey = "validationResult"
+
+#endregion
+
+#region === RENDER - Écrit le fichier ===
+
+Object:Scenario:GEVR:Template:Generate:Render:
+  .name = "Render"
+  .description = "Écrit le fichier HTML"
+  
+  .input = "{htmlContent}"
+  .validation = "{validationResult}"
+  
+  ## Condition: seulement si validation OK
+  .condition = "{validationResult.success} == true"
+  
+  ## Action d'écriture
+  .action = Object:Action:WriteFile
+  .actionConfig = {
+    "content": "{htmlContent}",
+    "path": "{V_OutputDir}{LOWERCASE(LAST(SPLIT(V_TemplateLineage, ':')))}.html",
+    "encoding": "utf-8",
+    "overwrite": true
+  }
+  
+  ## Post-actions
+  .onSuccess = [Object:Action:Log, Object:Action:NotifyCockpit]
+  .onFailure = [Object:Action:Log]
+  
+  .outputKey = "result"
+
+#endregion
+
+#region === SCENARIO WALK:DEPLOY ===
+
+Object:Scenario:Walk:Deploy:
+  .name = "Deploy"
+  .description = "Déploie un nœud HTML (appelé par Walker sur chaque élément)"
+  
+  ## Méthode exécutée sur chaque nœud
+  .method = Object:Function:Method:SecondaryMethod:Orchestrate:Deploy
+  
+  ## Le Deploy génère le HTML du nœud courant
+  ## Les enfants sont gérés par le Walker (récursion)
+
+#endregion
+
+#region === MÉTHODE ORCHESTRATE:DEPLOY ===
+
+Object:Function:Method:SecondaryMethod:Orchestrate:Deploy:
+  .name = V_DeployName
+  .description = "Génère le HTML d'un nœud"
+  .scan = "pass"
+  
+  ## Input: le nœud courant de la fractale
+  .input = "currentNode"
+  
+  ## Output: le HTML du nœud
+  .output = "htmlFragment"
+  
+  ## Hooks
+  .beforeHookList = [Log]
+  .afterHookList = [Log]
+  
+  ## Le Deploy utilise des règles pour déterminer quoi générer
+  .rules = [
+    Object:Rule:Deploy:Doctype,
+    Object:Rule:Deploy:HtmlOpen,
+    Object:Rule:Deploy:HtmlClose,
+    Object:Rule:Deploy:VoidElement,
+    Object:Rule:Deploy:StandardElement,
+    Object:Rule:Deploy:TextContent
+  ]
+
+#endregion
+
+#region === RÈGLES DE DEPLOY ===
+
+## Règle: DOCTYPE (premier nœud = template)
+Object:Rule:Deploy:Doctype:
+  .name = "Doctype"
+  .target = "Object:Template:PageTemplate:*"
+  .condition = "ISTYPEOF(currentNode, 'Object:Template:PageTemplate')"
+  .priority = 1
+  .action = "PREPEND"
+  .value = "<!DOCTYPE html>\n"
+
+## Règle: Ouvre <html>
+Object:Rule:Deploy:HtmlOpen:
+  .name = "HtmlOpen"
+  .target = "Object:Template:PageTemplate:*"
+  .condition = "ISTYPEOF(currentNode, 'Object:Template:PageTemplate')"
+  .priority = 2
+  .action = "APPEND"
+  .template = "<html lang=\"{RESOLVE(currentNode.lang, 'fr')}\">\n"
+
+## Règle: Ferme </html>
+Object:Rule:Deploy:HtmlClose:
+  .name = "HtmlClose"
+  .target = "Object:Template:PageTemplate:*"
+  .condition = "ISTYPEOF(currentNode, 'Object:Template:PageTemplate')"
+  .priority = 999
+  .action = "APPEND_AFTER_CHILDREN"
+  .value = "</html>\n"
+
+## Règle: Void elements (img, input, meta, link, br, hr, etc.)
+Object:Rule:Deploy:VoidElement:
+  .name = "VoidElement"
+  .target = "Object:Element:HTMLElement:*"
+  .condition = "IN(currentNode.tag, ['area','base','br','col','embed','hr','img','input','link','meta','source','track','wbr'])"
+  .priority = 10
+  .action = "APPEND"
+  .template = "{INDENT(depth)}<{currentNode.tag}{BUILDATTRIBUTES(currentNode)}>\n"
+
+## Règle: Éléments standards (avec balise ouvrante et fermante)
+Object:Rule:Deploy:StandardElement:
+  .name = "StandardElement"
+  .target = "Object:Element:HTMLElement:*"
+  .condition = "NOT IN(currentNode.tag, ['area','base','br','col','embed','hr','img','input','link','meta','source','track','wbr'])"
+  .priority = 20
+  .action = "WRAP"
+  .templateOpen = "{INDENT(depth)}<{currentNode.tag}{BUILDATTRIBUTES(currentNode)}>\n"
+  .templateClose = "{INDENT(depth)}</{currentNode.tag}>\n"
+
+## Règle: Contenu textuel
+Object:Rule:Deploy:TextContent:
+  .name = "TextContent"
+  .target = "Object:Element:HTMLElement:*"
+  .condition = "NOT ISEMPTY(currentNode.content)"
+  .priority = 30
+  .action = "APPEND_CONTENT"
+  .template = "{INDENT(depth+1)}{ESCAPE(RESOLVE(currentNode.content))}\n"
+
+#endregion
+
+#region === FORMULAS POUR DEPLOY ===
+
+Object:Formula:Deploy:BuildAttributes:
+  .name = "BUILDATTRIBUTES"
+  .description = "Construit la chaîne d'attributs HTML"
+  .syntax = "BUILDATTRIBUTES(node)"
+  .steps = [
+    "IF(node.id, CONCAT(' id=\"', node.id, '\"'), '')",
+    "IF(node.class, CONCAT(' class=\"', node.class, '\"'), '')",
+    "IF(node.classList, CONCAT(' class=\"', JOINLIST(node.classList, ' '), '\"'), '')",
+    "BUILDDATA(node)",
+    "BUILDARIA(node)",
+    "BUILDSTANDARD(node)"
+  ]
+  .join = ""
+
+Object:Formula:Deploy:BuildData:
+  .name = "BUILDDATA"
+  .description = "Construit les attributs data-*"
+  .syntax = "BUILDDATA(node)"
+  .template = "{FOREACH(node.dataList, ' data-{key}=\"{value}\"')}"
+
+Object:Formula:Deploy:BuildAria:
+  .name = "BUILDARIA"
+  .description = "Construit les attributs aria-*"
+  .syntax = "BUILDARIA(node)"
+  .template = "{FOREACH(node.ariaList, ' aria-{key}=\"{value}\"')}"
+
+Object:Formula:Deploy:BuildStandard:
+  .name = "BUILDSTANDARD"
+  .description = "Construit les attributs standards (href, src, alt, etc.)"
+  .syntax = "BUILDSTANDARD(node)"
+  .rules = [
+    "IF(node.tag == 'a' AND node.href, CONCAT(' href=\"', node.href, '\"'), '')",
+    "IF(node.tag == 'a' AND node.target, CONCAT(' target=\"', node.target, '\"'), '')",
+    "IF(node.tag == 'img' AND node.src, CONCAT(' src=\"', node.src, '\"'), '')",
+    "IF(node.tag == 'img', CONCAT(' alt=\"', RESOLVE(node.alt, ''), '\"'), '')",
+    "IF(node.tag == 'input' AND node.type, CONCAT(' type=\"', node.type, '\"'), '')",
+    "IF(node.tag == 'input' AND node.placeholder, CONCAT(' placeholder=\"', node.placeholder, '\"'), '')",
+    "IF(node.required == true, ' required', '')",
+    "IF(node.disabled == true, ' disabled', '')"
+  ]
+
+Object:Formula:Deploy:Indent:
+  .name = "INDENT"
+  .description = "Génère l'indentation selon la profondeur"
+  .syntax = "INDENT(depth)"
+  .formula = "REPEAT(' ', MULTIPLY(depth, V_IndentSize))"
+
+Object:Formula:Deploy:Escape:
+  .name = "ESCAPE"
+  .description = "Échappe les caractères HTML"
+  .syntax = "ESCAPE(text)"
+  .replacements = [
+    {"from": "&", "to": "&amp;"},
+    {"from": "<", "to": "&lt;"},
+    {"from": ">", "to": "&gt;"},
+    {"from": "\"", "to": "&quot;"}
+  ]
+
+#endregion
+
+#region === RÈGLES DE VALIDATION ===
+
+Object:Rule:Validation:HtmlHasDoctype:
+  .name = "HtmlHasDoctype"
+  .target = "{htmlContent}"
+  .condition = "STARTSWITH({htmlContent}, '<!DOCTYPE html>')"
+  .onFail = "error"
+  .message = "DOCTYPE manquant"
+
+Object:Rule:Validation:HtmlHasStructure:
+  .name = "HtmlHasStructure"
+  .target = "{htmlContent}"
+  .condition = "CONTAINS({htmlContent}, '<html') AND CONTAINS({htmlContent}, '<head>') AND CONTAINS({htmlContent}, '<body')"
+  .onFail = "error"
+  .message = "Structure HTML incomplète (html, head ou body manquant)"
+
+Object:Rule:Validation:HtmlHasLang:
+  .name = "HtmlHasLang"
+  .target = "{htmlContent}"
+  .condition = "CONTAINS({htmlContent}, 'lang=\"')"
+  .onFail = "warning"
+  .message = "Attribut lang manquant sur <html>"
+
+Object:Rule:Validation:ImagesHaveAlt:
+  .name = "ImagesHaveAlt"
+  .target = "{htmlContent}"
+  .condition = "NOT MATCHES({htmlContent}, '<img[^>]*(?<!alt=)[^>]*>')"
+  .onFail = "warning"
+  .message = "Une ou plusieurs images sans attribut alt"
+
+#endregion
+
+#region === ACTIONS ===
+
+Object:Action:WriteFile:
+  .name = "WriteFile"
+  .description = "Écrit du contenu dans un fichier"
+  .params = ["content", "path", "encoding", "overwrite"]
+  .returns = ["success", "path", "size", "error"]
+
+Object:Action:Log:
+  .name = "Log"
+  .description = "Log une action"
+  .params = ["message", "level", "data"]
+  .target = V_LogTarget
+
+Object:Action:NotifyCockpit:
+  .name = "NotifyCockpit"
+  .description = "Envoie une notification au cockpit VSCode"
+  .params = ["event", "data"]
+  .method = "vscode.postMessage"
+
+#endregion
+
+#region === VECTEURS ===
+
+Object:Structure:Fractal:Vector:V_TemplateGenerateName:
+  .default = {"FR": "Générer Template", "EN": "Generate Template"}
+
+Object:Structure:Fractal:Vector:V_DeployName:
+  .default = {"FR": "Déployer", "EN": "Deploy"}
+
+Object:Structure:Fractal:Vector:V_TemplateLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_OutputDir:
+  .default = "output/"
+
+Object:Structure:Fractal:Vector:V_IndentSize:
+  .default = 2
+
+#endregion

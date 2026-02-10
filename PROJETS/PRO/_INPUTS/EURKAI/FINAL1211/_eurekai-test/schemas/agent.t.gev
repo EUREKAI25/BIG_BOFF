@@ -1,0 +1,39 @@
+# ================================================================
+# SCHEMA: Agent
+# Contraintes - référence les vecteurs pour chaque attribut
+# ================================================================
+
+Object:Entity:
+  .name.vector = V_Name
+  .name.required = true
+  .description.vector = V_Description
+
+Object:Entity:Agent:
+  .name.vector = V_Name
+  .name.required = true
+  .description.vector = V_Description
+  .temperature.vector = V_Temperature
+  .role.vector = V_Role
+  .role.required = true
+  .model.vector = V_Model
+  .maxTokens.vector = V_MaxTokens
+  .permissions.vector = V_Permissions
+
+Object:Entity:Agent:AIAgent:
+  .provider.vector = V_Provider
+  .provider.required = true
+
+Object:Entity:Agent:ArchitectAgent:
+  .specialization.vector = V_Specialization
+  .role.fixed = architect
+  .temperature.default = 0.3
+
+Object:Entity:Agent:OrchestratorAgent:
+  .maxConcurrent.vector = V_MaxConcurrent
+  .role.fixed = orchestrator
+  .temperature.default = 0.5
+
+Object:Entity:Agent:GeneratorAgent:
+  .outputFormat.vector = V_OutputFormat
+  .role.fixed = generator
+  .temperature.default = 0.8

@@ -1,0 +1,58 @@
+{
+  "name": "eurekai-erk",
+  "displayName": "EUREKAI ERK",
+  "description": "ERK language support with integrated cockpit preview",
+  "version": "0.3.0",
+  "publisher": "eurekai",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Programming Languages", "Visualization"],
+  "activationEvents": ["onLanguage:erk", "workspaceContains:**/*.gev"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "erk",
+      "aliases": ["ERK", "EUREKAI"],
+      "extensions": [".erk", ".gev", ".s.gev", ".t.gev", ".v.gev", ".r.gev", ".c.gev", ".i.gev", ".m.gev"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "erk",
+      "scopeName": "source.erk",
+      "path": "./syntaxes/erk.tmLanguage.json"
+    }],
+    "commands": [
+      {"command": "eurekai.showCockpit", "title": "EUREKAI: Show Cockpit", "icon": "$(preview)"},
+      {"command": "eurekai.refresh", "title": "EUREKAI: Refresh", "icon": "$(refresh)"}
+    ],
+    "viewsContainers": {
+      "activitybar": [{
+        "id": "eurekai",
+        "title": "EUREKAI",
+        "icon": "resources/icon.svg"
+      }]
+    },
+    "views": {
+      "eurekai": [
+        {"id": "eurekaiExplorer", "name": "Fractale", "type": "tree"},
+        {"id": "eurekaiRules", "name": "Rules", "type": "tree"}
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {"command": "eurekai.showCockpit", "when": "view == eurekaiExplorer", "group": "navigation"},
+        {"command": "eurekai.refresh", "when": "view == eurekaiExplorer", "group": "navigation"}
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.0.0"
+  }
+}

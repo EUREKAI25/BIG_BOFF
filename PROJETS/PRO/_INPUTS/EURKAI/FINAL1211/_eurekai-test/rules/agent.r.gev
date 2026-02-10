@@ -1,0 +1,93 @@
+# ================================================================
+# RULES: Agent
+# Validation, hooks, comportements - syntaxe SuperRead
+# ================================================================
+
+# === VALIDATION ===
+Object:Rule:Agent:TemperatureRange:
+  .name = "TemperatureRange"
+  .target = Object:Entity:Agent
+  .assert = .temperature=[0..1]
+  .priority = 10
+  .onFailure = REJECT
+  .message = "Temperature must be between 0 and 1"
+
+Object:Rule:Agent:NameRequired:
+  .name = "NameRequired"
+  .target = Object:Entity:Agent
+  .assert = .name?
+  .priority = 5
+  .onFailure = REJECT
+  .message = "Name is required"
+
+Object:Rule:Agent:RoleRequired:
+  .name = "RoleRequired"
+  .target = Object:Entity:Agent
+  .assert = .role?
+  .priority = 5
+  .onFailure = REJECT
+  .message = "Role is required"
+
+Object:Rule:Agent:MaxTokensRange:
+  .name = "MaxTokensRange"
+  .target = Object:Entity:Agent
+  .assert = .maxTokens=[100..32000]
+  .priority = 10
+  .onFailure = REJECT
+  .message = "MaxTokens must be between 100 and 32000"
+
+# === DEFAULTS ===
+Object:Rule:Agent:DefaultTemperature:
+  .name = "DefaultTemperature"
+  .target = Object:Entity:Agent
+  .condition = .temperature!?
+  .action = set temperature=0.7
+  .priority = 20
+  .behavior = RunBehavior
+
+Object:Rule:Agent:DefaultModel:
+  .name = "DefaultModel"
+  .target = Object:Entity:Agent
+  .condition = .model!?
+  .action = set model=claude-3-sonnet
+  .priority = 20
+  .behavior = RunBehavior
+
+Object:Rule:Agent:DefaultMaxTokens:
+  .name = "DefaultMaxTokens"
+  .target = Object:Entity:Agent
+  .condition = .maxTokens!?
+  .action = set maxTokens=4096
+  .priority = 20
+  .behavior = RunBehavior
+
+# === INHERITANCE ===
+Object:Rule:Agent:InheritPermissions:
+  .name = "InheritPermissions"
+  .target = Object:Entity:Agent
+  .condition = .permissions!?
+  .action = set permissions=read Permission.@role={role} --fields=id
+  .priority = 30
+  .behavior = TraverseBehavior
+
+# === FIXED VALUES (role selon type) ===
+Object:Rule:ArchitectAgent:FixedRole:
+  .name = "ArchitectFixedRole"
+  .target = Object:Entity:Agent:ArchitectAgent
+  .action = set role=architect
+  .priority = 1
+  .behavior = RunBehavior
+
+Object:Rule:OrchestratorAgent:FixedRole:
+  .name = "OrchestratorFixedRole"
+  .target = Object:Entity:Agent:OrchestratorAgent
+  .action = set role=orchestrator
+  .priority = 1
+  .behavior = RunBehavior
+
+Object:Rule:GeneratorAgent:FixedRole:
+  .name = "GeneratorFixedRole"
+  .target = Object:Entity:Agent:GeneratorAgent
+  .action = set role=generator
+  .priority = 1
+  .behavior = RunBehavior

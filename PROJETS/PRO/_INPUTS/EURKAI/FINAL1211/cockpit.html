@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EUREKAI Cockpit</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e; 
+            color: #eee; 
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Sidebar - Arbre */
+        .sidebar {
+            width: 350px;
+            background: #16213e;
+            border-right: 1px solid #0f3460;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .sidebar h2 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        
+        /* Tree */
+        .tree ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        .tree > ul { padding-left: 0; }
+        .tree li {
+            position: relative;
+            padding: 5px 0;
+        }
+        .tree li::before {
+            content: "";
+            position: absolute;
+            left: -15px;
+            top: 0;
+            border-left: 1px solid #0f3460;
+            height: 100%;
+        }
+        .tree li::after {
+            content: "";
+            position: absolute;
+            left: -15px;
+            top: 15px;
+            border-top: 1px solid #0f3460;
+            width: 10px;
+        }
+        .tree li:last-child::before { height: 15px; }
+        
+        .node {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .node:hover { background: #0f3460; }
+        .node.selected { background: #e94560; }
+        .node .name { font-weight: 600; }
+        .node .count { 
+            color: #888; 
+            font-size: 0.8em; 
+            margin-left: 5px;
+        }
+        
+        .toggle {
+            cursor: pointer;
+            margin-right: 5px;
+            color: #e94560;
+        }
+        
+        /* Main content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: #16213e;
+            padding: 15px 20px;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header h1 {
+            color: #e94560;
+            font-size: 1.5em;
+        }
+        .search {
+            flex: 1;
+            max-width: 400px;
+        }
+        .search input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #0f3460;
+            border-radius: 20px;
+            background: #1a1a2e;
+            color: #eee;
+            outline: none;
+        }
+        .search input:focus { border-color: #e94560; }
+        
+        /* Content area */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        /* Object detail */
+        .object-detail {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .object-detail h3 {
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .lineage {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+        
+        /* Attributes table */
+        .attrs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .attrs-table th, .attrs-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #0f3460;
+        }
+        .attrs-table th {
+            color: #e94560;
+            font-weight: 600;
+            width: 200px;
+        }
+        .attrs-table td {
+            font-family: monospace;
+        }
+        .attrs-table tr:hover { background: #1a1a2e; }
+        
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #e94560;
+        }
+        .stat-card .label {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        /* Console */
+        .console {
+            background: #0d0d1a;
+            border-top: 1px solid #0f3460;
+            padding: 15px;
+        }
+        .console-input {
+            display: flex;
+            gap: 10px;
+        }
+        .console-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            background: #1a1a2e;
+            color: #eee;
+            font-family: monospace;
+            outline: none;
+        }
+        .console-input button {
+            padding: 10px 20px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .console-input button:hover { background: #c73e54; }
+        .console-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🌳 Fractale</h2>
+        <div class="tree" id="tree"></div>
+    </div>
+    
+    <div class="main">
+        <div class="header">
+            <h1>EUREKAI Cockpit</h1>
+            <div class="search">
+                <input type="text" id="search" placeholder="Rechercher un objet...">
+            </div>
+        </div>
+        
+        <div class="content" id="content">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="value" id="stat-objects">0</div>
+                    <div class="label">Objets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="stat-vectors">0</div>
+                    <div class="label">Vecteurs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="stat-rules">0</div>
+                    <div class="label">Rules</div>
+                </div>
+            </div>
+            
+            <div class="object-detail" id="detail">
+                <h3>Sélectionnez un objet</h3>
+                <p>Cliquez sur un élément dans l'arbre pour voir ses détails.</p>
+            </div>
+        </div>
+        
+        <div class="console">
+            <div class="console-input">
+                <input type="text" id="cmd" placeholder="SuperRead: read Agent.role=architect">
+                <button onclick="executeCmd()">Exécuter</button>
+            </div>
+            <div class="console-output" id="output"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Data
+        const treeData = {"name": "Object", "lineage": "Object", "attributes": {}, "children": [{"name": "Entity", "lineage": "Object:Entity", "attributes": {"name": "V_Name", "description": "V_Description"}, "children": [{"name": "Agent", "lineage": "Object:Entity:Agent", "attributes": {"name": "V_Name", "description": "V_Description", "temperature": "V_Temperature", "role": "V_Role", "model": "V_Model", "maxTokens": "V_MaxTokens", "permissions": "V_Permissions"}, "children": [{"name": "AIAgent", "lineage": "Object:Entity:Agent:AIAgent", "attributes": {"name": "V_Name", "description": "V_Description", "temperature": "V_Temperature", "role": "V_Role", "model": "V_Model", "maxTokens": "V_MaxTokens", "provider": "V_Provider"}, "children": []}, {"name": "ArchitectAgent", "lineage": "Object:Entity:Agent:ArchitectAgent", "attributes": {"name": "V_Name", "description": "V_Description", "temperature": "V_Temperature", "role": "V_Role", "model": "V_Model", "specialization": "V_Specialization"}, "children": [{"name": "MainArchitect", "lineage": "Object:Entity:Agent:ArchitectAgent:MainArchitect", "attributes": {"name": "\"MainArchitect\"", "description": "\"Agent architecte principal du système\"", "role": "architect", "temperature": "0.3", "model": "claude-3-opus", "maxTokens": "8192", "specialization": "schema", "provider": "anthropic"}, "children": []}, {"name": "RulesArchitect", "lineage": "Object:Entity:Agent:ArchitectAgent:RulesArchitect", "attributes": {"name": "\"RulesArchitect\"", "description": "\"Agent spécialisé dans les règles métier\"", "role": "architect", "temperature": "0.2", "model": "claude-3-opus", "maxTokens": "4096", "specialization": "rules", "provider": "anthropic"}, "children": []}]}, {"name": "OrchestratorAgent", "lineage": "Object:Entity:Agent:OrchestratorAgent", "attributes": {"name": "V_Name", "description": "V_Description", "temperature": "V_Temperature", "role": "V_Role", "model": "V_Model", "maxConcurrent": "V_MaxConcurrent"}, "children": [{"name": "MainOrchestrator", "lineage": "Object:Entity:Agent:OrchestratorAgent:MainOrchestrator", "attributes": {"name": "\"MainOrchestrator\"", "description": "\"Agent orchestrateur principal\"", "role": "orchestrator", "temperature": "0.5", "model": "claude-3-sonnet", "maxTokens": "4096", "maxConcurrent": "5", "provider": "anthropic"}, "children": []}]}, {"name": "GeneratorAgent", "lineage": "Object:Entity:Agent:GeneratorAgent", "attributes": {"name": "V_Name", "description": "V_Description", "temperature": "V_Temperature", "role": "V_Role", "model": "V_Model", "outputFormat": "V_OutputFormat"}, "children": [{"name": "ContentGenerator", "lineage": "Object:Entity:Agent:GeneratorAgent:ContentGenerator", "attributes": {"name": "\"ContentGenerator\"", "description": "\"Agent générateur de contenu\"", "role": "generator", "temperature": "0.8", "model": "claude-3-sonnet", "maxTokens": "8192", "outputFormat": "markdown", "provider": "anthropic"}, "children": []}, {"name": "CodeGenerator", "lineage": "Object:Entity:Agent:GeneratorAgent:CodeGenerator", "attributes": {"name": "\"CodeGenerator\"", "description": "\"Agent générateur de code\"", "role": "generator", "temperature": "0.4", "model": "claude-3-opus", "maxTokens": "16000", "outputFormat": "json", "provider": "anthropic"}, "children": []}]}]}]}]};
+        const stats = {"objects": 44, "vectors": 11, "rules": 11, "config": 0};
+        
+        // Update stats
+        document.getElementById('stat-objects').textContent = stats.objects;
+        document.getElementById('stat-vectors').textContent = stats.vectors;
+        document.getElementById('stat-rules').textContent = stats.rules;
+        
+        // Render tree
+        function renderTree(node, container) {
+            const li = document.createElement('li');
+            
+            const hasChildren = node.children && node.children.length > 0;
+            
+            const nodeEl = document.createElement('span');
+            nodeEl.className = 'node';
+            nodeEl.innerHTML = `
+                ${hasChildren ? '<span class="toggle">▼</span>' : '<span class="toggle" style="visibility:hidden">▼</span>'}
+                <span class="name">${node.name}</span>
+                ${hasChildren ? `<span class="count">(${node.children.length})</span>` : ''}
+            `;
+            nodeEl.onclick = (e) => {
+                e.stopPropagation();
+                selectNode(node);
+                
+                // Toggle children
+                if (hasChildren) {
+                    const ul = li.querySelector('ul');
+                    const toggle = nodeEl.querySelector('.toggle');
+                    if (ul) {
+                        ul.style.display = ul.style.display === 'none' ? 'block' : 'none';
+                        toggle.textContent = ul.style.display === 'none' ? '▶' : '▼';
+                    }
+                }
+            };
+            
+            li.appendChild(nodeEl);
+            
+            if (hasChildren) {
+                const ul = document.createElement('ul');
+                node.children.forEach(child => renderTree(child, ul));
+                li.appendChild(ul);
+            }
+            
+            container.appendChild(li);
+        }
+        
+        function selectNode(node) {
+            // Remove previous selection
+            document.querySelectorAll('.node.selected').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // Show detail
+            const detail = document.getElementById('detail');
+            
+            let attrsHtml = '';
+            const attrs = node.attributes || {};
+            for (const [key, value] of Object.entries(attrs)) {
+                attrsHtml += `<tr><th>${key}</th><td>${value}</td></tr>`;
+            }
+            
+            detail.innerHTML = `
+                <h3>${node.name}</h3>
+                <div class="lineage">${node.lineage}</div>
+                ${Object.keys(attrs).length > 0 ? `
+                    <table class="attrs-table">
+                        <tbody>${attrsHtml}</tbody>
+                    </table>
+                ` : '<p>Aucun attribut</p>'}
+            `;
+        }
+        
+        function executeCmd() {
+            const cmd = document.getElementById('cmd').value;
+            const output = document.getElementById('output');
+            output.textContent = `> ${cmd}\n\n(Exécution côté serveur requise)`;
+        }
+        
+        // Search
+        document.getElementById('search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.tree .node').forEach(node => {
+                const text = node.textContent.toLowerCase();
+                node.parentElement.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        });
+        
+        // Init
+        const treeContainer = document.getElementById('tree');
+        const ul = document.createElement('ul');
+        renderTree(treeData, ul);
+        treeContainer.appendChild(ul);
+    </script>
+</body>
+</html>

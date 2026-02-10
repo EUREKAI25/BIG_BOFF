@@ -1,0 +1,60 @@
+{
+  "tasks": [
+    {
+      "id": "alerts",
+      "action": "check_alerts",
+      "interval": 1,
+      "enabled": true,
+      "description": "Alertes et rappels (notifications macOS)"
+    },
+    {
+      "id": "new_files",
+      "action": "scan_new_files",
+      "interval": 60,
+      "enabled": true,
+      "description": "Nouveaux fichiers Dropbox → catalogue + tags"
+    },
+    {
+      "id": "stale_items",
+      "action": "check_stale_items",
+      "interval": 3600,
+      "enabled": true,
+      "description": "Fichiers périmés (supprimés/déplacés) — 500 items/heure"
+    },
+    {
+      "id": "pdf_index",
+      "action": "index_pdfs",
+      "interval": 300,
+      "enabled": true,
+      "description": "Extraction texte PDF → tags (10 PDFs/5min)"
+    },
+    {
+      "id": "pipeline",
+      "action": "pipeline_check",
+      "interval": 60,
+      "enabled": true,
+      "description": "Pipeline agence (TODO, gates)"
+    },
+    {
+      "id": "email_sync",
+      "action": "sync_emails",
+      "interval": 21600,
+      "enabled": false,
+      "description": "Sync emails IMAP (toutes les 6h) — activer quand prêt"
+    },
+    {
+      "id": "content_index",
+      "action": "content_index",
+      "interval": 86400,
+      "enabled": false,
+      "description": "Indexation contenu fichiers (1x/jour) — activer quand prêt"
+    },
+    {
+      "id": "cleanup",
+      "action": "maintenance_cleanup",
+      "interval": 604800,
+      "enabled": true,
+      "description": "Nettoyage tags orphelins + VACUUM (1x/semaine)"
+    }
+  ]
+}

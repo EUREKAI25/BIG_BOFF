@@ -1,0 +1,55 @@
+# ================================================================
+# CONFIG: Agent
+# Résolu au bootstrap - choix user + décisions agent IA
+# ================================================================
+
+# === PROJET ===
+Object:Entity:Project:
+  .name = "EUREKAI"
+  .locale = fr-FR
+  .country = FR
+  .currency = EUR
+  .timezone = Europe/Paris
+
+# === PROVIDER PAR DÉFAUT ===
+Object:Config:AI:
+  .defaultProvider = anthropic
+  .defaultModel = claude-3-sonnet
+  .fallbackModel = claude-3-haiku
+
+# === LIMITES ===
+Object:Config:Agent:Limits:
+  .maxTokensDefault = 4096
+  .maxTokensMax = 32000
+  .maxConcurrentDefault = 3
+  .maxConcurrentMax = 10
+
+# === TEMPERATURES PAR ROLE ===
+Object:Config:Agent:Temperature:
+  .architect = 0.3
+  .orchestrator = 0.5
+  .generator = 0.8
+  .executor = 0.2
+  .reviewer = 0.4
+
+# === MODELS DISPONIBLES ===
+Object:Config:Agent:Models:
+  .anthropic = claude-3-opus,claude-3-sonnet,claude-3-haiku
+  .openai = gpt-4,gpt-4-turbo,gpt-3.5-turbo
+  .google = gemini-pro,gemini-ultra
+
+# === PERMISSIONS PAR ROLE ===
+Object:Config:Permissions:Architect:
+  .permissions = schema.read,schema.write,rules.read,rules.write,scenarios.read
+
+Object:Config:Permissions:Orchestrator:
+  .permissions = scenarios.read,scenarios.write,agents.read,agents.execute
+
+Object:Config:Permissions:Generator:
+  .permissions = content.read,content.write,templates.read
+
+Object:Config:Permissions:Executor:
+  .permissions = tasks.read,tasks.execute
+
+Object:Config:Permissions:Reviewer:
+  .permissions = all.read,audit.write

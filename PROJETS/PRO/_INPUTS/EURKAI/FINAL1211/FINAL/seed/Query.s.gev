@@ -1,0 +1,58 @@
+# ============================================================================
+# EURKAI Seed - Query
+# seed/Query.s.gev
+# ============================================================================
+
+Object:Query:
+  .name = V_QueryName
+  .description = V_QueryDescription
+  .pattern = V_QueryPattern
+
+Object:Query:Command:
+  .name = V_QueryCommandName
+  .description = V_QueryCommandDescription
+  .syntax = V_QueryCommandSyntax
+  .example = V_QueryCommandExample
+  .returns = V_QueryCommandReturns
+
+Object:Query:Command:Read:
+  .name = "read"
+  .description = V_ReadCommandDescription
+  .syntax = "read <Type>[.<attr><op><val>]... [@<relation>=<Type>]... [OPTIONS]"
+  .example = "read Agent.status=active"
+  .returns = "list"
+
+Object:Query:Command:Get:
+  .name = "get"
+  .description = V_GetCommandDescription
+  .syntax = "get <Lineage>"
+  .example = "get Object:Entity:Agent:MainAgent"
+  .returns = "single"
+
+Object:Query:Command:Resolve:
+  .name = "resolve"
+  .description = V_ResolveCommandDescription
+  .syntax = "resolve V_<NomVecteur>"
+  .example = "resolve V_DeployableInstances"
+  .returns = "resolved"
+
+Object:Query:Command:Tree:
+  .name = "tree"
+  .description = V_TreeCommandDescription
+  .syntax = "tree <Lineage> [--depth=N]"
+  .example = "tree Object:Template --depth=3"
+  .returns = "tree"
+
+Object:Query:Command:Stats:
+  .name = "stats"
+  .description = V_StatsCommandDescription
+  .syntax = "stats [Type]"
+  .example = "stats Agent"
+  .returns = "object"
+
+Object:Query:Command:Vectors:
+  .name = "vectors"
+  .description = V_VectorsCommandDescription
+  .syntax = "vectors [--filter=pattern]"
+  .example = "vectors --filter=Deploy"
+  .returns = "list"

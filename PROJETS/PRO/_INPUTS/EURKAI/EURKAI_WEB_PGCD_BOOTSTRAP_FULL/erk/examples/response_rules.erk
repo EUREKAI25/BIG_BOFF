@@ -1,0 +1,5 @@
+# ERK:ResponseRules
+must_not Object:Response.contains_hallucination
+
+when Object:Response.score < 0.7
+then SuperEngage.diagnose(Object:Prompt, Object:Response)

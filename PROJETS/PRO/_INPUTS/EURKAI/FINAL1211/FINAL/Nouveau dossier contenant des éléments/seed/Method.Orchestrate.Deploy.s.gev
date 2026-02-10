@@ -1,0 +1,81 @@
+# ============================================================================
+# EURKAI - Méthode Orchestrate:Deploy
+# seed/method/Method.Orchestrate.Deploy.s.gev
+# Méthode de déploiement de templates avec hooks before/after
+# ============================================================================
+
+#region === MÉTHODE PRINCIPALE ===
+
+Object:Method:Orchestrate:Deploy:
+  .name = "Deploy"
+  .scan = "deploy"
+  .description = "Génère le HTML d'une instance de template"
+  .direction = "down"
+  .depth = -1
+  
+  ## Hooks - exécutés avant/après le walk
+  .beforeHook = "update:scan:deploy"
+  .afterHook = "update:scan:pass"
+  
+  ## Liste des instances disponibles pour ce scénario
+  ## Peuplée par query: Object:Interface:PageInterface:*
+  .optionList = V_DeployableInstances
+  .optionQuery = "Object:Interface:PageInterface:*"
+  
+  ## Output configuration
+  .outputDir = "output"
+  .outputFormat = "html"
+
+#endregion
+
+#region === HOOKS ===
+
+Object:Method:SecondaryMethod:Hook:UpdateScanDeploy:
+  .name = "UpdateScanDeploy"
+  .scan = "update:scan:deploy"
+  .description = "Override .scan à 'deploy' sur les objets cibles"
+  .targetAttribute = "scan"
+  .targetValue = "deploy"
+
+Object:Method:SecondaryMethod:Hook:UpdateScanPass:
+  .name = "UpdateScanPass"
+  .scan = "update:scan:pass"
+  .description = "Remet .scan à 'pass' sur les objets cibles"
+  .targetAttribute = "scan"
+  .targetValue = "pass"
+
+#endregion
+
+#region === VECTEURS ===
+
+V_DeployableInstances:
+  .query = "Object:Interface:PageInterface:*"
+  .description = "Liste des instances de pages déployables"
+
+V_DeployOutputDir:
+  .value = "output"
+  .description = "Répertoire de sortie pour les fichiers générés"
+
+#endregion
+
+#region === MÉTHODES SECONDAIRES ===
+
+Object:Method:SecondaryMethod:Scan:Deploy:
+  .name = "Deploy"
+  .scan = "deploy"
+  .description = "Génère le fragment HTML d'un élément"
+  .action = "generateHtml"
+  
+Object:Method:SecondaryMethod:Scan:Pass:
+  .name = "Pass"
+  .scan = "pass"
+  .description = "Traverse sans action"
+  .action = "none"
+
+Object:Method:SecondaryMethod:Scan:Ghost:
+  .name = "Ghost"
+  .scan = "ghost"
+  .description = "Simulation - ne modifie rien"
+  .action = "simulate"
+
+#endregion

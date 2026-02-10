@@ -1,0 +1,87 @@
+# ============================================================================
+# VECTORS: Paramètres configurables du système
+# ============================================================================
+
+Object:Vector:V_Temperature:
+  .name = "V_Temperature"
+  .description = "Température de génération IA"
+  .type = "float"
+  .default = 0.7
+  .min = 0.0
+  .max = 2.0
+
+Object:Vector:V_MaxTokens:
+  .name = "V_MaxTokens"
+  .description = "Nombre maximum de tokens"
+  .type = "integer"
+  .default = 4096
+  .min = 100
+  .max = 100000
+
+Object:Vector:V_Model:
+  .name = "V_Model"
+  .description = "Modèle IA à utiliser"
+  .type = "string"
+  .default = "claude-sonnet-4-20250514"
+  .options = "claude-sonnet-4-20250514,gpt-4o,gemini-pro"
+
+Object:Vector:V_Provider:
+  .name = "V_Provider"
+  .description = "Fournisseur d'API"
+  .type = "string"
+  .default = "anthropic"
+  .options = "anthropic,openai,google"
+
+Object:Vector:V_Role:
+  .name = "V_Role"
+  .description = "Rôle de l'agent"
+  .type = "string"
+  .default = "assistant"
+
+Object:Vector:V_Name:
+  .name = "V_Name"
+  .description = "Nom de l'entité"
+  .type = "string"
+  .default = "Unnamed"
+
+Object:Vector:V_Description:
+  .name = "V_Description"
+  .description = "Description de l'entité"
+  .type = "string"
+  .default = ""
+
+Object:Vector:V_Permissions:
+  .name = "V_Permissions"
+  .description = "Permissions de l'agent"
+  .type = "array"
+  .default = ["read", "write"]
+
+Object:Vector:V_Timeout:
+  .name = "V_Timeout"
+  .description = "Timeout en secondes"
+  .type = "integer"
+  .default = 30
+  .min = 1
+  .max = 300
+
+Object:Vector:V_RetryCount:
+  .name = "V_RetryCount"
+  .description = "Nombre de tentatives"
+  .type = "integer"
+  .default = 3
+  .min = 0
+  .max = 10
+
+Object:Vector:V_LogLevel:
+  .name = "V_LogLevel"
+  .description = "Niveau de log"
+  .type = "string"
+  .default = "info"
+  .options = "debug,info,warn,error"
+
+Object:Vector:V_OutputFormat:
+  .name = "V_OutputFormat"
+  .description = "Format de sortie"
+  .type = "string"
+  .default = "json"
+  .options = "json,xml,yaml,text"

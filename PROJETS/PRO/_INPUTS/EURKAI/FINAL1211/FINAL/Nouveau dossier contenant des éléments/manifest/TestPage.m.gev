@@ -1,0 +1,242 @@
+# ============================================================================
+# EURKAI - Test Page Manifest v4
+# manifest/TestPage.m.gev
+# Template avec slot pour contenu + Pages avec contenu séparé
+# ============================================================================
+
+#region === TEMPLATE (structure commune) ===
+
+Object:Template:PageTemplate:DefaultTemplate:
+  .name = "DefaultTemplate"
+  .title = "EURKAI"
+  .lang = "fr"
+  .HeadElement = Object:Element:HTMLElement:Head:TestHead
+  .BodyElement = Object:Element:HTMLElement:Body:TestBody
+
+#endregion
+
+#region === HEAD ===
+
+Object:Element:HTMLElement:Head:TestHead:
+  .name = "TestHead"
+  .Meta1 = Object:Element:HTMLElement:Meta:TestMeta1
+  .Meta2 = Object:Element:HTMLElement:Meta:TestMeta2
+  .CSS = Object:Element:HTMLElement:StylesheetLink:TestCSS
+
+Object:Element:HTMLElement:Meta:TestMeta1:
+  .name = "description"
+  .content = "Site généré par EURKAI"
+
+Object:Element:HTMLElement:Meta:TestMeta2:
+  .name = "viewport"
+  .content = "width=device-width, initial-scale=1.0"
+
+Object:Element:HTMLElement:StylesheetLink:TestCSS:
+  .rel = "stylesheet"
+  .href = "css/style.css"
+
+#endregion
+
+#region === BODY (structure commune) ===
+
+Object:Element:HTMLElement:Body:TestBody:
+  .class = "page"
+  .erkId = "app"
+  .Header = Object:Element:HTMLElement:Header:SiteHeader
+  .Main = Object:Element:HTMLElement:Main:MainSlot
+  .Footer = Object:Element:HTMLElement:Footer:SiteFooter
+
+#endregion
+
+#region === HEADER (commun) ===
+
+Object:Element:HTMLElement:Header:SiteHeader:
+  .class = "site-header"
+  .role = "banner"
+  .Logo = Object:Element:HTMLElement:Div:SiteLogo
+  .Nav = Object:Element:HTMLElement:Nav:MainNav
+
+Object:Element:HTMLElement:Div:SiteLogo:
+  .class = "logo"
+  .content = "EURKAI"
+
+Object:Element:HTMLElement:Nav:MainNav:
+  .class = "main-nav"
+  .role = "navigation"
+  .Link1 = Object:Element:HTMLElement:Anchor:NavHome
+  .Link2 = Object:Element:HTMLElement:Anchor:NavFeatures
+  .Link3 = Object:Element:HTMLElement:Anchor:NavDocs
+  .Link4 = Object:Element:HTMLElement:Anchor:NavContact
+
+Object:Element:HTMLElement:Anchor:NavHome:
+  .href = "/"
+  .content = "Accueil"
+  .order = 1
+
+Object:Element:HTMLElement:Anchor:NavFeatures:
+  .href = "/features"
+  .content = "Fonctionnalités"
+  .order = 2
+
+Object:Element:HTMLElement:Anchor:NavDocs:
+  .href = "/docs"
+  .content = "Documentation"
+  .order = 3
+
+Object:Element:HTMLElement:Anchor:NavContact:
+  .href = "/contact"
+  .content = "Contact"
+  .order = 4
+
+#endregion
+
+#region === MAIN SLOT (vide - rempli par page) ===
+
+Object:Element:HTMLElement:Main:MainSlot:
+  .class = "main-content"
+  .role = "main"
+  .erkId = "main-content"
+  ## Le contenu vient de la page active via SPA
+
+#endregion
+
+#region === FOOTER (commun) ===
+
+Object:Element:HTMLElement:Footer:SiteFooter:
+  .class = "site-footer"
+  .role = "contentinfo"
+  .Copyright = Object:Element:HTMLElement:Text:Copyright
+
+Object:Element:HTMLElement:Text:Copyright:
+  .content = "© 2025 EURKAI. Tous droits réservés."
+  .class = "copyright"
+
+#endregion
+
+# ============================================================================
+# PAGES - Chaque page définit son contenu
+# ============================================================================
+
+#region === PAGE: ACCUEIL ===
+
+Object:Interface:PageInterface:HTMLPage:HomePage:
+  .title = "EURKAI - Accueil"
+  .description = "Bienvenue sur EURKAI"
+  .slug = "/"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Div:HomeContent
+
+Object:Element:HTMLElement:Div:HomeContent:
+  .class = "page-content home-content"
+  .Hero = Object:Element:HTMLElement:Section:HomeHero
+
+Object:Element:HTMLElement:Section:HomeHero:
+  .class = "hero-section"
+  .Title = Object:Element:HTMLElement:H1:HomeTitle
+  .Subtitle = Object:Element:HTMLElement:Text:HomeSubtitle
+  .CTA = Object:Element:HTMLElement:Button:HomeCTA
+
+Object:Element:HTMLElement:H1:HomeTitle:
+  .content = "Bienvenue sur EURKAI"
+  .order = 1
+
+Object:Element:HTMLElement:Text:HomeSubtitle:
+  .content = "La plateforme de génération de templates intelligente"
+  .order = 2
+
+Object:Element:HTMLElement:Button:HomeCTA:
+  .content = "Commencer"
+  .class = "btn-primary"
+  .order = 3
+
+#endregion
+
+#region === PAGE: FONCTIONNALITÉS ===
+
+Object:Interface:PageInterface:HTMLPage:FeaturesPage:
+  .title = "EURKAI - Fonctionnalités"
+  .description = "Découvrez les fonctionnalités"
+  .slug = "/features"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Div:FeaturesContent
+
+Object:Element:HTMLElement:Div:FeaturesContent:
+  .class = "page-content features-content"
+  .Title = Object:Element:HTMLElement:H1:FeaturesTitle
+  .Grid = Object:Element:HTMLElement:Section:FeaturesGrid
+
+Object:Element:HTMLElement:H1:FeaturesTitle:
+  .content = "Fonctionnalités"
+  .order = 1
+
+Object:Element:HTMLElement:Section:FeaturesGrid:
+  .class = "features-grid"
+  .order = 2
+  .Feature1 = Object:Element:HTMLElement:Div:Feature1
+  .Feature2 = Object:Element:HTMLElement:Div:Feature2
+  .Feature3 = Object:Element:HTMLElement:Div:Feature3
+
+Object:Element:HTMLElement:Div:Feature1:
+  .class = "feature-card"
+  .content = "Templates récursifs"
+  .order = 1
+
+Object:Element:HTMLElement:Div:Feature2:
+  .class = "feature-card"
+  .content = "Génération automatique"
+  .order = 2
+
+Object:Element:HTMLElement:Div:Feature3:
+  .class = "feature-card"
+  .content = "100% ERK"
+  .order = 3
+
+#endregion
+
+#region === PAGE: DOCUMENTATION ===
+
+Object:Interface:PageInterface:HTMLPage:DocsPage:
+  .title = "EURKAI - Documentation"
+  .description = "Documentation technique"
+  .slug = "/docs"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Div:DocsContent
+
+Object:Element:HTMLElement:Div:DocsContent:
+  .class = "page-content docs-content"
+  .Title = Object:Element:HTMLElement:H1:DocsTitle
+  .Intro = Object:Element:HTMLElement:Text:DocsIntro
+
+Object:Element:HTMLElement:H1:DocsTitle:
+  .content = "Documentation"
+  .order = 1
+
+Object:Element:HTMLElement:Text:DocsIntro:
+  .content = "Retrouvez toute la documentation technique EURKAI."
+  .order = 2
+
+#endregion
+
+#region === PAGE: CONTACT ===
+
+Object:Interface:PageInterface:HTMLPage:ContactPage:
+  .title = "EURKAI - Contact"
+  .description = "Contactez-nous"
+  .slug = "/contact"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Div:ContactContent
+
+Object:Element:HTMLElement:Div:ContactContent:
+  .class = "page-content contact-content"
+  .Title = Object:Element:HTMLElement:H1:ContactTitle
+  .Intro = Object:Element:HTMLElement:Text:ContactIntro
+
+Object:Element:HTMLElement:H1:ContactTitle:
+  .content = "Contact"
+  .order = 1
+
+Object:Element:HTMLElement:Text:ContactIntro:
+  .content = "Une question ? Contactez-nous !"
+  .order = 2
+
+#endregion

@@ -1,0 +1,257 @@
+# rule.v.gev
+
+V_RuleName = "Rule"
+V_RuleDescription = ""
+V_RuleQuestion = ""
+V_RuleSeverity = "info"
+V_RuleConstraintLevel = "MAY"
+V_RuleScope = []
+V_RuleCondition = ""
+V_RuleErrorMessage = ""
+V_RuleErk = |
+  EXEC Rule.Validate(
+    input = {
+      target: $target,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_StructuralRuleName = "Règle structurelle"
+V_StructuralRuleDescription = "Règle qui décrit la forme attendue d'un objet (attributs, types, relations, bundles, format)."
+V_StructuralRuleQuestion = "Quelle règle de structure s'applique à cet objet ?"
+V_StructuralRuleSeverity = "info"
+V_StructuralRuleConstraintLevel = "MAY"
+V_StructuralRuleScope = []
+V_StructuralRuleCondition = ""
+V_StructuralRuleErrorMessage = ""
+V_StructuralRuleErk = |
+  EXEC Rule.Validate(
+    input = {
+      target: $target,
+      source_text: $source_text,
+      source_kind: $source_kind,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_SchemaRuleName = "Règle de schéma"
+V_SchemaRuleDescription = "Contraintes sur présence/absence d'attributs, types attendus, cardinalités et structure."
+V_SchemaRuleQuestion = "Quels attributs/types/cardis doivent exister pour cet objet ?"
+V_SchemaRuleSeverity = "info"
+V_SchemaRuleConstraintLevel = "MAY"
+V_SchemaRuleScope = []
+V_SchemaRuleCondition = ""
+V_SchemaRuleErrorMessage = ""
+V_SchemaRuleConstraintPattern = ""
+V_SchemaRuleRequiredKeyword = ""
+V_SchemaRuleRequiredSlot = ""
+V_SchemaRuleErk = |
+  EXEC Rule.Validate.Schema(
+    input = {
+      target: $target,
+      schema: $schema,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_FormatRuleName = "Règle de format"
+V_FormatRuleDescription = "Contraintes sur le format des valeurs (regex, format attendu)."
+V_FormatRuleQuestion = "Quel format cette valeur doit-elle respecter ?"
+V_FormatRuleSeverity = "info"
+V_FormatRuleConstraintLevel = "MAY"
+V_FormatRuleScope = []
+V_FormatRuleCondition = ""
+V_FormatRuleErrorMessage = ""
+V_FormatRuleRegex = ""
+V_FormatRuleFormat = ""
+V_FormatRuleErk = |
+  EXEC Rule.Validate.Format(
+    input = {
+      target: $target,
+      source_text: $source_text,
+      regex: $regex,
+      format: $format,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_CardinalityRuleName = "Règle de cardinalité"
+V_CardinalityRuleDescription = "Contraintes min/max sur le nombre d'éléments."
+V_CardinalityRuleQuestion = "La cardinalité respecte-t-elle les bornes min/max ?"
+V_CardinalityRuleSeverity = "info"
+V_CardinalityRuleConstraintLevel = "MAY"
+V_CardinalityRuleScope = []
+V_CardinalityRuleCondition = ""
+V_CardinalityRuleErrorMessage = ""
+V_CardinalityRuleMin = 0
+V_CardinalityRuleMax = -1
+V_CardinalityRuleErk = |
+  EXEC Rule.Validate.Cardinality(
+    input = {
+      target: $target,
+      min: $min,
+      max: $max,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_BehavioralRuleName = "Règle comportementale"
+V_BehavioralRuleDescription = "Règle sur le comportement (événement déclencheur et action)."
+V_BehavioralRuleQuestion = "Quel comportement est déclenché et quelle action s'exécute ?"
+V_BehavioralRuleSeverity = "info"
+V_BehavioralRuleConstraintLevel = "MAY"
+V_BehavioralRuleScope = []
+V_BehavioralRuleCondition = ""
+V_BehavioralRuleErrorMessage = ""
+V_BehavioralRuleTrigger = ""
+V_BehavioralRuleAction = ""
+V_BehavioralRuleErk = |
+  EXEC Rule.Execute(
+    input = {
+      trigger: $trigger,
+      action: $action,
+      target: $target,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_StateRuleName = "Règle d'état"
+V_StateRuleDescription = "Règle sur les états et transitions autorisées."
+V_StateRuleQuestion = "La transition est-elle autorisée ?"
+V_StateRuleSeverity = "info"
+V_StateRuleConstraintLevel = "MAY"
+V_StateRuleScope = []
+V_StateRuleCondition = ""
+V_StateRuleErrorMessage = ""
+V_StateRuleFromState = ""
+V_StateRuleToState = ""
+V_StateRuleAllowedTransitions = []
+V_StateRuleErk = |
+  EXEC Rule.Validate.State(
+    input = {
+      fromState: $fromState,
+      toState: $toState,
+      allowedTransitions: $allowedTransitions,
+      target: $target,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_PermissionRuleName = "Règle de permission"
+V_PermissionRuleDescription = "Règle sur les permissions (acteur, action, ressource)."
+V_PermissionRuleQuestion = "L'acteur a-t-il le droit d'exécuter l'action sur la ressource ?"
+V_PermissionRuleSeverity = "info"
+V_PermissionRuleConstraintLevel = "MAY"
+V_PermissionRuleScope = []
+V_PermissionRuleCondition = ""
+V_PermissionRuleErrorMessage = ""
+V_PermissionRuleActor = ""
+V_PermissionRuleAction = ""
+V_PermissionRuleResource = ""
+V_PermissionRuleErk = |
+  EXEC Rule.Validate.Permission(
+    input = {
+      actor: $actor,
+      action: $action,
+      resource: $resource,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_ValidationRuleName = "Règle de validation"
+V_ValidationRuleDescription = "Règle de validation métier (validator + hooks succès/échec)."
+V_ValidationRuleQuestion = "La validation réussit-elle et quels hooks s'appliquent ?"
+V_ValidationRuleSeverity = "info"
+V_ValidationRuleConstraintLevel = "MAY"
+V_ValidationRuleScope = []
+V_ValidationRuleCondition = ""
+V_ValidationRuleErrorMessage = ""
+V_ValidationRuleValidator = ""
+V_ValidationRuleOnSuccess = ""
+V_ValidationRuleOnFailure = ""
+V_ValidationRuleErk = |
+  EXEC Rule.Validate.Business(
+    input = {
+      validator: $validator,
+      target: $target,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, EXEC Hook($onSuccess), EXEC Hook($onFailure))
+
+V_ComputedRuleName = "Règle calculée"
+V_ComputedRuleDescription = "Règle de calcul (formule, dépendances, cache)."
+V_ComputedRuleQuestion = "La valeur calculée est-elle correcte ?"
+V_ComputedRuleSeverity = "info"
+V_ComputedRuleConstraintLevel = "MAY"
+V_ComputedRuleScope = []
+V_ComputedRuleCondition = ""
+V_ComputedRuleErrorMessage = ""
+V_ComputedRuleFormula = ""
+V_ComputedRuleDependencies = []
+V_ComputedRuleCache = false
+V_ComputedRuleErk = |
+  EXEC Rule.Compute(
+    input = {
+      formula: $formula,
+      dependencies: $dependencies,
+      cache: $cache,
+      target: $target,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+
+
+
+
+

@@ -1,0 +1,999 @@
+# ============================================================
+# EUREKAI SEED — ERK (EUREKAI Rule Kernel) v1.0
+# ============================================================
+# Contient:
+# - Object:Language:ERK — le langage
+# - Object:Rule:* — types de règles
+# - Object:Method:Formula:* — formulas par catégorie
+# - Object:Documentation:Specification:ERK — spec complète
+# ============================================================
+
+# ============================================================
+# LANGUAGE ERK
+# ============================================================
+
+Object:Language:ERK
+.name = ERK
+.fullName = EUREKAI Rule Kernel
+.version = 1.1.0
+.description = Langage logique opératoire unifié d'EUREKAI pour les règles, méthodes, formules et diagnostics
+.status = RELEASE_CANDIDATE
+
+Object:Language:ERK IN LanguageList
+
+# ============================================================
+# RULE TYPES — Actions de règles
+# ============================================================
+
+Object:Rule
+.description = Type racine des règles ERK
+.syntax = <action>: <expression>
+.example = must: this.name != null
+
+Object:Rule IN RuleList
+
+# --- Obligation ---
+Object:Rule:Must
+.action = must
+.description = Obligation stricte — bloque si false
+.effect = BLOCK + ERROR
+.syntax = must: <expression>
+.example = must: this.name != null AND this.name.length > 0
+
+Object:Rule:Must IN RuleList
+
+Object:Rule:MustNot
+.action = must_not
+.description = Interdiction stricte — bloque si true
+.effect = BLOCK + ERROR
+.syntax = must_not: <expression>
+.example = must_not: this.status == "deleted" AND this.hasChildren == true
+
+Object:Rule:MustNot IN RuleList
+
+# --- Permission ---
+Object:Rule:Allow
+.action = allow
+.description = Permission — refuse si false
+.effect = DENY si false
+.syntax = allow: <expression>
+.example = allow: ctx.user.role IN ["admin", "editor"]
+
+Object:Rule:Allow IN RuleList
+
+Object:Rule:Deny
+.action = deny
+.description = Refus explicite — toujours refusé
+.effect = DENY toujours
+.syntax = deny: <expression>
+.example = deny: ctx.user.banned == true
+
+Object:Rule:Deny IN RuleList
+
+# --- Prérequis ---
+Object:Rule:Require
+.action = require
+.description = Prérequis — bloque si absent
+.effect = BLOCK si absent
+.syntax = require: <expression>
+.example = require: this.parent != null
+
+Object:Rule:Require IN RuleList
+
+Object:Rule:Forbid
+.action = forbid
+.description = Interdiction absolue — critique
+.effect = BLOCK + CRITICAL
+.syntax = forbid: <expression>
+.example = forbid: ctx.execution_request != null AND ctx.approval == null
+
+Object:Rule:Forbid IN RuleList
+
+# --- Activation ---
+Object:Rule:Enable
+.action = enable
+.description = Activation conditionnelle
+.effect = Désactivé si false
+.syntax = enable: <expression>
+.example = enable: IF this.priority == "high" THEN true ELSE this.hasApproval
+
+Object:Rule:Enable IN RuleList
+
+Object:Rule:Disable
+.action = disable
+.description = Désactivation conditionnelle
+.effect = Activé si false
+.syntax = disable: <expression>
+.example = disable: this.deprecated == true
+
+Object:Rule:Disable IN RuleList
+
+# --- Vérification ---
+Object:Rule:Check
+.action = check
+.description = Vérification souple — warning si false
+.effect = WARNING (non bloquant)
+.syntax = check: <expression>
+.example = check: this.description.length >= 10
+
+Object:Rule:Check IN RuleList
+
+Object:Rule:Validate
+.action = validate
+.description = Validation structurelle — error si invalid
+.effect = ERROR si invalid
+.syntax = validate: <expression>
+.example = validate: this.email MATCHES "^[a-z]+@[a-z]+\\.[a-z]+$"
+
+Object:Rule:Validate IN RuleList
+
+Object:Rule:Warn
+.action = warn
+.description = Avertissement — non bloquant
+.effect = WARNING
+.syntax = warn: <expression>
+.example = warn: this.stock < 10
+
+Object:Rule:Warn IN RuleList
+
+# --- Suggestion ---
+Object:Rule:Suggest
+.action = suggest
+.description = Suggestion IA — proposé, non imposé
+.effect = Proposé
+.syntax = suggest: IF <condition> THEN SUGGEST <action>
+.example = suggest: IF this.score < 0.5 THEN SUGGEST improve_prompt(this.prompt, "clarity")
+
+Object:Rule:Suggest IN RuleList
+
+# ============================================================
+# FORMULA CATEGORIES
+# ============================================================
+
+Object:Function:Formula
+.description = Type racine des formulas ERK (style Excel)
+.syntax = FORMULA <name> = <expression>
+
+Object:Function:Formula IN FormulaList
+
+Object:Method:Formula:Category
+.description = Catégories de formulas
+
+Object:Method:Formula:Category:Logic
+.name = LOGIC
+.description = Opérateurs logiques
+
+Object:Method:Formula:Category:Comparison
+.name = COMPARISON
+.description = Opérateurs de comparaison
+
+Object:Method:Formula:Category:String
+.name = STRING
+.description = Manipulation de chaînes
+
+Object:Method:Formula:Category:Collection
+.name = COLLECTION
+.description = Manipulation de collections/arrays
+
+Object:Method:Formula:Category:Existence
+.name = EXISTENCE
+.description = Tests d'existence et nullité
+
+Object:Method:Formula:Category:Navigation
+.name = NAVIGATION
+.description = Navigation dans les structures
+
+Object:Method:Formula:Category:Structure
+.name = STRUCTURE
+.description = Manipulation de structures/objets
+
+Object:Method:Formula:Category:Math
+.name = MATH
+.description = Opérations mathématiques
+
+Object:Method:Formula:Category:Date
+.name = DATE
+.description = Manipulation de dates
+
+# ============================================================
+# FORMULAS — LOGIC
+# ============================================================
+
+Object:Method:Formula:AND
+.name = AND
+.category = Logic
+.description = Conjonction logique — true si tous les opérandes sont true
+.syntax = <expr1> AND <expr2>
+.input.type = bool, bool
+.output.type = bool
+.example = this.active == true AND this.approved == true
+.priority = 2
+
+Object:Method:Formula:AND IN FormulaList
+
+Object:Method:Formula:OR
+.name = OR
+.category = Logic
+.description = Disjonction logique — true si au moins un opérande est true
+.syntax = <expr1> OR <expr2>
+.input.type = bool, bool
+.output.type = bool
+.example = this.status == "active" OR this.status == "pending"
+.priority = 3
+
+Object:Method:Formula:OR IN FormulaList
+
+Object:Method:Formula:NOT
+.name = NOT
+.category = Logic
+.description = Négation logique — inverse la valeur booléenne
+.syntax = NOT <expr>
+.input.type = bool
+.output.type = bool
+.example = NOT this.deleted
+.priority = 1
+
+Object:Method:Formula:NOT IN FormulaList
+
+Object:Method:Formula:XOR
+.name = XOR
+.category = Logic
+.description = Ou exclusif — true si exactement un opérande est true
+.syntax = <expr1> XOR <expr2>
+.input.type = bool, bool
+.output.type = bool
+.example = this.optionA XOR this.optionB
+
+Object:Method:Formula:XOR IN FormulaList
+
+Object:Method:Formula:IF
+.name = IF
+.category = Logic
+.description = Condition ternaire — retourne valeur selon condition
+.syntax = IF(<condition>, <valeurSiVrai>, <valeurSiFaux>)
+.input.type = bool, any, any
+.output.type = any
+.example = IF(this.score > 80, "Excellent", IF(this.score > 50, "Passable", "Insuffisant"))
+
+Object:Method:Formula:IF IN FormulaList
+
+# ============================================================
+# FORMULAS — COMPARISON
+# ============================================================
+
+Object:Method:Formula:EQ
+.name = EQ
+.literal = ==
+.category = Comparison
+.description = Égalité stricte
+.syntax = <expr1> == <expr2>
+.input.type = any, any
+.output.type = bool
+.example = this.status == "active"
+
+Object:Method:Formula:EQ IN FormulaList
+
+Object:Method:Formula:NEQ
+.name = NEQ
+.literal = !=
+.category = Comparison
+.description = Inégalité
+.syntax = <expr1> != <expr2>
+.input.type = any, any
+.output.type = bool
+.example = this.status != "deleted"
+
+Object:Method:Formula:NEQ IN FormulaList
+
+Object:Method:Formula:GT
+.name = GT
+.literal = >
+.category = Comparison
+.description = Supérieur strict
+.syntax = <expr1> > <expr2>
+.input.type = number, number
+.output.type = bool
+.example = this.priority > 5
+
+Object:Method:Formula:GT IN FormulaList
+
+Object:Method:Formula:GTE
+.name = GTE
+.literal = >=
+.category = Comparison
+.description = Supérieur ou égal
+.syntax = <expr1> >= <expr2>
+.input.type = number, number
+.output.type = bool
+.example = this.score >= 80
+
+Object:Method:Formula:GTE IN FormulaList
+
+Object:Method:Formula:LT
+.name = LT
+.literal = <
+.category = Comparison
+.description = Inférieur strict
+.syntax = <expr1> < <expr2>
+.input.type = number, number
+.output.type = bool
+.example = this.stock < 10
+
+Object:Method:Formula:LT IN FormulaList
+
+Object:Method:Formula:LTE
+.name = LTE
+.literal = <=
+.category = Comparison
+.description = Inférieur ou égal
+.syntax = <expr1> <= <expr2>
+.input.type = number, number
+.output.type = bool
+.example = this.age <= 65
+
+Object:Method:Formula:LTE IN FormulaList
+
+Object:Method:Formula:IN
+.name = IN
+.category = Comparison
+.description = Appartenance à une liste
+.syntax = <expr> IN <array>
+.input.type = any, array
+.output.type = bool
+.example = this.country IN ["FR", "ES", "IT"]
+
+Object:Method:Formula:IN IN FormulaList
+
+Object:Method:Formula:NOT_IN
+.name = NOT_IN
+.category = Comparison
+.description = Non-appartenance à une liste
+.syntax = <expr> NOT IN <array>
+.input.type = any, array
+.output.type = bool
+.example = this.status NOT IN ["deleted", "archived"]
+
+Object:Method:Formula:NOT_IN IN FormulaList
+
+Object:Method:Formula:MATCHES
+.name = MATCHES
+.category = Comparison
+.description = Correspondance regex
+.syntax = <string> MATCHES <pattern>
+.input.type = string, string
+.output.type = bool
+.example = this.email MATCHES "^[a-z]+@[a-z]+\\.[a-z]+$"
+
+Object:Method:Formula:MATCHES IN FormulaList
+
+Object:Method:Formula:CONTAINS
+.name = CONTAINS
+.category = Comparison
+.description = Contient un élément
+.syntax = <collection> CONTAINS <element>
+.input.type = array|string, any
+.output.type = bool
+.example = this.tags CONTAINS "urgent"
+
+Object:Method:Formula:CONTAINS IN FormulaList
+
+# ============================================================
+# FORMULAS — EXISTENCE
+# ============================================================
+
+Object:Method:Formula:ISNULL
+.name = ISNULL
+.category = Existence
+.description = Test si null
+.syntax = ISNULL(<expr>)
+.input.type = any
+.output.type = bool
+.example = ISNULL(this.deletedAt)
+
+Object:Method:Formula:ISNULL IN FormulaList
+
+Object:Method:Formula:EXISTS
+.name = EXISTS
+.category = Existence
+.description = Test si existe (non null)
+.syntax = EXISTS(<expr>)
+.input.type = any
+.output.type = bool
+.example = EXISTS(this.parent)
+
+Object:Method:Formula:EXISTS IN FormulaList
+
+Object:Method:Formula:IS_EMPTY
+.name = IS_EMPTY
+.category = Existence
+.description = Test si vide (null, "", [], {})
+.syntax = IS_EMPTY(<expr>)
+.input.type = any
+.output.type = bool
+.example = IS_EMPTY(this.children)
+
+Object:Method:Formula:IS_EMPTY IN FormulaList
+
+Object:Method:Formula:COALESCE
+.name = COALESCE
+.category = Existence
+.description = Retourne la première valeur non-null
+.syntax = COALESCE(<expr1>, <expr2>, ...)
+.input.type = any...
+.output.type = any
+.example = COALESCE(this.nickname, this.name, "Anonymous")
+
+Object:Method:Formula:COALESCE IN FormulaList
+
+# ============================================================
+# FORMULAS — STRING
+# ============================================================
+
+Object:Method:Formula:CONCAT
+.name = CONCAT
+.category = String
+.description = Concaténation de chaînes
+.syntax = CONCAT(<str1>, <str2>, ...)
+.input.type = string...
+.output.type = string
+.example = CONCAT(this.firstName, " ", this.lastName)
+
+Object:Method:Formula:CONCAT IN FormulaList
+
+Object:Method:Formula:SPLIT
+.name = SPLIT
+.category = String
+.description = Découpe une chaîne en tableau
+.syntax = SPLIT(<string>, <separator>)
+.input.type = string, string
+.output.type = array
+.example = SPLIT(this.tags, ",")
+
+Object:Method:Formula:SPLIT IN FormulaList
+
+Object:Method:Formula:JOIN
+.name = JOIN
+.category = String
+.description = Joint un tableau en chaîne
+.syntax = JOIN(<array>, <separator>)
+.input.type = array, string
+.output.type = string
+.example = JOIN(this.tags, ", ")
+
+Object:Method:Formula:JOIN IN FormulaList
+
+Object:Method:Formula:UPPER
+.name = UPPER
+.category = String
+.description = Convertit en majuscules
+.syntax = UPPER(<string>)
+.input.type = string
+.output.type = string
+.example = UPPER(this.code)
+
+Object:Method:Formula:UPPER IN FormulaList
+
+Object:Method:Formula:LOWER
+.name = LOWER
+.category = String
+.description = Convertit en minuscules
+.syntax = LOWER(<string>)
+.input.type = string
+.output.type = string
+.example = LOWER(this.email)
+
+Object:Method:Formula:LOWER IN FormulaList
+
+Object:Method:Formula:TRIM
+.name = TRIM
+.category = String
+.description = Supprime les espaces début/fin
+.syntax = TRIM(<string>)
+.input.type = string
+.output.type = string
+.example = TRIM(this.input)
+
+Object:Method:Formula:TRIM IN FormulaList
+
+Object:Method:Formula:REPLACE
+.name = REPLACE
+.category = String
+.description = Remplace des occurrences
+.syntax = REPLACE(<string>, <old>, <new>)
+.input.type = string, string, string
+.output.type = string
+.example = REPLACE(this.text, "foo", "bar")
+
+Object:Method:Formula:REPLACE IN FormulaList
+
+Object:Method:Formula:SUBSTRING
+.name = SUBSTRING
+.category = String
+.description = Extrait une sous-chaîne
+.syntax = SUBSTRING(<string>, <start>, <length>)
+.input.type = string, int, int
+.output.type = string
+.example = SUBSTRING(this.code, 0, 3)
+
+Object:Method:Formula:SUBSTRING IN FormulaList
+
+Object:Method:Formula:LEN
+.name = LEN
+.category = String
+.description = Longueur de la chaîne
+.syntax = LEN(<string>)
+.input.type = string
+.output.type = int
+.example = LEN(this.name) > 0
+
+Object:Method:Formula:LEN IN FormulaList
+
+# ============================================================
+# FORMULAS — COLLECTION
+# ============================================================
+
+Object:Method:Formula:LENGTH
+.name = LENGTH
+.category = Collection
+.description = Nombre d'éléments
+.syntax = LENGTH(<array>)
+.input.type = array
+.output.type = int
+.example = LENGTH(this.items) > 0
+
+Object:Method:Formula:LENGTH IN FormulaList
+
+Object:Method:Formula:FIRST
+.name = FIRST
+.category = Collection
+.description = Premier élément
+.syntax = FIRST(<array>)
+.input.type = array
+.output.type = any
+.example = FIRST(this.results)
+
+Object:Method:Formula:FIRST IN FormulaList
+
+Object:Method:Formula:LAST
+.name = LAST
+.category = Collection
+.description = Dernier élément
+.syntax = LAST(<array>)
+.input.type = array
+.output.type = any
+.example = LAST(this.history)
+
+Object:Method:Formula:LAST IN FormulaList
+
+Object:Method:Formula:GET_ITEM
+.name = GET_ITEM
+.category = Collection
+.description = Élément à l'index
+.syntax = GET_ITEM(<array>, <index>)
+.input.type = array, int
+.output.type = any
+.example = GET_ITEM(this.items, 0)
+
+Object:Method:Formula:GET_ITEM IN FormulaList
+
+Object:Method:Formula:MAP
+.name = MAP
+.category = Collection
+.description = Transforme chaque élément
+.syntax = MAP(<array>, <transform>)
+.input.type = array, function
+.output.type = array
+.example = MAP(this.items, item => item.name)
+
+Object:Method:Formula:MAP IN FormulaList
+
+Object:Method:Formula:FILTER
+.name = FILTER
+.category = Collection
+.description = Filtre les éléments
+.syntax = FILTER(<array>, <predicate>)
+.input.type = array, function
+.output.type = array
+.example = FILTER(this.items, item => item.active == true)
+
+Object:Method:Formula:FILTER IN FormulaList
+
+Object:Method:Formula:REDUCE
+.name = REDUCE
+.category = Collection
+.description = Réduit à une valeur
+.syntax = REDUCE(<array>, <reducer>, <initial>)
+.input.type = array, function, any
+.output.type = any
+.example = REDUCE(this.items, (acc, item) => acc + item.price, 0)
+
+Object:Method:Formula:REDUCE IN FormulaList
+
+Object:Method:Formula:SORT
+.name = SORT
+.category = Collection
+.description = Trie les éléments
+.syntax = SORT(<array>, <key>?)
+.input.type = array, string?
+.output.type = array
+.example = SORT(this.items, "priority")
+
+Object:Method:Formula:SORT IN FormulaList
+
+Object:Method:Formula:UNIQUE
+.name = UNIQUE
+.category = Collection
+.description = Élimine les doublons
+.syntax = UNIQUE(<array>)
+.input.type = array
+.output.type = array
+.example = UNIQUE(this.tags)
+
+Object:Method:Formula:UNIQUE IN FormulaList
+
+Object:Method:Formula:FLATTEN
+.name = FLATTEN
+.category = Collection
+.description = Aplatit les tableaux imbriqués
+.syntax = FLATTEN(<array>)
+.input.type = array
+.output.type = array
+.example = FLATTEN(this.nestedItems)
+
+Object:Method:Formula:FLATTEN IN FormulaList
+
+# ============================================================
+# FORMULAS — NAVIGATION
+# ============================================================
+
+Object:Method:Formula:PATH_GET
+.name = PATH_GET
+.category = Navigation
+.description = Récupère une valeur par chemin
+.syntax = PATH_GET(<object>, <path>)
+.input.type = object, string
+.output.type = any
+.example = PATH_GET(this, "address.city")
+
+Object:Method:Formula:PATH_GET IN FormulaList
+
+Object:Method:Formula:PATH_SET
+.name = PATH_SET
+.category = Navigation
+.description = Définit une valeur par chemin
+.syntax = PATH_SET(<object>, <path>, <value>)
+.input.type = object, string, any
+.output.type = object
+.example = PATH_SET(this, "address.city", "Paris")
+
+Object:Method:Formula:PATH_SET IN FormulaList
+
+Object:Method:Formula:PATH_EXISTS
+.name = PATH_EXISTS
+.category = Navigation
+.description = Vérifie si un chemin existe
+.syntax = PATH_EXISTS(<object>, <path>)
+.input.type = object, string
+.output.type = bool
+.example = PATH_EXISTS(this, "metadata.createdAt")
+
+Object:Method:Formula:PATH_EXISTS IN FormulaList
+
+# ============================================================
+# FORMULAS — STRUCTURE
+# ============================================================
+
+Object:Method:Formula:GET_FIELD
+.name = GET_FIELD
+.category = Structure
+.description = Récupère un champ d'objet
+.syntax = GET_FIELD(<object>, <field>)
+.input.type = object, string
+.output.type = any
+.example = GET_FIELD(this.config, "timeout")
+
+Object:Method:Formula:GET_FIELD IN FormulaList
+
+Object:Method:Formula:SET_FIELD
+.name = SET_FIELD
+.category = Structure
+.description = Définit un champ d'objet
+.syntax = SET_FIELD(<object>, <field>, <value>)
+.input.type = object, string, any
+.output.type = object
+.example = SET_FIELD(this.config, "timeout", 5000)
+
+Object:Method:Formula:SET_FIELD IN FormulaList
+
+Object:Method:Formula:HAS_FIELD
+.name = HAS_FIELD
+.category = Structure
+.description = Vérifie si un champ existe
+.syntax = HAS_FIELD(<object>, <field>)
+.input.type = object, string
+.output.type = bool
+.example = HAS_FIELD(this.config, "debug")
+
+Object:Method:Formula:HAS_FIELD IN FormulaList
+
+Object:Method:Formula:KEYS
+.name = KEYS
+.category = Structure
+.description = Liste des clés d'un objet
+.syntax = KEYS(<object>)
+.input.type = object
+.output.type = array
+.example = KEYS(this.attributes)
+
+Object:Method:Formula:KEYS IN FormulaList
+
+Object:Method:Formula:VALUES
+.name = VALUES
+.category = Structure
+.description = Liste des valeurs d'un objet
+.syntax = VALUES(<object>)
+.input.type = object
+.output.type = array
+.example = VALUES(this.attributes)
+
+Object:Method:Formula:VALUES IN FormulaList
+
+Object:Method:Formula:MERGE
+.name = MERGE
+.category = Structure
+.description = Fusionne des objets
+.syntax = MERGE(<obj1>, <obj2>, ...)
+.input.type = object...
+.output.type = object
+.example = MERGE(this.defaults, this.overrides)
+
+Object:Method:Formula:MERGE IN FormulaList
+
+# ============================================================
+# FORMULAS — MATH
+# ============================================================
+
+Object:Method:Formula:SUM
+.name = SUM
+.category = Math
+.description = Somme des valeurs
+.syntax = SUM(<array>)
+.input.type = array<number>
+.output.type = number
+.example = SUM(this.items.map(i => i.price))
+
+Object:Method:Formula:SUM IN FormulaList
+
+Object:Method:Formula:AVG
+.name = AVG
+.category = Math
+.description = Moyenne des valeurs
+.syntax = AVG(<array>)
+.input.type = array<number>
+.output.type = number
+.example = AVG(this.scores)
+
+Object:Method:Formula:AVG IN FormulaList
+
+Object:Method:Formula:MIN
+.name = MIN
+.category = Math
+.description = Valeur minimale
+.syntax = MIN(<array>)
+.input.type = array<number>
+.output.type = number
+.example = MIN(this.prices)
+
+Object:Method:Formula:MIN IN FormulaList
+
+Object:Method:Formula:MAX
+.name = MAX
+.category = Math
+.description = Valeur maximale
+.syntax = MAX(<array>)
+.input.type = array<number>
+.output.type = number
+.example = MAX(this.scores)
+
+Object:Method:Formula:MAX IN FormulaList
+
+Object:Method:Formula:ABS
+.name = ABS
+.category = Math
+.description = Valeur absolue
+.syntax = ABS(<number>)
+.input.type = number
+.output.type = number
+.example = ABS(this.balance)
+
+Object:Method:Formula:ABS IN FormulaList
+
+Object:Method:Formula:ROUND
+.name = ROUND
+.category = Math
+.description = Arrondi
+.syntax = ROUND(<number>, <decimals>?)
+.input.type = number, int?
+.output.type = number
+.example = ROUND(this.price, 2)
+
+Object:Method:Formula:ROUND IN FormulaList
+
+Object:Method:Formula:FLOOR
+.name = FLOOR
+.category = Math
+.description = Arrondi inférieur
+.syntax = FLOOR(<number>)
+.input.type = number
+.output.type = int
+.example = FLOOR(this.quantity)
+
+Object:Method:Formula:FLOOR IN FormulaList
+
+Object:Method:Formula:CEIL
+.name = CEIL
+.category = Math
+.description = Arrondi supérieur
+.syntax = CEIL(<number>)
+.input.type = number
+.output.type = int
+.example = CEIL(this.quantity)
+
+Object:Method:Formula:CEIL IN FormulaList
+
+Object:Method:Formula:CLAMP
+.name = CLAMP
+.category = Math
+.description = Contrainte entre min et max
+.syntax = CLAMP(<value>, <min>, <max>)
+.input.type = number, number, number
+.output.type = number
+.example = CLAMP(this.score, 0, 100)
+
+Object:Method:Formula:CLAMP IN FormulaList
+
+# ============================================================
+# FORMULAS — DATE
+# ============================================================
+
+Object:Method:Formula:NOW
+.name = NOW
+.category = Date
+.description = Date/heure courante
+.syntax = NOW()
+.input.type = void
+.output.type = date
+.example = NOW()
+
+Object:Method:Formula:NOW IN FormulaList
+
+Object:Method:Formula:TODAY
+.name = TODAY
+.category = Date
+.description = Date du jour (00:00:00)
+.syntax = TODAY()
+.input.type = void
+.output.type = date
+.example = TODAY()
+
+Object:Method:Formula:TODAY IN FormulaList
+
+Object:Method:Formula:DATE_ADD
+.name = DATE_ADD
+.category = Date
+.description = Ajoute une durée à une date
+.syntax = DATE_ADD(<date>, <amount>, <unit>)
+.input.type = date, int, string
+.output.type = date
+.example = DATE_ADD(NOW(), 7, "days")
+
+Object:Method:Formula:DATE_ADD IN FormulaList
+
+Object:Method:Formula:DATE_DIFF
+.name = DATE_DIFF
+.category = Date
+.description = Différence entre deux dates
+.syntax = DATE_DIFF(<date1>, <date2>, <unit>)
+.input.type = date, date, string
+.output.type = int
+.example = DATE_DIFF(this.dueDate, NOW(), "days")
+
+Object:Method:Formula:DATE_DIFF IN FormulaList
+
+Object:Method:Formula:DATE_FORMAT
+.name = DATE_FORMAT
+.category = Date
+.description = Formate une date
+.syntax = DATE_FORMAT(<date>, <format>)
+.input.type = date, string
+.output.type = string
+.example = DATE_FORMAT(this.createdAt, "YYYY-MM-DD")
+
+Object:Method:Formula:DATE_FORMAT IN FormulaList
+
+# ============================================================
+# REFERENCES SPECIALES ERK
+# ============================================================
+
+Object:Language:ERK:Reference
+.description = Références spéciales dans les expressions ERK
+
+Object:Language:ERK:Reference:this
+.name = this
+.description = Objet courant évalué
+.example = this.name, this.status
+
+Object:Language:ERK:Reference:ctx
+.name = ctx
+.description = Contexte d'exécution
+.example = ctx.user, ctx.layer, ctx.mode
+
+Object:Language:ERK:Reference:parent
+.name = parent
+.description = Objet parent dans le lineage
+.example = parent.name, parent.config
+
+Object:Language:ERK:Reference:root
+.name = root
+.description = Objet racine du lineage
+.example = root.config, root.name
+
+# ============================================================
+# DOCUMENTATION — SPECIFICATION ERK
+# ============================================================
+
+Object:Documentation:Specification:ERK
+.name = ERK Specification
+.version = 1.1.0
+.status = RELEASE_CANDIDATE
+.description = Spécification complète du langage ERK (EUREKAI Rule Kernel)
+.url = /docs/erk/specification.md
+
+Object:Documentation:Specification:ERK IN DocumentationList
+
+# ============================================================
+# ERROR CODES ERK
+# ============================================================
+
+Object:Language:ERK:Error
+.description = Codes d'erreur ERK
+
+Object:Language:ERK:Error:PARSE
+.code = #PARSE!
+.description = Erreur de parsing ERK
+
+Object:Language:ERK:Error:TYPE
+.code = #TYPE!
+.description = Incompatibilité de types
+
+Object:Language:ERK:Error:VALUE
+.code = #VALUE!
+.description = Valeur invalide ou hors bornes
+
+Object:Language:ERK:Error:REF
+.code = #REF!
+.description = Référence non résolue
+
+Object:Language:ERK:Error:NULL
+.code = #NULL!
+.description = Accès à valeur null
+
+Object:Language:ERK:Error:PERM
+.code = #PERM!
+.description = Opération non autorisée
+
+Object:Language:ERK:Error:TIMEOUT
+.code = #TIMEOUT!
+.description = Dépassement temps d'exécution
+
+Object:Language:ERK:Error:DEPTH
+.code = #DEPTH!
+.description = Récursion trop profonde
+
+Object:Language:ERK:Error:MEMORY
+.code = #MEMORY!
+.description = Limite mémoire atteinte
+
+Object:Language:ERK:Error:NA
+.code = #N/A
+.description = Résultat non disponible

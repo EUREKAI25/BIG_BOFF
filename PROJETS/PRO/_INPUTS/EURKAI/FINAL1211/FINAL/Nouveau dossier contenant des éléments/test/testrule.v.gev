@@ -1,0 +1,130 @@
+Object:Structure:Fractal:Vector:V_RuleName:
+  .default = {"FR": "Règle", "EN": "Rule"}
+
+Object:Structure:Fractal:Vector:V_RuleDescription:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleQuestion:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_RuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_RuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_RuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleErk:
+  .default = |
+    EXEC Rule.Validate(
+      input = {
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_StructuralRuleName:
+  .default = {"FR": "Règle structurelle", "EN": "Structural rule"}
+
+Object:Structure:Fractal:Vector:V_StructuralRuleDescription:
+  .default = {"FR": "Règle qui décrit la forme attendue d'un objet (attributs, types, relations, bundles, format).", "EN": "Rule describing the expected shape of an object."}
+
+Object:Structure:Fractal:Vector:V_StructuralRuleQuestion:
+  .default = {"FR": "Quelle règle de structure s'applique à cet objet ?", "EN": "Which structural rule applies to this object?"}
+
+Object:Structure:Fractal:Vector:V_StructuralRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StructuralRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErk:
+  .default = |
+    EXEC Rule.Validate(
+      input = {
+        target: $target,
+        source_text: $source_text,
+        source_kind: $source_kind,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_SchemaRuleName:
+  .default = {"FR": "Règle de schéma", "EN": "Schema rule"}
+
+Object:Structure:Fractal:Vector:V_SchemaRuleDescription:
+  .default = {"FR": "Contraintes sur présence/absence d'attributs, types attendus, cardinalités et structure.", "EN": "Constraints on attribute presence, expected types, cardinalities and structure."}
+
+Object:Structure:Fractal:Vector:V_SchemaRuleQuestion:
+  .default = {"FR": "Quels attributs/types/cardis doivent exister pour cet objet ?", "EN": "Which attributes/types/cardinalities must exist for this object?"}
+
+Object:Structure:Fractal:Vector:V_SchemaRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_SchemaRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintPattern:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleRequiredKeyword:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleErk:
+  .default = |
+    EXEC Rule.Validate.Schema(
+      input = {
+        target: $target,
+        schema: $schema,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_AttributeDeclaredRuleErk:
+  .default = |
+    FOREACH attr IN $target.attributeList {
+      attrType = attr.name.toUpperFirst()
+      EXISTS("Object:Attribute:" + attrType) 
+        OR ISSUE("Attribut ." + attr.name + " non déclaré dans Object:Attribute")
+    }

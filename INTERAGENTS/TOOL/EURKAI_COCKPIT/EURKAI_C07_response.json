@@ -1,0 +1,60 @@
+{
+  "preflight": {
+    "ready": true,
+    "certainty": 1.0,
+    "missing_info": [],
+    "assumptions": []
+  },
+  "role": "coder",
+  "mode": "deliverable",
+  "summary": "C07 Backup module: SQLite copy + JSON export per table + Git commit/push to backup/auto branch. Dry-run always produces artifacts. 26 tests passing.",
+  "questions": [],
+  "files": [
+    {
+      "path": "backend/backup/__init__.py",
+      "description": "Package exports: BackupConfig, BackupResult, run_backup, export_json, copy_sqlite, git_commit_push, is_git_configured"
+    },
+    {
+      "path": "backend/backup/backup.py",
+      "description": "Main backup module with CLI. Supports --dry-run, --db-path, --backup-dir, --remote. Exports tables as JSON (base64 for binary), copies SQLite, commits to backup/auto branch."
+    },
+    {
+      "path": "tests/test_backup_dryrun.py",
+      "description": "26 tests covering: dry-run, SQLite copy, JSON export, Git detection, CLI, error handling"
+    },
+    {
+      "path": "docs/BACKUP.md",
+      "description": "Full documentation: CLI usage, env vars, cron examples, programmatic API, security notes"
+    }
+  ],
+  "commands": [
+    "pip install pytest cryptography --break-system-packages",
+    "PYTHONPATH=. python -m pytest tests/test_backup_dryrun.py -q",
+    "python -m backend.backup.backup --dry-run --db-path data/cockpit.db"
+  ],
+  "acceptance": {
+    "passes_in_a_row": 2,
+    "max_iters": 8
+  },
+  "versioning": {
+    "version": "1.0.0",
+    "breaking_changes": false,
+    "migration_notes": "New module, no breaking changes",
+    "contract_changes": []
+  },
+  "test_results": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "coverage_estimate": "~90%"
+  },
+  "implementation_notes": {
+    "Q1_db_path": "Configurable via EURKAI_DB_PATH env, default data/cockpit.db",
+    "Q2_json_format": "One file per table, binary as base64, always exported",
+    "Q3_backup_dir": "Configurable via EURKAI_BACKUP_DIR or CLI, default data/backups/<timestamp>",
+    "Q4_git": "Remote configurable (default origin), branch backup/auto, commit format: backup(db): <ISO8601>",
+    "Q5_cron": "Autonomous script, cron examples in docs/BACKUP.md",
+    "Q6_storage": "Imports Storage from C02 when available, records to backups table",
+    "Q7_backups_table": "Uses existing table, UUID for id, records status/commit_sha/notes"
+  }
+}

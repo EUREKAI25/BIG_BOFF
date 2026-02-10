@@ -1,0 +1,187 @@
+# ============================================================================
+# EURKAI Seed - Rule
+# seed/Rule.s.gev
+# ============================================================================
+
+#region === RULE BASE ===
+
+Object:Rule:
+  .name = V_RuleName
+  .description = V_RuleDescription
+  .question = V_RuleQuestion
+  .severity = V_RuleSeverity
+  .constraint.level = V_RuleConstraintLevel
+  .scope = V_RuleScope
+  .condition = V_RuleCondition
+  .errorMessage = V_RuleErrorMessage
+  .erk = V_RuleErk
+
+#endregion
+
+#region === RULE ACTIONS (from ERK) ===
+
+Object:Rule:Must:
+  .name = V_MustRuleName
+  .description = V_MustRuleDescription
+  .action = "must"
+  .effect = "BLOCK + ERROR"
+
+Object:Rule:MustNot:
+  .name = V_MustNotRuleName
+  .description = V_MustNotRuleDescription
+  .action = "must_not"
+  .effect = "BLOCK + ERROR"
+
+Object:Rule:Allow:
+  .name = V_AllowRuleName
+  .description = V_AllowRuleDescription
+  .action = "allow"
+  .effect = "DENY si false"
+
+Object:Rule:Deny:
+  .name = V_DenyRuleName
+  .description = V_DenyRuleDescription
+  .action = "deny"
+  .effect = "DENY toujours"
+
+Object:Rule:Require:
+  .name = V_RequireRuleName
+  .description = V_RequireRuleDescription
+  .action = "require"
+  .effect = "BLOCK si absent"
+
+Object:Rule:Forbid:
+  .name = V_ForbidRuleName
+  .description = V_ForbidRuleDescription
+  .action = "forbid"
+  .effect = "BLOCK + CRITICAL"
+
+Object:Rule:Enable:
+  .name = V_EnableRuleName
+  .description = V_EnableRuleDescription
+  .action = "enable"
+  .effect = "Désactivé si false"
+
+Object:Rule:Disable:
+  .name = V_DisableRuleName
+  .description = V_DisableRuleDescription
+  .action = "disable"
+  .effect = "Activé si false"
+
+Object:Rule:Check:
+  .name = V_CheckRuleName
+  .description = V_CheckRuleDescription
+  .action = "check"
+  .effect = "WARNING"
+
+Object:Rule:Validate:
+  .name = V_ValidateRuleName
+  .description = V_ValidateRuleDescription
+  .action = "validate"
+  .effect = "ERROR si invalid"
+
+Object:Rule:Warn:
+  .name = V_WarnRuleName
+  .description = V_WarnRuleDescription
+  .action = "warn"
+  .effect = "WARNING"
+
+Object:Rule:Suggest:
+  .name = V_SuggestRuleName
+  .description = V_SuggestRuleDescription
+  .action = "suggest"
+  .effect = "Proposé"
+
+#endregion
+
+#region === STRUCTURAL RULE ===
+
+Object:Rule:StructuralRule:
+  .name = V_StructuralRuleName
+  .description = V_StructuralRuleDescription
+  .question = V_StructuralRuleQuestion
+  .erk = V_StructuralRuleErk
+
+Object:Rule:StructuralRule:SchemaRule:
+  .name = V_SchemaRuleName
+  .description = V_SchemaRuleDescription
+  .question = V_SchemaRuleQuestion
+  .constraint.pattern = V_SchemaRuleConstraintPattern
+  .constraint.required_keyword = V_SchemaRuleRequiredKeyword
+  .constraint.required_slot = V_SchemaRuleRequiredSlot
+  .erk = V_SchemaRuleErk
+
+Object:Rule:StructuralRule:SchemaRule:AttributeDeclaredRule:
+  .name = V_AttributeDeclaredRuleName
+  .description = V_AttributeDeclaredRuleDescription
+  .erk = V_AttributeDeclaredRuleErk
+
+Object:Rule:StructuralRule:FormatRule:
+  .name = V_FormatRuleName
+  .description = V_FormatRuleDescription
+  .question = V_FormatRuleQuestion
+  .constraint.regex = V_FormatRuleRegex
+  .constraint.format = V_FormatRuleFormat
+  .erk = V_FormatRuleErk
+
+Object:Rule:StructuralRule:CardinalityRule:
+  .name = V_CardinalityRuleName
+  .description = V_CardinalityRuleDescription
+  .question = V_CardinalityRuleQuestion
+  .constraint.min = V_CardinalityRuleMin
+  .constraint.max = V_CardinalityRuleMax
+  .erk = V_CardinalityRuleErk
+
+#endregion
+
+#region === BEHAVIORAL RULE ===
+
+Object:Rule:BehavioralRule:
+  .name = V_BehavioralRuleName
+  .description = V_BehavioralRuleDescription
+  .question = V_BehavioralRuleQuestion
+  .trigger = V_BehavioralRuleTrigger
+  .action = V_BehavioralRuleAction
+  .erk = V_BehavioralRuleErk
+
+Object:Rule:BehavioralRule:StateRule:
+  .name = V_StateRuleName
+  .description = V_StateRuleDescription
+  .question = V_StateRuleQuestion
+  .fromState = V_StateRuleFromState
+  .toState = V_StateRuleToState
+  .allowedTransitions = V_StateRuleAllowedTransitions
+  .erk = V_StateRuleErk
+
+Object:Rule:BehavioralRule:PermissionRule:
+  .name = V_PermissionRuleName
+  .description = V_PermissionRuleDescription
+  .question = V_PermissionRuleQuestion
+  .actor = V_PermissionRuleActor
+  .action = V_PermissionRuleAction
+  .resource = V_PermissionRuleResource
+  .erk = V_PermissionRuleErk
+
+#endregion
+
+#region === VALIDATION & COMPUTED RULE ===
+
+Object:Rule:ValidationRule:
+  .name = V_ValidationRuleName
+  .description = V_ValidationRuleDescription
+  .question = V_ValidationRuleQuestion
+  .validator = V_ValidationRuleValidator
+  .onSuccess = V_ValidationRuleOnSuccess
+  .onFailure = V_ValidationRuleOnFailure
+  .erk = V_ValidationRuleErk
+
+Object:Rule:ComputedRule:
+  .name = V_ComputedRuleName
+  .description = V_ComputedRuleDescription
+  .question = V_ComputedRuleQuestion
+  .formula = V_ComputedRuleFormula
+  .dependencies = V_ComputedRuleDependencies
+  .cache = V_ComputedRuleCache
+  .erk = V_ComputedRuleErk
+
+#endregion

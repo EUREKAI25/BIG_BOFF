@@ -1,0 +1,539 @@
+# ============================================================================
+# EURKAI Seed - Formulas v0.10.5
+# seed/formula.s.gev
+# Formulas = types de méthodes
+# ============================================================================
+
+#region === FORMULA BASE ===
+
+Object:Method:Formula:
+  .name = V_FormulaName
+  .description = V_FormulaDescription
+
+#endregion
+
+#region === LOGIC ===
+
+Object:Method:Formula:Logic:
+  .name = V_LogicName
+  .category = "Logic"
+
+Object:Method:Formula:Logic:AND:
+  .name = "AND"
+  .description = V_ANDDescription
+  .syntax = "<expr1> AND <expr2>"
+  .input = "bool, bool"
+  .output = "bool"
+  .example = "this.active AND this.approved"
+
+Object:Method:Formula:Logic:OR:
+  .name = "OR"
+  .description = V_ORDescription
+  .syntax = "<expr1> OR <expr2>"
+  .input = "bool, bool"
+  .output = "bool"
+  .example = "this.status == 'active' OR this.status == 'pending'"
+
+Object:Method:Formula:Logic:NOT:
+  .name = "NOT"
+  .description = V_NOTDescription
+  .syntax = "NOT <expr>"
+  .input = "bool"
+  .output = "bool"
+  .example = "NOT this.deleted"
+
+Object:Method:Formula:Logic:XOR:
+  .name = "XOR"
+  .description = V_XORDescription
+  .syntax = "<expr1> XOR <expr2>"
+  .input = "bool, bool"
+  .output = "bool"
+  .example = "this.optionA XOR this.optionB"
+
+Object:Method:Formula:Logic:IF:
+  .name = "IF"
+  .description = V_IFDescription
+  .syntax = "IF(<condition>, <then>, <else>)"
+  .input = "bool, any, any"
+  .output = "any"
+  .example = "IF(this.score > 80, 'Excellent', 'Passable')"
+
+#endregion
+
+#region === COMPARISON ===
+
+Object:Method:Formula:Comparison:
+  .name = V_ComparisonName
+  .category = "Comparison"
+
+Object:Method:Formula:Comparison:EQ:
+  .name = "EQ"
+  .literal = "=="
+  .description = V_EQDescription
+  .syntax = "<expr1> == <expr2>"
+  .input = "any, any"
+  .output = "bool"
+  .example = "this.status == 'active'"
+
+Object:Method:Formula:Comparison:NEQ:
+  .name = "NEQ"
+  .literal = "!="
+  .description = V_NEQDescription
+  .syntax = "<expr1> != <expr2>"
+  .input = "any, any"
+  .output = "bool"
+  .example = "this.status != 'deleted'"
+
+Object:Method:Formula:Comparison:GT:
+  .name = "GT"
+  .literal = ">"
+  .description = V_GTDescription
+  .syntax = "<expr1> > <expr2>"
+  .input = "number, number"
+  .output = "bool"
+  .example = "this.priority > 5"
+
+Object:Method:Formula:Comparison:GTE:
+  .name = "GTE"
+  .literal = ">="
+  .description = V_GTEDescription
+  .syntax = "<expr1> >= <expr2>"
+  .input = "number, number"
+  .output = "bool"
+  .example = "this.score >= 80"
+
+Object:Method:Formula:Comparison:LT:
+  .name = "LT"
+  .literal = "<"
+  .description = V_LTDescription
+  .syntax = "<expr1> < <expr2>"
+  .input = "number, number"
+  .output = "bool"
+  .example = "this.stock < 10"
+
+Object:Method:Formula:Comparison:LTE:
+  .name = "LTE"
+  .literal = "<="
+  .description = V_LTEDescription
+  .syntax = "<expr1> <= <expr2>"
+  .input = "number, number"
+  .output = "bool"
+  .example = "this.age <= 65"
+
+Object:Method:Formula:Comparison:IN:
+  .name = "IN"
+  .description = V_INDescription
+  .syntax = "<expr> IN <array>"
+  .input = "any, array"
+  .output = "bool"
+  .example = "this.country IN ['FR', 'ES', 'IT']"
+
+Object:Method:Formula:Comparison:NOT_IN:
+  .name = "NOT_IN"
+  .description = V_NOT_INDescription
+  .syntax = "<expr> NOT IN <array>"
+  .input = "any, array"
+  .output = "bool"
+  .example = "this.status NOT IN ['deleted', 'archived']"
+
+Object:Method:Formula:Comparison:MATCHES:
+  .name = "MATCHES"
+  .description = V_MATCHESDescription
+  .syntax = "<expr> MATCHES <pattern>"
+  .input = "string, regex"
+  .output = "bool"
+  .example = "this.email MATCHES '^[a-z]+@[a-z]+\\.[a-z]+$'"
+
+Object:Method:Formula:Comparison:CONTAINS:
+  .name = "CONTAINS"
+  .description = V_CONTAINSDescription
+  .syntax = "<array> CONTAINS <expr>"
+  .input = "array, any"
+  .output = "bool"
+  .example = "this.tags CONTAINS 'urgent'"
+
+#endregion
+
+#region === EXISTENCE ===
+
+Object:Method:Formula:Existence:
+  .name = V_ExistenceName
+  .category = "Existence"
+
+Object:Method:Formula:Existence:ISNULL:
+  .name = "ISNULL"
+  .description = V_ISNULLDescription
+  .syntax = "ISNULL(<expr>)"
+  .input = "any"
+  .output = "bool"
+  .example = "ISNULL(this.deletedAt)"
+
+Object:Method:Formula:Existence:EXISTS:
+  .name = "EXISTS"
+  .description = V_EXISTSDescription
+  .syntax = "EXISTS(<expr>)"
+  .input = "any"
+  .output = "bool"
+  .example = "EXISTS(this.parent)"
+
+Object:Method:Formula:Existence:ISEMPTY:
+  .name = "ISEMPTY"
+  .description = V_ISEMPTYDescription
+  .syntax = "ISEMPTY(<expr>)"
+  .input = "any"
+  .output = "bool"
+  .example = "ISEMPTY(this.children)"
+
+Object:Method:Formula:Existence:COALESCE:
+  .name = "COALESCE"
+  .description = V_COALESCEDescription
+  .syntax = "COALESCE(<expr1>, <expr2>, ...)"
+  .input = "any, any, ..."
+  .output = "any"
+  .example = "COALESCE(this.nickname, this.name, 'Anonymous')"
+
+Object:Method:Formula:Existence:HAS:
+  .name = "HAS"
+  .description = V_HASDescription
+  .syntax = "<object> HAS <attribute>"
+  .input = "object, string"
+  .output = "bool"
+  .example = "this HAS 'name'"
+
+#endregion
+
+#region === STRING ===
+
+Object:Method:Formula:String:
+  .name = V_StringName
+  .category = "String"
+
+Object:Method:Formula:String:CONCAT:
+  .name = "CONCAT"
+  .description = V_CONCATDescription
+  .syntax = "CONCAT(<str1>, <str2>, ...)"
+  .input = "string, string, ..."
+  .output = "string"
+  .example = "CONCAT(this.firstName, ' ', this.lastName)"
+
+Object:Method:Formula:String:SPLIT:
+  .name = "SPLIT"
+  .description = V_SPLITDescription
+  .syntax = "SPLIT(<string>, <separator>)"
+  .input = "string, string"
+  .output = "array"
+  .example = "SPLIT(this.tags, ',')"
+
+Object:Method:Formula:String:JOIN:
+  .name = "JOIN"
+  .description = V_JOINDescription
+  .syntax = "JOIN(<array>, <separator>)"
+  .input = "array, string"
+  .output = "string"
+  .example = "JOIN(this.tags, ', ')"
+
+Object:Method:Formula:String:UPPER:
+  .name = "UPPER"
+  .description = V_UPPERDescription
+  .syntax = "UPPER(<string>)"
+  .input = "string"
+  .output = "string"
+  .example = "UPPER(this.code)"
+
+Object:Method:Formula:String:LOWER:
+  .name = "LOWER"
+  .description = V_LOWERDescription
+  .syntax = "LOWER(<string>)"
+  .input = "string"
+  .output = "string"
+  .example = "LOWER(this.email)"
+
+Object:Method:Formula:String:TRIM:
+  .name = "TRIM"
+  .description = V_TRIMDescription
+  .syntax = "TRIM(<string>)"
+  .input = "string"
+  .output = "string"
+  .example = "TRIM(this.input)"
+
+Object:Method:Formula:String:REPLACE:
+  .name = "REPLACE"
+  .description = V_REPLACEDescription
+  .syntax = "REPLACE(<string>, <search>, <replace>)"
+  .input = "string, string, string"
+  .output = "string"
+  .example = "REPLACE(this.text, 'foo', 'bar')"
+
+Object:Method:Formula:String:SUBSTRING:
+  .name = "SUBSTRING"
+  .description = V_SUBSTRINGDescription
+  .syntax = "SUBSTRING(<string>, <start>, <length>)"
+  .input = "string, number, number"
+  .output = "string"
+  .example = "SUBSTRING(this.code, 0, 3)"
+
+Object:Method:Formula:String:LENGTH:
+  .name = "LENGTH"
+  .description = V_LENGTHDescription
+  .syntax = "LENGTH(<string|array>)"
+  .input = "string|array"
+  .output = "number"
+  .example = "LENGTH(this.name) > 0"
+
+#endregion
+
+#region === COLLECTION ===
+
+Object:Method:Formula:Collection:
+  .name = V_CollectionName
+  .category = "Collection"
+
+Object:Method:Formula:Collection:FIRST:
+  .name = "FIRST"
+  .description = V_FIRSTDescription
+  .syntax = "FIRST(<array>)"
+  .input = "array"
+  .output = "any"
+  .example = "FIRST(this.items)"
+
+Object:Method:Formula:Collection:LAST:
+  .name = "LAST"
+  .description = V_LASTDescription
+  .syntax = "LAST(<array>)"
+  .input = "array"
+  .output = "any"
+  .example = "LAST(this.items)"
+
+Object:Method:Formula:Collection:GET:
+  .name = "GET"
+  .description = V_GETDescription
+  .syntax = "GET(<array>, <index>)"
+  .input = "array, number"
+  .output = "any"
+  .example = "GET(this.items, 0)"
+
+Object:Method:Formula:Collection:MAP:
+  .name = "MAP"
+  .description = V_MAPDescription
+  .syntax = "MAP(<array>, <expr>)"
+  .input = "array, expression"
+  .output = "array"
+  .example = "MAP(this.items, item => item.price)"
+
+Object:Method:Formula:Collection:FILTER:
+  .name = "FILTER"
+  .description = V_FILTERDescription
+  .syntax = "FILTER(<array>, <predicate>)"
+  .input = "array, expression"
+  .output = "array"
+  .example = "FILTER(this.items, item => item.active)"
+
+Object:Method:Formula:Collection:REDUCE:
+  .name = "REDUCE"
+  .description = V_REDUCEDescription
+  .syntax = "REDUCE(<array>, <reducer>, <initial>)"
+  .input = "array, expression, any"
+  .output = "any"
+  .example = "REDUCE(this.items, (acc, item) => acc + item.price, 0)"
+
+Object:Method:Formula:Collection:SORT:
+  .name = "SORT"
+  .description = V_SORTDescription
+  .syntax = "SORT(<array>, <key>)"
+  .input = "array, string"
+  .output = "array"
+  .example = "SORT(this.items, 'price')"
+
+Object:Method:Formula:Collection:UNIQUE:
+  .name = "UNIQUE"
+  .description = V_UNIQUEDescription
+  .syntax = "UNIQUE(<array>)"
+  .input = "array"
+  .output = "array"
+  .example = "UNIQUE(this.tags)"
+
+Object:Method:Formula:Collection:FLATTEN:
+  .name = "FLATTEN"
+  .description = V_FLATTENDescription
+  .syntax = "FLATTEN(<array>)"
+  .input = "array"
+  .output = "array"
+  .example = "FLATTEN(this.nestedItems)"
+
+Object:Method:Formula:Collection:COUNT:
+  .name = "COUNT"
+  .description = V_COUNTDescription
+  .syntax = "COUNT(<array>)"
+  .input = "array"
+  .output = "number"
+  .example = "COUNT(this.items)"
+
+Object:Method:Formula:Collection:COUNTIF:
+  .name = "COUNTIF"
+  .description = V_COUNTIFDescription
+  .syntax = "COUNTIF(<array>, <predicate>)"
+  .input = "array, expression"
+  .output = "number"
+  .example = "COUNTIF(this.results, item => item.success)"
+
+#endregion
+
+#region === MATH ===
+
+Object:Method:Formula:Math:
+  .name = V_MathName
+  .category = "Math"
+
+Object:Method:Formula:Math:SUM:
+  .name = "SUM"
+  .description = V_SUMDescription
+  .syntax = "SUM(<array>)"
+  .input = "array"
+  .output = "number"
+  .example = "SUM(this.items.map(i => i.price))"
+
+Object:Method:Formula:Math:AVG:
+  .name = "AVG"
+  .description = V_AVGDescription
+  .syntax = "AVG(<array>)"
+  .input = "array"
+  .output = "number"
+  .example = "AVG(this.scores)"
+
+Object:Method:Formula:Math:MIN:
+  .name = "MIN"
+  .description = V_MINDescription
+  .syntax = "MIN(<array>)"
+  .input = "array"
+  .output = "number"
+  .example = "MIN(this.prices)"
+
+Object:Method:Formula:Math:MAX:
+  .name = "MAX"
+  .description = V_MAXDescription
+  .syntax = "MAX(<array>)"
+  .input = "array"
+  .output = "number"
+  .example = "MAX(this.prices)"
+
+Object:Method:Formula:Math:ABS:
+  .name = "ABS"
+  .description = V_ABSDescription
+  .syntax = "ABS(<number>)"
+  .input = "number"
+  .output = "number"
+  .example = "ABS(this.delta)"
+
+Object:Method:Formula:Math:ROUND:
+  .name = "ROUND"
+  .description = V_ROUNDDescription
+  .syntax = "ROUND(<number>, <decimals>)"
+  .input = "number, number"
+  .output = "number"
+  .example = "ROUND(this.price, 2)"
+
+Object:Method:Formula:Math:FLOOR:
+  .name = "FLOOR"
+  .description = V_FLOORDescription
+  .syntax = "FLOOR(<number>)"
+  .input = "number"
+  .output = "number"
+  .example = "FLOOR(this.value)"
+
+Object:Method:Formula:Math:CEIL:
+  .name = "CEIL"
+  .description = V_CEILDescription
+  .syntax = "CEIL(<number>)"
+  .input = "number"
+  .output = "number"
+  .example = "CEIL(this.value)"
+
+#endregion
+
+#region === NAVIGATION ===
+
+Object:Method:Formula:Navigation:
+  .name = V_NavigationName
+  .category = "Navigation"
+
+Object:Method:Formula:Navigation:PATH_GET:
+  .name = "PATH_GET"
+  .description = V_PATH_GETDescription
+  .syntax = "PATH_GET(<object>, <path>)"
+  .input = "object, string"
+  .output = "any"
+  .example = "PATH_GET(this, 'address.city')"
+
+Object:Method:Formula:Navigation:PATH_SET:
+  .name = "PATH_SET"
+  .description = V_PATH_SETDescription
+  .syntax = "PATH_SET(<object>, <path>, <value>)"
+  .input = "object, string, any"
+  .output = "object"
+  .example = "PATH_SET(this, 'address.city', 'Paris')"
+
+Object:Method:Formula:Navigation:PATH_EXISTS:
+  .name = "PATH_EXISTS"
+  .description = V_PATH_EXISTSDescription
+  .syntax = "PATH_EXISTS(<object>, <path>)"
+  .input = "object, string"
+  .output = "bool"
+  .example = "PATH_EXISTS(this, 'address.city')"
+
+#endregion
+
+#region === STRUCTURE ===
+
+Object:Method:Formula:Structure:
+  .name = V_StructureFormulaName
+  .category = "Structure"
+
+Object:Method:Formula:Structure:GET_FIELD:
+  .name = "GET_FIELD"
+  .description = V_GET_FIELDDescription
+  .syntax = "GET_FIELD(<object>, <field>)"
+  .input = "object, string"
+  .output = "any"
+  .example = "GET_FIELD(this, 'name')"
+
+Object:Method:Formula:Structure:SET_FIELD:
+  .name = "SET_FIELD"
+  .description = V_SET_FIELDDescription
+  .syntax = "SET_FIELD(<object>, <field>, <value>)"
+  .input = "object, string, any"
+  .output = "object"
+  .example = "SET_FIELD(this, 'status', 'active')"
+
+Object:Method:Formula:Structure:HAS_FIELD:
+  .name = "HAS_FIELD"
+  .description = V_HAS_FIELDDescription
+  .syntax = "HAS_FIELD(<object>, <field>)"
+  .input = "object, string"
+  .output = "bool"
+  .example = "HAS_FIELD(this, 'email')"
+
+Object:Method:Formula:Structure:KEYS:
+  .name = "KEYS"
+  .description = V_KEYSDescription
+  .syntax = "KEYS(<object>)"
+  .input = "object"
+  .output = "array"
+  .example = "KEYS(this.attributes)"
+
+Object:Method:Formula:Structure:VALUES:
+  .name = "VALUES"
+  .description = V_VALUESDescription
+  .syntax = "VALUES(<object>)"
+  .input = "object"
+  .output = "array"
+  .example = "VALUES(this.attributes)"
+
+Object:Method:Formula:Structure:MERGE:
+  .name = "MERGE"
+  .description = V_MERGEDescription
+  .syntax = "MERGE(<object1>, <object2>)"
+  .input = "object, object"
+  .output = "object"
+  .example = "MERGE(this.defaults, this.overrides)"
+
+#endregion

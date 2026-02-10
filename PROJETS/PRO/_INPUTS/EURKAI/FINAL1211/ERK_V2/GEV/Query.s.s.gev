@@ -1,0 +1,22 @@
+# ============================================================================
+# EURKAI Seed - Query
+# ============================================================================
+
+Object:Query:
+.name = "Query"
+
+Object:Query:GetAllObjects:
+.name = "GetAllObjects"
+.erk = "SELECT * FROM Object ORDER BY lineage"
+
+Object:Query:GetGevFiles:
+.name = "GetGevFiles"
+.erk = "SELECT * FROM Object WHERE .source ENDSWITH '.gev' GROUP BY .source"
+
+Object:Query:GetChildren:
+.name = "GetChildren"
+.erk = "SELECT * FROM Object WHERE .parent = SELECTED_OBJECT.lineage ORDER BY name"
+
+Object:Query:GetRelations:
+.name = "GetRelations"
+.erk = "SELECT * FROM Relation WHERE .sourceUUID = SELECTED_OBJECT.uuid"

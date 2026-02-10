@@ -1,0 +1,382 @@
+{
+  "manifest": {
+    "name": "eurekai-cockpit",
+    "version": "47.0.0",
+    "description": "EUREKAI Cockpit - Interface de gestion d'objets fractals",
+    "generated": "2025-12-13T09:00:00Z",
+    "author": "EUREKAI"
+  },
+  
+  "config": {
+    "title": "EUREKAI Cockpit v47",
+    "lang": "fr",
+    "theme": "dark",
+    "templateEngine": "fractal"
+  },
+  
+  "modules": {
+    "navmenu": {
+      "id": "navmenu",
+      "name": "Navigation Menu",
+      "description": "Menu de navigation par onglets",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/navmenu/navmenu.js",
+      "template": "modules/navmenu/navmenu.template.json",
+      "styles": "modules/navmenu/navmenu.css",
+      "mountPoint": "#app-nav",
+      "config": {
+        "tabs": [
+          { "id": "explorer", "icon": "◇", "label": "Explorer", "default": true },
+          { "id": "create", "icon": "✚", "label": "Créer" },
+          { "id": "console", "icon": "⌘", "label": "Console" },
+          { "id": "gevr", "icon": "⚡", "label": "GEVR" },
+          { "id": "json", "icon": "{}", "label": "JSON" }
+        ]
+      },
+      "events": {
+        "emit": ["tab:switch"],
+        "listen": ["tab:activate"]
+      }
+    },
+    
+    "header": {
+      "id": "header",
+      "name": "Header",
+      "description": "En-tête avec logo, breadcrumb et actions",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/header/header.js",
+      "template": "modules/header/header.template.json",
+      "styles": "modules/header/header.css",
+      "mountPoint": "#app-header",
+      "config": {
+        "logo": "EUREKAI Cockpit",
+        "version": "v47",
+        "showLineageInput": true,
+        "actions": ["import", "export", "bootstrap"]
+      },
+      "events": {
+        "emit": ["lineage:submit", "action:import", "action:export", "action:bootstrap"],
+        "listen": ["object:select", "breadcrumb:update"]
+      }
+    },
+    
+    "tree": {
+      "id": "tree",
+      "name": "Object Tree",
+      "description": "Arbre hiérarchique des objets",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/tree/tree.js",
+      "template": "modules/tree/tree.template.json",
+      "styles": "modules/tree/tree.css",
+      "mountPoint": "#panel-tree",
+      "config": {
+        "searchable": true,
+        "expandable": true,
+        "draggable": false
+      },
+      "events": {
+        "emit": ["object:select", "object:expand", "object:collapse"],
+        "listen": ["store:change", "filter:tags"]
+      },
+      "dependencies": ["store"]
+    },
+    
+    "fractal": {
+      "id": "fractal",
+      "name": "Fractal View",
+      "description": "Vue fractale d'un objet avec ses bundles",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/fractal/fractal.js",
+      "template": "modules/fractal/fractal.template.json",
+      "styles": "modules/fractal/fractal.css",
+      "mountPoint": "#panel-fractal",
+      "config": {
+        "maxDepth": 5,
+        "showLegend": true,
+        "sources": ["owned", "inherited", "injected"]
+      },
+      "events": {
+        "emit": ["element:click", "depth:change"],
+        "listen": ["object:select"]
+      },
+      "dependencies": ["store", "traverse"]
+    },
+    
+    "tags": {
+      "id": "tags",
+      "name": "Tags Panel",
+      "description": "Gestion et filtrage par tags",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/tags/tags.js",
+      "template": "modules/tags/tags.template.json",
+      "styles": "modules/tags/tags.css",
+      "mountPoint": "#panel-tags",
+      "config": {
+        "allowCreate": true,
+        "multiSelect": true
+      },
+      "events": {
+        "emit": ["filter:tags", "tag:create"],
+        "listen": ["store:change", "object:select"]
+      },
+      "dependencies": ["store"]
+    },
+    
+    "creation": {
+      "id": "creation",
+      "name": "Object Creation",
+      "description": "Interface de création d'objets multi-sources",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/creation/creation.js",
+      "template": "modules/creation/creation.template.json",
+      "styles": "modules/creation/creation.css",
+      "mountPoint": "#tab-create",
+      "config": {
+        "sources": ["lineage", "schema", "seed", "instance", "idea"],
+        "views": ["form", "chat", "recap"],
+        "autonomyLevels": ["manual", "assisted", "auto"]
+      },
+      "events": {
+        "emit": ["object:create", "object:validate"],
+        "listen": ["store:change"]
+      },
+      "dependencies": ["store", "formBuilder", "viewManager", "getCreate"]
+    },
+    
+    "console": {
+      "id": "console",
+      "name": "Test Console",
+      "description": "Console de test et debug",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/console/console.js",
+      "template": "modules/console/console.template.json",
+      "styles": "modules/console/console.css",
+      "mountPoint": "#tab-console",
+      "events": {
+        "emit": ["command:execute"],
+        "listen": []
+      },
+      "dependencies": ["store"]
+    },
+    
+    "gevr": {
+      "id": "gevr",
+      "name": "GEVR Runtime",
+      "description": "Moteur d'exécution GEVR avec scénarios",
+      "version": "1.0.0",
+      "type": "runtime",
+      "entry": "modules/gevr/gevr.js",
+      "template": "modules/gevr/gevr.template.json",
+      "styles": "modules/gevr/gevr.css",
+      "mountPoint": "#tab-gevr",
+      "config": {
+        "autoBootstrap": false,
+        "logLevel": "info"
+      },
+      "events": {
+        "emit": ["gevr:log", "gevr:scenario:complete", "gevr:bootstrap:complete"],
+        "listen": ["gevr:execute", "gevr:bootstrap"]
+      },
+      "dependencies": ["store", "supertools"]
+    },
+    
+    "jsonview": {
+      "id": "jsonview",
+      "name": "JSON View",
+      "description": "Export et visualisation JSON",
+      "version": "1.0.0",
+      "type": "ui",
+      "entry": "modules/jsonview/jsonview.js",
+      "template": "modules/jsonview/jsonview.template.json",
+      "styles": "modules/jsonview/jsonview.css",
+      "mountPoint": "#tab-json",
+      "config": {
+        "indent": 2,
+        "copyable": true,
+        "downloadable": true
+      },
+      "events": {
+        "emit": [],
+        "listen": ["store:change", "tab:switch"]
+      },
+      "dependencies": ["store"]
+    },
+    
+    "toast": {
+      "id": "toast",
+      "name": "Toast Notifications",
+      "description": "Notifications temporaires",
+      "version": "1.0.0",
+      "type": "util",
+      "entry": "modules/toast/toast.js",
+      "styles": "modules/toast/toast.css",
+      "mountPoint": "#toast-container",
+      "config": {
+        "duration": 3000,
+        "position": "bottom-right"
+      },
+      "events": {
+        "emit": [],
+        "listen": ["toast:show"]
+      }
+    },
+    
+    "modal": {
+      "id": "modal",
+      "name": "Modal Dialogs",
+      "description": "Dialogues modaux",
+      "version": "1.0.0",
+      "type": "util",
+      "entry": "modules/modal/modal.js",
+      "template": "modules/modal/modal.template.json",
+      "styles": "modules/modal/modal.css",
+      "mountPoint": "#modal-container",
+      "events": {
+        "emit": ["modal:confirm", "modal:cancel"],
+        "listen": ["modal:show", "modal:hide"]
+      }
+    }
+  },
+  
+  "core": {
+    "store": {
+      "id": "store",
+      "name": "Data Store",
+      "description": "Store central des données",
+      "entry": "core/store.js",
+      "singleton": true
+    },
+    "traverse": {
+      "id": "traverse", 
+      "name": "Traverse",
+      "description": "Traversée de lineage avec early-exit",
+      "entry": "core/traverse.js"
+    },
+    "lineage": {
+      "id": "lineage",
+      "name": "Lineage Utils",
+      "description": "Utilitaires de parsing lineage",
+      "entry": "core/lineage.js"
+    },
+    "objects": {
+      "id": "objects",
+      "name": "Object Management",
+      "description": "CRUD des objets",
+      "entry": "core/objects.js",
+      "dependencies": ["store", "traverse", "lineage"]
+    },
+    "supertools": {
+      "id": "supertools",
+      "name": "SuperTools CRUDOE",
+      "description": "Méthodes centrales CRUDOE",
+      "entry": "core/supertools.js",
+      "dependencies": ["store", "objects"]
+    },
+    "formBuilder": {
+      "id": "formBuilder",
+      "name": "Form Builder",
+      "description": "Génération de formulaires depuis schema",
+      "entry": "core/formBuilder.js"
+    },
+    "viewManager": {
+      "id": "viewManager",
+      "name": "View Manager",
+      "description": "Gestion des vues unifiées",
+      "entry": "core/viewManager.js"
+    },
+    "getCreate": {
+      "id": "getCreate",
+      "name": "GetCreate Pattern",
+      "description": "Pattern Get avec hookFailure Create",
+      "entry": "core/getCreate.js",
+      "dependencies": ["store", "objects"]
+    },
+    "history": {
+      "id": "history",
+      "name": "History Logger",
+      "description": "Logging pour audit",
+      "entry": "core/history.js"
+    },
+    "eventBus": {
+      "id": "eventBus",
+      "name": "Event Bus",
+      "description": "Bus d'événements inter-modules",
+      "entry": "core/eventBus.js",
+      "singleton": true
+    }
+  },
+  
+  "themes": {
+    "dark": {
+      "id": "dark",
+      "name": "Dark Theme",
+      "file": "themes/dark.css",
+      "default": true
+    },
+    "light": {
+      "id": "light", 
+      "name": "Light Theme",
+      "file": "themes/light.css"
+    }
+  },
+  
+  "layout": {
+    "type": "grid",
+    "areas": [
+      "nav nav nav nav",
+      "header header header header",
+      "content content content content"
+    ],
+    "containers": {
+      "nav": { "id": "app-nav", "module": "navmenu" },
+      "header": { "id": "app-header", "module": "header" },
+      "content": { 
+        "id": "app-content",
+        "tabs": {
+          "explorer": {
+            "layout": "three-panel",
+            "panels": ["tree", "fractal", "tags"]
+          },
+          "create": {
+            "layout": "full",
+            "module": "creation"
+          },
+          "console": {
+            "layout": "full",
+            "module": "console"
+          },
+          "gevr": {
+            "layout": "full",
+            "module": "gevr"
+          },
+          "json": {
+            "layout": "full",
+            "module": "jsonview"
+          }
+        }
+      }
+    }
+  },
+  
+  "apis": {
+    "internal": {
+      "date": { "type": "internal", "status": "configured" },
+      "uuid": { "type": "internal", "status": "configured" }
+    },
+    "external": {
+      "anthropic": { 
+        "type": "external", 
+        "provider": "anthropic",
+        "status": "pending",
+        "requiredFor": ["creation.idea", "gevr.agent"]
+      }
+    }
+  }
+}

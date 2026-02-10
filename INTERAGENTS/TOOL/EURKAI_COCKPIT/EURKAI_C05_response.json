@@ -1,0 +1,37 @@
+{
+  "preflight": {
+    "ready": true,
+    "certainty": 1.0,
+    "missing_info": [],
+    "assumptions": []
+  },
+  "role": "coder",
+  "mode": "deliverable",
+  "summary": "CLI d'intégration EURKAI_COCKPIT v1.0.0 - Commandes: init, project add/list, brief add/list, run start/list, export, import. Tests: 22/22 passed.",
+  "questions": [],
+  "files": [
+    {"path": "cli/cli.py", "content": "CLI principal avec toutes les commandes"},
+    {"path": "cli/__init__.py", "content": "Package init"},
+    {"path": "docs/CLI.md", "content": "Documentation complète du CLI"},
+    {"path": "tests/test_cli.py", "content": "22 tests unitaires et d'intégration"}
+  ],
+  "commands": [
+    "python -m pytest tests/test_cli.py -v"
+  ],
+  "acceptance": {
+    "passes_in_a_row": 2,
+    "max_iters": 8,
+    "results": {
+      "init_idempotent": true,
+      "project_add_then_list": true,
+      "export_produces_artifact": true,
+      "all_tests_passed": true,
+      "test_count": 22
+    }
+  },
+  "versioning": {
+    "version": "1.0.0",
+    "breaking_changes": false,
+    "notes": "Initial CLI release - no breaking changes"
+  }
+}

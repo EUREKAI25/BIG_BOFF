@@ -1,0 +1,1 @@
+autonomous = exécution sans interaction humaine directe, pilotée par scénarios/agents, capable de boucles de correction/validation, et déclenchée par besoins (tickets) + opportunités (veille) selon permissions.

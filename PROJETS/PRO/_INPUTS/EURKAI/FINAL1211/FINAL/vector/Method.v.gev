@@ -1,0 +1,287 @@
+# ============================================================================
+# EURKAI Vector - Method
+# vector/Method.v.gev
+# ============================================================================
+
+#region === METHOD BASE ===
+
+Object:Structure:Fractal:Vector:V_MethodName:
+  .default = {"FR": "Méthode", "EN": "Method"}
+
+Object:Structure:Fractal:Vector:V_MethodDescription:
+  .default = {"FR": "Action exécutable", "EN": "Executable action"}
+
+Object:Structure:Fractal:Vector:V_MethodQuestion:
+  .default = {"FR": "Quelle méthode appliquer ?", "EN": "Which method to apply?"}
+
+Object:Structure:Fractal:Vector:V_MethodBeforeHookList:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_MethodAfterHookList:
+  .default = []
+
+#endregion
+
+#region === CENTRAL METHOD ===
+
+Object:Structure:Fractal:Vector:V_CentralMethodName:
+  .default = {"FR": "Méthode Centrale", "EN": "Central Method"}
+
+Object:Structure:Fractal:Vector:V_CentralMethodDescription:
+  .default = {"FR": "Méthode CRUD de base", "EN": "Base CRUD method"}
+
+Object:Structure:Fractal:Vector:V_CreateName:
+  .default = "Create"
+
+Object:Structure:Fractal:Vector:V_CreateDescription:
+  .default = {"FR": "Créer un objet", "EN": "Create an object"}
+
+Object:Structure:Fractal:Vector:V_ReadName:
+  .default = "Read"
+
+Object:Structure:Fractal:Vector:V_ReadDescription:
+  .default = {"FR": "Lire un objet", "EN": "Read an object"}
+
+Object:Structure:Fractal:Vector:V_UpdateName:
+  .default = "Update"
+
+Object:Structure:Fractal:Vector:V_UpdateDescription:
+  .default = {"FR": "Modifier un objet", "EN": "Update an object"}
+
+Object:Structure:Fractal:Vector:V_DeleteName:
+  .default = "Delete"
+
+Object:Structure:Fractal:Vector:V_DeleteDescription:
+  .default = {"FR": "Supprimer un objet", "EN": "Delete an object"}
+
+Object:Structure:Fractal:Vector:V_OrchestrateName:
+  .default = "Orchestrate"
+
+Object:Structure:Fractal:Vector:V_OrchestrateDescription:
+  .default = {"FR": "Orchestrer des actions", "EN": "Orchestrate actions"}
+
+Object:Structure:Fractal:Vector:V_EngageName:
+  .default = "Engage"
+
+Object:Structure:Fractal:Vector:V_EngageDescription:
+  .default = {"FR": "Engager une interaction", "EN": "Engage an interaction"}
+
+#endregion
+
+#region === SUPERTOOL ===
+
+Object:Structure:Fractal:Vector:V_SuperToolName:
+  .default = {"FR": "SuperTool", "EN": "SuperTool"}
+
+Object:Structure:Fractal:Vector:V_SuperToolDescription:
+  .default = {"FR": "Outil avancé combinant méthodes", "EN": "Advanced tool combining methods"}
+
+Object:Structure:Fractal:Vector:V_SuperCreateName:
+  .default = "SuperCreate"
+
+Object:Structure:Fractal:Vector:V_SuperCreateDescription:
+  .default = {"FR": "Création avancée avec hooks", "EN": "Advanced creation with hooks"}
+
+Object:Structure:Fractal:Vector:V_SuperReadName:
+  .default = "SuperRead"
+
+Object:Structure:Fractal:Vector:V_SuperReadDescription:
+  .default = {"FR": "Lecture avancée avec options", "EN": "Advanced read with options"}
+
+Object:Structure:Fractal:Vector:V_SuperUpdateName:
+  .default = "SuperUpdate"
+
+Object:Structure:Fractal:Vector:V_SuperUpdateDescription:
+  .default = {"FR": "Modification avancée avec validation", "EN": "Advanced update with validation"}
+
+Object:Structure:Fractal:Vector:V_SuperDeleteName:
+  .default = "SuperDelete"
+
+Object:Structure:Fractal:Vector:V_SuperDeleteDescription:
+  .default = {"FR": "Suppression avancée avec cascade", "EN": "Advanced delete with cascade"}
+
+Object:Structure:Fractal:Vector:V_SuperOrchestrateName:
+  .default = "SuperOrchestrate"
+
+Object:Structure:Fractal:Vector:V_SuperOrchestrateDescription:
+  .default = {"FR": "Orchestration avancée", "EN": "Advanced orchestration"}
+
+Object:Structure:Fractal:Vector:V_SuperEngageName:
+  .default = "SuperEngage"
+
+Object:Structure:Fractal:Vector:V_SuperEngageDescription:
+  .default = {"FR": "Engagement avancé", "EN": "Advanced engagement"}
+
+#endregion
+
+#region === SECONDARY METHOD ===
+
+Object:Structure:Fractal:Vector:V_SecondaryMethodName:
+  .default = {"FR": "Méthode Secondaire", "EN": "Secondary Method"}
+
+Object:Structure:Fractal:Vector:V_SecondaryMethodDescription:
+  .default = {"FR": "Méthode dépendante d'une centrale", "EN": "Method dependent on a central one"}
+
+Object:Structure:Fractal:Vector:V_MRGName:
+  .default = "GlobalRecursiveMethod"
+
+Object:Structure:Fractal:Vector:V_MRGDescription:
+  .default = {"FR": "Exécute GEVR sur toute méthode", "EN": "Executes GEVR on any method"}
+
+Object:Structure:Fractal:Vector:V_MRGVersion:
+  .default = "0.9.9"
+
+Object:Structure:Fractal:Vector:V_MRGUpdatedAt:
+  .default = "2025-12-19T22:00:00Z"
+
+Object:Structure:Fractal:Vector:V_ConvertName:
+  .default = "Convert"
+
+Object:Structure:Fractal:Vector:V_ConvertDescription:
+  .default = {"FR": "Convertir d'un format à un autre", "EN": "Convert from one format to another"}
+
+Object:Structure:Fractal:Vector:V_WalkName:
+  .default = "Walk"
+
+Object:Structure:Fractal:Vector:V_WalkDescription:
+  .default = {"FR": "Parcourt un objet et ses enfants", "EN": "Traverses object and children"}
+
+Object:Structure:Fractal:Vector:V_WalkBeforeHookList:
+  .default = ["Log"]
+
+Object:Structure:Fractal:Vector:V_WalkAfterHookList:
+  .default = ["Log"]
+
+Object:Structure:Fractal:Vector:V_LogName:
+  .default = "Log"
+
+Object:Structure:Fractal:Vector:V_LogDescription:
+  .default = {"FR": "Journaliser les actions", "EN": "Log actions"}
+
+Object:Structure:Fractal:Vector:V_LogTarget:
+  .default = "reports/mrg.log"
+
+Object:Structure:Fractal:Vector:V_ScanName:
+  .default = "Scan"
+
+Object:Structure:Fractal:Vector:V_ScanDescription:
+  .default = {"FR": "Scanner les objets", "EN": "Scan objects"}
+
+Object:Structure:Fractal:Vector:V_PassName:
+  .default = "Pass"
+
+Object:Structure:Fractal:Vector:V_PassDescription:
+  .default = {"FR": "Mode pass - exécution normale", "EN": "Pass mode - normal execution"}
+
+Object:Structure:Fractal:Vector:V_GhostName:
+  .default = "Ghost"
+
+Object:Structure:Fractal:Vector:V_GhostDescription:
+  .default = {"FR": "Mode ghost - simulation sans effet", "EN": "Ghost mode - simulation without effect"}
+
+Object:Structure:Fractal:Vector:V_CheckName:
+  .default = "Check"
+
+Object:Structure:Fractal:Vector:V_CheckDescription:
+  .default = {"FR": "Vérification", "EN": "Check"}
+
+Object:Structure:Fractal:Vector:V_CheckFormatName:
+  .default = "Check Format"
+
+Object:Structure:Fractal:Vector:V_CheckFormatDescription:
+  .default = {"FR": "Vérifier le format des fichiers", "EN": "Check files format"}
+
+Object:Structure:Fractal:Vector:V_CheckVectorsName:
+  .default = "Check Vectors"
+
+Object:Structure:Fractal:Vector:V_CheckVectorsDescription:
+  .default = {"FR": "Vérifier les vecteurs", "EN": "Check vectors"}
+
+Object:Structure:Fractal:Vector:V_CheckOrphanName:
+  .default = "Check Orphan"
+
+Object:Structure:Fractal:Vector:V_CheckOrphanDescription:
+  .default = {"FR": "Vérifier les orphelins", "EN": "Check orphans"}
+
+Object:Structure:Fractal:Vector:V_SecondaryHookName:
+  .default = {"FR": "Hook Secondaire", "EN": "Secondary Hook"}
+
+Object:Structure:Fractal:Vector:V_SecondaryHookDescription:
+  .default = {"FR": "Hook pour méthode secondaire", "EN": "Hook for secondary method"}
+
+Object:Structure:Fractal:Vector:V_SecondaryHookTargetAttribute:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SecondaryHookTargetValue:
+  .default = ""
+
+#endregion
+
+#region === SCENARIO ===
+
+Object:Structure:Fractal:Vector:V_ScenarioName:
+  .default = {"FR": "Scénario", "EN": "Scenario"}
+
+Object:Structure:Fractal:Vector:V_ScenarioDescription:
+  .default = {"FR": "Séquence d'étapes", "EN": "Sequence of steps"}
+
+Object:Structure:Fractal:Vector:V_ScenarioQuestion:
+  .default = {"FR": "Quel scénario exécuter ?", "EN": "Which scenario to execute?"}
+
+Object:Structure:Fractal:Vector:V_StepName:
+  .default = {"FR": "Étape", "EN": "Step"}
+
+Object:Structure:Fractal:Vector:V_StepDescription:
+  .default = {"FR": "Étape d'un scénario", "EN": "Scenario step"}
+
+Object:Structure:Fractal:Vector:V_GetStepName:
+  .default = "Get"
+
+Object:Structure:Fractal:Vector:V_GetStepDescription:
+  .default = {"FR": "Récupérer les cibles", "EN": "Get targets"}
+
+Object:Structure:Fractal:Vector:V_ExecuteStepName:
+  .default = "Execute"
+
+Object:Structure:Fractal:Vector:V_ExecuteStepDescription:
+  .default = {"FR": "Exécuter sur chaque cible", "EN": "Execute on each target"}
+
+Object:Structure:Fractal:Vector:V_ValidateStepName:
+  .default = "Validate"
+
+Object:Structure:Fractal:Vector:V_ValidateStepDescription:
+  .default = {"FR": "Valider les résultats", "EN": "Validate results"}
+
+Object:Structure:Fractal:Vector:V_RenderStepName:
+  .default = "Render"
+
+Object:Structure:Fractal:Vector:V_RenderStepDescription:
+  .default = {"FR": "Présenter les résultats", "EN": "Render results"}
+
+Object:Structure:Fractal:Vector:V_MaintenanceScenarioName:
+  .default = {"FR": "Scénario de maintenance", "EN": "Maintenance Scenario"}
+
+Object:Structure:Fractal:Vector:V_MaintenanceScenarioDescription:
+  .default = {"FR": "Scénario de vérification/maintenance", "EN": "Check/maintenance scenario"}
+
+Object:Structure:Fractal:Vector:V_MaintenanceScenarioQuery:
+  .default = "Object:*"
+
+Object:Structure:Fractal:Vector:V_MaintenanceScenarioRuleList:
+  .default = []
+
+#endregion
+
+#region === DEPLOY ===
+
+Object:Structure:Fractal:Vector:V_DeployName:
+  .default = "Deploy"
+
+Object:Structure:Fractal:Vector:V_DeployDescription:
+  .default = {"FR": "Déployer un template en HTML", "EN": "Deploy template to HTML"}
+
+Object:Structure:Fractal:Vector:V_DeployableInstances:
+  .type = "query"
+  .query = "Object:Interface:PageInterface:*"
+
+#endregion

@@ -1,0 +1,23 @@
+## Object:Attribute:BEM:
+## Convention de nommage CSS Block-Element-Modifier
+## Génère: block__element--modifier1--modifier2
+
+Object:Attribute:BEM:
+  .vector = {"required": true}
+  .block = {"required": true}
+  .element = {}
+  .modifierList = {"type": "list"}
+  .BEMList = {"type": "list", "of": "Object:Attribute:BEM"}
+
+## Exemples d'instances:
+## 
+## section_hero:
+##   .block = "section"
+##   .modifierList = ["fullwidth", "dark"]
+##   => class="section section--fullwidth section--dark"
+##
+## section_hero_title:
+##   .block = "section"
+##   .element = "title"
+##   .modifierList = ["large"]
+##   => class="section__title section__title--large"

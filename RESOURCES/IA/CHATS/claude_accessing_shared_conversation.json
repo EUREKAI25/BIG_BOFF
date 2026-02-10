@@ -1,0 +1,298 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T12:52:38.010Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/4b455d8a-efd8-4ac1-87db-9798ed48e27d",
+    "title": "Accessing Shared Conversation - Claude",
+    "conversationId": "4b455d8a-efd8-4ac1-87db-9798ed48e27d",
+    "suggestedFilename": "claude_accessing_shared_conversation_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 34,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "assistant",
+        "content": "https://claude.ai/share/afd7f4db-26d5-4ad8-aee7-da949bc2893a as-tu accès àcette conversation ? (oui/non)",
+        "timestamp": "2025-07-08T12:52:38.007Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "user",
+        "content": "je crée mon agence avec une structure triplée. j'ai essayé ce code pour enregistrer les objets mais tu y as vu des erreurs (de fait je n'ai pas les bons résultats lorsque je teste des requetes). tout est objet, y compris les metas d'objets (objets liés par meta_of et qualifié par meta_value_of et meta_name_of eux mêmes associés à l'objet meta par la relation \"meta_of\". les relations également sont des objets. est-ce clair pour toi ? (oui/non)",
+        "timestamp": "2025-07-08T12:52:38.007Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "assistant",
+        "content": "oui j'ai besoin que tu me donnes uncode fonctionnel pour importer les objets à partir d'un json. si le format du json ne te semble pas optimal, n'hésite pas à m'en proposer un autre. ce sont des agents IA qu vont générer ces fichiers et le but est de faciliter les opérations d'ajout requete d'objets, tout en simplifiant au maximum l'accès au data (une couche d'abstraction est prévue pour la. consultation des données)",
+        "timestamp": "2025-07-08T12:52:38.007Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "user",
+        "content": "donn moi le json adapté à partir de celui que je t'ai donné, mais n'invente pas de nouveaux objets / noms / relations",
+        "timestamp": "2025-07-08T12:52:38.007Z",
+        "originalIndex": 3,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "assistant",
+        "content": "j'ai du modifier ton script car il faut qu'il continue à fonctionner avec l'existant (conn, nommage, path) ma is j'obtiens : venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 run.py Requirement already satisfied: pip in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX/meta_project/venv/lib/python3.13/site-packages (25.1.1) install bdd /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db Base de données existante '/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db' supprimée. dbse /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db Base de données '/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db' créée avec succès. 🔹 Enregistrement de : {'nom': 'ObjetType', 'type': 'MetaClass'} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Objects', 'type': 'ObjetType'} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'RelationType', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Meta', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Tag', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Language', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Function', 'type': 'MetaClass', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de l'installation des données initiales : expected str, bytes or os.PathLike object, not dict install_initial_datas ok * Serving Flask app 'app.main' * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_5",
+        "role": "user",
+        "content": "je eux que tu conserves def register_object_recursive(conn, json_path): c'est capital",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 5,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_6",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 run.py Requirement already satisfied: pip in /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX/meta_project/venv/lib/python3.13/site-packages (25.1.1) install bdd /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db Base de données existante '/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db' supprimée. dbse /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db Base de données '/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/_LNSX2/projects/default/database/default.db' créée avec succès. 🔹 Enregistrement de : {'nom': 'ObjetType', 'type': 'MetaClass'} ❌ Erreur lors de la lecture du fichier {'nom': 'ObjetType', 'type': 'MetaClass'} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de ObjetType : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Objects', 'type': 'ObjetType'} ❌ Erreur lors de la lecture du fichier {'nom': 'Objects', 'type': 'ObjetType'} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de Objects : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'RelationType', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de la lecture du fichier {'nom': 'RelationType', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de RelationType : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Meta', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de la lecture du fichier {'nom': 'Meta', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de Meta : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Tag', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de la lecture du fichier {'nom': 'Tag', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de Tag : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Language', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de la lecture du fichier {'nom': 'Language', 'type': 'ObjetType', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de Language : expected str, bytes or os.PathLike object, not dict 🔹 Enregistrement de : {'nom': 'Function', 'type': 'MetaClass', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} ❌ Erreur lors de la lecture du fichier {'nom': 'Function', 'type': 'MetaClass', 'relations': [{'type': 'derives_from', 'target': 'Objects'}]} : expected str, bytes or os.PathLike object, not dict ❌ Erreur lors de l'enregistrement de Function : expected str, bytes or os.PathLike object, not dict install_initial_datas ok * Serving Flask app 'app.main' * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 6,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_7",
+        "role": "user",
+        "content": "la table Relations est complètement vide",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 7,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_8",
+        "role": "assistant",
+        "content": "ça a l'air bon.donne moi le code pour def get_objects_by_meta(meta_name, meta_value=None): et prévois un test pour récupérer les objets dont tu sais qu'il y aura des réponses (cf json)",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 8,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_9",
+        "role": "user",
+        "content": "redonne moi le code sachant que db_path = \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/__LNSX2/projects/default/database/database.db\" et fais en sorte d'afficher tous les objets qu'on a enregistrés",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 9,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_10",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/query_imported_objects.py ============================================================ 🧪 TESTS DES REQUÊTES ============================================================ 📋 Test 0: TOUS LES OBJETS ENREGISTRÉS ❌ Erreur lors de la requête get_all_objects: no such table: Objects Total d'objets trouvés: 0 📋 Test 1: Objets de type 'ObjetType' (Attendu: RelationType, Meta, Tag, Language) ❌ Erreur lors de la requête get_objects_by_meta: no such table: Objects Résultats trouvés: 0 📋 Test 2: Objets de type 'MetaClass' (Attendu: ObjetType, Function) ❌ Erreur lors de la requête get_objects_by_meta: no such table: Objects Résultats trouvés: 0 📋 Test 3: Tous les objets ayant un 'type' (Attendu: ObjetType, Objects, RelationType, Meta, Tag, Language, Function) ❌ Erreur lors de la requête get_objects_by_meta: no such table: Objects Résultats trouvés: 0 📋 Test 5: Objets liés à 'Objects' par 'derives_from' (Attendu: RelationType, Meta, Tag, Language, Function) Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/query_imported_objects.py\", line 279, in <module> run_tests() ~~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/query_imported_objects.py\", line 274, in run_tests test_queries(db_path) ~~~~~~~~~~~~^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/query_imported_objects.py\", line 246, in test_queries cur.execute(query) ~~~~~~~~~~~^^^^^^^ sqlite3.OperationalError: no such table: Relations venvnathalie@Nathalies-MacBook-Pro LNSX2 % l elle existe pourtant",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 10,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_11",
+        "role": "assistant",
+        "content": "j'ai réinstallé : et j'ai corrigé le chemin maiis j'ai encore ça",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 11,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_12",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 /Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/query_imported_objects.py ============================================================ 🧪 TESTS DES REQUÊTES ============================================================ 📋 Test 0: TOUS LES OBJETS ENREGISTRÉS Total d'objets trouvés: 14 - ObjetType (ID: 1) - label_of (ID: 2) - type (ID: 3) - MetaClass (ID: 4) - meta_name_of (ID: 5) - meta_value_of (ID: 6) - meta_of (ID: 7) - Objects (ID: 8) - RelationType (ID: 9) - derives_from (ID: 10) - Meta (ID: 11) - Tag (ID: 12) - Language (ID: 13) - Function (ID: 14) 📋 Test 1: Objets de type 'ObjetType' (Attendu: RelationType, Meta, Tag, Language) Résultats trouvés: 5 - Objects (ID: 8) - RelationType (ID: 9) - Meta (ID: 11) - Tag (ID: 12) - Language (ID: 13) 📋 Test 2: Objets de type 'MetaClass' (Attendu: ObjetType, Function) Résultats trouvés: 2 - ObjetType (ID: 1) - Function (ID: 14) 📋 Test 3: Tous les objets ayant un 'type' (Attendu: ObjetType, Objects, RelationType, Meta, Tag, Language, Function) Résultats trouvés: 7 - ObjetType (ID: 1) - Objects (ID: 8) - RelationType (ID: 9) - Meta (ID: 11) - Tag (ID: 12) - Language (ID: 13) - Function (ID: 14) 📋 Test 4: Métadonnées de 'ObjetType' Métadonnées trouvées: 1 - type: MetaClass 📋 Test 5: Objets liés à 'Objects' par 'derives_from' (Attendu: RelationType, Meta, Tag, Language, Function) Relations 'derives_from' vers 'Objects': 5 - Function -[derives_from]-> Objects - Language -[derives_from]-> Objects - Meta -[derives_from]-> Objects - RelationType -[derives_from]-> Objects - Tag -[derives_from]-> Objects 📋 Test 6: Structure de la base - Objects: 14 - Labels: 14 - Relations: 47 venvnathalie@Nathalies-MacBook-Pro __LNSX2 % vérifie que tout est cohérent, compare les objets de json, la bdd et les résultats de la requete. vois-tu des incohérences ?",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 12,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_13",
+        "role": "assistant",
+        "content": "parfait ! maintenant donne moi juste les fichiers get_objects_by_meta, get_metas_by_object, get_relations_by_object, get_object_by_tag (tag sera un type d'objet lié à un autre objet par la relation tag_of, get_tags_by_object et get_enriched_object(objectid) qui va retourner l'objet avec toutes ses metas, la liste des relations associées (en tant que src et en tant que target) je veux une fonction par fichier par souci de modularité. les fichiers porteront le nom query<function_name>.py et toutes seront dans functions",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 13,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_14",
+        "role": "user",
+        "content": "prépare moi un fichier de test permettant pour chaque fonction d'enregistrer les éléments nécessaires (depuis des datas json en dur) puis de tester la fonction, puis de supprimer les objets qu'on vient d'ajouter (depuis une fonction delete_object_from_id) cette fonction delete devra supprimer l'objet, mais aussi toutes les relations la concernant et les objets créés pour elles telles que les metas. n'utilise pas de cache pour ça, la fonction delete devra être utilisée dans d'autres circonstances, à partir de l'id uniquement",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 15,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_15",
+        "role": "assistant",
+        "content": "je parlais de 1 fichier PAR fonction",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 16,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_16",
+        "role": "user",
+        "content": "test_get_tags_by_object finit comme ça : # 4. Tester la fonction - tags de TestService print(f\"\\n📋 Test 2: Tags de TestService\") service_id = get_object_id_by_name(conn, \"TestService\") service_tags = get_tags_by_object(conn, service_id) print(f\"Tags trouvés: {len(service_tags)} (attendu: 2)\") for tag in service_tags: print(f\" - {tag['name']} (ID: {tag['id']})\") # 5. Test avec un objet inexistant print(f\"\\n📋 Test 3: Tags d'un obdonne moi la suite delete_object_from_id est supposée etre une fonction à part. tu l(as mise dans chaque fichier ? (oui/non)",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 19,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_17",
+        "role": "assistant",
+        "content": "je veux tout sur le même doc pour copier coller",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 21,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_18",
+        "role": "user",
+        "content": ":-) rien à signaler ?",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 22,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_19",
+        "role": "assistant",
+        "content": "Problème 3 non il y a des erreurs, on en parlera après. donne moi déjà. les fichiers corrigés",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 23,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_20",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions.py Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/test_query_functions.py\", line 15, in <module> from functions.query_get_objects_by_meta import get_objects_by_meta ModuleNotFoundError: No module named 'functions' venvnathalie@Nathalies-MacBook-Pro __LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 24,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_21",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_get_enriched_object.py 🧪 Test get_enriched_object ------------------------------ Objet enrichi: RelationType (ID: 9) 📋 Métadonnées (1): - type: ObjetType 🏷️ Tags (0): 🔗 Relations sortantes (1): - derives_from -> Objects (ID: 8) 🔗 Relations entrantes (0): --- Test avec objet inexistant (ID: 999) --- ✅ Gestion correcte des objets inexistants venvnathalie@Nathalies-MacBook-Pro LNSX2 % venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions.py ================================================================================ 🧪 TESTS COMPLETS DES FONCTIONS DE REQUÊTE ================================================================================ 🔧 Création des objets de test... ✅ 6 objets de test créés ============================================================ 📋 TEST 1: get_objects_by_meta ============================================================ Objets de type 'Product': 1 - TestProduct (ID: 83) Objets avec category='electronics': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 2: get_metas_by_object ============================================================ Métadonnées de TestProduct: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 ============================================================ 📋 TEST 3: get_relations_by_object ============================================================ Relations de TestProduct: Sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Entrantes: 2 - new_arrival (ID: 87) -> tag_of - popular (ID: 86) -> tag_of ============================================================ 📋 TEST 4: get_objects_by_tag ============================================================ Objets avec tag 'popular': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 5: get_tags_by_object ============================================================ Tags de TestProduct: 2 - new_arrival (ID: 87) - popular (ID: 86) ============================================================ 📋 TEST 6: get_enriched_object ============================================================ Objet enrichi: TestProduct (ID: 83) Métadonnées: 4 Tags: 2 Relations sortantes: 2 Relations entrantes: 2 ============================================================ ✅ TOUS LES TESTS TERMINÉS AVEC SUCCÈS ============================================================ 🧹 NETTOYAGE... ------------------------------ 🗑️ Suppression de l'objet ID 88... ✅ Objet 'featured' supprimé (2 relations, 0 métadonnées) 🗑️ Suppression de l'objet ID 87... ✅ Objet 'new_arrival' supprimé (2 relations, 0 métadonnées) 🗑️ Suppression de l'objet ID 86... ✅ Objet 'popular' supprimé (2 relations, 0 métadonnées) 🗑️ Suppression de l'objet ID 85... ✅ Objet 'TestBrand' supprimé (13 relations, 0 métadonnées) 🗑️ Suppression de l'objet ID 84... ✅ Objet 'TestCategory' supprimé (14 relations, 0 métadonnées) 🗑️ Suppression de l'objet ID 83... ✅ Objet 'TestProduct' supprimé (18 relations, 0 métadonnées) ✅ Nettoyage terminé venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 25,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_22",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions.py ================================================================================ 🧪 TESTS COMPLETS DES FONCTIONS DE REQUÊTE (IMPORTS CORRIGES) ================================================================================ 🔧 Création des objets de test... ✅ 6 objets de test créés ============================================================ 📋 TEST 1: get_objects_by_meta ============================================================ Objets de type 'Product': 1 - TestProduct (ID: 83) Objets avec category='electronics': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 2: get_metas_by_object ============================================================ Métadonnées de TestProduct: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 ============================================================ 📋 TEST 3: get_relations_by_object ============================================================ Relations de TestProduct: Sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Entrantes: 2 - new_arrival (ID: 87) -> tag_of - popular (ID: 86) -> tag_of ============================================================ 📋 TEST 4: get_objects_by_tag ============================================================ Objets avec tag 'popular': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 5: get_tags_by_object ============================================================ Tags de TestProduct: 2 - new_arrival (ID: 87) - popular (ID: 86) ============================================================ 📋 TEST 6: get_enriched_object ============================================================ Objet enrichi: TestProduct (ID: 83) Métadonnées: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 Tags: 2 - new_arrival (ID: 87) - popular (ID: 86) Relations sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Relations entrantes: 2 - new_arrival (ID: 87) -> tag_of - popular (ID: 86) -> tag_of ============================================================ ✅ TOUS LES TESTS TERMINÉS AVEC SUCCÈS ============================================================ 🧹 NETTOYAGE... ------------------------------ 🗑️ Suppression de l'objet 'featured' (ID: 88)... ✅ Objet 'featured' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'new_arrival' (ID: 87)... ✅ Objet 'new_arrival' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'popular' (ID: 86)... ✅ Objet 'popular' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestBrand' (ID: 85)... ✅ Objet 'TestBrand' supprimé (13 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestCategory' (ID: 84)... ✅ Objet 'TestCategory' supprimé (14 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestProduct' (ID: 83)... ✅ Objet 'TestProduct' supprimé (18 relations, 0 métadonnées nettoyées) ✅ Nettoyage terminé venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.008Z",
+        "originalIndex": 27,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_23",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions.py ================================================================================ 🧪 TESTS COMPLETS DES FONCTIONS DE REQUÊTE (IMPORTS CORRIGES) ================================================================================ 🔧 Création des objets de test... ✅ 6 objets de test créés ============================================================ 📋 TEST 1: get_objects_by_meta ============================================================ Objets de type 'Product': 1 - TestProduct (ID: 83) Objets avec category='electronics': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 2: get_metas_by_object ============================================================ Métadonnées de TestProduct: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 ============================================================ 📋 TEST 3: get_relations_by_object ============================================================ Relations de TestProduct: Sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Entrantes: 2 - new_arrival (ID: 87) -> tag_of - popular (ID: 86) -> tag_of ============================================================ 📋 TEST 4: get_objects_by_tag ============================================================ Objets avec tag 'popular': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 5: get_tags_by_object ============================================================ Tags de TestProduct: 2 - new_arrival (ID: 87) - popular (ID: 86) ============================================================ 📋 TEST 6: get_enriched_object ============================================================ Objet enrichi: TestProduct (ID: 83) Métadonnées: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 Tags: 2 - new_arrival (ID: 87) - popular (ID: 86) Relations sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Relations entrantes: 2 - new_arrival (ID: 87) -> tag_of - popular (ID: 86) -> tag_of ============================================================ ✅ TOUS LES TESTS TERMINÉS AVEC SUCCÈS ============================================================ 🧹 NETTOYAGE... ------------------------------ 🗑️ Suppression de l'objet 'featured' (ID: 88)... ✅ Objet 'featured' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'new_arrival' (ID: 87)... ✅ Objet 'new_arrival' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'popular' (ID: 86)... ✅ Objet 'popular' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestBrand' (ID: 85)... ✅ Objet 'TestBrand' supprimé (13 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestCategory' (ID: 84)... ✅ Objet 'TestCategory' supprimé (14 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestProduct' (ID: 83)... ✅ Objet 'TestProduct' supprimé (18 relations, 0 métadonnées nettoyées) ✅ Nettoyage terminé venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 28,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_24",
+        "role": "assistant",
+        "content": "non, j'ai copié collé le code dans l'ancien fichier",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 29,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_25",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions.py Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/test_query_functions.py\", line 15, in <module> from query_get_enriched_object import get_enriched_object ImportError: cannot import name 'get_enriched_object' from 'query_get_enriched_object' (/Users/nathalie/Dropbox/PROJETS/LANOSTRAI/LNSX2/functions/query_get_enriched_object.py) venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 31,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_26",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions.py ================================================================================ 🧪 TESTS COMPLETS DES FONCTIONS DE REQUÊTE (IMPORTS CORRIGES) ================================================================================ 🔧 Création des objets de test... ✅ 6 objets de test créés ============================================================ 📋 TEST 1: get_objects_by_meta ============================================================ Objets de type 'Product': 1 - TestProduct (ID: 83) Objets avec category='electronics': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 2: get_metas_by_object ============================================================ Métadonnées de TestProduct: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 ============================================================ 📋 TEST 3: get_relations_by_object ============================================================ Relations de TestProduct: Sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Entrantes: 0 ============================================================ 📋 TEST 4: get_objects_by_tag ============================================================ Objets avec tag 'popular': 1 - TestProduct (ID: 83) ============================================================ 📋 TEST 5: get_tags_by_object ============================================================ Tags de TestProduct: 2 - new_arrival (ID: 87) - popular (ID: 86) ============================================================ 📋 TEST 6: get_enriched_object ============================================================ Objet enrichi: TestProduct (ID: 83) Métadonnées: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 Tags: 2 - new_arrival (ID: 87) - popular (ID: 86) Relations sortantes: 2 - belongs_to -> TestCategory (ID: 84) - manufactured_by -> TestBrand (ID: 33) Relations entrantes: 0 ============================================================ ✅ TOUS LES TESTS TERMINÉS AVEC SUCCÈS ============================================================ 🧹 NETTOYAGE... ------------------------------ 🗑️ Suppression de l'objet 'featured' (ID: 88)... ✅ Objet 'featured' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'new_arrival' (ID: 87)... ✅ Objet 'new_arrival' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'popular' (ID: 86)... ✅ Objet 'popular' supprimé (2 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestBrand' (ID: 85)... ✅ Objet 'TestBrand' supprimé (13 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestCategory' (ID: 84)... ✅ Objet 'TestCategory' supprimé (14 relations, 0 métadonnées nettoyées) 🗑️ Suppression de l'objet 'TestProduct' (ID: 83)... ✅ Objet 'TestProduct' supprimé (18 relations, 0 métadonnées nettoyées) ✅ Nettoyage terminé venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 32,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_27",
+        "role": "user",
+        "content": "bien sûr qu'il faut débugger",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 33,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_28",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions_DEBUG.py ================================================================================ 🐛 DEBUG: Problème des métadonnées ================================================================================ 🔧 Création des objets de test avec DEBUG... 🔵 === CRÉATION DE L'OBJET TestProduct === ✅ Objet principal créé avec ID: 83 ✅ Label 'TestProduct' créé pour l'objet 83 🔍 Objet système 'label_of' EXISTANT -> ID 2 ✅ Relation label_of créée: 83 -> 83 🟡 --- CRÉATION MÉTADONNÉE 'type' = 'Product' --- 🔹 Métadonnée: type = Product pour objet 83 🔍 Objet système 'type' EXISTANT -> ID 3 ➤ meta_name 'type' -> ID 3 🔍 Objet système 'Product' EXISTANT -> ID 32 ➤ meta_value 'Product' -> ID 32 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 3 -[meta_name_of(5)]-> 83 ✓ 32 -[meta_value_of(6)]-> 83 ✓ 3 -[meta_of(7)]-> 83 ✓ 32 -[meta_of(7)]-> 83 🟡 --- CRÉATION MÉTADONNÉE 'category' = 'electronics' --- 🔹 Métadonnée: category = electronics pour objet 83 🔍 Objet système 'category' EXISTANT -> ID 19 ➤ meta_name 'category' -> ID 19 🔍 Objet système 'electronics' EXISTANT -> ID 34 ➤ meta_value 'electronics' -> ID 34 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 19 -[meta_name_of(5)]-> 83 ✓ 34 -[meta_value_of(6)]-> 83 ✓ 19 -[meta_of(7)]-> 83 ✓ 34 -[meta_of(7)]-> 83 🟡 --- CRÉATION MÉTADONNÉE 'price' = '299.99' --- 🔹 Métadonnée: price = 299.99 pour objet 83 🔍 Objet système 'price' EXISTANT -> ID 35 ➤ meta_name 'price' -> ID 35 🔍 Objet système '299.99' EXISTANT -> ID 71 ➤ meta_value '299.99' -> ID 71 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 35 -[meta_name_of(5)]-> 83 ✓ 71 -[meta_value_of(6)]-> 83 ✓ 35 -[meta_of(7)]-> 83 ✓ 71 -[meta_of(7)]-> 83 🟡 --- CRÉATION MÉTADONNÉE 'status' = 'active' --- 🔹 Métadonnée: status = active pour objet 83 🔍 Objet système 'status' EXISTANT -> ID 21 ➤ meta_name 'status' -> ID 21 🔍 Objet système 'active' EXISTANT -> ID 37 ➤ meta_value 'active' -> ID 37 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 21 -[meta_name_of(5)]-> 83 ✓ 37 -[meta_value_of(6)]-> 83 ✓ 21 -[meta_of(7)]-> 83 ✓ 37 -[meta_of(7)]-> 83 ✅ 1 objets de test créés ============================================================ 📋 RÉCUPÉRATION DES MÉTADONNÉES ============================================================ 🔍 Test avec l'objet ID 83 Métadonnées trouvées: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 🧹 NETTOYAGE... 🗑️ Suppression de l'objet 'TestProduct' (ID: 83)... ✅ Objet 'TestProduct' supprimé (17 relations, 0 métadonnées nettoyées) venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 34,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_29",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/test_query_functions_DEBUG.py ================================================================================ 🐛 DEBUG: Problème des métadonnées ================================================================================ 🔧 Création des objets de test avec DEBUG... 🔵 === CRÉATION DE L'OBJET TestProduct === ✅ Objet principal créé avec ID: 83 ✅ Label 'TestProduct' créé pour l'objet 83 🔍 Objet système 'label_of' EXISTANT -> ID 2 ✅ Relation label_of créée: 83 -> 83 🟡 --- CRÉATION MÉTADONNÉE 'type' = 'Product' --- 🔹 Métadonnée: type = Product pour objet 83 🔍 Objet système 'type' EXISTANT -> ID 3 ➤ meta_name 'type' -> ID 3 🔍 Objet système 'Product' EXISTANT -> ID 32 ➤ meta_value 'Product' -> ID 32 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 3 -[meta_name_of(5)]-> 83 ✓ 32 -[meta_value_of(6)]-> 83 ✓ 3 -[meta_of(7)]-> 83 ✓ 32 -[meta_of(7)]-> 83 🟡 --- CRÉATION MÉTADONNÉE 'category' = 'electronics' --- 🔹 Métadonnée: category = electronics pour objet 83 🔍 Objet système 'category' EXISTANT -> ID 19 ➤ meta_name 'category' -> ID 19 🔍 Objet système 'electronics' EXISTANT -> ID 34 ➤ meta_value 'electronics' -> ID 34 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 19 -[meta_name_of(5)]-> 83 ✓ 34 -[meta_value_of(6)]-> 83 ✓ 19 -[meta_of(7)]-> 83 ✓ 34 -[meta_of(7)]-> 83 🟡 --- CRÉATION MÉTADONNÉE 'price' = '299.99' --- 🔹 Métadonnée: price = 299.99 pour objet 83 🔍 Objet système 'price' EXISTANT -> ID 35 ➤ meta_name 'price' -> ID 35 🔍 Objet système '299.99' EXISTANT -> ID 71 ➤ meta_value '299.99' -> ID 71 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 35 -[meta_name_of(5)]-> 83 ✓ 71 -[meta_value_of(6)]-> 83 ✓ 35 -[meta_of(7)]-> 83 ✓ 71 -[meta_of(7)]-> 83 🟡 --- CRÉATION MÉTADONNÉE 'status' = 'active' --- 🔹 Métadonnée: status = active pour objet 83 🔍 Objet système 'status' EXISTANT -> ID 21 ➤ meta_name 'status' -> ID 21 🔍 Objet système 'active' EXISTANT -> ID 37 ➤ meta_value 'active' -> ID 37 🔍 Objet système 'meta_name_of' EXISTANT -> ID 5 ➤ meta_name_of -> ID 5 🔍 Objet système 'meta_value_of' EXISTANT -> ID 6 ➤ meta_value_of -> ID 6 🔍 Objet système 'meta_of' EXISTANT -> ID 7 ➤ meta_of -> ID 7 🔗 Création des 4 relations métadonnées... ✓ 21 -[meta_name_of(5)]-> 83 ✓ 37 -[meta_value_of(6)]-> 83 ✓ 21 -[meta_of(7)]-> 83 ✓ 37 -[meta_of(7)]-> 83 ✅ 1 objets de test créés ============================================================ 📋 RÉCUPÉRATION DES MÉTADONNÉES ============================================================ 🔍 Test avec l'objet ID 83 Métadonnées trouvées: 4 - category: 299.99 - price: 299.99 - status: 299.99 - type: 299.99 🧹 NETTOYAGE... 🗑️ Suppression de l'objet 'TestProduct' (ID: 83)... ✅ Objet 'TestProduct' supprimé (17 relations, 0 métadonnées nettoyées) venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 35,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_30",
+        "role": "assistant",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/debug_sql_inspection.py ================================================================================ 🔍 INSPECTION DIRECTE DES MÉTADONNÉES ================================================================================ 🔧 Création d'un objet de test... 🔧 Création de la métadonnée name = 'TestName'... ✅ Objet test créé: ID 83 ✅ name -> ID 84 ✅ TestName -> ID 85 📋 TOUTES LES RELATIONS POUR L'OBJET 83: -------------------------------------------------- 84(name) -[meta_name_of]-> 83(TestObject) 85(TestName) -[meta_of]-> 83(TestObject) 84(name) -[meta_of]-> 83(TestObject) 85(TestName) -[meta_value_of]-> 83(TestObject) 🧪 TEST DE LA REQUÊTE get_metas_by_object: -------------------------------------------------- Résultats trouvés: 1 name = TestName (name_id: 84, value_id: 85) 🧹 Nettoyage de l'objet test 83... venvnathalie@Nathalies-MacBook-Pro LNSX2 %",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 36,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_31",
+        "role": "user",
+        "content": "venvnathalie@Nathalies-MacBook-Pro LNSX2 % python3 functions/debug_real_object.py ================================================================================ 🔍 DEBUG DE L'OBJET RÉEL TestProduct ================================================================================ 🔧 Création d'un TestProduct réel... 🟡 Création métadonnée: category = electronics 🔍 'category' EXISTANT -> ID 19 🔍 'electronics' EXISTANT -> ID 34 🔍 'meta_name_of' EXISTANT -> ID 5 🔍 'meta_value_of' EXISTANT -> ID 6 🔍 'meta_of' EXISTANT -> ID 7 🟡 Création métadonnée: price = 299.99 🔍 'price' EXISTANT -> ID 35 🔍 '299.99' EXISTANT -> ID 71 🧪 TEST DE LA REQUÊTE SUR L'OBJET 86: -------------------------------------------------- Résultats trouvés: 4 Format: nom = valeur (name_id, value_id) category = 299.99 (name_id: 19, value_id: 71) category = electronics (name_id: 19, value_id: 34) price = 299.99 (name_id: 35, value_id: 71) price = electronics (name_id: 35, value_id: 34) 📋 TOUTES LES RELATIONS meta_of POUR L'OBJET 86: -------------------------------------------------- Objets liés par meta_of: 4 71(299.99) -[meta_of]-> 86 19(category) -[meta_of]-> 86 34(electronics) -[meta_of]-> 86 35(price) -[meta_of]-> 86 🧹 Nettoyage... venvnathalie@Nathalies-MacBook-Pro LNSX2 % je ne vois nulle part meta_name_of et meta_value_of. je ne sais pas si c'est normal mais ces deux objets doivent qualifier l'objet qui esmeta_of de l'objet initial, du fait de la logique triplé",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 37,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_32",
+        "role": "assistant",
+        "content": "non. tout doit passer par l'objet, meta_of (objet), meta_name_of (meta), meta_value_of (meta) et les labels (label_of des divers objets)",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 38,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_33",
+        "role": "assistant",
+        "content": "oui, donne moi query_get_enriched_object. il n'y a rien d'autre à mettre à jour ?",
+        "timestamp": "2025-07-08T12:52:38.009Z",
+        "originalIndex": 42,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 7592,
+      "bodyText": 742454
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T10:49:42.270Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/b6a3ace9-5c2a-4c84-b8ed-2ca297834bdd",
+    "title": "Continuing a Previous Conversation - Claude",
+    "conversationId": "b6a3ace9-5c2a-4c84-b8ed-2ca297834bdd",
+    "suggestedFilename": "claude_continuing_a_previous_conversation_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 9,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "user",
+        "content": "comment faire pour te commmuniquer l'hstorique de la conversation précédente ? j'ai été luimitée en longueur mais je veux poursuivre",
+        "timestamp": "2025-07-08T10:49:42.269Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "user",
+        "content": "je parle d'un chat que je voudrais poursuivre, ici même. c'est donc impossible ?",
+        "timestamp": "2025-07-08T10:49:42.269Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "user",
+        "content": "oui mais comment ? rien n'est prévu pour ça ?",
+        "timestamp": "2025-07-08T10:49:42.269Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "assistant",
+        "content": "donne moi args pour récupérer la liste de tous les objets en lien avec un objet dont on connait l'id, quelle que soit la relation, et où l'objet connu est la target. je veux les résultats classés par relation.par exemple, voici une liste de paramètres que tu m'as donnés pour récupérer des listes d'objets selon divers critères. je veux l'équivalent",
+        "timestamp": "2025-07-08T10:49:42.269Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "user",
+        "content": "donne moi args pour récupérer la liste des méthodes associées à un modèle. pour ça l'objet src doit etre de type method et doit avoir la relation linked_to avec un objet de type model . je veux les résultats triés par modèle",
+        "timestamp": "2025-07-08T10:49:42.269Z",
+        "originalIndex": 5,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_5",
+        "role": "assistant",
+        "content": "n cours % flask run ⚠️ Impossible de précharger Scenario, il sera chargé à la demande. ⚠️ Impossible de précharger Hook, il sera chargé à la demande. ⚠️ Impossible de précharger Object, il sera chargé à la demande. * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quit [DEBUG] Démarrage du test [DEBUG] Arguments : {'query_groups': [{'filters': [{'type': 'meta', 'conditions': [{'key': 'type', 'operator': '=', 'value': 'method'}]}, {'type': 'relation', 'conditions': [{'relation_name': 'linked_to', 'target_conditions': {'id': 3051, 'type': 'model'}}]}], 'combine': 'AND'}], 'order': {'field': 'model', 'direction': 'ASC'}} [ERREUR] superquery : no such column: model Args {'query_groups': [{'filters': [{'type': 'meta', 'conditions': [{'key': 'type', 'operator': '=', 'value': 'method'}]}, {'type': 'relation', 'conditions': [{'relation_name': 'linked_to', 'target_conditions': {'id': 3051, 'type': 'model'}}]}], 'combine': 'AND'}], 'order': {'field': 'model', 'direction': 'ASC'}} Résultats de la requête methods_by_object_id : 127.0.0.1 - - [07/Feb/2025 18:05:06] \"GET /test HTTP/1.1\" 200 - 127.0.0.1 - - [07/Feb/2025 18:05:06] \"GET /favicon.ico HTTP/1.1\" 304 -",
+        "timestamp": "2025-07-08T10:49:42.270Z",
+        "originalIndex": 6,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_6",
+        "role": "user",
+        "content": "non il n'existe pas, model est un type. pour info, ce filtre fonctionne : model_list = { 'query_groups': [{ 'filters': [ { 'type': 'meta', 'conditions': [ {'key': 'type', 'operator': '=', 'value': 'model'} ] } ], 'combine': 'AND' }], 'order': {'field': 'name', 'direction': 'ASC'} } ces objets possèdent des méthodes enrefgistrées comme objets avec meta type = method et relation depends_on id du modèle parent",
+        "timestamp": "2025-07-08T10:49:42.270Z",
+        "originalIndex": 7,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_7",
+        "role": "assistant",
+        "content": "ce script ne retourne aucun résultat alors qu'il devrait (le bon id est 2591). aide moi à débugger, donne moi les requetes pour valider que le résultat peut sortir",
+        "timestamp": "2025-07-08T10:49:42.270Z",
+        "originalIndex": 8,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_8",
+        "role": "user",
+        "content": "je parle des requetes sql",
+        "timestamp": "2025-07-08T10:49:42.270Z",
+        "originalIndex": 9,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 2320,
+      "bodyText": 645889
+    }
+  }
+}

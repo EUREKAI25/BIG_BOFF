@@ -1,0 +1,28 @@
+{
+  "name": "Installation minimale Python",
+  "created_at": "2024-01-02T13:00:00.000Z",
+  "tags": [],
+  "project": "",
+  "messages": [
+    {
+      "author": "user",
+      "message": "J'ai besoin de relancer l'installation de l'agence à partir d'une structure extrêmement minimaliste. Je veux juste le fichier run.py qui appelle le fichier app qui appelle le fichier main.py dans app/  main va ouvrir le fichier routes.py qui gère les formats. Les routes doivent être elles-mêmes extrêmement minimalistes. Je veux juste un appel dynamique pour les routes /<page> ou /api?<objet>&<method>\nRien de plus. Ça devra charger le template index.html et admin.html depuis le répertoire  /template \nprépare le prompt à donner à une IA pour qu'elle me fournisse tous les fichier en respectant la règle d'une fonction par fichier uniquement",
+      "order": 0
+    },
+    {
+      "author": "ChatGPT",
+      "message": "Voici un prompt clair, précis et structuré à soumettre à une IA pour générer l'installation minimale de ton agence, en respectant **une fonction par fichier uniquement** et **une architecture ultra-minimaliste** :\n\n---\n\n### 🎯 PROMPT À DONNER À L’IA :\n\nJe veux que tu me génères tous les fichiers nécessaires à une version **extrêmement minimaliste** de mon agence en Python, avec les contraintes suivantes :\n\n---\n\n### 📁 ARCHITECTURE :\n\n```\n/run.py\n/app/\n    __init__.py\n    main.py\n    routes/\n        __init__.py\n        route_page.py\n        route_api.py\n/templates/\n    index.html\n    admin.html\n```\n\n---\n\n### ⚙️ COMPORTEMENT ATTENDU :\n\n#### `run.py`\n- Doit **lancer l'application** en appelant `app/main.py`.\n\n#### `app/main.py`\n- Doit **charger les routes** depuis le répertoire `routes`.\n- Doit lancer un serveur Flask ou équivalent minimaliste (tu peux utiliser FastAPI ou Flask selon ton choix, mais priorité à la simplicité).\n- Routes dynamiques :\n  - `/page_name` → rend le template `index.html`\n  - `/admin` → rend le template `admin.html`\n  - `/api?object=xxx&method=yyy` → appel dynamique de la méthode concernée\n\n#### `routes/route_page.py`\n- Une fonction `route_page(app)` qui définit les routes dynamiques pour `/`.\n\n#### `routes/route_api.py`\n- Une fonction `route_api(app)` qui définit la route `/api` et exécute dynamiquement la méthode demandée selon les query params `object` et `method`.\n\n#### `/templates/index.html` et `/templates/admin.html`\n- Un contenu HTML basique (titre différent pour distinguer).\n\n---\n\n### 🧱 CONTRAINTES TECHNIQUES :\n\n1. **Une seule fonction par fichier.**\n2. Chaque route est définie dans un fichier séparé.\n3. Pas d’autres routes que `/page`, `/admin`, et `/api`.\n4. Les routes doivent être dynamiques, gérées dans `routes.py` (ou plusieurs fichiers dans `/routes/`).\n5. Le rendu HTML se fait via Flask avec `render_template()`.\n6. Pas de base de données, pas d’auth, pas de dépendance inutile.\n7. Aucun fichier inutile. Priorité à l’essentiel absolu.\n8. Utilise `if __name__ == '__main__':` uniquement dans `run.py`.\n\n---\n\n### 🧠 ATTENTES :\n\nTu dois me fournir tous les fichiers :\n- un fichier `.py` **par fonction**\n- les deux templates `.html`\n- une structure de répertoires conforme\n\nTu peux me fournir cela en ZIP ou bien lister chaque fichier avec son chemin et son contenu.\n\n---\n\nSouhaites-tu que je génère directement les fichiers correspondant à ce prompt ?",
+      "order": 1
+    },
+    {
+      "author": "user",
+      "message": "Mets-moi tout ça dans un fichier .md que je puisse télécharger parce que là je ne peux pas copier tel que tu me le donnes là. Je te rappelle que je t'ai demandé le fichier run.py qui va lancer l'application.",
+      "order": 2
+    },
+    {
+      "author": "ChatGPT",
+      "message": "Voici le fichier `.md` prêt à être téléchargé :  \n📄 [prompt_agence_minimaliste.md](sandbox:/mnt/data/prompt_agence_minimaliste.md)  \n\nIl contient le prompt complet pour générer ton installation ultra-minimaliste, y compris le fichier `run.py` comme demandé.",
+      "order": 3
+    }
+  ]
+}

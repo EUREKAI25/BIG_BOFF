@@ -1,0 +1,83 @@
+# ============================================================================
+# RULES: Règles de validation et contraintes
+# ============================================================================
+
+Object:Logic:Rule:R_TemperatureRange:
+  .name = "R_TemperatureRange"
+  .description = "La température doit être entre 0 et 2"
+  .target = "Object:Config:Vector:V_Temperature"
+  .condition = "value >= 0 AND value <= 2"
+  .severity = "error"
+  .message = "Temperature must be between 0 and 2"
+
+Object:Logic:Rule:R_MaxTokensRange:
+  .name = "R_MaxTokensRange"
+  .description = "MaxTokens doit être positif"
+  .target = "Object:Config:Vector:V_MaxTokens"
+  .condition = "value > 0 AND value <= 100000"
+  .severity = "error"
+  .message = "MaxTokens must be between 1 and 100000"
+
+Object:Logic:Rule:R_AgentHasRole:
+  .name = "R_AgentHasRole"
+  .description = "Tout agent doit avoir un rôle"
+  .target = "Object:Entity:Agent:*"
+  .condition = "attributes.role EXISTS"
+  .severity = "warning"
+  .message = "Agent should have a role defined"
+
+Object:Logic:Rule:R_AgentHasModel:
+  .name = "R_AgentHasModel"
+  .description = "Tout agent IA doit avoir un modèle"
+  .target = "Object:Entity:Agent:AIAgent:*"
+  .condition = "attributes.model EXISTS"
+  .severity = "error"
+  .message = "AI Agent must have a model defined"
+
+Object:Logic:Rule:R_NameRequired:
+  .name = "R_NameRequired"
+  .description = "Toute entité doit avoir un nom"
+  .target = "Object:Entity:*"
+  .condition = "attributes.name EXISTS AND attributes.name != ''"
+  .severity = "error"
+  .message = "Entity must have a name"
+
+Object:Logic:Rule:R_DescriptionRecommended:
+  .name = "R_DescriptionRecommended"
+  .description = "Une description est recommandée"
+  .target = "Object:*"
+  .condition = "attributes.description EXISTS"
+  .severity = "info"
+  .message = "Consider adding a description"
+
+Object:Logic:Rule:R_UniqueLineage:
+  .name = "R_UniqueLineage"
+  .description = "Les lineages doivent être uniques"
+  .target = "Object:*"
+  .condition = "UNIQUE(lineage)"
+  .severity = "error"
+  .message = "Duplicate lineage detected"
+
+Object:Logic:Rule:R_ValidParent:
+  .name = "R_ValidParent"
+  .description = "Le parent doit exister"
+  .target = "Object:*"
+  .condition = "parent EXISTS OR parent == 'Object'"
+  .severity = "error"
+  .message = "Parent object does not exist"
+
+Object:Logic:Rule:R_ArchitectSpecialization:
+  .name = "R_ArchitectSpecialization"
+  .description = "Les architectes doivent avoir une spécialisation"
+  .target = "Object:Entity:Agent:ArchitectAgent:*"
+  .condition = "attributes.specialization EXISTS"
+  .severity = "warning"
+  .message = "Architect should have a specialization"
+
+Object:Logic:Rule:R_TimeoutPositive:
+  .name = "R_TimeoutPositive"
+  .description = "Le timeout doit être positif"
+  .target = "Object:Config:Vector:V_Timeout"
+  .condition = "value > 0"
+  .severity = "error"
+  .message = "Timeout must be positive"

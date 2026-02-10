@@ -1,0 +1,650 @@
+    EXEC Rule.Validate(
+      input = {
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_StructuralRuleName:
+  .default = "Règle structurelle"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleDescription:
+  .default = "Règle qui décrit la forme attendue d'un objet (attributs, types, relations, bundles, format)."
+
+Object:Structure:Fractal:Vector:V_StructuralRuleQuestion:
+  .default = "Quelle règle de structure s'applique à cet objet ?"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StructuralRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErk:
+  .default = |
+    EXEC Rule.Validate(
+      input = {
+        target: $target,
+        source_text: $source_text,
+        source_kind: $source_kind,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_SchemaRuleName:
+  .default = "Règle de schéma"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleDescription:
+  .default = "Contraintes sur présence/absence d'attributs, types attendus, cardinalités et structure."
+
+Object:Structure:Fractal:Vector:V_SchemaRuleQuestion:
+  .default = "Quels attributs/types/cardis doivent exister pour cet objet ?"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_SchemaRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintPattern:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleRequiredKeyword:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleRequiredSlot:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleErk:
+  .default = |
+    EXEC Rule.Validate.Schema(
+      input = {
+        target: $target,
+        schema: $schema,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_FormatRuleName:
+  .default = "Règle de format"
+
+Object:Structure:Fractal:Vector:V_FormatRuleDescription:
+  .default = "Contraintes sur le format des valeurs (regex, format attendu)."
+
+Object:Structure:Fractal:Vector:V_FormatRuleQuestion:
+  .default = "Quel format cette valeur doit-elle respecter ?"
+
+Object:Structure:Fractal:Vector:V_FormatRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_FormatRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_FormatRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_FormatRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleRegex:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleFormat:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleErk:
+  .default = |
+    EXEC Rule.Validate.Format(
+      input = {
+        target: $target,
+        source_text: $source_text,
+        regex: $regex,
+        format: $format,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleName:
+  .default = "Règle de cardinalité"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleDescription:
+  .default = "Contraintes min/max sur le nombre d'éléments."
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleQuestion:
+  .default = "La cardinalité respecte-t-elle les bornes min/max ?"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleMin:
+  .default = 0
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleMax:
+  .default = -1
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleErk:
+  .default = |
+    EXEC Rule.Validate.Cardinality(
+      input = {
+        target: $target,
+        min: $min,
+        max: $max,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleName:
+  .default = "Règle comportementale"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleDescription:
+  .default = "Règle sur le comportement (événement déclencheur et action)."
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleQuestion:
+  .default = "Quel comportement est déclenché et quelle action s'exécute ?"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleTrigger:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleAction:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleErk:
+  .default = |
+    EXEC Rule.Execute(
+      input = {
+        trigger: $trigger,
+        action: $action,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_StateRuleName:
+  .default = "Règle d'état"
+
+Object:Structure:Fractal:Vector:V_StateRuleDescription:
+  .default = "Règle sur les états et transitions autorisées."
+
+Object:Structure:Fractal:Vector:V_StateRuleQuestion:
+  .default = "La transition est-elle autorisée ?"
+
+Object:Structure:Fractal:Vector:V_StateRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_StateRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_StateRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StateRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleFromState:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleToState:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleAllowedTransitions:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StateRuleErk:
+  .default = |
+    EXEC Rule.Validate.State(
+      input = {
+        fromState: $fromState,
+        toState: $toState,
+        allowedTransitions: $allowedTransitions,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_PermissionRuleName:
+  .default = "Règle de permission"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleDescription:
+  .default = "Règle sur les permissions (acteur, action, ressource)."
+
+Object:Structure:Fractal:Vector:V_PermissionRuleQuestion:
+  .default = "L'acteur a-t-il le droit d'exécuter l'action sur la ressource ?"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_PermissionRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleActor:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleAction:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleResource:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleErk:
+  .default = |
+    EXEC Rule.Validate.Permission(
+      input = {
+        actor: $actor,
+        action: $action,
+        resource: $resource,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_ValidationRuleName:
+  .default = "Règle de validation"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleDescription:
+  .default = "Règle de validation métier (validator + hooks succès/échec)."
+
+Object:Structure:Fractal:Vector:V_ValidationRuleQuestion:
+  .default = "La validation réussit-elle et quels hooks s'appliquent ?"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ValidationRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleValidator:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleOnSuccess:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleOnFailure:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleErk:
+  .default = |
+    EXEC Rule.Validate.Business(
+      input = {
+        validator: $validator,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, EXEC Hook($onSuccess), EXEC Hook($onFailure))
+
+Object:Structure:Fractal:Vector:V_ComputedRuleName:
+  .default = "Règle calculée"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleDescription:
+  .default = "Règle de calcul (formule, dépendances, cache)."
+
+Object:Structure:Fractal:Vector:V_ComputedRuleQuestion:
+  .default = "La valeur calculée est-elle correcte ?"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ComputedRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleFormula:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleDependencies:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ComputedRuleCache:
+  .default = false
+
+Object:Structure:Fractal:Vector:V_ComputedRuleErk:
+  .default = |
+    EXEC Rule.Compute(
+      input = {
+        formula: $formula,
+        dependencies: $dependencies,
+        cache: $cache,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_AttributeDeclaredRuleErk:
+  .default = |
+    FOREACH attr IN $target.attributeList {
+      attrType = attr.name.toUpperFirst()
+      EXISTS("Object:Attribute:" + attrType) 
+        OR ISSUE("Attribut ." + attr.name + " non déclaré dans Object:Attribute")
+    }tal:Vector:V_CardinalityRuleName:
+  .default = "Règle de cardinalité"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleDescription:
+  .default = "Contraintes min/max sur le nombre d'éléments."
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleQuestion:
+  .default = "La cardinalité respecte-t-elle les bornes min/max ?"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleMin:
+  .default = 0
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleMax:
+  .default = -1
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleErk:
+  .default = |
+    EXEC Rule.Validate.Cardinality(
+      input = {
+        target: $target,
+        min: $min,
+        max: $max,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+#endregion
+
+#region === BEHAVIORAL RULE ===
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleName:
+  .default = "Règle comportementale"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleDescription:
+  .default = "Règle sur le comportement (événement déclencheur et action)."
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleQuestion:
+  .default = "Quel comportement est déclenché et quelle action s'exécute ?"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleTrigger:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleAction:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleErk:
+  .default = |
+    EXEC Rule.Execute(
+      input = {
+        trigger: $trigger,
+        action: $action,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_StateRuleName:
+  .default = "Règle d'état"
+
+Object:Structure:Fractal:Vector:V_StateRuleDescription:
+  .default = "Règle sur les états et transitions autorisées."
+
+Object:Structure:Fractal:Vector:V_StateRuleQuestion:
+  .default = "La transition est-elle autorisée ?"
+
+Object:Structure:Fractal:Vector:V_StateRuleFromState:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleToState:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleAllowedTransitions:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StateRuleErk:
+  .default = |
+    EXEC Rule.Validate.State(
+      input = {
+        fromState: $fromState,
+        toState: $toState,
+        allowedTransitions: $allowedTransitions,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_PermissionRuleName:
+  .default = "Règle de permission"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleDescription:
+  .default = "Règle sur les permissions (acteur, action, ressource)."
+
+Object:Structure:Fractal:Vector:V_PermissionRuleQuestion:
+  .default = "L'acteur a-t-il le droit d'exécuter l'action sur la ressource ?"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleActor:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleAction:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleResource:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleErk:
+  .default = |
+    EXEC Rule.Validate.Permission(
+      input = {
+        actor: $actor,
+        action: $action,
+        resource: $resource,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+#endregion
+
+#region === VALIDATION & COMPUTED ===
+
+Object:Structure:Fractal:Vector:V_ValidationRuleName:
+  .default = "Règle de validation"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleDescription:
+  .default = "Règle de validation métier (validator + hooks succès/échec)."
+
+Object:Structure:Fractal:Vector:V_ValidationRuleQuestion:
+  .default = "La validation réussit-elle et quels hooks s'appliquent ?"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleValidator:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleOnSuccess:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleOnFailure:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleErk:
+  .default = |
+    EXEC Rule.Validate.Business(
+      input = {
+        validator: $validator,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, EXEC Hook($onSuccess), EXEC Hook($onFailure))
+
+Object:Structure:Fractal:Vector:V_ComputedRuleName:
+  .default = "Règle calculée"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleDescription:
+  .default = "Règle de calcul (formule, dépendances, cache)."
+
+Object:Structure:Fractal:Vector:V_ComputedRuleQuestion:
+  .default = "La valeur calculée est-elle correcte ?"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleFormula:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleDependencies:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ComputedRuleCache:
+  .default = false
+
+Object:Structure:Fractal:Vector:V_ComputedRuleErk:
+  .default = |
+    EXEC Rule.Compute(
+      input = {
+        formula: $formula,
+        dependencies: $dependencies,
+        cache: $cache,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+#endregion

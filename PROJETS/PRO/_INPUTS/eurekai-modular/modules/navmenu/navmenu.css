@@ -1,0 +1,53 @@
+/* =============================================================================
+   EUREKAI Module — NavMenu Styles
+   ============================================================================= */
+
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px;
+  background: var(--bg-secondary, #16213e);
+  border-bottom: 1px solid var(--border-subtle, #333);
+  height: 40px;
+  align-items: center;
+}
+
+.nav-tab {
+  padding: 10px 20px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted, #888);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: -1px;
+}
+
+.nav-tab:hover {
+  color: var(--text-secondary, #aaa);
+  background: var(--bg-tertiary, #1a1a2e);
+}
+
+.nav-tab.active {
+  color: var(--accent-owned, #2ed573);
+  border-bottom-color: var(--accent-owned, #2ed573);
+  background: var(--bg-primary, #0f0f23);
+}
+
+.tab-icon {
+  margin-right: 6px;
+}
+
+/* Tab content visibility */
+.tab-content {
+  display: none;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tab-content.active {
+  display: flex;
+}

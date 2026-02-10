@@ -1,0 +1,450 @@
+# ================================================================
+ EUREKAI — Master Seed v8
+ Méthodes centrales: Create, Read, Update, Delete, Orchestrate, Engage (CRUDOE)
+# ================================================================
+
+# ===================== SECTION 1: ROOT =======================================
+Object:
+  .name = "Object"
+  .description = "Racine de toute la fractale"
+  .createdAt = 
+
+# ============== SECTION 2: CORE TYPES ============================
+Object:Entity:
+  .name = "Entity"
+  .description = "Entité de base"
+
+Object:Function:
+  .name = "Function"
+  .description = "Fonction exécutable"
+
+Object:Function:Method:
+  .name = "Method"
+  .description = "Méthode (fonction liée à un objet)"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+Object:Function:Method:CentralMethod:
+  .name = "CentralMethod"
+  .description = "Méthode centrale CRUDOE"
+
+Object:Function:Method:CentralMethod:Create:
+  .name = "Create"
+  .description = "Création d'objets"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+Object:Function:Method:CentralMethod:Read:
+  .name = "Read"
+  .description = "Lecture d'objets"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+Object:Function:Method:CentralMethod:Update:
+  .name = "Update"
+  .description = "Mise à jour d'objets"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+Object:Function:Method:CentralMethod:Delete:
+  .name = "Delete"
+  .description = "Suppression d'objets"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+Object:Function:Method:CentralMethod:Orchestrate:
+  .name = "Orchestrate"
+  .description = "Orchestration de scénarios"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+Object:Function:Method:CentralMethod:Engage:
+  .name = "Engage"
+  .description = "Engagement d'agents"
+  .hookBefore = null
+  .hookAfter = null
+  .hookFailure = null
+
+# ================ SECTION 3: BEHAVIORS ==========================
+Object:Behavior:
+  .name = "Behavior"
+  .description = "Comportement de base"
+
+Object:Behavior:TraverseBehavior:
+  .name = "TraverseBehavior"
+  .description = "Traversée du lineage avec early-exit"
+
+Object:Behavior:LoopBehavior:
+  .name = "LoopBehavior"
+  .description = "Boucle itérative"
+
+Object:Behavior:RunBehavior:
+  .name = "RunBehavior"
+  .description = "Exécution séquentielle"
+
+# ================= SECTION 4: PERMISSIONS (CRUDOE) ====================
+Object:Permission:
+  .name = "Permission"
+  .description = "Permission de base"
+
+Object:Permission:CreatePermission:
+  .name = "CreatePermission"
+  .description = "Permission de création"
+
+Object:Permission:ReadPermission:
+  .name = "ReadPermission"
+  .description = "Permission de lecture"
+
+Object:Permission:UpdatePermission:
+  .name = "UpdatePermission"
+  .description = "Permission de mise à jour"
+
+Object:Permission:DeletePermission:
+  .name = "DeletePermission"
+  .description = "Permission de suppression"
+
+Object:Permission:OrchestratePermission:
+  .name = "OrchestratePermission"
+  .description = "Permission d'orchestration"
+
+Object:Permission:EngagePermission:
+  .name = "EngagePermission"
+  .description = "Permission d'engagement"
+
+# ================== SECTION 5: SUPER TOOLS (CRUDOE) =======================
+Object:SuperTool:
+  .name = "SuperTool"
+  .description = "Outil central de la fractale"
+
+Object:SuperTool:SuperCreate:
+  .name = "SuperCreate"
+  .description = "SuperTool de création"
+  .centralMethod = Create
+
+Object:SuperTool:SuperRead:
+  .name = "SuperRead"
+  .description = "SuperTool de lecture"
+  .centralMethod = Read
+
+Object:SuperTool:SuperUpdate:
+  .name = "SuperUpdate"
+  .description = "SuperTool de mise à jour"
+  .centralMethod = Update
+
+Object:SuperTool:SuperDelete:
+  .name = "SuperDelete"
+  .description = "SuperTool de suppression"
+  .centralMethod = Delete
+
+Object:SuperTool:SuperOrchestrate:
+  .name = "SuperOrchestrate"
+  .description = "SuperTool d'orchestration"
+  .centralMethod = Orchestrate
+
+Object:SuperTool:SuperEngage:
+  .name = "SuperEngage"
+  .description = "SuperTool d'engagement"
+  .centralMethod = Engage
+
+# ========== SECTION 6: AGENTS =================================
+
+Object:Entity:Agent:
+  .name = "Agent"
+  .description = "Agent de base"
+  .temperature = 0.7
+
+Object:Entity:Agent:AIAgent:
+  .name = "AIAgent"
+  .description = "Agent IA"
+  .model = claude-3-opus
+
+Object:Entity:Agent:ArchitectAgent:
+  .name = "ArchitectAgent"
+  .description = "Agent architecte"
+  .role = architect
+  .temperature = 0.3
+
+Object:Entity:Agent:OrchestratorAgent:
+  .name = "OrchestratorAgent"
+  .description = "Agent orchestrateur"
+  .role = orchestrator
+  .temperature = 0.5
+
+Object:Entity:Agent:GeneratorAgent:
+  .name = "GeneratorAgent"
+  .description = "Agent générateur"
+  .role = generator
+  .temperature = 0.7
+
+# ============= SECTION 7: PROMPTS ===============================
+
+Object:AI:
+  .name = "AI"
+  .description = "Éléments IA"
+
+Object:AI:Prompt:
+  .name = "Prompt"
+  .description = "Fragment de prompt"
+  .priority = 50
+
+Object:AI:Prompt:ContextPrompt:
+  .name = "ContextPrompt"
+  .description = "Contexte du prompt"
+  .priority = 10
+
+Object:AI:Prompt:RolePrompt:
+  .name = "RolePrompt"
+  .description = "Rôle du prompt"
+  .priority = 20
+
+Object:AI:Prompt:MissionPrompt:
+  .name = "MissionPrompt"
+  .description = "Mission du prompt"
+  .priority = 30
+
+Object:AI:Prompt:GoalPrompt:
+  .name = "GoalPrompt"
+  .description = "Objectif du prompt"
+  .priority = 40
+
+Object:AI:Prompt:ConstraintsPrompt:
+  .name = "ConstraintsPrompt"
+  .description = "Contraintes du prompt"
+  .priority = 60
+
+Object:AI:Prompt:FormatPrompt:
+  .name = "FormatPrompt"
+  .description = "Format de sortie"
+  .priority = 70
+
+Object:AI:Prompt:ComposePrompt:
+  .name = "ComposePrompt"
+  .description = "Composition de prompts (méthode secondaire de Orchestrate)"
+
+Object:AI:Prompt:SystemContext:
+  .name = "SystemContext"
+  .description = "Contexte système"
+  .content = "Tu es un agent EUREKAI dans une architecture fractale récursive."
+
+Object:AI:Prompt:ArchitectRole:
+  .name = "ArchitectRole"
+  .description = "Rôle architecte"
+  .instructions = "Tu conçois la structure fractale."
+
+Object:AI:Prompt:ExecutorRole:
+  .name = "ExecutorRole"
+  .description = "Rôle exécuteur"
+  .instructions = "Tu exécutes les scénarios GEVR."
+
+# ============= SECTION 8: SCENARIOS & STEPS =====================================
+Object:Scenario:
+  .name = "Scenario"
+  .description = "Scénario de base"
+
+Object:Scenario:Step:
+  .name = "Step"
+  .description = "Étape de scénario"
+
+Object:Scenario:Step:GetStep:
+  .name = "GetStep"
+  .description = "Étape GET (récupération)"
+  .type = GetStep
+
+Object:Scenario:Step:ExecuteStep:
+  .name = "ExecuteStep"
+  .description = "Étape EXECUTE (transformation)"
+  .type = ExecuteStep
+
+Object:Scenario:Step:ValidateStep:
+  .name = "ValidateStep"
+  .description = "Étape VALIDATE (validation)"
+  .type = ValidateStep
+
+Object:Scenario:Step:RenderStep:
+  .name = "RenderStep"
+  .description = "Étape RENDER (rendu)"
+  .type = RenderStep
+
+# ================= SECTION 9: BOOTSTRAP SCENARIO ====================================
+Object:Scenario:Bootstrap:
+  .name = "Bootstrap"
+  .description = "Scénarios de bootstrap"
+
+Object:Scenario:Bootstrap:InitSystem:
+  .name = "InitSystem"
+  .description = "Initialisation du système"
+  .steps = GetStep,ExecuteStep,ValidateStep,RenderStep
+
+Object:Scenario:Bootstrap:InitSystem:GetStep:
+  .name = "GetStep"
+  .description = "Récupérer les fichiers .gev"
+  .type = GetStep
+  .pattern = "*.gev"
+
+Object:Scenario:Bootstrap:InitSystem:ExecuteStep:
+  .name = "ExecuteStep"
+  .description = "Parser et créer les objets"
+  .type = ExecuteStep
+
+Object:Scenario:Bootstrap:InitSystem:ValidateStep:
+  .name = "ValidateStep"
+  .description = "Valider la création"
+  .type = ValidateStep
+  .target = ObjectType
+
+Object:Scenario:Bootstrap:InitSystem:RenderStep:
+  .name = "RenderStep"
+  .description = "Générer le rapport"
+  .type = RenderStep
+  .format = BootstrapReport
+
+# ====================== SECTION 10: QUERY SCENARIO ====================================
+Object:Scenario:ExecuteQuery:
+  .name = "ExecuteQuery"
+  .description = "Exécution de requête"
+  .steps = GetStep,ExecuteStep,ValidateStep,RenderStep
+
+Object:Scenario:ExecuteQuery:GetStep:
+  .name = "GetStep"
+  .description = "Récupérer le contexte de requête"
+  .type = GetStep
+
+Object:Scenario:ExecuteQuery:ExecuteStep:
+  .name = "ExecuteStep"
+  .description = "Exécuter la requête"
+  .type = ExecuteStep
+
+Object:Scenario:ExecuteQuery:ValidateStep:
+  .name = "ValidateStep"
+  .description = "Valider les résultats"
+  .type = ValidateStep
+  .target = QueryResult
+
+Object:Scenario:ExecuteQuery:RenderStep:
+  .name = "RenderStep"
+  .description = "Formater les résultats"
+  .type = RenderStep
+  .format = QueryResults
+
+# ================== SECTION 11: RULES ===========================================
+Object:Rule:
+  .name = "Rule"
+  .description = "Règle de base"
+
+Object:Rule:FormatRule:
+  .name = "FormatRule"
+  .description = "Règle de format (regex, naming)"
+
+Object:Rule:StructureRule:
+  .name = "StructureRule"
+  .description = "Règle de structure (attributs, bundles)"
+
+Object:Rule:TypageRule:
+  .name = "TypageRule"
+  .description = "Règle de typage"
+
+Object:Rule:CardinalityRule:
+  .name = "CardinalityRule"
+  .description = "Règle de cardinalité (min/max)"
+
+Object:Rule:IntegrityRule:
+  .name = "IntegrityRule"
+  .description = "Règle d'intégrité"
+
+# ================ SECTION 12: VECTORS =======================================
+Object:Vector:
+  .name = "Vector"
+  .description = "Vecteur de base (unité d'information)"
+
+Object:Vector:InputVector:
+  .name = "InputVector"
+  .description = "Vecteur d'entrée"
+
+Object:Vector:InputVector:WhatVector:
+  .name = "WhatVector"
+  .description = "Vecteur WHAT (données)"
+
+Object:Vector:InputVector:HowVector:
+  .name = "HowVector"
+  .description = "Vecteur HOW (instructions)"
+
+Object:Vector:OutputVector:
+  .name = "OutputVector"
+  .description = "Vecteur de sortie"
+
+Object:Vector:OutputVector:ResultVector:
+  .name = "ResultVector"
+  .description = "Vecteur résultat"
+
+Object:Vector:OutputVector:ScriptVector:
+  .name = "ScriptVector"
+  .description = "Vecteur script"
+
+Object:Vector:OutputVector:AccessVector:
+  .name = "AccessVector"
+  .description = "Vecteur d'accès"
+
+# ================ SECTION 13: SOURCES (pour création multi-sources) =================
+Object:Source:
+  .name = "Source"
+  .description = "Source de création d'objets"
+
+Object:Source:LineageSource:
+  .name = "LineageSource"
+  .description = "Création depuis un lineage"
+  .create.secondary = fromLineage
+
+Object:Source:SchemaSource:
+  .name = "SchemaSource"
+  .description = "Création depuis un schéma"
+  .create.secondary = fromSchema
+
+Object:Source:SeedSource:
+  .name = "SeedSource"
+  .description = "Création depuis un seed .gev"
+  .create.secondary = fromSeed
+
+Object:Source:InstanceSource:
+  .name = "InstanceSource"
+  .description = "Création depuis une instance existante"
+  .create.secondary = fromInstance
+
+Object:Source:IdeaSource:
+  .name = "IdeaSource"
+  .description = "Création depuis une idée/description"
+  .create.secondary = fromIdea
+
+# ======================= SECTION 14: LISTS (PromptList example) ===============
+Object:List:
+  .name = "List"
+  .description = "Liste de base"
+
+Object:List:PromptList:
+  .name = "PromptList"
+  .description = "Liste de prompts"
+
+Prompt IN PromptList
+ContextPrompt IN PromptList
+RolePrompt IN PromptList
+MissionPrompt IN PromptList
+GoalPrompt IN PromptList
+ConstraintsPrompt IN PromptList
+FormatPrompt IN PromptList
+ComposePrompt IN PromptList
+SystemContext IN PromptList
+ArchitectRole IN PromptList
+ExecutorRole IN PromptList
+
+Object:List:BootstrapList:
+  .name = "BootstrapList"
+  .description = "Liste des scénarios bootstrap"
+
+InitSystem IN BootstrapList
+
+# ======================= END OF SEED ==========================

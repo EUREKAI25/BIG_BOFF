@@ -1,0 +1,225 @@
+# ============================================================================
+# EURKAI - Test Website Manifest
+# manifest/TestWebsite.m.gev
+# Exemple complet: Website avec NavMenu et Pages liées
+# ============================================================================
+
+#region === CONFIG ===
+
+Object:Config:ProductConfig:EurkaiConfig:
+  .name = "EURKAI Config"
+  .baseUrl = "/"
+  .apiBaseUrl = "/api"
+  .env = "dev"
+
+#endregion
+
+#region === PRODUCT: WEBSITE ===
+
+Object:Product:Website:EurkaiSite:
+  .name = "EURKAI Website"
+  .description = "Site vitrine EURKAI"
+  .domain = "www.eurkai.com"
+  .config = Object:Config:ProductConfig:EurkaiConfig
+  .defaultLang = "fr"
+  .navMenu = Object:Menu:NavMenu:MainNav
+  .homePage = Object:Interface:PageInterface:HTMLPage:HomePage
+  .template = Object:Template:PageTemplate:DefaultTemplate
+
+#endregion
+
+#region === MENU: NAVIGATION ===
+
+Object:Menu:NavMenu:MainNav:
+  .name = "Navigation principale"
+  .position = "header"
+  .orientation = "horizontal"
+  .class = "main-nav"
+  ## Les items sont définis séparément et liés
+
+Object:Menu:MenuItem:MenuHome:
+  .name = "Accueil"
+  .page = Object:Interface:PageInterface:HTMLPage:HomePage
+  .order = 1
+  .class = "nav-link"
+
+Object:Menu:MenuItem:MenuFeatures:
+  .name = "Fonctionnalités"
+  .page = Object:Interface:PageInterface:HTMLPage:FeaturesPage
+  .order = 2
+  .class = "nav-link"
+
+Object:Menu:MenuItem:MenuDocs:
+  .name = "Documentation"
+  .page = Object:Interface:PageInterface:HTMLPage:DocsPage
+  .order = 3
+  .class = "nav-link"
+
+Object:Menu:MenuItem:MenuContact:
+  .name = "Contact"
+  .page = Object:Interface:PageInterface:HTMLPage:ContactPage
+  .order = 4
+  .class = "nav-link"
+
+#endregion
+
+#region === PAGES ===
+
+## Page d'accueil
+Object:Interface:PageInterface:HTMLPage:HomePage:
+  .name = "Accueil"
+  .title = "EURKAI - Accueil"
+  .description = "Bienvenue sur EURKAI"
+  .slug = "/"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Main:HomeContent
+
+## Page Fonctionnalités
+Object:Interface:PageInterface:HTMLPage:FeaturesPage:
+  .name = "Fonctionnalités"
+  .title = "EURKAI - Fonctionnalités"
+  .description = "Découvrez les fonctionnalités d'EURKAI"
+  .slug = "/features"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Main:FeaturesContent
+
+## Page Documentation
+Object:Interface:PageInterface:HTMLPage:DocsPage:
+  .name = "Documentation"
+  .title = "EURKAI - Documentation"
+  .description = "Documentation technique EURKAI"
+  .slug = "/docs"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Main:DocsContent
+
+## Page Contact
+Object:Interface:PageInterface:HTMLPage:ContactPage:
+  .name = "Contact"
+  .title = "EURKAI - Contact"
+  .description = "Contactez-nous"
+  .slug = "/contact"
+  .template = Object:Template:PageTemplate:DefaultTemplate
+  .content = Object:Element:HTMLElement:Main:ContactContent
+
+#endregion
+
+#region === CONTENUS DES PAGES ===
+
+## Contenu page accueil
+Object:Element:HTMLElement:Main:HomeContent:
+  .class = "main-content"
+  .erkId = "home-content"
+  .Hero = Object:Element:HTMLElement:Section:HomeHero
+
+Object:Element:HTMLElement:Section:HomeHero:
+  .class = "hero-section"
+  .erkId = "hero"
+  .Heading = Object:Element:HTMLElement:H1:HomeTitle
+  .Text = Object:Element:HTMLElement:Text:HomeIntro
+  .CTA = Object:Element:HTMLElement:Button:HomeCTA
+
+Object:Element:HTMLElement:H1:HomeTitle:
+  .content = "Bienvenue sur EURKAI"
+  .class = "hero-title"
+
+Object:Element:HTMLElement:Text:HomeIntro:
+  .content = "La plateforme de génération de templates intelligente"
+  .class = "hero-subtitle"
+
+Object:Element:HTMLElement:Button:HomeCTA:
+  .content = "Découvrir"
+  .class = "btn btn-primary"
+
+## Contenu page fonctionnalités
+Object:Element:HTMLElement:Main:FeaturesContent:
+  .class = "main-content"
+  .erkId = "features-content"
+  .Heading = Object:Element:HTMLElement:H1:FeaturesTitle
+  .List = Object:Element:HTMLElement:Section:FeaturesList
+
+Object:Element:HTMLElement:H1:FeaturesTitle:
+  .content = "Fonctionnalités"
+  .class = "page-title"
+
+Object:Element:HTMLElement:Section:FeaturesList:
+  .class = "features-grid"
+  .Feature1 = Object:Element:HTMLElement:Div:FeatureCard1
+  .Feature2 = Object:Element:HTMLElement:Div:FeatureCard2
+  .Feature3 = Object:Element:HTMLElement:Div:FeatureCard3
+
+Object:Element:HTMLElement:Div:FeatureCard1:
+  .class = "feature-card"
+  .content = "Templates récursifs"
+
+Object:Element:HTMLElement:Div:FeatureCard2:
+  .class = "feature-card"
+  .content = "Génération automatique"
+
+Object:Element:HTMLElement:Div:FeatureCard3:
+  .class = "feature-card"
+  .content = "100% ERK"
+
+## Contenu page documentation
+Object:Element:HTMLElement:Main:DocsContent:
+  .class = "main-content"
+  .erkId = "docs-content"
+  .Heading = Object:Element:HTMLElement:H1:DocsTitle
+  .Intro = Object:Element:HTMLElement:Text:DocsIntro
+
+Object:Element:HTMLElement:H1:DocsTitle:
+  .content = "Documentation"
+  .class = "page-title"
+
+Object:Element:HTMLElement:Text:DocsIntro:
+  .content = "Retrouvez toute la documentation technique d'EURKAI."
+  .class = "intro-text"
+
+## Contenu page contact
+Object:Element:HTMLElement:Main:ContactContent:
+  .class = "main-content"
+  .erkId = "contact-content"
+  .Heading = Object:Element:HTMLElement:H1:ContactTitle
+  .Intro = Object:Element:HTMLElement:Text:ContactIntro
+  .Form = Object:Element:HTMLElement:Form:ContactForm
+
+Object:Element:HTMLElement:H1:ContactTitle:
+  .content = "Contact"
+  .class = "page-title"
+
+Object:Element:HTMLElement:Text:ContactIntro:
+  .content = "Une question ? Contactez-nous !"
+  .class = "intro-text"
+
+Object:Element:HTMLElement:Form:ContactForm:
+  .class = "contact-form"
+  .action = "/api/contact"
+  .method = "post"
+  .NameField = Object:Element:HTMLElement:Input:NameInput
+  .EmailField = Object:Element:HTMLElement:Input:EmailInput
+  .MessageField = Object:Element:HTMLElement:Textarea:MessageInput
+  .Submit = Object:Element:HTMLElement:Button:SubmitBtn
+
+Object:Element:HTMLElement:Input:NameInput:
+  .type = "text"
+  .name = "name"
+  .placeholder = "Votre nom"
+  .required = true
+
+Object:Element:HTMLElement:Input:EmailInput:
+  .type = "email"
+  .name = "email"
+  .placeholder = "Votre email"
+  .required = true
+
+Object:Element:HTMLElement:Textarea:MessageInput:
+  .name = "message"
+  .placeholder = "Votre message"
+  .rows = 5
+  .required = true
+
+Object:Element:HTMLElement:Button:SubmitBtn:
+  .type = "submit"
+  .content = "Envoyer"
+  .class = "btn btn-primary"
+
+#endregion

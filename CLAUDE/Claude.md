@@ -1,0 +1,113 @@
+# Claude.md — Contrat & Instructions
+
+> Ce fichier est le point d'entrée pour Claude. Il contient les règles permanentes,
+> les tâches récurrentes et le lien vers le hub central.
+
+## Navigation
+
+| Fichier | Rôle |
+|---|---|
+| [_AUTO_BRIEF.md](_AUTO_BRIEF.md) | **État des travaux** — lire en premier pour reprendre |
+| [_HUB.md](/Users/nathalie/Dropbox/____BIG_BOFF___/_HUB.md) | Carte centrale de tous les projets |
+| [_MOVES_LOG.md](_MOVES_LOG.md) | Journal des mouvements de fichiers |
+| [_CRON.md](_CRON.md) | Tâches planifiées (vérifier à chaque session) |
+| [_PROJETS.md](_PROJETS.md) | Liste exhaustive des projets (path, statut) |
+
+| Répertoire | Rôle |
+|---|---|
+| [DROPBOX](/Users/nathalie/Dropbox/____BIG_BOFF___/CLAUDE/DROPBOX)| Ressources utiles pour tes besoinsdu moment|
+| [TODO](/Users/nathalie/Dropbox/____BIG_BOFF___/CLAUDE/TODO)|Sources de projets à traiter selonle process défini|
+---
+
+## Conventions
+
+### Types d'éléments
+| Type | Définition | Suivi |
+|---|---|---|
+| **Projet** | A un objectif et des étapes | `_SUIVI.md` dans son dossier |
+| **Ressource** | Matériau utilisable, sans objectif propre | Catalogué en base, taggé |
+| **Output** | Produit fini d'un projet | Rattaché au projet parent |
+
+### Statuts de projet
+| Emoji | Statut |
+|---|---|
+| 💡 | idée |
+| ⚪ | à faire |
+| 🟢 | actif |
+| 🟡 | en pause |
+| 🔴 | bloqué |
+| 🟣 | action requise (attend Nathalie) |
+| ⚫ | archivé |
+
+### Marqueurs de tâche
+- `[ ]` à faire
+- `[~]` en cours
+- `[x]` fait
+
+### Fichiers standards
+- `_SUIVI.md` : suivi local de chaque projet (jamais d'autre nom)
+- `_HUB.md` : carte centrale (unique, à la racine de BIG_BOFF)
+- `_PROJETS.md` : liste exhaustive des projets (unique, dans /CLAUDE/)
+- `Claude.md` : ce fichier (unique, dans /CLAUDE/)
+
+### Structure standard d'un projet
+
+Tout nouveau projet DOIT respecter cette arborescence :
+
+```
+NOM_PROJET/
+├── _SUIVI.md           # Obligatoire — suivi, objectif, historique
+├── README.md           # Obligatoire — description, comment lancer, dépendances
+├── src/                # Code source
+├── tests/              # Tests
+├── docs/               # Documentation complémentaire (si besoin)
+└── dist/               # Build / livrable (si applicable)
+```
+
+**Règles de création de projet :**
+1. Créer le dossier + `_SUIVI.md` + `README.md` dès le départ
+2. Enregistrer le projet dans `_PROJETS.md` (path, description, statut)
+3. Mettre à jour `_HUB.md` si le projet est significatif
+4. Tout projet est un module EURKAI potentiel
+
+### Tags (convention de nommage)
+
+Les tags sont **atomiques** : un mot = un tag. Pas de tags composés.
+- Bon : `code`, `python`, `script`
+- Mauvais : `code-python`, `script-shell`
+
+Catégories de tags :
+- **Structure** : `pro`, `perso`, `eurkai`, `archive`, `ressource`
+- **Type** : `code`, `script`, `config`, `doc`, `media`, `data`
+- **Format** : `python`, `js`, `html`, `image`, `video`, `pdf`, `json`
+- **Extension** : `py`, `js`, `md`, `jpg`, `mp4`...
+- **Projet** : `sublym`, `eurkai`, `lovlov`, `restart`...
+- **Mots-clefs** : extraits du nom de fichier (split sur `-`, `_`, espaces)
+
+---
+
+## Règles permanentes
+
+1. **MAJ systématique** : après chaque action, mettre à jour le `_SUIVI.md` du projet concerné
+2. **MAJ hub** : si un statut global change, mettre à jour `_HUB.md`
+3. **Pas de suppression** : ne jamais supprimer un fichier sans validation explicite de Nathalie
+4. **Couverture** : si un dossier-projet n'a pas de `_SUIVI.md`, en créer un
+5. **Alerte 🟣** : signaler en début de session tout projet en attente d'action de Nathalie
+6. **Langue** : tout en français
+7. **Pas de redondance** : un concept = un seul endroit. Toujours renvoyer, jamais dupliquer
+8. **EURKAI est le projet central** : tout module, tout système transversal doit être pensé comme composant EURKAI
+9. **Journal des mouvements** : tout déplacement, renommage ou archivage de fichier/dossier doit être consigné dans `_MOVES_LOG.md` (source → destination, date, raison). Ce fichier est nettoyé régulièrement une fois les mouvements confirmés.
+10. **Cron** : à chaque début de session, consulter `_CRON.md` et exécuter les tâches échues
+
+---
+
+## Tâches récurrentes
+
+- [ ] Veille : détecter les nouveaux dossiers sans `_SUIVI.md`
+- [ ] Veille : détecter les `_SUIVI.md` obsolètes (dernière MAJ > 30j)
+- [ ] Alerte : lister les projets 🟣 en début de session
+- [ ] Rapport : résumé des actions en fin de session, MAJ des suivis
+- [ ] **Auto-brief** : mettre à jour `_AUTO_BRIEF.md` après chaque action significative
+
+---
+

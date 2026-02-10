@@ -1,0 +1,554 @@
+# ============================================================================
+# EURKAI - SuperRead Query System
+# seed/erk/SuperRead.s.gev
+# Source de vérité pour tous les formats de query
+# Version: 1.0.0
+# ============================================================================
+
+#region === COMMANDES PRINCIPALES ===
+
+Object:Query:Command:Read:
+  .name = "read"
+  .description = "Lire/rechercher des objets"
+  .syntax = "read <Type>[.<attr><op><val>]... [@<relation>=<Type>]... [OPTIONS]"
+  .example = "read Agent.status=active"
+  .returns = "list"
+
+Object:Query:Command:Get:
+  .name = "get"
+  .description = "Récupérer un objet par lineage exact"
+  .syntax = "get <Lineage>"
+  .example = "get Object:Entity:Agent:MainAgent"
+  .returns = "single"
+
+Object:Query:Command:Resolve:
+  .name = "resolve"
+  .description = "Résoudre un vecteur"
+  .syntax = "resolve V_<NomVecteur>"
+  .example = "resolve V_DeployableInstances"
+  .returns = "resolved"
+
+Object:Query:Command:Tree:
+  .name = "tree"
+  .description = "Afficher l'arbre d'objets"
+  .syntax = "tree <Lineage> [--depth=N]"
+  .example = "tree Object:Template --depth=3"
+  .returns = "tree"
+
+Object:Query:Command:Stats:
+  .name = "stats"
+  .description = "Statistiques du store"
+  .syntax = "stats [Type]"
+  .example = "stats Agent"
+  .returns = "object"
+
+Object:Query:Command:Vectors:
+  .name = "vectors"
+  .description = "Lister tous les vecteurs"
+  .syntax = "vectors [--filter=pattern]"
+  .example = "vectors --filter=Deploy"
+  .returns = "list"
+
+Object:Query:Command:Rules:
+  .name = "rules"
+  .description = "Lister toutes les règles"
+  .syntax = "rules [Type]"
+  .example = "rules Agent"
+  .returns = "list"
+
+#endregion
+
+#region === OPÉRATEURS DE COMPARAISON ===
+
+Object:Query:Operator:Comparison:Equals:
+  .name = "Equals"
+  .symbol = "="
+  .description = "Égal à"
+  .example = ".status=active"
+  .sql = "WHERE status = 'active'"
+
+Object:Query:Operator:Comparison:NotEquals:
+  .name = "NotEquals"
+  .symbol = "!="
+  .description = "Différent de"
+  .example = ".status!=deleted"
+  .sql = "WHERE status != 'deleted'"
+
+Object:Query:Operator:Comparison:GreaterThan:
+  .name = "GreaterThan"
+  .symbol = ">"
+  .description = "Supérieur à"
+  .example = ".priority>5"
+  .sql = "WHERE priority > 5"
+
+Object:Query:Operator:Comparison:GreaterOrEqual:
+  .name = "GreaterOrEqual"
+  .symbol = ">="
+  .description = "Supérieur ou égal"
+  .example = ".priority>=5"
+  .sql = "WHERE priority >= 5"
+
+Object:Query:Operator:Comparison:LessThan:
+  .name = "LessThan"
+  .symbol = "<"
+  .description = "Inférieur à"
+  .example = ".priority<10"
+  .sql = "WHERE priority < 10"
+
+Object:Query:Operator:Comparison:LessOrEqual:
+  .name = "LessOrEqual"
+  .symbol = "<="
+  .description = "Inférieur ou égal"
+  .example = ".priority<=10"
+  .sql = "WHERE priority <= 10"
+
+Object:Query:Operator:Comparison:Contains:
+  .name = "Contains"
+  .symbol = "~"
+  .description = "Contient (substring)"
+  .example = ".name~Main"
+  .sql = "WHERE name LIKE '%Main%'"
+
+Object:Query:Operator:Comparison:StartsWith:
+  .name = "StartsWith"
+  .symbol = "^"
+  .description = "Commence par"
+  .example = ".name^Obj"
+  .sql = "WHERE name LIKE 'Obj%'"
+
+Object:Query:Operator:Comparison:EndsWith:
+  .name = "EndsWith"
+  .symbol = "$"
+  .description = "Finit par"
+  .example = ".name$Template"
+  .sql = "WHERE name LIKE '%Template'"
+
+Object:Query:Operator:Comparison:In:
+  .name = "In"
+  .symbol = "@"
+  .description = "Dans la liste (IN)"
+  .example = ".status@[active,pending]"
+  .sql = "WHERE status IN ('active','pending')"
+
+Object:Query:Operator:Comparison:NotIn:
+  .name = "NotIn"
+  .symbol = "!@"
+  .description = "Pas dans la liste"
+  .example = ".status!@[deleted,archived]"
+  .sql = "WHERE status NOT IN (...)"
+
+Object:Query:Operator:Comparison:Exists:
+  .name = "Exists"
+  .symbol = "?"
+  .description = "Existe (NOT NULL)"
+  .example = ".email?"
+  .sql = "WHERE email IS NOT NULL"
+
+Object:Query:Operator:Comparison:NotExists:
+  .name = "NotExists"
+  .symbol = "!?"
+  .description = "N'existe pas (NULL)"
+  .example = ".deleted_at!?"
+  .sql = "WHERE deleted_at IS NULL"
+
+#endregion
+
+#region === OPÉRATEURS LOGIQUES ===
+
+Object:Query:Operator:Logic:And:
+  .name = "And"
+  .symbol = "."
+  .description = "AND entre conditions (chaînage)"
+  .example = ".status=active.priority>5"
+  .sql = "WHERE status='active' AND priority>5"
+
+Object:Query:Operator:Logic:Or:
+  .name = "Or"
+  .symbol = "|"
+  .description = "OR entre conditions"
+  .example = ".status=active|.status=pending"
+  .sql = "WHERE status='active' OR status='pending'"
+
+Object:Query:Operator:Logic:Group:
+  .name = "Group"
+  .symbol = "()"
+  .description = "Groupement de conditions"
+  .example = "(.status=active|.status=pending).priority>5"
+  .sql = "WHERE (status='active' OR status='pending') AND priority>5"
+
+#endregion
+
+#region === RELATIONS ===
+
+Object:Query:Relation:Simple:
+  .name = "SimpleRelation"
+  .symbol = "@attr=Type"
+  .description = "Relation simple vers autre objet"
+  .example = ".@client=Client.country=ES"
+  .syntax = "read Facture.@client=Client.country=ES"
+
+Object:Query:Relation:Recursive:
+  .name = "RecursiveRelation"
+  .symbol = "@@attr=Type"
+  .description = "Relation récursive parent-enfant"
+  .example = ".@@parent=Object:Entity --depth=5"
+  .syntax = "read *.@@parent=Object:Entity --depth=5"
+
+Object:Query:Relation:Include:
+  .name = "Include"
+  .symbol = "++"
+  .description = "Inclure l'objet lié"
+  .example = "++client"
+  .syntax = "read Facture.paid=false ++client"
+
+Object:Query:Relation:IncludeAll:
+  .name = "IncludeAll"
+  .symbol = "++*"
+  .description = "Inclure toutes les relations"
+  .example = "++*"
+  .syntax = "read Facture ++*"
+
+Object:Query:Relation:Exclude:
+  .name = "Exclude"
+  .symbol = "--attr"
+  .description = "Exclure un attribut"
+  .example = "--password"
+  .syntax = "read User --password"
+
+#endregion
+
+#region === VARIABLES TEMPORELLES ===
+
+Object:Query:TimeVar:Now:
+  .name = "now"
+  .symbol = "$now"
+  .description = "Date/heure actuelle"
+  .example = ".created_at>$now-1h"
+
+Object:Query:TimeVar:Today:
+  .name = "today"
+  .symbol = "$today"
+  .description = "Date du jour à 00:00"
+  .example = ".date>=$today"
+
+Object:Query:TimeVar:Yesterday:
+  .name = "yesterday"
+  .symbol = "$yesterday"
+  .description = "Hier à 00:00"
+  .example = ".date=$yesterday"
+
+Object:Query:TimeVar:Tomorrow:
+  .name = "tomorrow"
+  .symbol = "$tomorrow"
+  .description = "Demain à 00:00"
+  .example = ".due_date=$tomorrow"
+
+Object:Query:TimeUnit:Seconds:
+  .name = "Seconds"
+  .symbol = "s"
+  .description = "Secondes"
+  .example = "$now-30s"
+
+Object:Query:TimeUnit:Minutes:
+  .name = "Minutes"
+  .symbol = "m"
+  .description = "Minutes"
+  .example = "$now-5m"
+
+Object:Query:TimeUnit:Hours:
+  .name = "Hours"
+  .symbol = "h"
+  .description = "Heures"
+  .example = "$now-1h"
+
+Object:Query:TimeUnit:Days:
+  .name = "Days"
+  .symbol = "d"
+  .description = "Jours"
+  .example = "$today-7d"
+
+Object:Query:TimeUnit:Weeks:
+  .name = "Weeks"
+  .symbol = "w"
+  .description = "Semaines"
+  .example = "$today-2w"
+
+Object:Query:TimeUnit:Months:
+  .name = "Months"
+  .symbol = "M"
+  .description = "Mois"
+  .example = "$today-1M"
+
+Object:Query:TimeUnit:Years:
+  .name = "Years"
+  .symbol = "y"
+  .description = "Années"
+  .example = "$today-1y"
+
+#endregion
+
+#region === OPTIONS DE QUERY ===
+
+Object:Query:Option:Limit:
+  .name = "limit"
+  .symbol = "--limit"
+  .description = "Nombre maximum de résultats"
+  .example = "--limit=10"
+  .sql = "LIMIT 10"
+
+Object:Query:Option:Offset:
+  .name = "offset"
+  .symbol = "--offset"
+  .description = "Nombre de résultats à sauter"
+  .example = "--offset=20"
+  .sql = "OFFSET 20"
+
+Object:Query:Option:Page:
+  .name = "page"
+  .symbol = "--page"
+  .description = "Numéro de page"
+  .example = "--page=2 --per=20"
+
+Object:Query:Option:Per:
+  .name = "per"
+  .symbol = "--per"
+  .description = "Résultats par page"
+  .example = "--per=20"
+
+Object:Query:Option:Order:
+  .name = "order"
+  .symbol = "--order"
+  .description = "Tri (- pour DESC)"
+  .example = "--order=-date"
+  .sql = "ORDER BY date DESC"
+
+Object:Query:Option:Fields:
+  .name = "fields"
+  .symbol = "--fields"
+  .description = "Champs à retourner"
+  .example = "--fields=id,name,status"
+  .sql = "SELECT id,name,status"
+
+Object:Query:Option:Depth:
+  .name = "depth"
+  .symbol = "--depth"
+  .description = "Profondeur récursive"
+  .example = "--depth=5"
+
+Object:Query:Option:Count:
+  .name = "count"
+  .symbol = "--count"
+  .description = "Compter les résultats"
+  .example = "--count"
+  .sql = "SELECT COUNT(*)"
+
+Object:Query:Option:Sum:
+  .name = "sum"
+  .symbol = "--sum"
+  .description = "Somme d'un champ"
+  .example = "--sum=amount"
+  .sql = "SELECT SUM(amount)"
+
+Object:Query:Option:Avg:
+  .name = "avg"
+  .symbol = "--avg"
+  .description = "Moyenne d'un champ"
+  .example = "--avg=price"
+  .sql = "SELECT AVG(price)"
+
+Object:Query:Option:Min:
+  .name = "min"
+  .symbol = "--min"
+  .description = "Minimum d'un champ"
+  .example = "--min=date"
+  .sql = "SELECT MIN(date)"
+
+Object:Query:Option:Max:
+  .name = "max"
+  .symbol = "--max"
+  .description = "Maximum d'un champ"
+  .example = "--max=date"
+  .sql = "SELECT MAX(date)"
+
+Object:Query:Option:Group:
+  .name = "group"
+  .symbol = "--group"
+  .description = "Grouper par champ"
+  .example = "--group=status"
+  .sql = "GROUP BY status"
+
+Object:Query:Option:Distinct:
+  .name = "distinct"
+  .symbol = "--distinct"
+  .description = "Valeurs uniques"
+  .example = "--distinct=country"
+  .sql = "SELECT DISTINCT country"
+
+Object:Query:Option:Dry:
+  .name = "dry"
+  .symbol = "--dry"
+  .description = "Simulation (pas d'exécution)"
+  .example = "--dry"
+
+Object:Query:Option:Cascade:
+  .name = "cascade"
+  .symbol = "--cascade"
+  .description = "Action en cascade"
+  .example = "--cascade"
+
+#endregion
+
+#region === SYNTAXE LINEAGE ===
+
+Object:Query:Lineage:Descendants:
+  .name = "Descendants"
+  .symbol = ":Type"
+  .description = "Descendants de Type"
+  .example = ":Template"
+  .syntax = "read :Template"
+
+Object:Query:Lineage:DirectChildren:
+  .name = "DirectChildren"
+  .symbol = "Type:*"
+  .description = "Enfants directs de Type"
+  .example = "Object:Template:PageTemplate:*"
+  .syntax = "read Object:Template:PageTemplate:*"
+
+Object:Query:Lineage:AllDescendants:
+  .name = "AllDescendants"
+  .symbol = "Type:**"
+  .description = "Tous les descendants (récursif)"
+  .example = "Object:Template:**"
+  .syntax = "read Object:Template:**"
+
+Object:Query:Lineage:Wildcard:
+  .name = "Wildcard"
+  .symbol = "*"
+  .description = "Tout type à cette position"
+  .example = "Object:*:HTMLElement:*"
+  .syntax = "read Object:*:HTMLElement:*"
+
+#endregion
+
+#region === CALCULS ET FORMULES ===
+
+Object:Query:Formula:Add:
+  .name = "Add"
+  .symbol = "+"
+  .description = "Addition"
+  .example = "{price+tax}"
+
+Object:Query:Formula:Subtract:
+  .name = "Subtract"
+  .symbol = "-"
+  .description = "Soustraction"
+  .example = "{total-discount}"
+
+Object:Query:Formula:Multiply:
+  .name = "Multiply"
+  .symbol = "*"
+  .description = "Multiplication"
+  .example = "{quantity*price}"
+
+Object:Query:Formula:Divide:
+  .name = "Divide"
+  .symbol = "/"
+  .description = "Division"
+  .example = "{total/count}"
+
+Object:Query:Formula:Modulo:
+  .name = "Modulo"
+  .symbol = "%"
+  .description = "Modulo"
+  .example = "{index%2}"
+
+Object:Query:Formula:Ternary:
+  .name = "Ternary"
+  .symbol = "?:"
+  .description = "Expression conditionnelle"
+  .example = "{paid=true?Payée:Impayée}"
+  .syntax = "{condition?valeurVrai:valeurFaux}"
+
+#endregion
+
+#region === EXEMPLES COMPLETS ===
+
+Object:Query:Example:SimpleRead:
+  .name = "SimpleRead"
+  .description = "Lecture simple avec filtre"
+  .query = "read Agent.status=active"
+  .category = "basic"
+
+Object:Query:Example:MultiFilter:
+  .name = "MultiFilter"
+  .description = "Filtres multiples (AND)"
+  .query = "read Agent.status=active.priority>5"
+  .category = "basic"
+
+Object:Query:Example:OrFilter:
+  .name = "OrFilter"
+  .description = "Filtres avec OR"
+  .query = "read Agent.status=active|.status=pending"
+  .category = "basic"
+
+Object:Query:Example:WithRelation:
+  .name = "WithRelation"
+  .description = "Avec relation"
+  .query = "read Facture.@client=Client.country=ES"
+  .category = "relation"
+
+Object:Query:Example:WithInclude:
+  .name = "WithInclude"
+  .description = "Avec jointure"
+  .query = "read Facture.paid=false ++client"
+  .category = "relation"
+
+Object:Query:Example:Paginated:
+  .name = "Paginated"
+  .description = "Avec pagination"
+  .query = "read Facture --page=2 --per=20"
+  .category = "options"
+
+Object:Query:Example:Sorted:
+  .name = "Sorted"
+  .description = "Avec tri"
+  .query = "read Facture --order=-date"
+  .category = "options"
+
+Object:Query:Example:Aggregated:
+  .name = "Aggregated"
+  .description = "Avec agrégation"
+  .query = "read Facture --group=status --count"
+  .category = "aggregation"
+
+Object:Query:Example:Temporal:
+  .name = "Temporal"
+  .description = "Avec filtre temporel"
+  .query = "read Facture.date>=$today-7d"
+  .category = "temporal"
+
+Object:Query:Example:Recursive:
+  .name = "Recursive"
+  .description = "Requête récursive"
+  .query = "read :Template --depth=10"
+  .category = "recursive"
+
+Object:Query:Example:TemplateWithElements:
+  .name = "TemplateWithElements"
+  .description = "Template avec tous ses éléments"
+  .query = "read Template:PageTemplate ++HeadElement ++BodyElement --depth=5"
+  .category = "eurkai"
+
+Object:Query:Example:HTMLElements:
+  .name = "HTMLElements"
+  .description = "Éléments HTML d'un template"
+  .query = "read :HTMLElement.@template=Template:PageTemplate:HomePage"
+  .category = "eurkai"
+
+Object:Query:Example:FullPage:
+  .name = "FullPage"
+  .description = "Structure complète d'une page"
+  .query = "read Template:PageTemplate:HomePage ++* --depth=10"
+  .category = "eurkai"
+
+#endregion

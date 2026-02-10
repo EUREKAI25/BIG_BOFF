@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* LovLov Theme - from logo colors */
+  --love-primary: #b61600;
+  --love-dark: #700b06;
+  --love-light: #d46f66;
+  --cream: #F5E6D3;
+  --cream-light: #FFF8E7;
+
+  /* Glass */
+  --glass-bg: rgba(112, 11, 6, 0.4);
+  --glass-border: rgba(245, 230, 211, 0.2);
+  --glass-blur: 20px;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-cream-200;
+    background: var(--love-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@layer components {
+  /* Glass Card - LovLov Style */
+  .glass-love {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-love-light {
+    background: rgba(245, 230, 211, 0.1);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(245, 230, 211, 0.15);
+    border-radius: 20px;
+  }
+
+  /* Button Love - Neumorphism */
+  .btn-love {
+    @apply px-5 py-2.5 rounded-3xl font-semibold transition-all;
+    background: var(--love-primary);
+    color: var(--cream);
+    box-shadow:
+      6px 6px 12px rgba(80, 10, 0, 0.6),
+      -6px -6px 12px rgba(200, 40, 20, 0.3);
+  }
+
+  .btn-love:hover {
+    box-shadow:
+      8px 8px 16px rgba(80, 10, 0, 0.7),
+      -8px -8px 16px rgba(200, 40, 20, 0.4);
+  }
+
+  .btn-love:active {
+    box-shadow:
+      inset 3px 3px 6px rgba(80, 10, 0, 0.5),
+      inset -3px -3px 6px rgba(200, 40, 20, 0.2);
+  }
+
+  /* Option Love - Neumorphism for selectable options */
+  .option-love {
+    @apply px-4 py-2.5 rounded-3xl font-medium transition-all cursor-pointer;
+    background: var(--love-primary);
+    color: rgba(245, 230, 211, 0.7);
+    box-shadow:
+      4px 4px 8px rgba(80, 10, 0, 0.5),
+      -4px -4px 8px rgba(200, 40, 20, 0.25);
+  }
+
+  .option-love:hover {
+    color: var(--cream);
+  }
+
+  /* Selected option - inverted shadow for depth (glassmorphism) */
+  .option-love-selected {
+    @apply px-4 py-2.5 rounded-3xl font-medium transition-all cursor-pointer;
+    background: var(--love-primary);
+    color: var(--cream);
+    box-shadow:
+      inset 4px 4px 8px rgba(80, 10, 0, 0.5),
+      inset -4px -4px 8px rgba(200, 40, 20, 0.25);
+  }
+
+  /* Button Outline */
+  .btn-outline-love {
+    @apply px-6 py-3 rounded-2xl font-semibold transition-all;
+    background: transparent;
+    border: 2px solid var(--cream);
+    color: var(--cream);
+  }
+
+  .btn-outline-love:hover {
+    background: rgba(245, 230, 211, 0.1);
+  }
+
+  /* Input Love */
+  .input-love {
+    @apply w-full px-4 py-3 rounded-2xl transition-all;
+    background: rgba(245, 230, 211, 0.1);
+    border: 1px solid rgba(245, 230, 211, 0.2);
+    color: var(--cream);
+  }
+
+  .input-love::placeholder {
+    color: rgba(245, 230, 211, 0.5);
+  }
+
+  .input-love:focus {
+    outline: none;
+    border-color: rgba(245, 230, 211, 0.4);
+    box-shadow: 0 0 0 3px rgba(245, 230, 211, 0.1);
+  }
+
+  /* Heart decorations */
+  .heart-bg {
+    position: absolute;
+    opacity: 0.1;
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-love-gradient {
+    background: linear-gradient(135deg, #d46f66 0%, #F5E6D3 50%, #d46f66 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Font styles */
+  .font-romantic {
+    font-family: 'Pacifico', cursive;
+  }
+
+  .font-display {
+    font-family: 'Bebas Neue', sans-serif;
+  }
+}
+
+/* Heart SVG animation */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.05); }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+/* Floating hearts background */
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.floating-heart {
+  animation: float-up linear infinite;
+}

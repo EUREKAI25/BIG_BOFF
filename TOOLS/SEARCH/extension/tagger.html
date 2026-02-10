@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>BIG_BOFF — Tagger</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; color: #1a1a1a; background: #f5f5f5; display: flex; justify-content: center; padding: 40px 20px; }
+.container { width: 520px; background: #fff; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.1); overflow: hidden; }
+.header { background: #1a1a1a; color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 10px; }
+.header h1 { font-size: 16px; font-weight: 600; }
+.header .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.badge-video { background: #c00; }
+.badge-image { background: #3498db; }
+.content { padding: 20px; }
+.info-section { margin-bottom: 16px; }
+.info-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.info-value { font-size: 13px; color: #333; word-break: break-all; }
+.info-value a { color: #4a90d9; text-decoration: none; }
+.info-value a:hover { text-decoration: underline; }
+.title-field { font-size: 15px; font-weight: 600; color: #222; padding: 0; border: none; background: transparent; margin-top: 4px; }
+.image-preview { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 8px; object-fit: contain; background: #f0f0f0; }
+.tags-section { margin-bottom: 16px; }
+.tags-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 30px; }
+.tag-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 5px; font-size: 13px; font-weight: 500; background: #d4edda; color: #155724; border: 1px solid #b1dfbb; }
+.tag-chip .remove { cursor: pointer; font-size: 14px; opacity: 0.6; margin-left: 2px; }
+.tag-chip .remove:hover { opacity: 1; }
+.tag-chip.auto { background: #e8ecf1; color: #444; border: 1px solid #d0d5dd; }
+.tag-input-wrap { position: relative; }
+.tag-input { width: 100%; padding: 10px 14px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.tag-input:focus { border-color: #4a90d9; }
+.tag-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 0 0 8px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; display: none; max-height: 200px; overflow-y: auto; }
+.tag-dropdown .dd-item { padding: 8px 14px; cursor: pointer; display: flex; justify-content: space-between; font-size: 13px; }
+.tag-dropdown .dd-item:hover, .tag-dropdown .dd-item.selected { background: #f0f4ff; }
+.tag-dropdown .dd-item .cnt { font-size: 11px; color: #888; }
+.tag-dropdown .dd-create { padding: 8px 14px; cursor: pointer; font-size: 13px; color: #27ae60; font-weight: 500; border-top: 1px solid #eee; }
+.tag-dropdown .dd-create:hover { background: #f0faf0; }
+.cooc-section { margin-bottom: 16px; }
+.cooc-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.cooc-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.cooc-tag { padding: 3px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; background: #e8ecf1; color: #444; border: 1px solid #d0d5dd; }
+.cooc-tag:hover { background: #d4edda; border-color: #b1dfbb; }
+.cooc-tag .cnt { font-size: 10px; opacity: 0.6; margin-left: 3px; }
+.buttons { display: flex; gap: 10px; justify-content: flex-end; padding: 16px 20px; border-top: 1px solid #eee; }
+.btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 500; transition: all 0.15s; }
+.btn-cancel { background: #f0f0f0; color: #666; }
+.btn-cancel:hover { background: #e0e0e0; }
+.btn-ok { background: #27ae60; color: #fff; }
+.btn-ok:hover { background: #219a52; }
+.btn-ok:disabled { background: #a0d8b8; cursor: not-allowed; }
+.status-bar { padding: 12px 20px; text-align: center; font-size: 13px; display: none; }
+.status-bar.success { background: #d4edda; color: #155724; display: block; }
+.status-bar.error { background: #f8d7da; color: #721c24; display: block; }
+.loading { color: #888; font-size: 12px; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>BIG_BOFF</h1>
+    <span class="badge" id="type-badge">Tagger</span>
+  </div>
+  <div class="content">
+    <div class="info-section" id="url-section">
+      <div class="info-label">URL</div>
+      <div class="info-value" id="url-display"></div>
+    </div>
+    <div class="info-section" id="title-section">
+      <div class="info-label">Titre</div>
+      <div class="info-value" id="title-display"><span class="loading">Chargement...</span></div>
+    </div>
+    <div class="info-section" id="preview-section" style="display:none">
+      <div class="info-label">Apercu</div>
+      <img class="image-preview" id="image-preview">
+    </div>
+    <div class="tags-section">
+      <div class="info-label">Tags</div>
+      <div class="tags-list" id="tags-list"></div>
+      <div class="tag-input-wrap">
+        <input type="text" class="tag-input" id="tag-input" placeholder="Ajouter un tag...">
+        <div class="tag-dropdown" id="tag-dropdown"></div>
+      </div>
+    </div>
+    <div class="cooc-section" id="cooc-section" style="display:none">
+      <div class="cooc-label">Tags associes</div>
+      <div class="cooc-tags" id="cooc-tags"></div>
+    </div>
+  </div>
+  <div class="status-bar" id="status-bar"></div>
+  <div class="buttons">
+    <button class="btn btn-cancel" id="btn-cancel">Annuler</button>
+    <button class="btn btn-ok" id="btn-ok">Valider</button>
+  </div>
+</div>
+<script src="tagger.js"></script>
+</body>
+</html>

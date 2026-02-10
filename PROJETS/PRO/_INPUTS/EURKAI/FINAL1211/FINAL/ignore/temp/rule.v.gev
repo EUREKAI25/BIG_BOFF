@@ -1,0 +1,321 @@
+# ============================================================================
+# EURKAI Vector - Rules v0.10.5
+# vector/rule.v.gev
+# ============================================================================
+
+#region === RULE BASE ===
+
+Object:Structure:Fractal:Vector:V_RuleName:
+  .default = {"FR": "Règle", "EN": "Rule"}
+
+Object:Structure:Fractal:Vector:V_RuleDescription:
+  .default = {"FR": "Type racine des règles ERK", "EN": "Root type for ERK rules"}
+
+Object:Structure:Fractal:Vector:V_RuleAttribute:
+  .default = ""
+
+#endregion
+
+#region === MUST ===
+
+Object:Structure:Fractal:Vector:V_MustName:
+  .default = "Must"
+
+Object:Structure:Fractal:Vector:V_MustDescription:
+  .default = {"FR": "Obligation stricte — bloque si false", "EN": "Strict obligation — blocks if false"}
+
+Object:Structure:Fractal:Vector:V_MustSyntax:
+  .default = "must: <expression>"
+
+Object:Structure:Fractal:Vector:V_MustExample:
+  .default = "must: this.name != null AND LENGTH(this.name) > 0"
+
+#endregion
+
+#region === MUST NOT ===
+
+Object:Structure:Fractal:Vector:V_MustNotName:
+  .default = "MustNot"
+
+Object:Structure:Fractal:Vector:V_MustNotDescription:
+  .default = {"FR": "Interdiction stricte — bloque si true", "EN": "Strict prohibition — blocks if true"}
+
+
+Object:Structure:Fractal:Vector:V_MustNotSyntax:
+  .default = "must_not: <expression>"
+
+Object:Structure:Fractal:Vector:V_MustNotExample:
+  .default = "must_not: this.status == 'deleted' AND this.hasChildren"
+
+#endregion
+
+#region === ALLOW ===
+
+Object:Structure:Fractal:Vector:V_AllowName:
+  .default = "Allow"
+
+Object:Structure:Fractal:Vector:V_AllowDescription:
+  .default = {"FR": "Permission — refuse si false", "EN": "Permission — denies if false"}
+
+Object:Structure:Fractal:Vector:V_AllowSyntax:
+  .default = "allow: <expression>"
+
+Object:Structure:Fractal:Vector:V_AllowExample:
+  .default = "allow: ctx.user.role IN ['admin', 'editor']"
+
+#endregion
+
+#region === DENY ===
+
+Object:Structure:Fractal:Vector:V_DenyName:
+  .default = "Deny"
+
+Object:Structure:Fractal:Vector:V_DenyDescription:
+  .default = {"FR": "Refus explicite — toujours refusé", "EN": "Explicit denial — always denied"}
+
+Object:Structure:Fractal:Vector:V_DenySyntax:
+  .default = "deny: <expression>"
+
+Object:Structure:Fractal:Vector:V_DenyExample:
+  .default = "deny: ctx.user.banned == true"
+
+#endregion
+
+#region === REQUIRE ===
+
+Object:Structure:Fractal:Vector:V_RequireName:
+  .default = "Require"
+
+Object:Structure:Fractal:Vector:V_RequireDescription:
+  .default = {"FR": "Prérequis — bloque si absent", "EN": "Prerequisite — blocks if missing"}
+
+Object:Structure:Fractal:Vector:V_RequireSyntax:
+  .default = "require: <expression>"
+
+Object:Structure:Fractal:Vector:V_RequireExample:
+  .default = "require: EXISTS(this.parent)"
+
+#endregion
+
+#region === FORBID ===
+
+Object:Structure:Fractal:Vector:V_ForbidName:
+  .default = "Forbid"
+
+Object:Structure:Fractal:Vector:V_ForbidDescription:
+  .default = {"FR": "Interdiction absolue — critique", "EN": "Absolute prohibition — critical"}
+
+Object:Structure:Fractal:Vector:V_ForbidSyntax:
+  .default = "forbid: <expression>"
+
+Object:Structure:Fractal:Vector:V_ForbidExample:
+  .default = "forbid: ctx.execution_request != null AND ISNULL(ctx.approval)"
+
+#endregion
+
+#region === ENABLE / DISABLE ===
+
+Object:Structure:Fractal:Vector:V_EnableName:
+  .default = "Enable"
+
+Object:Structure:Fractal:Vector:V_EnableDescription:
+  .default = {"FR": "Activation conditionnelle", "EN": "Conditional activation"}
+
+Object:Structure:Fractal:Vector:V_EnableSyntax:
+  .default = "enable: <expression>"
+
+Object:Structure:Fractal:Vector:V_EnableExample:
+  .default = "enable: IF(this.priority == 'high', true, this.hasApproval)"
+
+Object:Structure:Fractal:Vector:V_DisableName:
+  .default = "Disable"
+
+Object:Structure:Fractal:Vector:V_DisableDescription:
+  .default = {"FR": "Désactivation conditionnelle", "EN": "Conditional deactivation"}
+
+Object:Structure:Fractal:Vector:V_DisableSyntax:
+  .default = "disable: <expression>"
+
+Object:Structure:Fractal:Vector:V_DisableExample:
+  .default = "disable: this.deprecated == true"
+
+#endregion
+
+#region === CHECK / VALIDATE / WARN ===
+
+Object:Structure:Fractal:Vector:V_CheckRuleName:
+  .default = "Check"
+
+Object:Structure:Fractal:Vector:V_CheckRuleDescription:
+  .default = {"FR": "Vérification — retourne bool sans bloquer", "EN": "Check — returns bool without blocking"}
+
+Object:Structure:Fractal:Vector:V_CheckRuleSyntax:
+  .default = "check: <expression>"
+
+Object:Structure:Fractal:Vector:V_CheckRuleExample:
+  .default = "check: LENGTH(this.description) >= 10"
+
+Object:Structure:Fractal:Vector:V_ValidateName:
+  .default = "Validate"
+
+Object:Structure:Fractal:Vector:V_ValidateDescription:
+  .default = {"FR": "Validation — WARN si false", "EN": "Validation — WARN if false"}
+
+Object:Structure:Fractal:Vector:V_ValidateSyntax:
+  .default = "validate: <expression>"
+
+Object:Structure:Fractal:Vector:V_ValidateExample:
+  .default = "validate: this.email MATCHES '^[a-z]+@[a-z]+\\.[a-z]+$'"
+
+Object:Structure:Fractal:Vector:V_WarnName:
+  .default = "Warn"
+
+Object:Structure:Fractal:Vector:V_WarnDescription:
+  .default = {"FR": "Avertissement — log warning", "EN": "Warning — log warning"}
+
+Object:Structure:Fractal:Vector:V_WarnSyntax:
+  .default = "warn: <expression>"
+
+Object:Structure:Fractal:Vector:V_WarnExample:
+  .default = "warn: this.stock < 10"
+
+#endregion
+
+#region === SUGGEST ===
+
+Object:Structure:Fractal:Vector:V_SuggestName:
+  .default = "Suggest"
+
+Object:Structure:Fractal:Vector:V_SuggestDescription:
+  .default = {"FR": "Suggestion IA", "EN": "AI suggestion"}
+
+Object:Structure:Fractal:Vector:V_SuggestSyntax:
+  .default = "suggest: <expression>"
+
+Object:Structure:Fractal:Vector:V_SuggestExample:
+  .default = "suggest: COALESCE(this.recommendation, 'Aucune suggestion')"
+
+#endregion
+
+#region === REQUIRED ATTRIBUTE ===
+
+Object:Structure:Fractal:Vector:V_RequiredAttributeName:
+  .default = {"FR": "Attribut Requis", "EN": "Required Attribute"}
+
+Object:Structure:Fractal:Vector:V_RequiredAttributeMessage:
+  .default = ".{attribute} est obligatoire"
+
+#endregion
+
+#region === PATTERN ===
+
+Object:Structure:Fractal:Vector:V_PatternRuleName:
+  .default = {"FR": "Pattern", "EN": "Pattern"}
+
+Object:Structure:Fractal:Vector:V_RulePattern:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PatternRuleMessage:
+  .default = "Le format ne correspond pas au pattern attendu"
+
+#endregion
+
+# ============================================================================
+# EURKAI Rules v0.10.3
+# vector/rules.v.gev
+# ============================================================================
+
+#region === REQUIRED ATTRIBUTES ===
+
+# Attributs requis pour chaque type d'objet
+# Format: liste séparée par des virgules
+
+Object:Structure:Fractal:Vector:V_RequiredAttributes_Object:
+  .default = "name"
+  .description = "Attributs obligatoires pour tout objet"
+
+Object:Structure:Fractal:Vector:V_RequiredAttributes_Vector:
+  .default = "default"
+  .description = "Attributs obligatoires pour un vecteur"
+
+Object:Structure:Fractal:Vector:V_RequiredAttributes_Method:
+  .default = "name"
+  .description = "Attributs obligatoires pour une méthode"
+
+Object:Structure:Fractal:Vector:V_RequiredAttributes_Scan:
+  .default = "name,scan"
+  .description = "Attributs obligatoires pour une méthode Scan"
+
+Object:Structure:Fractal:Vector:V_RequiredAttributes_SuperTool:
+  .default = "name,centralMethod"
+  .description = "Attributs obligatoires pour un SuperTool"
+
+#endregion
+
+#region === OPTIONAL ATTRIBUTES ===
+
+Object:Structure:Fractal:Vector:V_OptionalAttributes_Object:
+  .default = "description,scan,version,createdAt,updatedAt"
+  .description = "Attributs optionnels pour tout objet"
+
+#endregion
+
+#region === VALIDATION RULES ===
+
+# Règles de validation format
+# Syntaxe: attribut:type (string, number, json, lineage, vector)
+
+Object:Structure:Fractal:Vector:V_ValidationRule_Name:
+  .default = "string"
+  .pattern = "^[A-Za-z][A-Za-z0-9_]*$"
+  .description = "Le nom doit être alphanumérique"
+
+Object:Structure:Fractal:Vector:V_ValidationRule_Lineage:
+  .default = "lineage"
+  .pattern = "^[A-Z][A-Za-z0-9]*(:[A-Z][A-Za-z0-9]*)*$"
+  .description = "Format Object:Type:SousType"
+
+Object:Structure:Fractal:Vector:V_ValidationRule_Vector:
+  .default = "vector"
+  .pattern = "^V_[A-Za-z][A-Za-z0-9]*$"
+  .description = "Format V_NomDuVecteur"
+
+#endregion
+
+#region === QUERIES ===
+
+# Queries prédéfinies
+# .type = "query" indique que c'est une query dynamique
+# .query = pattern à matcher
+
+Object:Structure:Fractal:Vector:V_Query_AllMethods:
+  .type = "query"
+  .query = "Object:Method:*"
+  .description = "Toutes les méthodes"
+
+Object:Structure:Fractal:Vector:V_Query_AllVectors:
+  .type = "query"
+  .query = "V_*"
+  .description = "Tous les vecteurs"
+
+Object:Structure:Fractal:Vector:V_Query_AllSuperTools:
+  .type = "query"
+  .query = "Object:Method:SuperTool:*"
+  .description = "Tous les SuperTools"
+
+Object:Structure:Fractal:Vector:V_Query_AllChecks:
+  .type = "query"
+  .query = "*Check*"
+  .description = "Toutes les méthodes Check"
+
+Object:Structure:Fractal:Vector:V_Query_AllHooks:
+  .type = "query"
+  .query = "Object:Event:Hook:*"
+  .description = "Tous les hooks"
+
+Object:Structure:Fractal:Vector:V_Query_SeedFiles:
+  .type = "query"
+  .query = "Object:Structure:File:GevFile:SeedFile:*"
+  .description = "Tous les fichiers seed"
+
+#endregion

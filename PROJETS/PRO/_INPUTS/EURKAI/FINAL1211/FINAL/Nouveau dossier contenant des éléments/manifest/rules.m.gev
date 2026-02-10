@@ -1,0 +1,45 @@
+# ============================================================================
+# EURKAI Rules Manifest v0.10.5
+# manifest/rules.m.gev
+# Instances de règles de validation
+# ============================================================================
+
+#region === REQUIRED ATTRIBUTE RULES ===
+
+Object:Rule:RequiredAttribute:NameRequired:
+  .attribute = "name"
+  .message = ".name est obligatoire"
+
+Object:Rule:RequiredAttribute:DefaultRequired:
+  .attribute = "default"
+  .message = ".default est obligatoire pour un vecteur"
+
+Object:Rule:RequiredAttribute:CentralMethodRequired:
+  .attribute = "centralMethod"
+  .message = ".centralMethod est obligatoire pour un SuperTool"
+
+Object:Rule:RequiredAttribute:ScanRequired:
+  .attribute = "scan"
+  .message = ".scan est obligatoire pour une méthode Scan"
+
+Object:Rule:RequiredAttribute:DescriptionRequired:
+  .attribute = "description"
+  .message = ".description est obligatoire"
+
+#endregion
+
+#region === PATTERN RULES ===
+
+Object:Rule:Pattern:LineageFormat:
+  .pattern = "^[A-Z][A-Za-z0-9]*(:[A-Z][A-Za-z0-9]*)*$"
+  .message = "Le lineage doit être au format Object:Type:SousType"
+
+Object:Rule:Pattern:VectorFormat:
+  .pattern = "^V_[A-Za-z][A-Za-z0-9]*$"
+  .message = "Le nom du vecteur doit commencer par V_"
+
+Object:Rule:Pattern:EmailFormat:
+  .pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  .message = "Format email invalide"
+
+#endregion

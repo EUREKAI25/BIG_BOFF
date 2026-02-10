@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #1e1e1e; color: #d4d4d4; height: 100vh; display: flex; flex-direction: column; }
+    .header { background: #252526; border-bottom: 1px solid #3c3c3c; display: flex; align-items: center; padding: 0 8px; }
+    .logo { padding: 12px; color: #cccccc; font-weight: bold; cursor: pointer; }
+    .logo::before { content: '◆ '; color: #569cd6; }
+    .logo:hover { color: #569cd6; }
+    .tabs { display: flex; flex: 1; }
+    .tab { padding: 12px 20px; cursor: pointer; border-bottom: 2px solid transparent; color: #808080; }
+    .tab:hover { color: #d4d4d4; background: rgba(255,255,255,0.05); }
+    .tab.active { color: #d4d4d4; border-bottom-color: #569cd6; }
+    .project-info { padding: 8px 12px; font-size: 12px; color: #808080; }
+    .project-info .name { color: #4ec9b0; }
+    .header-actions { display: flex; gap: 8px; padding: 0 12px; }
+    .header-btn { background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; padding: 4px 8px; color: #808080; cursor: pointer; font-size: 11px; }
+    .header-btn:hover { border-color: #569cd6; color: #569cd6; }
+    .version { padding: 12px; color: #555; font-size: 12px; }
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 280px; min-width: 150px; background: #252526; border-right: 1px solid #3c3c3c; display: flex; flex-direction: column; position: relative; }
+    .resizer { width: 5px; background: transparent; cursor: col-resize; position: absolute; right: 0; top: 0; bottom: 0; z-index: 10; }
+    .resizer:hover, .resizer.active { background: #569cd6; }
+    .sidebar-header { padding: 12px; border-bottom: 1px solid #3c3c3c; display: flex; justify-content: space-between; }
+    .sidebar-title { font-size: 11px; text-transform: uppercase; color: #808080; }
+    .object-count { background: #569cd6; color: #1e1e1e; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+    .search { padding: 8px 12px; }
+    .search input { width: 100%; padding: 8px; background: #3c3c3c; border: 1px solid #3c3c3c; border-radius: 4px; color: #d4d4d4; }
+    .search input:focus { outline: none; border-color: #569cd6; }
+    .tree { flex: 1; overflow: auto; padding: 8px; }
+    .tree ul { list-style: none; padding-left: 16px; }
+    .tree > ul { padding-left: 0; }
+    .tree-node { display: flex; align-items: center; gap: 6px; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 13px; }
+    .tree-node:hover { background: #2a2d2e; }
+    .tree-node.selected { background: #094771; }
+    .tree-toggle { width: 12px; color: #808080; font-size: 10px; }
+    .tree-node .icon { color: #569cd6; }
+    .tree-node .count { color: #808080; font-size: 11px; }
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .tab-panel { display: none; flex: 1; overflow: auto; padding: 20px; }
+    .tab-panel.active { display: block; }
+    .no-project { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #808080; text-align: center; padding: 40px; }
+    .no-project .icon { font-size: 64px; margin-bottom: 20px; opacity: 0.3; }
+    .no-project h2 { color: #d4d4d4; margin-bottom: 12px; }
+    .no-project p { margin-bottom: 24px; max-width: 400px; }
+    .btn-primary { padding: 10px 20px; background: #0e639c; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: 500; }
+    .btn-primary:hover { background: #1177bb; }
+    .btn-secondary { padding: 10px 20px; background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; color: #d4d4d4; cursor: pointer; font-weight: 500; }
+    .btn-secondary:hover { background: #2a2d2e; }
+    .btn-warning { padding: 10px 20px; background: #d97706; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: 500; }
+    .btn-warning:hover { background: #b45309; }
+    .walker-error { background: rgba(244,135,113,0.1); border-left: 3px solid #f48771; padding: 12px; margin: 8px 0; border-radius: 4px; }
+    .walker-error-title { color: #f48771; font-weight: bold; margin-bottom: 4px; }
+    .walker-error-detail { color: #808080; font-size: 12px; margin-left: 16px; }
+    .walker-ok { color: #4ec9b0; }
+    .walker-summary { display: flex; gap: 16px; margin-bottom: 16px; padding: 12px; background: #252526; border-radius: 4px; }
+    .stats { display: flex; gap: 16px; margin-bottom: 20px; }
+    .stat { background: #252526; padding: 16px 24px; border-radius: 4px; text-align: center; border: 1px solid #3c3c3c; }
+    .stat-value { font-size: 28px; font-weight: bold; color: #569cd6; }
+    .stat-label { color: #808080; font-size: 12px; margin-top: 4px; }
+    .object-detail { background: #252526; border-radius: 4px; padding: 20px; border: 1px solid #3c3c3c; }
+    .object-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .object-header h2 { color: #4ec9b0; margin: 0; }
+    .object-alias { color: #569cd6; font-family: monospace; font-size: 12px; margin-left: 12px; }
+    .object-actions { display: flex; gap: 8px; }
+    .action-btn { background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; padding: 6px 10px; cursor: pointer; color: #808080; }
+    .action-btn:hover { border-color: #569cd6; color: #569cd6; }
+    .object-lineage { color: #808080; font-family: monospace; font-size: 12px; margin-bottom: 4px; }
+    .object-source { color: #6a9955; font-size: 11px; margin-bottom: 16px; }
+    .section { margin-top: 16px; }
+    .section-header { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #3c3c3c; cursor: pointer; }
+    .section-title { font-size: 12px; text-transform: uppercase; color: #808080; }
+    .section-toggle { color: #808080; }
+    .section-content { padding: 12px 0; }
+    .section-content.collapsed { display: none; }
+    .add-btn { background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; padding: 2px 8px; color: #808080; cursor: pointer; font-size: 11px; }
+    .add-btn:hover { border-color: #4ec9b0; color: #4ec9b0; }
+    .attrs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .attrs-table th, .attrs-table td { padding: 8px; text-align: left; border-bottom: 1px solid #3c3c3c; }
+    .attrs-table th { color: #808080; font-weight: normal; width: 35%; }
+    .vector-value { color: #4ec9b0; cursor: help; }
+    .vector-unresolved { color: #dcdcaa; cursor: help; font-style: italic; }
+    .raw-value { color: #ce9178; }
+    .relation-target { color: #569cd6; cursor: pointer; }
+    .relation-target:hover { text-decoration: underline; }
+    .from { color: #808080; font-size: 11px; margin-left: 8px; }
+    .edit-btn { background: transparent; border: none; color: #808080; cursor: pointer; margin-left: 8px; opacity: 0; }
+    .attrs-table tr:hover .edit-btn { opacity: 1; }
+    .edit-btn:hover { color: #569cd6; }
+    .empty { color: #808080; font-style: italic; font-size: 12px; }
+    .form-group { margin-bottom: 16px; position: relative; }
+    .form-group label { display: block; color: #808080; font-size: 12px; margin-bottom: 6px; text-transform: uppercase; }
+    .form-input { width: 100%; padding: 10px; background: #3c3c3c; border: 1px solid #3c3c3c; border-radius: 4px; color: #d4d4d4; }
+    .form-input:focus { outline: none; border-color: #569cd6; }
+    select.form-input { cursor: pointer; }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: #252526; border: 1px solid #569cd6; border-radius: 4px; max-height: 200px; overflow: auto; z-index: 100; display: none; }
+    .autocomplete-list.show { display: block; }
+    .autocomplete-item { padding: 8px 12px; cursor: pointer; font-size: 13px; }
+    .autocomplete-item:hover, .autocomplete-item.selected { background: #094771; }
+    .autocomplete-item .type { color: #808080; font-size: 11px; margin-left: 8px; }
+    .right-sidebar { width: 220px; background: #252526; border-left: 1px solid #3c3c3c; display: flex; flex-direction: column; }
+    .right-sidebar.collapsed { width: 32px; }
+    .right-sidebar.collapsed .sidebar-content { display: none; }
+    .sidebar-toggle { padding: 8px; cursor: pointer; text-align: center; border-bottom: 1px solid #3c3c3c; color: #808080; }
+    .sidebar-toggle:hover { background: #2a2d2e; }
+    .sidebar-content { padding: 12px; overflow: auto; flex: 1; }
+    .sidebar-section-title { font-size: 10px; text-transform: uppercase; color: #808080; margin-bottom: 8px; }
+    .source-file { padding: 4px 8px; margin: 2px 0; font-size: 11px; color: #808080; background: #2a2d2e; border-radius: 4px; cursor: pointer; }
+    .source-file:hover { color: #569cd6; }
+    .themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .theme-file { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #252526; border: 1px solid #3c3c3c; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .theme-file:hover { border-color: #569cd6; background: #2a2d2e; }
+    .theme-icon { font-size: 24px; }
+    .theme-name { flex: 1; color: #d4d4d4; font-size: 13px; }
+    .theme-btn { background: none; border: none; color: #808080; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+    .theme-btn:hover { background: #3c3c3c; color: #569cd6; }
+    .accordion { border: 1px solid #3c3c3c; border-radius: 4px; overflow: hidden; }
+    .accordion-item { border-bottom: 1px solid #3c3c3c; }
+    .accordion-item:last-child { border-bottom: none; }
+    .accordion-header { padding: 12px 16px; background: #252526; cursor: pointer; display: flex; justify-content: space-between; }
+    .accordion-header:hover { background: #2a2d2e; }
+    .accordion-header h4 { margin: 0; color: #569cd6; font-size: 14px; }
+    .accordion-content { padding: 16px; background: #2a2d2e; display: none; }
+    .accordion-content.open { display: block; }
+    .accordion-content p { color: #808080; font-size: 13px; margin: 4px 0; }
+    .accordion-content strong { color: #4ec9b0; }
+    .create-form { max-width: 500px; }
+    .walker-config { background: #252526; padding: 20px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #3c3c3c; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo" onclick="openHtmlPreview()" title="Ouvrir en HTML">EURKAI Cockpit</div>
+    <div class="tabs">
+      <div class="tab active" data-tab="schemas">📐 Schémas</div>
+      <div class="tab" data-tab="instances">📦 Instances</div>
+      <div class="tab" data-tab="aliases">🏷 Alias</div>
+      <div class="tab" data-tab="walker">🚶 Walker</div>
+      <div class="tab" data-tab="library">📚 Library</div>
+      <div class="tab" data-tab="themes">🎨 Themes</div>
+      <div class="tab" data-tab="console">🖥 Console</div>
+    </div>
+    
+      <div class="header-actions">
+        <button class="header-btn" onclick="openHtmlPreview()" title="Ouvrir dans le navigateur">🌐 HTML</button>
+        <button class="header-btn" onclick="refreshProject()" title="Rafraîchir">🔄</button>
+      </div>
+      <div class="project-info">📁 <span class="name">FINAL1211</span></div>
+    
+    <div class="version">v0.10.10</div>
+  </div>
+  
+  <div class="main">
+    
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><span class="sidebar-title">Types</span><span class="object-count">45</span></div>
+        <div class="search"><input type="text" id="searchInput" placeholder="Rechercher..."></div>
+        <div class="tree" id="tree"></div>
+        <div class="resizer" id="resizer"></div>
+      </div>
+    
+    
+    <div class="content">
+      <div class="tab-panel active" id="panel-schemas">
+        
+          <div class="stats">
+            <div class="stat"><div class="stat-value">45</div><div class="stat-label">Types</div></div>
+            <div class="stat"><div class="stat-value">1</div><div class="stat-label">Vecteurs</div></div>
+            <div class="stat"><div class="stat-value">45</div><div class="stat-label">Alias</div></div>
+          </div>
+          <div class="object-detail" id="objectDetail">
+            <div class="no-project" style="padding:40px;"><div class="icon">◇</div><p>Sélectionnez un type</p></div>
+          </div>
+        
+      </div>
+      
+      <div class="tab-panel" id="panel-instances">
+        
+          <h2 style="color:#569cd6;margin-bottom:20px;">📦 Instances</h2>
+          <p class="empty">FormBuilder à venir</p>
+          <div style="margin-top:20px;">
+            <h3 style="color:#808080;margin-bottom:12px;">Créer une instance</h3>
+            <div class="create-form">
+              <div class="form-group"><label>Type parent</label><input type="text" id="instanceType" class="form-input" placeholder="Object:Entity:Agent"></div>
+              <div class="form-group"><label>Nom</label><input type="text" id="instanceName" class="form-input" placeholder="MonAgent"></div>
+              <button class="btn-primary" onclick="createInstance()">Créer</button>
+            </div>
+          </div>
+        
+      </div>
+      
+      <div class="tab-panel" id="panel-aliases">
+        
+          <h2 style="color:#569cd6;margin-bottom:20px;">🏷 Créer un alias</h2>
+          <div class="create-form">
+            <div class="form-group"><label>Nom</label><input type="text" id="aliasName" class="form-input" placeholder="MonAlias"></div>
+            <div class="form-group"><label>Cible</label><input type="text" id="aliasTarget" class="form-input" placeholder="Object:Entity:Agent"></div>
+            <div class="form-group"><label>Query</label><input type="text" id="aliasQuery" class="form-input" placeholder="getMergedList(...)"></div>
+            <button class="btn-primary" onclick="createAlias()">Créer</button>
+          </div>
+          <h3 style="color:#808080;margin:30px 0 15px;">Alias existants</h3>
+          <table class="attrs-table"><tbody><tr><th>Object</th><td class="vector-value">V_Object</td></tr><tr><th>Structure</th><td class="vector-value">V_Structure</td></tr><tr><th>StructureDict</th><td class="vector-value">V_StructureDict</td></tr><tr><th>StructureList</th><td class="vector-value">V_StructureList</td></tr><tr><th>StructureListOrderedList</th><td class="vector-value">V_StructureListOrderedList</td></tr><tr><th>StructureElement</th><td class="vector-value">V_StructureElement</td></tr><tr><th>Attribute</th><td class="vector-value">V_Attribute</td></tr><tr><th>AttributeElementList</th><td class="vector-value">V_AttributeElementList</td></tr><tr><th>AttributeAttributeList</th><td class="vector-value">V_AttributeAttributeList</td></tr><tr><th>AttributeMethodList</th><td class="vector-value">V_AttributeMethodList</td></tr><tr><th>AttributeRuleList</th><td class="vector-value">V_AttributeRuleList</td></tr><tr><th>AttributeRelationList</th><td class="vector-value">V_AttributeRelationList</td></tr><tr><th>AttributeOptionList</th><td class="vector-value">V_AttributeOptionList</td></tr><tr><th>AttributeChildList</th><td class="vector-value">V_AttributeChildList</td></tr><tr><th>AttributeAutomated</th><td class="vector-value">V_AttributeAutomated</td></tr><tr><th>Method</th><td class="vector-value">V_Method</td></tr><tr><th>MethodCentralMethod</th><td class="vector-value">V_MethodCentralMethod</td></tr><tr><th>MethodCentralMethodCreate</th><td class="vector-value">V_MethodCentralMethodCreate</td></tr><tr><th>MethodCentralMethodRead</th><td class="vector-value">V_MethodCentralMethodRead</td></tr><tr><th>MethodCentralMethodUpdate</th><td class="vector-value">V_MethodCentralMethodUpdate</td></tr><tr><th>MethodCentralMethodDelete</th><td class="vector-value">V_MethodCentralMethodDelete</td></tr><tr><th>MethodSecondaryMethod</th><td class="vector-value">V_MethodSecondaryMethod</td></tr><tr><th>MethodSecondaryMethodGenerate</th><td class="vector-value">V_MethodSecondaryMethodGenerate</td></tr><tr><th>MethodSecondaryMethodValidate</th><td class="vector-value">V_MethodSecondaryMethodValidate</td></tr><tr><th>MethodScenario</th><td class="vector-value">V_MethodScenario</td></tr><tr><th>MethodScenarioStep</th><td class="vector-value">V_MethodScenarioStep</td></tr><tr><th>ScenarioStepGetStep</th><td class="vector-value">V_ScenarioStepGetStep</td></tr><tr><th>ScenarioStepExecuteStep</th><td class="vector-value">V_ScenarioStepExecuteStep</td></tr><tr><th>ScenarioStepValidateStep</th><td class="vector-value">V_ScenarioStepValidateStep</td></tr><tr><th>ScenarioStepRenderStep</th><td class="vector-value">V_ScenarioStepRenderStep</td></tr><tr><th>MethodScenarioMilestone</th><td class="vector-value">V_MethodScenarioMilestone</td></tr><tr><th>Rule</th><td class="vector-value">V_Rule</td></tr><tr><th>RuleValidationRule</th><td class="vector-value">V_RuleValidationRule</td></tr><tr><th>RuleCreateRule</th><td class="vector-value">V_RuleCreateRule</td></tr><tr><th>RuleFormatRule</th><td class="vector-value">V_RuleFormatRule</td></tr><tr><th>Relation</th><td class="vector-value">V_Relation</td></tr><tr><th>RelationInheritsFrom</th><td class="vector-value">V_RelationInheritsFrom</td></tr><tr><th>RelationDependsOn</th><td class="vector-value">V_RelationDependsOn</td></tr><tr><th>RelationRelatedTo</th><td class="vector-value">V_RelationRelatedTo</td></tr><tr><th>RelationIn</th><td class="vector-value">V_RelationIn</td></tr><tr><th>Config</th><td class="vector-value">V_Config</td></tr><tr><th>ConfigVector</th><td class="vector-value">V_ConfigVector</td></tr><tr><th>ConfigAlias</th><td class="vector-value">V_ConfigAlias</td></tr><tr><th>Project</th><td class="vector-value">V_Project</td></tr><tr><th>ConfigVectorV_ObjectElementList</th><td class="vector-value">V_ConfigVectorV_ObjectElementList</td></tr></tbody></table>
+        
+      </div>
+      
+      <div class="tab-panel" id="panel-walker">
+        
+          <h2 style="color:#569cd6;margin-bottom:20px;">🚶 Walker</h2>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+              <h3 style="color:#4ec9b0;margin-bottom:16px;">📦 Configuration</h3>
+              
+              <div class="form-group">
+                <label>Objet (point d'entrée)</label>
+                <input type="text" id="walkerDict" class="form-input" list="objectList" placeholder="Object:Element:HTMLElement:Body:TestBody" value="Object">
+                <datalist id="objectList">
+                  <option value="Object"><option value="Object:Structure"><option value="Object:Structure:Dict"><option value="Object:Structure:List"><option value="Object:Structure:List:OrderedList"><option value="Object:Structure:Element"><option value="Object:Attribute"><option value="Object:Attribute:ElementList"><option value="Object:Attribute:AttributeList"><option value="Object:Attribute:MethodList"><option value="Object:Attribute:RuleList"><option value="Object:Attribute:RelationList"><option value="Object:Attribute:OptionList"><option value="Object:Attribute:ChildList"><option value="Object:Attribute:Automated"><option value="Object:Method"><option value="Object:Method:CentralMethod"><option value="Object:Method:CentralMethod:Create"><option value="Object:Method:CentralMethod:Read"><option value="Object:Method:CentralMethod:Update"><option value="Object:Method:CentralMethod:Delete"><option value="Object:Method:SecondaryMethod"><option value="Object:Method:SecondaryMethod:Generate"><option value="Object:Method:SecondaryMethod:Validate"><option value="Object:Method:Scenario"><option value="Object:Method:Scenario:Step"><option value="Object:Method:Scenario:Step:GetStep"><option value="Object:Method:Scenario:Step:ExecuteStep"><option value="Object:Method:Scenario:Step:ValidateStep"><option value="Object:Method:Scenario:Step:RenderStep"><option value="Object:Method:Scenario:Milestone"><option value="Object:Rule"><option value="Object:Rule:ValidationRule"><option value="Object:Rule:CreateRule"><option value="Object:Rule:FormatRule"><option value="Object:Relation"><option value="Object:Relation:InheritsFrom"><option value="Object:Relation:DependsOn"><option value="Object:Relation:RelatedTo"><option value="Object:Relation:In"><option value="Object:Config"><option value="Object:Config:Vector"><option value="Object:Config:Alias"><option value="Object:Project"><option value="Object:Config:Vector:V_ObjectElementList">
+                </datalist>
+                <div style="color:#808080;font-size:11px;margin-top:4px;">Lineage, V_vecteur, ou @alias</div>
+              </div>
+              
+              <div class="form-group">
+                <label>Scénario (scan)</label>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+                  <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;">
+                    <input type="radio" name="walkerScan" value="pass" checked> pass
+                  </label>
+                  <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;">
+                    <input type="radio" name="walkerScan" value="ghost"> ghost
+                  </label>
+                  <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;">
+                    <input type="radio" name="walkerScan" value="other"> autre...
+                  </label>
+                </div>
+              </div>
+              
+              <div class="form-group" id="customScanGroup" style="display:none;">
+                <label>Méthode / Scan</label>
+                <input type="text" id="walkerCustomScan" class="form-input" list="scanList" placeholder="deploy | check:format | etc.">
+                <datalist id="scanList">
+                  
+                </datalist>
+                <div style="color:#808080;font-size:11px;margin-top:4px;">Toutes les méthodes avec .scan défini</div>
+              </div>
+              
+              <div style="display:flex;gap:16px;">
+                <div class="form-group" style="flex:1;">
+                  <label>Direction</label>
+                  <select id="walkerDirection" class="form-input">
+                    <option value="down" selected>⬇ down (descendants)</option>
+                    <option value="up">⬆ up (ancêtres)</option>
+                    <option value="global">🌐 global (tous)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                  <label>Profondeur</label>
+                  <input type="number" id="walkerDepth" class="form-input" placeholder="-1 = infini" value="-1">
+                </div>
+              </div>
+            </div>
+            
+            <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+              <h3 style="color:#dcdcaa;margin-bottom:16px;">⚡ Actions</h3>
+              
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                <button class="btn-primary" onclick="runWalker('run')" style="padding:12px;">
+                  <div style="font-size:18px;">▶</div>
+                  <div>Exécuter</div>
+                </button>
+                <button class="btn-secondary" onclick="runWalker('test')" style="padding:12px;">
+                  <div style="font-size:18px;">🧪</div>
+                  <div>Tester</div>
+                </button>
+                <button class="btn-warning" onclick="alert('Test OK - runWalker existe: ' + (typeof runWalker))" style="padding:12px;">
+                  <div style="font-size:18px;">🔧</div>
+                  <div>Debug</div>
+                </button>
+              </div>
+              
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                <button class="btn-secondary" onclick="exportWalkerReport()" style="padding:12px;">
+                  <div style="font-size:18px;">📄</div>
+                  <div>Export</div>
+                </button>
+                <button class="btn-secondary" onclick="clearWalkerReport()" style="padding:12px;">
+                  <div style="font-size:18px;">🗑</div>
+                  <div>Clear</div>
+                </button>
+              </div>
+              
+              <div style="background:#1e1e1e;padding:12px;border-radius:4px;margin-bottom:12px;">
+                <div style="color:#808080;font-size:11px;margin-bottom:4px;">RÉSUMÉ RAPIDE</div>
+                <div id="walkerQuickStats" style="display:flex;gap:12px;flex-wrap:wrap;">
+                  <span style="color:#4ec9b0;">--</span>
+                </div>
+              </div>
+              
+              <div style="color:#808080;font-size:11px;">
+                <p style="margin:4px 0;">💡 <strong>pass</strong> : traverse sans modification</p>
+                <p style="margin:4px 0;">💡 <strong>ghost</strong> : simule l'exécution</p>
+                <p style="margin:4px 0;">💡 <strong>check:*</strong> : valide selon les règles</p>
+                <p style="margin:4px 0;">💡 <strong>deploy</strong> : génère output (HTML, etc.)</p>
+              </div>
+            </div>
+          </div>
+          
+          <div id="walkerReport" style="margin-top:20px;background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;max-height:400px;overflow-y:auto;">
+            <p class="empty">Lancez un Walk pour voir le rapport</p>
+          </div>
+        
+      </div>
+      
+      <div class="tab-panel" id="panel-library">
+        <h2 style="color:#569cd6;margin-bottom:20px;">📚 Bibliothèque</h2>
+        <div class="accordion">
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>📄 Rapports (0)</h4><span>▼</span></div>
+            <div class="accordion-content open"><p class="empty">Aucun rapport</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>⚡ Méthodes (0)</h4><span>▼</span></div>
+            <div class="accordion-content"><p class="empty">Aucune méthode</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>📏 Règles ERK (3)</h4><span>▼</span></div>
+            <div class="accordion-content"><div style="margin:8px 0;padding:8px;background:#2a2d2e;border-radius:4px;"><strong style="color:#dcdcaa;">ValidationRule</strong><br><span style="color:#808080;font-size:11px;"></span></div><div style="margin:8px 0;padding:8px;background:#2a2d2e;border-radius:4px;"><strong style="color:#dcdcaa;">CreateRule</strong><br><span style="color:#808080;font-size:11px;"></span></div><div style="margin:8px 0;padding:8px;background:#2a2d2e;border-radius:4px;"><strong style="color:#dcdcaa;">FormatRule</strong><br><span style="color:#808080;font-size:11px;"></span></div></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>🔢 Formulas (0)</h4><span>▼</span></div>
+            <div class="accordion-content" style="max-height:500px;overflow-y:auto;"><p class="empty">Aucune formule — chargez seed/erk.s.gev</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>🔎 SuperRead Opérateurs (0)</h4><span>▼</span></div>
+            <div class="accordion-content" style="max-height:400px;overflow-y:auto;"><p class="empty">Aucun opérateur — chargez seed/superread.s.gev</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>📅 Dates & Variables (0)</h4><span>▼</span></div>
+            <div class="accordion-content"><p class="empty">Aucune variable — chargez seed/superread.s.gev</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>⚙️ Options SuperRead (0)</h4><span>▼</span></div>
+            <div class="accordion-content" style="max-height:300px;overflow-y:auto;"><p class="empty">Aucune option — chargez seed/superread.s.gev</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>💡 Exemples SuperRead (0)</h4><span>▼</span></div>
+            <div class="accordion-content"><p class="empty">Aucun exemple — chargez seed/superread.s.gev</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>📁 Fichiers</h4><span>▼</span></div>
+            <div class="accordion-content"><p><strong>.s.gev</strong> — Seeds (définitions)</p><p><strong>.m.gev</strong> — Manifests (instances)</p><p><strong>.v.gev</strong> — Vecteurs (valeurs)</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>🔄 GEVR</h4><span>▼</span></div>
+            <div class="accordion-content"><p><strong>Get</strong> — Récupère les cibles</p><p><strong>Execute</strong> — Exécute sur chaque cible</p><p><strong>Validate</strong> — Valide les résultats</p><p><strong>Render</strong> — Présente les résultats</p></div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><h4>🔍 Queries SuperRead (0)</h4><span>▼</span></div>
+            <div class="accordion-content" style="max-height:600px;overflow-y:auto;">
+              <p class="empty">Aucune query — chargez seed/erk/SuperRead.s.gev</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-panel" id="panel-themes">
+        
+          <h2 style="color:#569cd6;margin-bottom:20px;">🎨 Themes & Templates</h2>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+            <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+              <h3 style="color:#4ec9b0;margin-bottom:16px;">📄 Fichiers HTML (11)</h3>
+              <div style="max-height:200px;overflow-y:auto;">
+                <div class="theme-file" onclick="previewTheme('ERK_V2/outils/converters/dom_to_json/outputs/www_myhealthprac_com_export/index.html')"><span class="theme-icon">📄</span><span class="theme-name">ERK_V2/outils/converters/dom_to_json/outputs/www_myhealthprac_com_export/index.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('ERK_V2/outils/converters/dom_to_json/outputs/www_myhealthprac_com_export/index.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('FINAL/Nouveau dossier contenant des éléments/reports/cockpit.html')"><span class="theme-icon">📄</span><span class="theme-name">FINAL/Nouveau dossier contenant des éléments/reports/cockpit.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('FINAL/Nouveau dossier contenant des éléments/reports/cockpit.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('FINAL/output/defaulttemplate.html')"><span class="theme-icon">📄</span><span class="theme-name">FINAL/output/defaulttemplate.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('FINAL/output/defaulttemplate.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('FINAL/output/eurkai-website.html')"><span class="theme-icon">📄</span><span class="theme-name">FINAL/output/eurkai-website.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('FINAL/output/eurkai-website.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('FINAL/reports/cockpit.html')"><span class="theme-icon">📄</span><span class="theme-name">FINAL/reports/cockpit.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('FINAL/reports/cockpit.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('cockpit.html')"><span class="theme-icon">📄</span><span class="theme-name">cockpit.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('cockpit.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('converters/dom_extractor/outputs/_export/index.html')"><span class="theme-icon">📄</span><span class="theme-name">converters/dom_extractor/outputs/_export/index.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('converters/dom_extractor/outputs/_export/index.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('converters/dom_extractor/outputs/extract/_export/index.html')"><span class="theme-icon">📄</span><span class="theme-name">converters/dom_extractor/outputs/extract/_export/index.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('converters/dom_extractor/outputs/extract/_export/index.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('eurekai-cockpit/index.html')"><span class="theme-icon">📄</span><span class="theme-name">eurekai-cockpit/index.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('eurekai-cockpit/index.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('eurekai-cockpit.html')"><span class="theme-icon">📄</span><span class="theme-name">eurekai-cockpit.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('eurekai-cockpit.html')" title="Éditer">✎</button></div><div class="theme-file" onclick="previewTheme('reports/cockpit.html')"><span class="theme-icon">📄</span><span class="theme-name">reports/cockpit.html</span><button class="theme-btn" onclick="event.stopPropagation(); openSourceFile('reports/cockpit.html')" title="Éditer">✎</button></div>
+              </div>
+            </div>
+            
+            <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+              <h3 style="color:#dcdcaa;margin-bottom:16px;">🚀 Déployer Website</h3>
+              <div class="form-group">
+                <label>Website</label>
+                <select id="websiteSelect" class="form-input">
+                  <option value="">-- Sélectionner --</option>
+                  
+                </select>
+              </div>
+              <div id="websiteInfo" style="margin:12px 0;padding:12px;background:#1e1e1e;border-radius:4px;display:none;">
+                <div id="websiteInfoContent"></div>
+              </div>
+              <button class="btn-primary" onclick="deployWebsite()" style="margin-top:12px;width:100%;">🚀 Déployer</button>
+              <div id="deployResult" style="margin-top:12px;"></div>
+              
+              <div style="margin-top:20px;padding-top:16px;border-top:1px solid #3c3c3c;">
+                <h4 style="color:#808080;margin-bottom:12px;font-size:12px;">Génération manuelle</h4>
+                <div class="form-group">
+                  <label>PageTemplate</label>
+                  <select id="templateSelect" class="form-input" onchange="updateOutputName()">
+                    <option value="">-- Sélectionner --</option>
+                    
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Fichier de sortie</label>
+                  <input type="text" id="outputFileName" class="form-input" placeholder="index.html">
+                </div>
+                <button class="btn-secondary" onclick="generateTemplate()" style="margin-top:8px;width:100%;">Générer HTML (SPA)</button>
+                <button class="btn-secondary" onclick="generateStaticSite()" style="margin-top:8px;width:100%;">Générer Site Statique</button>
+              </div>
+              <div id="generateResult" style="margin-top:12px;"></div>
+            </div>
+          </div>
+          
+          <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+            <h3 style="color:#c586c0;margin-bottom:16px;">🌐 Websites (0)</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;">
+              <p class="empty">Aucun Website. Créez Object:Product:Website:* dans vos manifests.</p>
+            </div>
+          </div>
+          
+          <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+            <h3 style="color:#c586c0;margin-bottom:16px;">📋 Templates (0)</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;">
+              <p class="empty">Aucun PageTemplate. Créez Object:Template:PageTemplate:* dans vos manifests.</p>
+            </div>
+          </div>
+        
+      </div>
+      
+      <div class="tab-panel" id="panel-console">
+        <h2 style="color:#569cd6;margin-bottom:20px;">🖥 Console</h2>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+            <h3 style="color:#4ec9b0;margin-bottom:16px;">🔍 Query</h3>
+            <div class="form-group">
+              <label>Pattern (lineage, V_, @alias, regex)</label>
+              <input type="text" id="queryInput" class="form-input" placeholder="Object:Method:* | V_* | @Walker">
+            </div>
+            <button class="btn-primary" onclick="runQuery()" style="margin-top:8px;">Exécuter</button>
+            <div id="queryResult" style="margin-top:16px;max-height:300px;overflow-y:auto;"></div>
+          </div>
+          
+          <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+            <h3 style="color:#dcdcaa;margin-bottom:16px;">✅ Test Règle</h3>
+            <div class="form-group">
+              <label>Cible (lineage, V_, @alias)</label>
+              <input type="text" id="ruleTarget" class="form-input" placeholder="Object:Method:SecondaryMethod:Walk">
+            </div>
+            <div class="form-group">
+              <label>Règle (ERK expression)</label>
+              <input type="text" id="ruleExpr" class="form-input" placeholder=".name HAS | .scan == 'pass' | NOT ISEMPTY(.children)">
+            </div>
+            <button class="btn-secondary" onclick="testRule()" style="margin-top:8px;">Tester</button>
+            <div id="ruleResult" style="margin-top:16px;font-size:24px;font-weight:bold;"></div>
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+          <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+            <h3 style="color:#c586c0;margin-bottom:16px;">📝 Résoudre</h3>
+            <div style="display:flex;gap:12px;">
+              <input type="text" id="resolveInput" class="form-input" placeholder="V_ObjectName | @Walker | Object:Method" style="flex:1;">
+              <button class="btn-primary" onclick="resolveValue()">Résoudre</button>
+            </div>
+            <div id="resolveResult" style="margin-top:16px;padding:12px;background:#1e1e1e;border-radius:4px;font-family:monospace;max-height:300px;overflow-y:auto;"></div>
+          </div>
+          
+          <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+            <h3 style="color:#6a9955;margin-bottom:16px;">🧮 ERK Eval</h3>
+            <div class="form-group">
+              <label>Expression ERK</label>
+              <input type="text" id="erkExpr" class="form-input" placeholder="AND(true, false) | IF(5 > 3, 'yes', 'no') | LENGTH('hello')">
+            </div>
+            <div class="form-group">
+              <label>Contexte (optionnel, JSON)</label>
+              <input type="text" id="erkContext" class="form-input" placeholder='{"name": "test", "value": 42}'>
+            </div>
+            <button class="btn-primary" onclick="evalErk()" style="margin-top:8px;">Évaluer</button>
+            <div id="erkResult" style="margin-top:16px;padding:12px;background:#1e1e1e;border-radius:4px;font-family:monospace;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+      <div class="right-sidebar" id="rightSidebar">
+        <div class="sidebar-toggle" onclick="toggleRightSidebar()">◀</div>
+        <div class="sidebar-content">
+          <div class="sidebar-section-title">Fichiers</div>
+          
+        </div>
+      </div>
+    
+  </div>
+  
+  <script>
+    try {
+    const vscode = acquireVsCodeApi();
+    const objects = [{"lineage":"Object","name":"Object","parent":"","attributes":{"name":"\"Object\"","description.FR":"\"\"","description.EN":"\"\"","elementList":"V_ObjectElementList"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":4,"alias":"Object"},{"lineage":"Object:Structure","name":"Structure","parent":"Object","attributes":{"name":"\"Structure\"","transversal":"true"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":12,"alias":"Structure"},{"lineage":"Object:Structure:Dict","name":"Dict","parent":"Object:Structure","attributes":{"name":"\"Dict\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":17,"alias":"StructureDict"},{"lineage":"Object:Structure:List","name":"List","parent":"Object:Structure","attributes":{"name":"\"List\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":21,"alias":"StructureList"},{"lineage":"Object:Structure:List:OrderedList","name":"OrderedList","parent":"Object:Structure:List","attributes":{"name":"\"OrderedList\"","sortRule":"V_SortRule"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":24,"alias":"StructureListOrderedList"},{"lineage":"Object:Structure:Element","name":"Element","parent":"Object:Structure","attributes":{"name":"\"Element\"","cardinality":"\"undefined\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":28,"alias":"StructureElement"},{"lineage":"Object:Attribute","name":"Attribute","parent":"Object","attributes":{"name":"\"Attribute\"","multiple":"\"undefined\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":34,"alias":"Attribute"},{"lineage":"Object:Attribute:ElementList","name":"ElementList","parent":"Object:Attribute","attributes":{"name":"\"ElementList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":38,"alias":"AttributeElementList"},{"lineage":"Object:Attribute:AttributeList","name":"AttributeList","parent":"Object:Attribute","attributes":{"name":"\"AttributeList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":42,"alias":"AttributeAttributeList"},{"lineage":"Object:Attribute:MethodList","name":"MethodList","parent":"Object:Attribute","attributes":{"name":"\"MethodList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":46,"alias":"AttributeMethodList"},{"lineage":"Object:Attribute:RuleList","name":"RuleList","parent":"Object:Attribute","attributes":{"name":"\"RuleList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":50,"alias":"AttributeRuleList"},{"lineage":"Object:Attribute:RelationList","name":"RelationList","parent":"Object:Attribute","attributes":{"name":"\"RelationList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":54,"alias":"AttributeRelationList"},{"lineage":"Object:Attribute:OptionList","name":"OptionList","parent":"Object:Attribute","attributes":{"name":"\"OptionList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":58,"alias":"AttributeOptionList"},{"lineage":"Object:Attribute:ChildList","name":"ChildList","parent":"Object:Attribute","attributes":{"name":"\"ChildList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":62,"alias":"AttributeChildList"},{"lineage":"Object:Attribute:Automated","name":"Automated","parent":"Object:Attribute","attributes":{"name":"\"Automated\"","automated":"true"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":66,"alias":"AttributeAutomated"},{"lineage":"Object:Method","name":"Method","parent":"Object","attributes":{"name":"\"Method\"","input":"V_MethodInput","output":"V_MethodOutput","hookBeforeList":"V_MethodHookBeforeList","hookAfterList":"V_MethodHookAfterList"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":72,"alias":"Method"},{"lineage":"Object:Method:CentralMethod","name":"CentralMethod","parent":"Object:Method","attributes":{"name":"\"CentralMethod\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":79,"alias":"MethodCentralMethod"},{"lineage":"Object:Method:CentralMethod:Create","name":"Create","parent":"Object:Method:CentralMethod","attributes":{"name":"\"Create\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":82,"alias":"MethodCentralMethodCreate"},{"lineage":"Object:Method:CentralMethod:Read","name":"Read","parent":"Object:Method:CentralMethod","attributes":{"name":"\"Read\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":85,"alias":"MethodCentralMethodRead"},{"lineage":"Object:Method:CentralMethod:Update","name":"Update","parent":"Object:Method:CentralMethod","attributes":{"name":"\"Update\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":88,"alias":"MethodCentralMethodUpdate"},{"lineage":"Object:Method:CentralMethod:Delete","name":"Delete","parent":"Object:Method:CentralMethod","attributes":{"name":"\"Delete\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":91,"alias":"MethodCentralMethodDelete"},{"lineage":"Object:Method:SecondaryMethod","name":"SecondaryMethod","parent":"Object:Method","attributes":{"name":"\"SecondaryMethod\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":94,"alias":"MethodSecondaryMethod"},{"lineage":"Object:Method:SecondaryMethod:Generate","name":"Generate","parent":"Object:Method:SecondaryMethod","attributes":{"name":"\"Generate\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":97,"alias":"MethodSecondaryMethodGenerate"},{"lineage":"Object:Method:SecondaryMethod:Validate","name":"Validate","parent":"Object:Method:SecondaryMethod","attributes":{"name":"\"Validate\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":101,"alias":"MethodSecondaryMethodValidate"},{"lineage":"Object:Method:Scenario","name":"Scenario","parent":"Object:Method","attributes":{"name":"\"Scenario\"","milestoneList":"V_ScenarioMilestoneList"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":104,"alias":"MethodScenario"},{"lineage":"Object:Method:Scenario:Step","name":"Step","parent":"Object:Method:Scenario","attributes":{"name":"\"Step\"","method":"V_StepMethod"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":108,"alias":"MethodScenarioStep"},{"lineage":"Object:Method:Scenario:Step:GetStep","name":"GetStep","parent":"Object:Method:Scenario:Step","attributes":{"name":"\"GetStep\"","order":"1"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":112,"alias":"ScenarioStepGetStep"},{"lineage":"Object:Method:Scenario:Step:ExecuteStep","name":"ExecuteStep","parent":"Object:Method:Scenario:Step","attributes":{"name":"\"ExecuteStep\"","order":"2"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":116,"alias":"ScenarioStepExecuteStep"},{"lineage":"Object:Method:Scenario:Step:ValidateStep","name":"ValidateStep","parent":"Object:Method:Scenario:Step","attributes":{"name":"\"ValidateStep\"","order":"3"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":120,"alias":"ScenarioStepValidateStep"},{"lineage":"Object:Method:Scenario:Step:RenderStep","name":"RenderStep","parent":"Object:Method:Scenario:Step","attributes":{"name":"\"RenderStep\"","order":"4"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":124,"alias":"ScenarioStepRenderStep"},{"lineage":"Object:Method:Scenario:Milestone","name":"Milestone","parent":"Object:Method:Scenario","attributes":{"name":"\"Milestone\"","order":"V_MilestoneOrder","stepList":"V_MilestoneStepList"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":128,"alias":"MethodScenarioMilestone"},{"lineage":"Object:Rule","name":"Rule","parent":"Object","attributes":{"name":"\"Rule\"","condition":"V_RuleCondition"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":135,"alias":"Rule"},{"lineage":"Object:Rule:ValidationRule","name":"ValidationRule","parent":"Object:Rule","attributes":{"name":"\"ValidationRule\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":139,"alias":"RuleValidationRule"},{"lineage":"Object:Rule:CreateRule","name":"CreateRule","parent":"Object:Rule","attributes":{"name":"\"CreateRule\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":142,"alias":"RuleCreateRule"},{"lineage":"Object:Rule:FormatRule","name":"FormatRule","parent":"Object:Rule","attributes":{"name":"\"FormatRule\"","pattern":"V_FormatPattern"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":145,"alias":"RuleFormatRule"},{"lineage":"Object:Relation","name":"Relation","parent":"Object","attributes":{"name":"\"Relation\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":151,"alias":"Relation"},{"lineage":"Object:Relation:InheritsFrom","name":"InheritsFrom","parent":"Object:Relation","attributes":{"name":"\"inherits_from\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":154,"alias":"RelationInheritsFrom"},{"lineage":"Object:Relation:DependsOn","name":"DependsOn","parent":"Object:Relation","attributes":{"name":"\"depends_on\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":157,"alias":"RelationDependsOn"},{"lineage":"Object:Relation:RelatedTo","name":"RelatedTo","parent":"Object:Relation","attributes":{"name":"\"related_to\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":160,"alias":"RelationRelatedTo"},{"lineage":"Object:Relation:In","name":"In","parent":"Object:Relation","attributes":{"name":"\"IN\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":163,"alias":"RelationIn"},{"lineage":"Object:Config","name":"Config","parent":"Object","attributes":{"name":"\"Config\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":168,"alias":"Config"},{"lineage":"Object:Config:Vector","name":"Vector","parent":"Object:Config","attributes":{"name":"\"Vector\"","automated":"true"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":171,"alias":"ConfigVector"},{"lineage":"Object:Config:Alias","name":"Alias","parent":"Object:Config","attributes":{"name":"\"Alias\"","automated":"true"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/seed/object.s.gev","line":175,"alias":"ConfigAlias"},{"lineage":"Object:Project","name":"Project","parent":"Object","attributes":{"name":"V_ProjectName","description":"V_ProjectDescription","version":"V_ProjectVersion"},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/manifest/project.m.gev","line":4,"alias":"Project"},{"lineage":"Object:Config:Vector:V_ObjectElementList","name":"V_ObjectElementList","parent":"Object:Config:Vector","attributes":{"name":"\"V_ObjectElementList\"","type":"\"query\"","method":"\"getMergedList\""},"source":"/Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/_INPUTS/EURKAI/FINAL1211/vector/core.v.gev","line":4,"alias":"ConfigVectorV_ObjectElementList"}];
+    const vectors = [{"name":"V_ObjectElementList","attributes":{"name":"\"V_ObjectElementList\"","type":"\"query\"","method":"\"getMergedList\""},"resolved":""}];
+    const vectorMap = {"V_ObjectElementList":""};
+    const treeData = {"lineage":"Object","name":"Object","alias":"Object","children":[{"lineage":"Object:Structure","name":"Structure","alias":"Structure","children":[{"lineage":"Object:Structure:Dict","name":"Dict","alias":"StructureDict","children":[]},{"lineage":"Object:Structure:List","name":"List","alias":"StructureList","children":[{"lineage":"Object:Structure:List:OrderedList","name":"OrderedList","alias":"StructureListOrderedList","children":[]}]},{"lineage":"Object:Structure:Element","name":"Element","alias":"StructureElement","children":[]}]},{"lineage":"Object:Attribute","name":"Attribute","alias":"Attribute","children":[{"lineage":"Object:Attribute:ElementList","name":"ElementList","alias":"AttributeElementList","children":[]},{"lineage":"Object:Attribute:AttributeList","name":"AttributeList","alias":"AttributeAttributeList","children":[]},{"lineage":"Object:Attribute:MethodList","name":"MethodList","alias":"AttributeMethodList","children":[]},{"lineage":"Object:Attribute:RuleList","name":"RuleList","alias":"AttributeRuleList","children":[]},{"lineage":"Object:Attribute:RelationList","name":"RelationList","alias":"AttributeRelationList","children":[]},{"lineage":"Object:Attribute:OptionList","name":"OptionList","alias":"AttributeOptionList","children":[]},{"lineage":"Object:Attribute:ChildList","name":"ChildList","alias":"AttributeChildList","children":[]},{"lineage":"Object:Attribute:Automated","name":"Automated","alias":"AttributeAutomated","children":[]}]},{"lineage":"Object:Method","name":"Method","alias":"Method","children":[{"lineage":"Object:Method:CentralMethod","name":"CentralMethod","alias":"MethodCentralMethod","children":[{"lineage":"Object:Method:CentralMethod:Create","name":"Create","alias":"MethodCentralMethodCreate","children":[]},{"lineage":"Object:Method:CentralMethod:Read","name":"Read","alias":"MethodCentralMethodRead","children":[]},{"lineage":"Object:Method:CentralMethod:Update","name":"Update","alias":"MethodCentralMethodUpdate","children":[]},{"lineage":"Object:Method:CentralMethod:Delete","name":"Delete","alias":"MethodCentralMethodDelete","children":[]}]},{"lineage":"Object:Method:SecondaryMethod","name":"SecondaryMethod","alias":"MethodSecondaryMethod","children":[{"lineage":"Object:Method:SecondaryMethod:Generate","name":"Generate","alias":"MethodSecondaryMethodGenerate","children":[]},{"lineage":"Object:Method:SecondaryMethod:Validate","name":"Validate","alias":"MethodSecondaryMethodValidate","children":[]}]},{"lineage":"Object:Method:Scenario","name":"Scenario","alias":"MethodScenario","children":[{"lineage":"Object:Method:Scenario:Step","name":"Step","alias":"MethodScenarioStep","children":[{"lineage":"Object:Method:Scenario:Step:GetStep","name":"GetStep","alias":"ScenarioStepGetStep","children":[]},{"lineage":"Object:Method:Scenario:Step:ExecuteStep","name":"ExecuteStep","alias":"ScenarioStepExecuteStep","children":[]},{"lineage":"Object:Method:Scenario:Step:ValidateStep","name":"ValidateStep","alias":"ScenarioStepValidateStep","children":[]},{"lineage":"Object:Method:Scenario:Step:RenderStep","name":"RenderStep","alias":"ScenarioStepRenderStep","children":[]}]},{"lineage":"Object:Method:Scenario:Milestone","name":"Milestone","alias":"MethodScenarioMilestone","children":[]}]}]},{"lineage":"Object:Rule","name":"Rule","alias":"Rule","children":[{"lineage":"Object:Rule:ValidationRule","name":"ValidationRule","alias":"RuleValidationRule","children":[]},{"lineage":"Object:Rule:CreateRule","name":"CreateRule","alias":"RuleCreateRule","children":[]},{"lineage":"Object:Rule:FormatRule","name":"FormatRule","alias":"RuleFormatRule","children":[]}]},{"lineage":"Object:Relation","name":"Relation","alias":"Relation","children":[{"lineage":"Object:Relation:InheritsFrom","name":"InheritsFrom","alias":"RelationInheritsFrom","children":[]},{"lineage":"Object:Relation:DependsOn","name":"DependsOn","alias":"RelationDependsOn","children":[]},{"lineage":"Object:Relation:RelatedTo","name":"RelatedTo","alias":"RelationRelatedTo","children":[]},{"lineage":"Object:Relation:In","name":"In","alias":"RelationIn","children":[]}]},{"lineage":"Object:Config","name":"Config","alias":"Config","children":[{"lineage":"Object:Config:Vector","name":"Vector","alias":"ConfigVector","children":[{"lineage":"Object:Config:Vector:V_ObjectElementList","name":"V_ObjectElementList","alias":"ConfigVectorV_ObjectElementList","children":[]}]},{"lineage":"Object:Config:Alias","name":"Alias","alias":"ConfigAlias","children":[]}]},{"lineage":"Object:Project","name":"Project","alias":"Project","children":[]}]};
+    const hasProject = true;
+    
+    // DEBUG: Log all panels on load
+    console.log('[EURKAI] Cockpit loaded. hasProject:', hasProject);
+    var allPanels = document.querySelectorAll('.tab-panel');
+    console.log('[EURKAI] Found', allPanels.length, 'panels:');
+    allPanels.forEach(function(p) { console.log('  -', p.id, p.className); });
+    var allTabs = document.querySelectorAll('.tab');
+    console.log('[EURKAI] Found', allTabs.length, 'tabs:');
+    allTabs.forEach(function(t) { console.log('  -', t.dataset.tab); });
+    
+    function resolveVec(v) {
+      if (typeof v === 'string' && v.startsWith('V_') && vectorMap[v]) {
+        return vectorMap[v];
+      }
+      return v;
+    }
+    
+    document.querySelectorAll('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var panelId = 'panel-' + tab.dataset.tab;
+        var panel = document.getElementById(panelId);
+        console.log('[EURKAI] Tab clicked:', tab.dataset.tab, 'Panel found:', !!panel);
+        if (!panel) {
+          console.error('[EURKAI] Panel not found:', panelId);
+          return;
+        }
+        document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        panel.classList.add('active');
+        console.log('[EURKAI] Panel activated:', panelId, 'Classes:', panel.className);
+      });
+    });
+    
+    function selectProject() { vscode.postMessage({ command: 'selectProject' }); }
+    function toggleRightSidebar() {
+      var s = document.getElementById('rightSidebar');
+      s.classList.toggle('collapsed');
+      s.querySelector('.sidebar-toggle').textContent = s.classList.contains('collapsed') ? '▶' : '◀';
+    }
+    function toggleAccordion(h) {
+      var c = h.nextElementSibling;
+      c.classList.toggle('open');
+      h.querySelector('span').textContent = c.classList.contains('open') ? '▲' : '▼';
+    }
+    
+    if (hasProject) {
+      function renderTree(node, container) {
+        var li = document.createElement('li');
+        var hasChildren = node.children && node.children.length > 0;
+        var nodeEl = document.createElement('div');
+        nodeEl.className = 'tree-node';
+        nodeEl.innerHTML = '<span class="tree-toggle">' + (hasChildren ? '▶' : '') + '</span><span class="icon">◇</span><span class="name">' + node.name + '</span>' + (hasChildren ? '<span class="count">(' + node.children.length + ')</span>' : '');
+        nodeEl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          document.querySelectorAll('.tree-node').forEach(function(n) { n.classList.remove('selected'); });
+          nodeEl.classList.add('selected');
+          selectObject(node.lineage);
+          if (hasChildren) {
+            var ul = li.querySelector('ul');
+            if (ul) { ul.style.display = ul.style.display === 'none' ? 'block' : 'none'; nodeEl.querySelector('.tree-toggle').textContent = ul.style.display === 'none' ? '▶' : '▼'; }
+          }
+        });
+        li.appendChild(nodeEl);
+        if (hasChildren) { var ul = document.createElement('ul'); ul.style.display = 'none'; node.children.forEach(function(c) { renderTree(c, ul); }); li.appendChild(ul); }
+        container.appendChild(li);
+      }
+      var treeContainer = document.getElementById('tree');
+      if (treeContainer) { var ul = document.createElement('ul'); renderTree(treeData, ul); treeContainer.appendChild(ul); }
+      var searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          var q = e.target.value.toLowerCase();
+          document.querySelectorAll('.tree-node').forEach(function(n) { n.style.display = n.querySelector('.name').textContent.toLowerCase().includes(q) ? 'flex' : 'none'; });
+        });
+      }
+    }
+    
+    function selectObject(lineage) {
+      var obj = objects.find(function(o) { return o.lineage === lineage; });
+      var detail = document.getElementById('objectDetail');
+      if (!obj || !detail) return;
+      function strip(v) { return typeof v === 'string' && v.startsWith('"') ? v.slice(1, -1) : v; }
+      function isVec(v) { return typeof v === 'string' && v.startsWith('V_'); }
+      var allAttrs = [];
+      for (var k in obj.attributes) { 
+        var v = strip(obj.attributes[k]); 
+        var resolved = isVec(v) ? resolveVec(v) : v;
+        allAttrs.push({ key: k, value: v, resolved: resolved, isVector: isVec(v), source: 'owned' }); 
+      }
+      var pL = obj.parent;
+      while (pL) { 
+        var p = objects.find(function(o) { return o.lineage === pL; }); 
+        if (p && p.attributes) { 
+          for (var k2 in p.attributes) { 
+            if (!allAttrs.some(function(a) { return a.key === k2; })) { 
+              var v2 = strip(p.attributes[k2]); 
+              var resolved2 = isVec(v2) ? resolveVec(v2) : v2;
+              allAttrs.push({ key: k2, value: v2, resolved: resolved2, isVector: isVec(v2), source: p.name }); 
+            } 
+          } 
+        } 
+        pL = p ? p.parent : ''; 
+      }
+      var attrsHtml = '';
+      if (allAttrs.length) {
+        attrsHtml = '<table class="attrs-table"><tbody>';
+        allAttrs.forEach(function(a) { 
+          var displayVal = a.isVector ? a.resolved : a.value;
+          var tooltip = a.isVector ? ' title="' + a.value + '"' : '';
+          var valClass = a.isVector ? 'vector-value' : 'raw-value';
+          if (a.isVector && !a.resolved) { displayVal = a.value; valClass = 'vector-unresolved'; }
+          attrsHtml += '<tr><th>' + a.key + '</th><td><span class="' + valClass + '"' + tooltip + '>' + displayVal + '</span>' + (a.source !== 'owned' ? '<span class="from">(' + a.source + ')</span>' : '<button class="edit-btn" onclick="editAttr(\'' + obj.lineage + '\',\'' + a.key + '\')">✎</button>') + '</td></tr>'; 
+        });
+        attrsHtml += '</tbody></table>';
+      } else { attrsHtml = '<p class="empty">Aucun</p>'; }
+      
+      // Relations
+      var relations = obj.relations || [];
+      var relationsHtml = '';
+      if (relations.length) {
+        relationsHtml = '<table class="attrs-table"><tbody>';
+        relations.forEach(function(r) {
+          relationsHtml += '<tr><th>' + r.type + '</th><td><span class="relation-target" onclick="selectObject(\'' + r.target + '\')">' + r.target + '</span></td></tr>';
+        });
+        relationsHtml += '</tbody></table>';
+      } else { relationsHtml = '<p class="empty">Aucune</p>'; }
+      
+      var children = objects.filter(function(o) { return o.parent === obj.lineage; });
+      var childrenHtml = children.length ? children.map(function(c) { return '<div class="source-file" onclick="selectObject(\'' + c.lineage + '\')">' + c.name + '</div>'; }).join('') : '<p class="empty">Aucun</p>';
+      detail.innerHTML = '<div class="object-header"><div><h2>' + obj.name + '<span class="object-alias">' + obj.alias + '</span></h2></div><div class="object-actions"><button class="action-btn" onclick="gotoObject(\'' + obj.lineage + '\')">📄</button><button class="action-btn" onclick="deleteObj(\'' + obj.lineage + '\')">🗑</button></div></div><div class="object-lineage">' + obj.lineage + '</div><div class="object-source">' + (obj.source ? obj.source.split('/').slice(-2).join('/') : '') + '</div><div class="section"><div class="section-header" onclick="toggleSection(this)"><span class="section-title">ATTRIBUTS (' + allAttrs.length + ')</span><span class="section-toggle">▶</span></div><div class="section-content collapsed">' + attrsHtml + '<button class="add-btn" style="margin-top:8px" onclick="showAddAttr(\'' + obj.lineage + '\')">+ Ajouter</button></div></div><div class="section"><div class="section-header" onclick="toggleSection(this)"><span class="section-title">RELATIONS (' + relations.length + ')</span><span class="section-toggle">▶</span></div><div class="section-content collapsed">' + relationsHtml + '</div></div><div class="section"><div class="section-header" onclick="toggleSection(this)"><span class="section-title">ENFANTS (' + children.length + ')</span><span class="section-toggle">▶</span></div><div class="section-content collapsed">' + childrenHtml + '<button class="add-btn" style="margin-top:8px" onclick="showCreateType(\'' + obj.lineage + '\')">+ Créer</button></div></div>';
+    }
+    function toggleSection(h) { var c = h.nextElementSibling; c.classList.toggle('collapsed'); h.querySelector('.section-toggle').textContent = c.classList.contains('collapsed') ? '▶' : '▼'; }
+    function gotoObject(l) { vscode.postMessage({ command: 'gotoObject', lineage: l }); }
+    function deleteObj(l) { if (confirm('Supprimer ' + l + ' ?')) vscode.postMessage({ command: 'deleteObject', lineage: l }); }
+    function editAttr(l, k) { var v = prompt('Nouvelle valeur:'); if (v !== null) vscode.postMessage({ command: 'updateAttribute', lineage: l, key: k, value: v }); }
+    function showAddAttr(l) { var k = prompt('Attribut:'); if (!k) return; var v = prompt('Valeur:'); if (v !== null) vscode.postMessage({ command: 'addAttribute', lineage: l, key: k, value: v }); }
+    function showCreateType(p) { var n = prompt('Nom (PascalCase):'); if (!n || !/^[A-Z][A-Za-z0-9]*$/.test(n)) return; vscode.postMessage({ command: 'createType', parent: p, name: n }); }
+    function openSourceFile(f) { vscode.postMessage({ command: 'openSourceFile', file: f }); }
+    function previewTheme(f) { vscode.postMessage({ command: 'previewTheme', file: f }); }
+    function createAlias() { var n = document.getElementById('aliasName').value.trim(); var t = document.getElementById('aliasTarget').value.trim(); var q = document.getElementById('aliasQuery').value.trim(); if (!n) return alert('Nom requis'); vscode.postMessage({ command: 'createAlias', aliasName: n, target: t, query: q }); }
+    
+    // Radio buttons scan - afficher/masquer le champ custom
+    document.querySelectorAll('input[name="walkerScan"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        var customGroup = document.getElementById('customScanGroup');
+        if (customGroup) {
+          customGroup.style.display = this.value === 'other' ? 'block' : 'none';
+        }
+      });
+    });
+    
+    function getSelectedScan() {
+      var selected = document.querySelector('input[name="walkerScan"]:checked');
+      if (!selected) return 'pass';
+      if (selected.value === 'other') {
+        return document.getElementById('walkerCustomScan').value.trim() || 'pass';
+      }
+      return selected.value;
+    }
+    
+    function runWalker(action) {
+      console.log('[EURKAI] runWalker called with action:', action);
+      
+      var dict = document.getElementById('walkerDict').value.trim();
+      var scenario = getSelectedScan();
+      var direction = document.getElementById('walkerDirection').value;
+      var depth = parseInt(document.getElementById('walkerDepth').value) || -1;
+      
+      console.log('[EURKAI] dict:', dict, 'scenario:', scenario, 'direction:', direction, 'depth:', depth);
+      
+      if (!dict) {
+        alert('Entrez un objet (point d\'entrée)');
+        return;
+      }
+      
+      // Mode test = dry run
+      var mode = action; // 'run' ou 'test'
+      
+      // Mise à jour visuelle
+      var statsDiv = document.getElementById('walkerQuickStats');
+      if (statsDiv) {
+        statsDiv.innerHTML = '<span style="color:#569cd6;">⏳ ' + scenario + ' sur ' + dict.split(':').pop() + '...</span>';
+      }
+      
+      console.log('[EURKAI] Sending walk message...');
+      vscode.postMessage({ command: 'walk', dict: dict, scenario: scenario, direction: direction, depth: depth, mode: mode });
+      console.log('[EURKAI] Message sent');
+    }
+    
+    function clearWalkerReport() {
+      var reportDiv = document.getElementById('walkerReport');
+      if (reportDiv) {
+        reportDiv.innerHTML = '<p class="empty">Lancez un Walk pour voir le rapport</p>';
+      }
+      var statsDiv = document.getElementById('walkerQuickStats');
+      if (statsDiv) {
+        statsDiv.innerHTML = '<span style="color:#4ec9b0;">--</span>';
+      }
+    }
+    
+    function exportWalkerReport() {
+      vscode.postMessage({ command: 'exportWalkerReport' });
+    }
+    
+    window.addEventListener('message', function(event) {
+      var msg = event.data;
+      
+      if (msg.command === 'generateResult') {
+        var resultDiv = document.getElementById('generateResult');
+        if (!resultDiv) return;
+        if (msg.success) {
+          resultDiv.innerHTML = '<div style="background:#1e3a1e;padding:12px;border-radius:4px;border:1px solid #4ec9b0;">' +
+            '<p style="color:#4ec9b0;margin:0 0 8px 0;">✅ Généré avec succès!</p>' +
+            '<p style="color:#d4d4d4;margin:0 0 4px 0;font-size:12px;">📄 ' + msg.path + '</p>' +
+            '<p style="color:#808080;margin:0;font-size:11px;">' + msg.stats.elements + ' éléments • ' + msg.stats.size + ' bytes</p>' +
+            '</div>';
+        } else {
+          resultDiv.innerHTML = '<div style="background:#3a1e1e;padding:12px;border-radius:4px;border:1px solid #f48771;">' +
+            '<p style="color:#f48771;margin:0;">❌ ' + msg.error + '</p></div>';
+        }
+        return;
+      }
+      
+      if (msg.command === 'staticSiteResult') {
+        var resultDiv = document.getElementById('generateResult');
+        if (!resultDiv) return;
+        if (msg.success) {
+          var pagesList = msg.pages.map(function(p) { return '<li style="color:#d4d4d4;font-size:12px;">' + p.slug + ' → ' + p.file + '</li>'; }).join('');
+          resultDiv.innerHTML = '<div style="background:#1e3a1e;padding:12px;border-radius:4px;border:1px solid #4ec9b0;">' +
+            '<p style="color:#4ec9b0;margin:0 0 8px 0;">✅ Site statique généré!</p>' +
+            '<p style="color:#d4d4d4;margin:0 0 8px 0;font-size:12px;">📦 ' + msg.pages.length + ' pages dans ' + msg.outputDir + '</p>' +
+            '<ul style="margin:0;padding-left:20px;">' + pagesList + '</ul>' +
+            '</div>';
+        } else {
+          resultDiv.innerHTML = '<div style="background:#3a1e1e;padding:12px;border-radius:4px;border:1px solid #f48771;">' +
+            '<p style="color:#f48771;margin:0;">❌ ' + msg.error + '</p></div>';
+        }
+        return;
+      }
+      
+      if (msg.command === 'deployResult') {
+        var resultDiv = document.getElementById('deployResult');
+        if (!resultDiv) return;
+        if (msg.success) {
+          var content = '<p style="color:#4ec9b0;margin:0 0 8px 0;">✅ ' + msg.website + ' déployé!</p>' +
+            '<p style="color:#d4d4d4;margin:0 0 4px 0;font-size:12px;">Mode: <strong>' + msg.mode + '</strong></p>';
+          
+          if (msg.pages) {
+            content += '<p style="color:#d4d4d4;margin:0;font-size:12px;">📦 ' + msg.pages.length + ' pages dans ' + msg.outputDir + '</p>';
+          }
+          if (msg.file) {
+            content += '<p style="color:#d4d4d4;margin:0;font-size:12px;">📄 ' + msg.file + '</p>';
+          }
+          if (msg.instructions) {
+            content += '<p style="color:#569cd6;margin:8px 0 0 0;font-size:11px;">' + msg.instructions + '</p>';
+          }
+          
+          resultDiv.innerHTML = '<div style="background:#1e3a1e;padding:12px;border-radius:4px;border:1px solid #4ec9b0;">' + content + '</div>';
+        } else {
+          resultDiv.innerHTML = '<div style="background:#3a1e1e;padding:12px;border-radius:4px;border:1px solid #f48771;">' +
+            '<p style="color:#f48771;margin:0;">❌ ' + msg.error + '</p></div>';
+        }
+        return;
+      }
+      
+      if (msg.command === 'walkResult') {
+        var report = document.getElementById('walkerReport');
+        var statsDiv = document.getElementById('walkerQuickStats');
+        if (!report) return;
+        var r = msg.result;
+        
+        // Mise à jour du quick stats
+        if (statsDiv) {
+          statsDiv.innerHTML = 
+            '<span style="color:#d4d4d4;">' + r.total + ' obj</span> • ' +
+            '<span style="color:#4ec9b0;">' + r.pass + ' pass</span> • ' +
+            '<span style="color:#dcdcaa;">' + (r.ghost || 0) + ' ghost</span> • ' +
+            '<span style="color:#569cd6;">' + r.ok + ' ok</span> • ' +
+            '<span style="color:#f48771;">' + r.errors + ' err</span>';
+        }
+        
+        var html = '<div class="walker-summary">';
+        html += '<div><strong>' + r.total + '</strong> objets</div>';
+        html += '<div style="color:#4ec9b0;"><strong>' + r.pass + '</strong> pass</div>';
+        html += '<div style="color:#dcdcaa;"><strong>' + (r.ghost || 0) + '</strong> ghost</div>';
+        html += '<div style="color:#569cd6;"><strong>' + r.ok + '</strong> ok</div>';
+        html += '<div style="color:#f48771;"><strong>' + r.errors + '</strong> erreurs</div>';
+        html += '<div style="color:#808080;"><strong>' + r.skip + '</strong> skip</div>';
+        html += '</div>';
+        
+        // Erreurs
+        var errorResults = r.results.filter(function(x) { return x.result === 'error'; });
+        if (errorResults.length > 0) {
+          html += '<h3 style="color:#f48771;margin:16px 0 12px;">✗ Erreurs (' + errorResults.length + ')</h3>';
+          errorResults.forEach(function(e) {
+            html += '<div class="walker-error">';
+            html += '<div class="walker-error-title">' + e.lineage + ' <span style="color:#808080;font-weight:normal;">scan: ' + e.scan + '</span></div>';
+            if (e.details) {
+              e.details.forEach(function(d) {
+                html += '<div class="walker-error-detail">└─ ' + d + '</div>';
+              });
+            }
+            html += '</div>';
+          });
+        }
+        
+        // Ghost
+        var ghostResults = r.results.filter(function(x) { return x.result === 'ghost'; });
+        if (ghostResults.length > 0) {
+          html += '<details style="margin-top:16px;"><summary style="cursor:pointer;color:#dcdcaa;">👻 Ghost (' + ghostResults.length + ')</summary>';
+          html += '<div style="margin-top:8px;color:#808080;font-size:12px;">';
+          ghostResults.forEach(function(g) {
+            html += '<div style="padding:2px 0;">' + g.lineage + '</div>';
+          });
+          html += '</div></details>';
+        }
+        
+        // Pass
+        var passResults = r.results.filter(function(x) { return x.result === 'pass'; });
+        if (passResults.length > 0) {
+          html += '<details style="margin-top:16px;"><summary style="cursor:pointer;color:#4ec9b0;">✓ Pass (' + passResults.length + ')</summary>';
+          html += '<div style="margin-top:8px;color:#808080;font-size:12px;">';
+          passResults.forEach(function(p) {
+            html += '<div style="padding:2px 0;">' + p.lineage + '</div>';
+          });
+          html += '</div></details>';
+        }
+        
+        // OK
+        var okResults = r.results.filter(function(x) { return x.result === 'ok'; });
+        if (okResults.length > 0) {
+          html += '<details style="margin-top:16px;"><summary style="cursor:pointer;color:#569cd6;">✓ OK (' + okResults.length + ')</summary>';
+          html += '<div style="margin-top:8px;color:#808080;font-size:12px;">';
+          okResults.forEach(function(o) {
+            html += '<div style="padding:2px 0;">' + o.lineage + ' <span style="color:#555;">(' + o.scan + ')</span></div>';
+          });
+          html += '</div></details>';
+        }
+        
+        html += '<div style="margin-top:16px;display:flex;gap:12px;">';
+        html += '<button class="btn-secondary" onclick="exportWalkerReport()">📄 Exporter</button>';
+        html += '</div>';
+        report.innerHTML = html;
+      }
+    });
+    function exportWalkerReport() { vscode.postMessage({ command: 'exportWalkerReport' }); }
+    function openReport(file) { vscode.postMessage({ command: 'openReport', file: file }); }
+    
+    // Resizer
+    var resizer = document.getElementById('resizer');
+    var sidebar = document.getElementById('sidebar');
+    if (resizer && sidebar) {
+      var isResizing = false;
+      resizer.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        resizer.classList.add('active');
+      });
+      document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+        var newWidth = e.clientX;
+        if (newWidth > 150 && newWidth < 600) {
+          sidebar.style.width = newWidth + 'px';
+        }
+      });
+      document.addEventListener('mouseup', function() {
+        isResizing = false;
+        if (resizer) resizer.classList.remove('active');
+      });
+    }
+    
+    // Autocomplete - méthodes dynamiques depuis le store
+    var allLineages = objects.map(function(o) { return { value: o.lineage, type: 'lineage' }; });
+    var allVectors = vectors.map(function(v) { return { value: v.name, type: 'vector' }; });
+    var methods = [];
+    var allMethods = methods.map(function(m) { return { value: m.scan, type: 'method', name: m.name }; });
+    var allItems = allLineages.concat(allVectors).concat(allMethods);
+    
+    document.querySelectorAll('.autocomplete-input').forEach(function(input) {
+      var list = input.nextElementSibling;
+      if (!list) return;
+      
+      input.addEventListener('focus', function() { showAutocomplete(input, list); });
+      input.addEventListener('input', function() { showAutocomplete(input, list); });
+      input.addEventListener('blur', function() { setTimeout(function() { list.classList.remove('show'); }, 200); });
+      
+      function showAutocomplete(inp, lst) {
+        var val = inp.value.toLowerCase();
+        var type = inp.dataset.type;
+        var items = type === 'method' ? allMethods : (type === 'all' ? allLineages.concat(allVectors) : allItems);
+        var filtered = items.filter(function(it) { return it.value.toLowerCase().includes(val); }).slice(0, 20);
+        
+        if (filtered.length === 0) { lst.classList.remove('show'); return; }
+        
+        lst.innerHTML = filtered.map(function(it) {
+          return '<div class="autocomplete-item" data-value="' + it.value + '">' + it.value + '<span class="type">' + it.type + '</span></div>';
+        }).join('');
+        lst.classList.add('show');
+        
+        lst.querySelectorAll('.autocomplete-item').forEach(function(item) {
+          item.addEventListener('mousedown', function() {
+            inp.value = item.dataset.value;
+            lst.classList.remove('show');
+          });
+        });
+      }
+    });
+    
+    // Open HTML preview
+    function openHtmlPreview() { vscode.postMessage({ command: 'openHtmlPreview' }); }
+    function refreshProject() { vscode.postMessage({ command: 'refreshProject' }); }
+    
+    // Template generation
+    function selectTemplate(lineage) {
+      document.getElementById('templateSelect').value = lineage;
+      updateOutputName();
+    }
+    
+    function updateOutputName() {
+      var sel = document.getElementById('templateSelect');
+      var name = sel.value ? sel.value.split(':').pop().toLowerCase() : '';
+      document.getElementById('outputFileName').value = name ? name + '.html' : '';
+    }
+    
+    function generateTemplate() {
+      var template = document.getElementById('templateSelect').value;
+      var output = document.getElementById('outputFileName').value.trim();
+      var resultDiv = document.getElementById('generateResult');
+      
+      if (!template) {
+        resultDiv.innerHTML = '<p style="color:#f48771;">❌ Sélectionnez un template</p>';
+        return;
+      }
+      if (!output) output = template.split(':').pop().toLowerCase() + '.html';
+      if (!output.endsWith('.html')) output += '.html';
+      
+      resultDiv.innerHTML = '<p style="color:#569cd6;">⏳ Génération en cours...</p>';
+      vscode.postMessage({ command: 'generateTemplate', template: template, output: output });
+    }
+    
+    function generateStaticSite() {
+      var resultDiv = document.getElementById('generateResult');
+      resultDiv.innerHTML = '<p style="color:#569cd6;">⏳ Génération du site statique...</p>';
+      vscode.postMessage({ command: 'generateStaticSite' });
+    }
+    
+    function deployWebsite() {
+      var website = document.getElementById('websiteSelect').value;
+      var resultDiv = document.getElementById('deployResult');
+      
+      if (!website) {
+        resultDiv.innerHTML = '<p style="color:#f48771;">❌ Sélectionnez un Website</p>';
+        return;
+      }
+      
+      resultDiv.innerHTML = '<p style="color:#569cd6;">⏳ Déploiement en cours...</p>';
+      vscode.postMessage({ command: 'deployWebsite', website: website });
+    }
+    
+    function selectWebsite(lineage) {
+      document.getElementById('websiteSelect').value = lineage;
+      updateWebsiteInfo();
+      deployWebsite();
+    }
+    
+    function updateWebsiteInfo() {
+      var select = document.getElementById('websiteSelect');
+      var infoDiv = document.getElementById('websiteInfo');
+      var contentDiv = document.getElementById('websiteInfoContent');
+      
+      if (!select.value) {
+        infoDiv.style.display = 'none';
+        return;
+      }
+      
+      var obj = objects.find(function(o) { return o.lineage === select.value; });
+      if (obj && obj.attributes) {
+        var mode = obj.attributes.navigationMode || 'spa';
+        var domain = obj.attributes.domain || '-';
+        var template = obj.attributes.template || '-';
+        contentDiv.innerHTML = 
+          '<div style="color:#569cd6;">Mode: <strong>' + mode + '</strong></div>' +
+          '<div style="color:#808080;font-size:11px;">Domain: ' + domain + '</div>' +
+          '<div style="color:#808080;font-size:11px;">Template: ' + template.split(':').pop() + '</div>';
+        infoDiv.style.display = 'block';
+      }
+    }
+    
+    // Console - Query
+    function runQuery() {
+      var pattern = document.getElementById('queryInput').value.trim();
+      var resultDiv = document.getElementById('queryResult');
+      if (!pattern) { resultDiv.innerHTML = '<p class="empty">Entrez un pattern</p>'; return; }
+      
+      var results = [];
+      
+      // Pattern avec wildcard *
+      if (pattern.includes('*')) {
+        var regex = new RegExp('^' + pattern.split('*').join('.*') + '$');
+        objects.forEach(function(obj) {
+          if (regex.test(obj.lineage)) results.push(obj.lineage);
+        });
+        vectors.forEach(function(vec) {
+          if (regex.test(vec.name)) results.push(vec.name);
+        });
+      }
+      // Vecteur V_
+      else if (pattern.startsWith('V_')) {
+        vectors.forEach(function(vec) {
+          if (vec.name.includes(pattern)) results.push(vec.name);
+        });
+      }
+      // Alias @
+      else if (pattern.startsWith('@')) {
+        var aliasName = pattern.substring(1);
+        objects.forEach(function(obj) {
+          if (obj.alias && obj.alias.includes(aliasName)) results.push(obj.lineage + ' (@' + obj.alias + ')');
+        });
+      }
+      // Lineage contient
+      else {
+        objects.forEach(function(obj) {
+          if (obj.lineage.includes(pattern)) results.push(obj.lineage);
+        });
+      }
+      
+      if (results.length === 0) {
+        resultDiv.innerHTML = '<p class="empty">Aucun résultat</p>';
+      } else {
+        resultDiv.innerHTML = '<p style="color:#808080;margin-bottom:8px;">' + results.length + ' résultat(s)</p>' +
+          results.slice(0, 50).map(function(r) { return '<div style="padding:4px 0;border-bottom:1px solid #3c3c3c;font-family:monospace;font-size:12px;">' + r + '</div>'; }).join('') +
+          (results.length > 50 ? '<p style="color:#808080;margin-top:8px;">... et ' + (results.length - 50) + ' autres</p>' : '');
+      }
+    }
+    
+    // Console - Test Rule
+    function testRule() {
+      var target = document.getElementById('ruleTarget').value.trim();
+      var expr = document.getElementById('ruleExpr').value.trim();
+      var resultDiv = document.getElementById('ruleResult');
+      
+      if (!target || !expr) { resultDiv.innerHTML = '<span style="color:#808080;">?</span>'; return; }
+      
+      // Résoudre la cible
+      var obj = null;
+      if (target.startsWith('V_')) {
+        obj = vectors.find(function(v) { return v.name === target; });
+      } else if (target.startsWith('@')) {
+        var aliasName = target.substring(1);
+        obj = objects.find(function(o) { return o.alias === aliasName; });
+      } else {
+        obj = objects.find(function(o) { return o.lineage === target; });
+      }
+      
+      if (!obj) { resultDiv.innerHTML = '<span style="color:#f48771;">❌ Cible non trouvée</span>'; return; }
+      
+      // Evaluer la règle
+      var result = false;
+      var details = '';
+      
+      // .attr HAS (attribut existe)
+      if (expr.includes(' HAS')) {
+        var attr = expr.replace(' HAS', '').replace('.', '').trim();
+        result = obj.attributes && obj.attributes[attr] !== undefined;
+        details = '.' + attr + ' = ' + (result ? obj.attributes[attr] : 'undefined');
+      }
+      // .attr = value
+      else if (expr.includes(' = ')) {
+        var parts = expr.split(' = ');
+        var attr = parts[0].replace('.', '').trim();
+        var expected = parts[1].trim();
+        var actual = obj.attributes ? obj.attributes[attr] : undefined;
+        if (actual) actual = actual.replace(/^"|"$/g, '');
+        result = actual === expected;
+        details = '.' + attr + ' = ' + (actual || 'undefined') + ' (attendu: ' + expected + ')';
+      }
+      // IN V_List
+      else if (expr.startsWith('IN ')) {
+        var listName = expr.replace('IN ', '').trim();
+        var listVec = vectors.find(function(v) { return v.name === listName; });
+        if (listVec && listVec.attributes && listVec.attributes.default) {
+          var list = listVec.attributes.default.replace(/^"|"$/g, '');
+          result = list.includes(obj.lineage) || list.includes(obj.name);
+          details = 'Liste: ' + list;
+        } else {
+          details = 'Liste ' + listName + ' non trouvée';
+        }
+      }
+      // lineage pattern (MATCH)
+      else if (expr.startsWith('MATCH ')) {
+        var pattern = expr.replace('MATCH ', '').trim();
+        var regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
+        result = regex.test(obj.lineage);
+        details = obj.lineage + ' match ' + pattern;
+      }
+      else {
+        details = 'Syntaxe non reconnue';
+      }
+      
+      resultDiv.innerHTML = result ? 
+        '<span style="color:#4ec9b0;">✓ TRUE</span><div style="font-size:12px;color:#808080;margin-top:8px;">' + details + '</div>' :
+        '<span style="color:#f48771;">✗ FALSE</span><div style="font-size:12px;color:#808080;margin-top:8px;">' + details + '</div>';
+    }
+    
+    // Console - Resolve
+    function resolveValue() {
+      var input = document.getElementById('resolveInput').value.trim();
+      var resultDiv = document.getElementById('resolveResult');
+      
+      if (!input) { resultDiv.innerHTML = '<span style="color:#808080;">Entrez une valeur</span>'; return; }
+      
+      var result = '';
+      var obj = null;
+      
+      // Vecteur V_
+      if (input.startsWith('V_')) {
+        var vec = vectors.find(function(v) { return v.name === input; });
+        if (vec && vec.attributes) {
+          result = '<div style="color:#4ec9b0;font-weight:bold;margin-bottom:8px;">📐 VECTEUR</div>';
+          result += '<strong>Name:</strong> ' + input + '<br>';
+          result += '<strong>Lineage:</strong> ' + vec.lineage + '<br>';
+          result += '<strong>Resolved:</strong> ' + resolveVec(input) + '<br>';
+          result += '<div style="margin-top:12px;color:#dcdcaa;font-weight:bold;">Attributs:</div>';
+          for (var k in vec.attributes) {
+            result += '<div style="padding-left:12px;"><span style="color:#9cdcfe;">' + k + '</span>: ' + vec.attributes[k] + '</div>';
+          }
+        } else {
+          result = '<span style="color:#f48771;">Vecteur non trouvé</span>';
+        }
+      }
+      // Alias @
+      else if (input.startsWith('@')) {
+        var aliasName = input.substring(1);
+        obj = objects.find(function(o) { return o.alias === aliasName; });
+        if (obj) {
+          result = '<div style="color:#c586c0;font-weight:bold;margin-bottom:8px;">🏷 ALIAS</div>';
+          result += '<strong>Alias:</strong> @' + aliasName + '<br>';
+          result += '<strong>Cible:</strong> ' + obj.lineage + '<br>';
+          result += buildObjectDetails(obj);
+        } else {
+          result = '<span style="color:#f48771;">Alias non trouvé</span>';
+        }
+      }
+      // Lineage
+      else {
+        obj = objects.find(function(o) { return o.lineage === input; });
+        if (obj) {
+          result = '<div style="color:#569cd6;font-weight:bold;margin-bottom:8px;">📦 OBJET</div>';
+          result += buildObjectDetails(obj);
+        } else {
+          result = '<span style="color:#f48771;">Objet non trouvé</span>';
+        }
+      }
+      
+      resultDiv.innerHTML = result;
+    }
+    
+    function buildObjectDetails(obj) {
+      var html = '';
+      html += '<strong>Lineage:</strong> ' + obj.lineage + '<br>';
+      html += '<strong>Name:</strong> ' + (obj.name || '?') + '<br>';
+      html += '<strong>Parent:</strong> ' + (obj.parent || 'aucun') + '<br>';
+      html += '<strong>Source:</strong> ' + (obj.source || '?') + '<br>';
+      
+      // Attributs
+      var attrs = obj.attributes || {};
+      var attrKeys = Object.keys(attrs);
+      html += '<div style="margin-top:12px;color:#dcdcaa;font-weight:bold;">Attributs (' + attrKeys.length + '):</div>';
+      if (attrKeys.length === 0) {
+        html += '<div style="padding-left:12px;color:#808080;">Aucun</div>';
+      } else {
+        attrKeys.forEach(function(k) {
+          var v = attrs[k];
+          var resolved = '';
+          if (typeof v === 'string' && v.startsWith('V_')) {
+            resolved = ' → ' + resolveVec(v.replace(/"/g, ''));
+          }
+          html += '<div style="padding-left:12px;"><span style="color:#9cdcfe;">' + k + '</span>: <span style="color:#ce9178;">' + v + '</span>' + (resolved ? '<span style="color:#4ec9b0;">' + resolved + '</span>' : '') + '</div>';
+        });
+      }
+      
+      // Relations
+      var rels = obj.relations || [];
+      html += '<div style="margin-top:12px;color:#c586c0;font-weight:bold;">Relations (' + rels.length + '):</div>';
+      if (rels.length === 0) {
+        html += '<div style="padding-left:12px;color:#808080;">Aucune</div>';
+      } else {
+        rels.forEach(function(r) {
+          html += '<div style="padding-left:12px;"><span style="color:#569cd6;">' + r.type + '</span> → ' + r.target + '</div>';
+        });
+      }
+      
+      // Enfants
+      var children = objects.filter(function(o) { return o.parent === obj.lineage; });
+      html += '<div style="margin-top:12px;color:#4ec9b0;font-weight:bold;">Enfants (' + children.length + '):</div>';
+      if (children.length === 0) {
+        html += '<div style="padding-left:12px;color:#808080;">Aucun</div>';
+      } else {
+        children.slice(0, 10).forEach(function(c) {
+          html += '<div style="padding-left:12px;cursor:pointer;" onclick="document.getElementById(\'resolveInput\').value=\'' + c.lineage + '\';resolveValue();">' + c.name + '</div>';
+        });
+        if (children.length > 10) {
+          html += '<div style="padding-left:12px;color:#808080;">... et ' + (children.length - 10) + ' autres</div>';
+        }
+      }
+      
+      return html;
+    }
+    
+    // ERK Eval - évaluer une expression ERK
+    function evalErk() {
+      var expr = document.getElementById('erkExpr').value.trim();
+      var ctxStr = document.getElementById('erkContext').value.trim();
+      var resultDiv = document.getElementById('erkResult');
+      
+      if (!expr) { 
+        resultDiv.innerHTML = '<span style="color:#808080;">Entrez une expression</span>'; 
+        return; 
+      }
+      
+      var ctx = {};
+      if (ctxStr) {
+        try { ctx = JSON.parse(ctxStr); } 
+        catch(e) { resultDiv.innerHTML = '<span style="color:#f48771;">Erreur JSON: ' + e.message + '</span>'; return; }
+      }
+      
+      try {
+        var result = erkEval(expr, ctx);
+        var color = typeof result === 'boolean' ? (result ? '#4ec9b0' : '#f48771') : '#dcdcaa';
+        resultDiv.innerHTML = '<span style="color:' + color + ';font-size:18px;font-weight:bold;">' + JSON.stringify(result) + '</span>' +
+          '<div style="color:#808080;font-size:11px;margin-top:8px;">Type: ' + typeof result + '</div>';
+      } catch(e) {
+        resultDiv.innerHTML = '<span style="color:#f48771;">Erreur: ' + e.message + '</span>';
+      }
+    }
+    
+    // Mini évaluateur ERK
+    function erkEval(expr, ctx) {
+      ctx = ctx || {};
+      expr = expr.trim();
+      
+      // Booléens
+      if (expr === 'true') return true;
+      if (expr === 'false') return false;
+      
+      // Nombres
+      if (/^-?\d+(\.\d+)?$/.test(expr)) return parseFloat(expr);
+      
+      // Chaînes entre quotes
+      if (/^['"].*['"]$/.test(expr)) return expr.slice(1, -1);
+      
+      // Variable contexte
+      if (ctx[expr] !== undefined) return ctx[expr];
+      
+      // AND(a, b)
+      if (expr.startsWith('AND(')) {
+        var args = parseArgs(expr.slice(4, -1));
+        return args.every(function(a) { return erkEval(a, ctx); });
+      }
+      
+      // OR(a, b)
+      if (expr.startsWith('OR(')) {
+        var args = parseArgs(expr.slice(3, -1));
+        return args.some(function(a) { return erkEval(a, ctx); });
+      }
+      
+      // NOT(a)
+      if (expr.startsWith('NOT(')) {
+        return !erkEval(expr.slice(4, -1), ctx);
+      }
+      
+      // IF(cond, then, else)
+      if (expr.startsWith('IF(')) {
+        var args = parseArgs(expr.slice(3, -1));
+        return erkEval(args[0], ctx) ? erkEval(args[1], ctx) : erkEval(args[2], ctx);
+      }
+      
+      // LENGTH(x)
+      if (expr.startsWith('LENGTH(')) {
+        var val = erkEval(expr.slice(7, -1), ctx);
+        return val ? val.length : 0;
+      }
+      
+      // CONCAT(a, b, ...)
+      if (expr.startsWith('CONCAT(')) {
+        var args = parseArgs(expr.slice(7, -1));
+        return args.map(function(a) { return erkEval(a, ctx); }).join('');
+      }
+      
+      // UPPER(x)
+      if (expr.startsWith('UPPER(')) {
+        return String(erkEval(expr.slice(6, -1), ctx)).toUpperCase();
+      }
+      
+      // LOWER(x)
+      if (expr.startsWith('LOWER(')) {
+        return String(erkEval(expr.slice(6, -1), ctx)).toLowerCase();
+      }
+      
+      // ISNULL(x)
+      if (expr.startsWith('ISNULL(')) {
+        var val = erkEval(expr.slice(7, -1), ctx);
+        return val === null || val === undefined;
+      }
+      
+      // EXISTS(x)
+      if (expr.startsWith('EXISTS(')) {
+        var val = erkEval(expr.slice(7, -1), ctx);
+        return val !== null && val !== undefined;
+      }
+      
+      // ISEMPTY(x)
+      if (expr.startsWith('ISEMPTY(')) {
+        var val = erkEval(expr.slice(8, -1), ctx);
+        if (val === null || val === undefined) return true;
+        if (typeof val === 'string') return val.length === 0;
+        if (Array.isArray(val)) return val.length === 0;
+        if (typeof val === 'object') return Object.keys(val).length === 0;
+        return false;
+      }
+      
+      // SUM(arr)
+      if (expr.startsWith('SUM(')) {
+        var val = erkEval(expr.slice(4, -1), ctx);
+        if (Array.isArray(val)) return val.reduce(function(a,b) { return a + b; }, 0);
+        return 0;
+      }
+      
+      // AVG(arr)
+      if (expr.startsWith('AVG(')) {
+        var val = erkEval(expr.slice(4, -1), ctx);
+        if (Array.isArray(val) && val.length > 0) return val.reduce(function(a,b) { return a + b; }, 0) / val.length;
+        return 0;
+      }
+      
+      // MIN(arr)
+      if (expr.startsWith('MIN(')) {
+        var val = erkEval(expr.slice(4, -1), ctx);
+        if (Array.isArray(val) && val.length > 0) return Math.min.apply(null, val);
+        return 0;
+      }
+      
+      // MAX(arr)
+      if (expr.startsWith('MAX(')) {
+        var val = erkEval(expr.slice(4, -1), ctx);
+        if (Array.isArray(val) && val.length > 0) return Math.max.apply(null, val);
+        return 0;
+      }
+      
+      // FIRST(arr)
+      if (expr.startsWith('FIRST(')) {
+        var val = erkEval(expr.slice(6, -1), ctx);
+        if (Array.isArray(val) && val.length > 0) return val[0];
+        return null;
+      }
+      
+      // LAST(arr)
+      if (expr.startsWith('LAST(')) {
+        var val = erkEval(expr.slice(5, -1), ctx);
+        if (Array.isArray(val) && val.length > 0) return val[val.length - 1];
+        return null;
+      }
+      
+      // COUNT(arr)
+      if (expr.startsWith('COUNT(')) {
+        var val = erkEval(expr.slice(6, -1), ctx);
+        if (Array.isArray(val)) return val.length;
+        return 0;
+      }
+      
+      // Comparaisons: a > b, a < b, a == b, a != b, a >= b, a <= b
+      var compOps = ['>=', '<=', '!=', '==', '>', '<'];
+      for (var i = 0; i < compOps.length; i++) {
+        var op = compOps[i];
+        var idx = expr.indexOf(op);
+        if (idx > 0) {
+          var left = erkEval(expr.slice(0, idx).trim(), ctx);
+          var right = erkEval(expr.slice(idx + op.length).trim(), ctx);
+          if (op === '==') return left === right;
+          if (op === '!=') return left !== right;
+          if (op === '>') return left > right;
+          if (op === '<') return left < right;
+          if (op === '>=') return left >= right;
+          if (op === '<=') return left <= right;
+        }
+      }
+      
+      // Arithmétique: +, -, *, /
+      if (expr.indexOf('+') > 0 && !expr.includes('(')) {
+        var parts = expr.split('+');
+        return parts.reduce(function(a, p) { return a + erkEval(p.trim(), ctx); }, 0);
+      }
+      if (expr.indexOf('*') > 0 && !expr.includes('(')) {
+        var parts = expr.split('*');
+        return parts.reduce(function(a, p) { return a * erkEval(p.trim(), ctx); }, 1);
+      }
+      
+      // Array literal [1, 2, 3]
+      if (expr.startsWith('[') && expr.endsWith(']')) {
+        var inner = expr.slice(1, -1);
+        if (inner.trim() === '') return [];
+        return parseArgs(inner).map(function(a) { return erkEval(a, ctx); });
+      }
+      
+      // Fallback: retourne expr comme string
+      return expr;
+    }
+    
+    // Parse arguments séparés par virgules (gère parenthèses imbriquées)
+    function parseArgs(str) {
+      var args = [];
+      var depth = 0;
+      var current = '';
+      for (var i = 0; i < str.length; i++) {
+        var c = str[i];
+        if (c === '(' || c === '[') depth++;
+        else if (c === ')' || c === ']') depth--;
+        else if (c === ',' && depth === 0) {
+          args.push(current.trim());
+          current = '';
+          continue;
+        }
+        current += c;
+      }
+      if (current.trim()) args.push(current.trim());
+      return args;
+    }
+    
+    } catch(e) {
+      document.body.innerHTML = '<h1 style="color:red;padding:20px;">ERROR: ' + e.message + '</h1><pre>' + e.stack + '</pre>';
+      console.error('[EURKAI] Fatal error:', e);
+    }
+  </script>
+</body>
+</html>

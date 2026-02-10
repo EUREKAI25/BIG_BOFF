@@ -1,0 +1,80 @@
+# ============================================================================
+# CONFIG: Configuration système EUREKAI
+# ============================================================================
+
+Object:Config:System:
+  .name = "System"
+  .description = "Configuration système globale"
+  .version = "1.0.0"
+  .environment = "development"
+
+Object:Config:System:Database:
+  .name = "Database"
+  .description = "Configuration base de données"
+  .driver = "sqlite"
+  .path = "./data/eurekai.db"
+  .poolSize = 5
+
+Object:Config:V_UpdateScan:API:
+  .name = "API"
+  .description = "Configuration API REST"
+  .port = 8080
+  .host = "localhost"
+  .cors = true
+  .rateLimit = 100
+
+Object:Config:System:Logging:
+  .name = "Logging"
+  .description = "Configuration des logs"
+  .level = V_LogLevel
+  .format = "json"
+  .output = "./logs/eurekai.log"
+  .maxSize = "10MB"
+  .maxFiles = 5
+
+Object:Config:System:Cache:
+  .name = "Cache"
+  .description = "Configuration du cache"
+  .enabled = true
+  .driver = "memory"
+  .ttl = 3600
+  .maxSize = 1000
+
+Object:Config:System:Security:
+  .name = "Security"
+  .description = "Configuration sécurité"
+  .authEnabled = true
+  .jwtSecret = "${JWT_SECRET}"
+  .tokenExpiry = 86400
+  .bcryptRounds = 10
+
+Object:Config:Providers:
+  .name = "Providers"
+  .description = "Configuration des fournisseurs IA"
+
+Object:Config:Providers:Anthropic:
+  .name = "Anthropic"
+  .description = "Configuration Anthropic Claude"
+  .apiKey = "${ANTHROPIC_API_KEY}"
+  .baseUrl = "https://api.anthropic.com"
+  .defaultModel = "claude-sonnet-4-20250514"
+  .maxRetries = V_RetryCount
+  .timeout = V_Timeout
+
+Object:Config:Providers:OpenAI:
+  .name = "OpenAI"
+  .description = "Configuration OpenAI"
+  .apiKey = "${OPENAI_API_KEY}"
+  .baseUrl = "https://api.openai.com/v1"
+  .defaultModel = "gpt-4o"
+  .maxRetries = V_RetryCount
+  .timeout = V_Timeout
+
+Object:Config:Providers:Google:
+  .name = "Google"
+  .description = "Configuration Google Gemini"
+  .apiKey = "${GOOGLE_API_KEY}"
+  .baseUrl = "https://generativelanguage.googleapis.com"
+  .defaultModel = "gemini-pro"
+  .maxRetries = V_RetryCount
+  .timeout = V_Timeout

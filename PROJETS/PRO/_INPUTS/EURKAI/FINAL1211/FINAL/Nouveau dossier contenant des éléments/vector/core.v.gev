@@ -1,0 +1,942 @@
+# ============================================================================
+# EURKAI Vectors v0.9.8
+# vector/core.v.gev
+# ============================================================================
+
+#region === OBJECT ===
+
+Object:Structure:Fractal:Vector:V_ObjectName:
+  .default = {"FR": "Objet", "EN": "Object"}
+
+Object:Structure:Fractal:Vector:V_ObjectDescription:
+  .default = {"FR": "Racine de tous les objets", "EN": "Root of all objects"}
+
+#endregion
+
+#region === STRUCTURE ===
+
+Object:Structure:Fractal:Vector:V_StructureName:
+  .default = {"FR": "Structure", "EN": "Structure"}
+
+Object:Structure:Fractal:Vector:V_DictName:
+  .default = {"FR": "Dictionnaire", "EN": "Dictionary"}
+
+Object:Structure:Fractal:Vector:V_ListName:
+  .default = {"FR": "Liste", "EN": "List"}
+
+Object:Structure:Fractal:Vector:V_OrderedListName:
+  .default = {"FR": "Liste ordonnée", "EN": "Ordered List"}
+
+Object:Structure:Fractal:Vector:V_ElementName:
+  .default = {"FR": "Élément", "EN": "Element"}
+
+Object:Structure:Fractal:Vector:V_FractalName:
+  .default = {"FR": "Fractal", "EN": "Fractal"}
+
+Object:Structure:Fractal:Vector:V_VectorName:
+  .default = {"FR": "Vecteur", "EN": "Vector"}
+
+Object:Structure:Fractal:Vector:V_PlaneName:
+  .default = {"FR": "Plan", "EN": "Plane"}
+
+#endregion
+
+#region === FILE ===
+
+Object:Structure:Fractal:Vector:V_FileName:
+  .default = {"FR": "Fichier", "EN": "File"}
+
+Object:Structure:Fractal:Vector:V_FilePath:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FileFormat:
+  .default = "text"
+
+Object:Structure:Fractal:Vector:V_FileCreatedAt:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FileUpdatedAt:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_GevFileName:
+  .default = {"FR": "Fichier GEV", "EN": "GEV File"}
+
+Object:Structure:Fractal:Vector:V_SeedFileName:
+  .default = {"FR": "Fichier Seed", "EN": "Seed File"}
+
+Object:Structure:Fractal:Vector:V_ManifestFileName:
+  .default = {"FR": "Fichier Manifest", "EN": "Manifest File"}
+
+Object:Structure:Fractal:Vector:V_VectorFileName:
+  .default = {"FR": "Fichier Vector", "EN": "Vector File"}
+
+Object:Structure:Fractal:Vector:V_TSFileName:
+  .default = {"FR": "Fichier TypeScript", "EN": "TypeScript File"}
+
+Object:Structure:Fractal:Vector:V_MRGFileName:
+  .default = "mrg.ts"
+
+Object:Structure:Fractal:Vector:V_MRGFileDescription:
+  .default = {"FR": "Fichier source de la MRG", "EN": "MRG source file"}
+
+#endregion
+
+#region === FILE LISTS (QUERY) ===
+
+Object:Structure:Fractal:Vector:V_SeedFileList:
+  .type = "query"
+  .query = "Object:Structure:File:GevFile:SeedFile.*"
+
+Object:Structure:Fractal:Vector:V_ManifestFileList:
+  .type = "query"
+  .query = "Object:Structure:File:GevFile:ManifestFile.*"
+
+Object:Structure:Fractal:Vector:V_VectorFileList:
+  .type = "query"
+  .query = "Object:Structure:File:GevFile:VectorFile.*"
+
+#endregion
+
+#region === ATTRIBUTE ===
+
+Object:Structure:Fractal:Vector:V_AttributeName:
+  .default = {"FR": "Attribut", "EN": "Attribute"}
+
+Object:Structure:Fractal:Vector:V_AttributeNameName:
+  .default = {"FR": "Nom", "EN": "Name"}
+
+Object:Structure:Fractal:Vector:V_AttributeDescriptionName:
+  .default = {"FR": "Description", "EN": "Description"}
+
+Object:Structure:Fractal:Vector:V_AttributeScanName:
+  .default = {"FR": "Scan", "EN": "Scan"}
+
+Object:Structure:Fractal:Vector:V_AttributeVersionName:
+  .default = {"FR": "Version", "EN": "Version"}
+
+Object:Structure:Fractal:Vector:V_AttributePathName:
+  .default = {"FR": "Chemin", "EN": "Path"}
+
+Object:Structure:Fractal:Vector:V_AttributeCreatedAtName:
+  .default = {"FR": "Créé le", "EN": "Created At"}
+
+Object:Structure:Fractal:Vector:V_AttributeUpdatedAtName:
+  .default = {"FR": "Modifié le", "EN": "Updated At"}
+
+#endregion
+
+#region === MANIFEST ===
+
+Object:Structure:Fractal:Vector:V_ManifestName:
+  .default = {"FR": "Manifest", "EN": "Manifest"}
+
+#endregion
+
+#region === ENTITY ===
+
+Object:Structure:Fractal:Vector:V_EntityName:
+  .default = {"FR": "Entité", "EN": "Entity"}
+
+Object:Structure:Fractal:Vector:V_AgentName:
+  .default = {"FR": "Agent", "EN": "Agent"}
+
+Object:Structure:Fractal:Vector:V_AIAgentName:
+  .default = {"FR": "Agent IA", "EN": "AI Agent"}
+
+Object:Structure:Fractal:Vector:V_WalkerName:
+  .default = {"FR": "Walker", "EN": "Walker"}
+
+Object:Structure:Fractal:Vector:V_WalkerDescription:
+  .default = {"FR": "Parcourt et exécute les méthodes", "EN": "Traverses and executes methods"}
+
+#endregion
+
+#region === EVENT ===
+
+Object:Structure:Fractal:Vector:V_EventName:
+  .default = {"FR": "Événement", "EN": "Event"}
+
+Object:Structure:Fractal:Vector:V_HookName:
+  .default = {"FR": "Hook", "EN": "Hook"}
+
+Object:Structure:Fractal:Vector:V_BeforeHookName:
+  .default = {"FR": "Hook Before", "EN": "Before Hook"}
+
+Object:Structure:Fractal:Vector:V_AfterHookName:
+  .default = {"FR": "Hook After", "EN": "After Hook"}
+
+#endregion
+
+#region === METHOD ===
+
+Object:Structure:Fractal:Vector:V_MethodName:
+  .default = {"FR": "Méthode", "EN": "Method"}
+
+Object:Structure:Fractal:Vector:V_MethodBeforeHookList:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MethodAfterHookList:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_CentralMethodName:
+  .default = {"FR": "Méthode Centrale", "EN": "Central Method"}
+
+Object:Structure:Fractal:Vector:V_CreateName:
+  .default = {"FR": "Create", "EN": "Create"}
+
+Object:Structure:Fractal:Vector:V_ReadName:
+  .default = {"FR": "Read", "EN": "Read"}
+
+Object:Structure:Fractal:Vector:V_UpdateName:
+  .default = {"FR": "Update", "EN": "Update"}
+
+Object:Structure:Fractal:Vector:V_DeleteName:
+  .default = {"FR": "Delete", "EN": "Delete"}
+
+Object:Structure:Fractal:Vector:V_OrchestrateName:
+  .default = {"FR": "Orchestrate", "EN": "Orchestrate"}
+
+Object:Structure:Fractal:Vector:V_EngageName:
+  .default = {"FR": "Engage", "EN": "Engage"}
+
+Object:Structure:Fractal:Vector:V_SecondaryMethodName:
+  .default = {"FR": "Méthode Secondaire", "EN": "Secondary Method"}
+
+Object:Structure:Fractal:Vector:V_MRGName:
+  .default = {"FR": "GlobalRecursiveMethod", "EN": "GlobalRecursiveMethod"}
+
+Object:Structure:Fractal:Vector:V_MRGDescription:
+  .default = {"FR": "Exécute GEVR sur toute méthode", "EN": "Executes GEVR on any method"}
+
+Object:Structure:Fractal:Vector:V_MRGVersion:
+  .default = "0.9.8"
+
+Object:Structure:Fractal:Vector:V_MRGUpdatedAt:
+  .default = "2025-12-17T20:00:00Z"
+
+Object:Structure:Fractal:Vector:V_ConvertName:
+  .default = {"FR": "Convert", "EN": "Convert"}
+
+Object:Structure:Fractal:Vector:V_WalkName:
+  .default = {"FR": "Walk", "EN": "Walk"}
+
+Object:Structure:Fractal:Vector:V_WalkDescription:
+  .default = {"FR": "Parcourt un objet et ses enfants", "EN": "Traverses object and children"}
+
+Object:Structure:Fractal:Vector:V_WalkBeforeHookList:
+  .default = "Log"
+
+Object:Structure:Fractal:Vector:V_WalkAfterHookList:
+  .default = "Log"
+
+Object:Structure:Fractal:Vector:V_LogName:
+  .default = {"FR": "Log", "EN": "Log"}
+
+Object:Structure:Fractal:Vector:V_LogTarget:
+  .default = "reports/mrg.log"
+
+Object:Structure:Fractal:Vector:V_ScanName:
+  .default = {"FR": "Scan", "EN": "Scan"}
+
+Object:Structure:Fractal:Vector:V_PassName:
+  .default = {"FR": "Pass", "EN": "Pass"}
+
+Object:Structure:Fractal:Vector:V_GhostName:
+  .default = {"FR": "Ghost", "EN": "Ghost"}
+
+Object:Structure:Fractal:Vector:V_CheckName:
+  .default = {"FR": "Check", "EN": "Check"}
+
+Object:Structure:Fractal:Vector:V_CheckFormatName:
+  .default = {"FR": "Check Format", "EN": "Check Format"}
+
+Object:Structure:Fractal:Vector:V_CheckVectorsName:
+  .default = {"FR": "Check Vectors", "EN": "Check Vectors"}
+
+Object:Structure:Fractal:Vector:V_CheckOrphanName:
+  .default = {"FR": "Check Orphan", "EN": "Check Orphan"}
+
+#endregion
+
+#region === SUPERTOOL ===
+
+Object:Structure:Fractal:Vector:V_SuperToolName:
+  .default = {"FR": "SuperTool", "EN": "SuperTool"}
+
+Object:Structure:Fractal:Vector:V_SuperCreateName:
+  .default = {"FR": "SuperCreate", "EN": "SuperCreate"}
+
+Object:Structure:Fractal:Vector:V_SuperReadName:
+  .default = {"FR": "SuperRead", "EN": "SuperRead"}
+
+Object:Structure:Fractal:Vector:V_SuperUpdateName:
+  .default = {"FR": "SuperUpdate", "EN": "SuperUpdate"}
+
+Object:Structure:Fractal:Vector:V_SuperDeleteName:
+  .default = {"FR": "SuperDelete", "EN": "SuperDelete"}
+
+Object:Structure:Fractal:Vector:V_SuperOrchestrateName:
+  .default = {"FR": "SuperOrchestrate", "EN": "SuperOrchestrate"}
+
+Object:Structure:Fractal:Vector:V_SuperEngageName:
+  .default = {"FR": "SuperEngage", "EN": "SuperEngage"}
+
+#endregion
+
+#region === SCENARIO ===
+
+Object:Structure:Fractal:Vector:V_ScenarioName:
+  .default = {"FR": "Scénario", "EN": "Scenario"}
+
+Object:Structure:Fractal:Vector:V_StepName:
+  .default = {"FR": "Step", "EN": "Step"}
+
+Object:Structure:Fractal:Vector:V_GetStepName:
+  .default = {"FR": "Get", "EN": "Get"}
+
+Object:Structure:Fractal:Vector:V_ExecuteStepName:
+  .default = {"FR": "Execute", "EN": "Execute"}
+
+Object:Structure:Fractal:Vector:V_ValidateStepName:
+  .default = {"FR": "Validate", "EN": "Validate"}
+
+Object:Structure:Fractal:Vector:V_RenderStepName:
+  .default = {"FR": "Render", "EN": "Render"}
+
+#endregion
+
+#region === REPORT ===
+
+Object:Structure:Fractal:Vector:V_ReportName:
+  .default = {"FR": "Rapport", "EN": "Report"}
+
+Object:Structure:Fractal:Vector:V_ReportWalkerName:
+  .default = {"FR": "Rapport Walker", "EN": "Walker Report"}
+
+#endregion
+
+#region === BEHAVIOR ===
+
+Object:Structure:Fractal:Vector:V_BehaviorName:
+  .default = {"FR": "Comportement", "EN": "Behavior"}
+
+Object:Structure:Fractal:Vector:V_TraverseBehaviorName:
+  .default = {"FR": "Traverse", "EN": "Traverse"}
+
+Object:Structure:Fractal:Vector:V_LoopBehaviorName:
+  .default = {"FR": "Loop", "EN": "Loop"}
+
+#endregion
+
+#region === CONFIG ===
+
+Object:Structure:Fractal:Vector:V_ConfigName:
+  .default = {"FR": "Configuration", "EN": "Configuration"}
+
+#endregion
+
+#region === RESULT ===
+
+Object:Structure:Fractal:Vector:V_ResultName:
+  .default = {"FR": "Résultat", "EN": "Result"}
+
+Object:Structure:Fractal:Vector:V_ResultSuccess:
+  .default = "false"
+
+Object:Structure:Fractal:Vector:V_ResultDict:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ResultScenario:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ResultMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ResultCreatedAt:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_WalkResultName:
+  .default = {"FR": "Résultat Walk", "EN": "Walk Result"}
+
+Object:Structure:Fractal:Vector:V_WalkResultTotal:
+  .default = "0"
+
+Object:Structure:Fractal:Vector:V_WalkResultPass:
+  .default = "0"
+
+Object:Structure:Fractal:Vector:V_WalkResultGhost:
+  .default = "0"
+
+Object:Structure:Fractal:Vector:V_WalkResultOk:
+  .default = "0"
+
+Object:Structure:Fractal:Vector:V_WalkResultErrors:
+  .default = "0"
+
+Object:Structure:Fractal:Vector:V_WalkResultSkip:
+  .default = "0"
+
+Object:Structure:Fractal:Vector:V_WalkResultScriptId:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_CheckResultName:
+  .default = {"FR": "Résultat Check", "EN": "Check Result"}
+
+Object:Structure:Fractal:Vector:V_CheckResultDetails:
+  .default = ""
+
+#endregion
+
+#region === RULE ===
+
+Object:Structure:Fractal:Vector:V_RuleName:
+  .default = {"FR": "Règle", "EN": "Rule"}
+
+Object:Structure:Fractal:Vector:V_RuleTarget:
+  .default = "*"
+
+Object:Structure:Fractal:Vector:V_RuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RequiredAttributeRuleName:
+  .default = {"FR": "Attribut Requis", "EN": "Required Attribute"}
+
+Object:Structure:Fractal:Vector:V_RuleAttribute:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PatternRuleName:
+  .default = {"FR": "Pattern", "EN": "Pattern"}
+
+Object:Structure:Fractal:Vector:V_RulePattern:
+  .default = ""
+
+#endregion
+
+#region === QUERY ===
+
+Object:Structure:Fractal:Vector:V_QueryName:
+  .default = {"FR": "Requête", "EN": "Query"}
+
+Object:Structure:Fractal:Vector:V_QueryPattern:
+  .default = "*"
+
+Object:Structure:Fractal:Vector:V_QueryDescription:
+  .default = ""
+
+#endregion
+
+#region === RULES ===
+
+Object:Structure:Fractal:Vector:V_StructuralRuleName:
+  .default = {"FR": "Règle structurelle", "EN": "Structural rule"}
+
+Object:Structure:Fractal:Vector:V_StructuralRuleDescription:
+  .default = {"FR": "Règle qui décrit la forme attendue d'un objet (attributs, types, relations, bundles, format).", "EN": "Rule describing the expected shape of an object."}
+
+Object:Structure:Fractal:Vector:V_StructuralRuleQuestion:
+  .default = {"FR": "Quelle règle de structure s'applique à cet objet ?", "EN": "Which structural rule applies to this object?"}
+
+Object:Structure:Fractal:Vector:V_StructuralRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StructuralRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintPattern:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleRequiredKeyword:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_AttributeDeclaredRuleErk:
+  .default = |
+    FOREACH attr IN $target.attributeList {
+      attrType = attr.name.toUpperFirst()
+      EXISTS("Object:Attribute:" + attrType) 
+        OR ISSUE("Attribut ." + attr.name + " non déclaré dans Object:Attribute")
+    }
+
+#endregion
+
+# rule.v.gev 
+Object:Structure:Fractal:Vector:V_RuleName:
+  .default = "Rule"
+
+Object:Structure:Fractal:Vector:V_RuleDescription:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleQuestion:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_RuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_RuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_RuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_RuleErk:
+  .default = |
+    EXEC Rule.Validate(
+      input = {
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_StructuralRuleName:
+  .default = "Règle structurelle"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleDescription:
+  .default = "Règle qui décrit la forme attendue d'un objet (attributs, types, relations, bundles, format)."
+
+Object:Structure:Fractal:Vector:V_StructuralRuleQuestion:
+  .default = "Quelle règle de structure s'applique à cet objet ?"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_StructuralRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StructuralRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StructuralRuleErk:
+  .default = |
+    EXEC Rule.Validate(
+      input = {
+        target: $target,
+        source_text: $source_text,
+        source_kind: $source_kind,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_SchemaRuleName:
+  .default = "Règle de schéma"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleDescription:
+  .default = "Contraintes sur présence/absence d'attributs, types attendus, cardinalités et structure."
+
+Object:Structure:Fractal:Vector:V_SchemaRuleQuestion:
+  .default = "Quels attributs/types/cardis doivent exister pour cet objet ?"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_SchemaRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_SchemaRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleConstraintPattern:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleRequiredKeyword:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleRequiredSlot:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SchemaRuleErk:
+  .default = |
+    EXEC Rule.Validate.Schema(
+      input = {
+        target: $target,
+        schema: $schema,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_FormatRuleName:
+  .default = "Règle de format"
+
+Object:Structure:Fractal:Vector:V_FormatRuleDescription:
+  .default = "Contraintes sur le format des valeurs (regex, format attendu)."
+
+Object:Structure:Fractal:Vector:V_FormatRuleQuestion:
+  .default = "Quel format cette valeur doit-elle respecter ?"
+
+Object:Structure:Fractal:Vector:V_FormatRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_FormatRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_FormatRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_FormatRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleRegex:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleFormat:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FormatRuleErk:
+  .default = |
+    EXEC Rule.Validate.Format(
+      input = {
+        target: $target,
+        source_text: $source_text,
+        regex: $regex,
+        format: $format,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleName:
+  .default = "Règle de cardinalité"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleDescription:
+  .default = "Contraintes min/max sur le nombre d'éléments."
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleQuestion:
+  .default = "La cardinalité respecte-t-elle les bornes min/max ?"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleMin:
+  .default = 0
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleMax:
+  .default = -1
+
+Object:Structure:Fractal:Vector:V_CardinalityRuleErk:
+  .default = |
+    EXEC Rule.Validate.Cardinality(
+      input = {
+        target: $target,
+        min: $min,
+        max: $max,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleName:
+  .default = "Règle comportementale"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleDescription:
+  .default = "Règle sur le comportement (événement déclencheur et action)."
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleQuestion:
+  .default = "Quel comportement est déclenché et quelle action s'exécute ?"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleTrigger:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleAction:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BehavioralRuleErk:
+  .default = |
+    EXEC Rule.Execute(
+      input = {
+        trigger: $trigger,
+        action: $action,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_StateRuleName:
+  .default = "Règle d'état"
+
+Object:Structure:Fractal:Vector:V_StateRuleDescription:
+  .default = "Règle sur les états et transitions autorisées."
+
+Object:Structure:Fractal:Vector:V_StateRuleQuestion:
+  .default = "La transition est-elle autorisée ?"
+
+Object:Structure:Fractal:Vector:V_StateRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_StateRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_StateRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StateRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleFromState:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleToState:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_StateRuleAllowedTransitions:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_StateRuleErk:
+  .default = |
+    EXEC Rule.Validate.State(
+      input = {
+        fromState: $fromState,
+        toState: $toState,
+        allowedTransitions: $allowedTransitions,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_PermissionRuleName:
+  .default = "Règle de permission"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleDescription:
+  .default = "Règle sur les permissions (acteur, action, ressource)."
+
+Object:Structure:Fractal:Vector:V_PermissionRuleQuestion:
+  .default = "L'acteur a-t-il le droit d'exécuter l'action sur la ressource ?"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_PermissionRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_PermissionRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleActor:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleAction:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleResource:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_PermissionRuleErk:
+  .default = |
+    EXEC Rule.Validate.Permission(
+      input = {
+        actor: $actor,
+        action: $action,
+        resource: $resource,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_ValidationRuleName:
+  .default = "Règle de validation"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleDescription:
+  .default = "Règle de validation métier (validator + hooks succès/échec)."
+
+Object:Structure:Fractal:Vector:V_ValidationRuleQuestion:
+  .default = "La validation réussit-elle et quels hooks s'appliquent ?"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_ValidationRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ValidationRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleValidator:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleOnSuccess:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleOnFailure:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ValidationRuleErk:
+  .default = |
+    EXEC Rule.Validate.Business(
+      input = {
+        validator: $validator,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, EXEC Hook($onSuccess), EXEC Hook($onFailure))
+
+Object:Structure:Fractal:Vector:V_ComputedRuleName:
+  .default = "Règle calculée"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleDescription:
+  .default = "Règle de calcul (formule, dépendances, cache)."
+
+Object:Structure:Fractal:Vector:V_ComputedRuleQuestion:
+  .default = "La valeur calculée est-elle correcte ?"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleSeverity:
+  .default = "info"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleConstraintLevel:
+  .default = "MAY"
+
+Object:Structure:Fractal:Vector:V_ComputedRuleScope:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ComputedRuleCondition:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleErrorMessage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleFormula:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComputedRuleDependencies:
+  .default = []
+
+Object:Structure:Fractal:Vector:V_ComputedRuleCache:
+  .default = false
+
+Object:Structure:Fractal:Vector:V_ComputedRuleErk:
+  .default = |
+    EXEC Rule.Compute(
+      input = {
+        formula: $formula,
+        dependencies: $dependencies,
+        cache: $cache,
+        target: $target,
+        context: $context
+      },
+      output = {
+        ok: $ok,
+        issue: $issue
+      }
+    )
+    IF($ok, OK(), ISSUE($issue))
+
+Object:Structure:Fractal:Vector:V_AttributeDeclaredRuleErk:
+  .default = |
+    FOREACH attr IN $target.attributeList {
+      attrType = attr.name.toUpperFirst()
+      EXISTS("Object:Attribute:" + attrType) 
+        OR ISSUE("Attribut ." + attr.name + " non déclaré dans Object:Attribute")
+    }

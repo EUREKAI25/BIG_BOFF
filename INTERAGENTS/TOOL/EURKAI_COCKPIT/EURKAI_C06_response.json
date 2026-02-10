@@ -1,0 +1,63 @@
+{
+  "preflight": {
+    "ready": true,
+    "certainty": 1.0,
+    "missing_info": [],
+    "assumptions": [
+      "Table secrets existe déjà (schéma C02)",
+      "Nouvelle table secret_logs créée pour audit",
+      "AES-256-GCM avec Argon2id comme spécifié",
+      "Gate password global (Option A)",
+      "Logs JSON en DB (table secret_logs)"
+    ]
+  },
+  "role": "coder",
+  "mode": "deliverable",
+  "summary": "Module secrets implémenté avec AES-256-GCM, Argon2id, copy-gating et audit logging. 39 tests passent (2x).",
+  "questions": [],
+  "files": [
+    {
+      "path": "backend/secrets/__init__.py",
+      "description": "Public API exposant SecretsService, SecretMetadata, RevealResult, etc."
+    },
+    {
+      "path": "backend/secrets/crypto.py",
+      "description": "AES-256-GCM encryption avec Argon2id key derivation"
+    },
+    {
+      "path": "backend/secrets/service.py",
+      "description": "SecretsService avec create/list/reveal/copy/delete et audit logging"
+    },
+    {
+      "path": "tests/test_secrets.py",
+      "description": "39 tests couvrant crypto, gating, CRUD et acceptance criteria"
+    },
+    {
+      "path": "docs/SECRETS.md",
+      "description": "Documentation complète du module secrets"
+    }
+  ],
+  "commands": [
+    "python -m pytest tests/test_secrets.py -v"
+  ],
+  "acceptance": {
+    "passes_in_a_row": 2,
+    "max_iters": 8,
+    "result": "PASSED",
+    "iterations_used": 1
+  },
+  "contracts": {
+    "breaking_changes": false,
+    "new_tables": ["secret_logs"],
+    "new_dependencies": ["cryptography", "argon2-cffi"],
+    "semver_bump": "MINOR",
+    "notes": "Ajoute table secret_logs, compatible avec schéma C02 existant"
+  },
+  "security": {
+    "encryption": "AES-256-GCM",
+    "kdf": "Argon2id (time=3, memory=64MB)",
+    "gate": "Global master password",
+    "logging": "All actions logged to DB (no values)",
+    "list_endpoint": "NEVER returns plaintext"
+  }
+}

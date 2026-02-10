@@ -1,0 +1,406 @@
+# ============================================================================
+# EURKAI Template Query Vectors v1.0.0
+# vector/template_query.v.gev
+# Vecteurs de query pour alimenter les templates HTML récursifs
+# ============================================================================
+
+#region === TEMPLATE PRINCIPAL ===
+
+Object:Structure:Fractal:Vector:V_TemplateComplete:
+  .type = "query"
+  .description = {"FR": "Template complet avec structure récursive", "EN": "Complete template with recursive structure"}
+  .query = "read Template:PageTemplate:{V_TemplateName} ++* --depth=15"
+  .returns = "Object:Template:PageTemplate"
+
+Object:Structure:Fractal:Vector:V_TemplateName:
+  .default = ""
+  .description = {"FR": "Nom du template à charger", "EN": "Template name to load"}
+
+Object:Structure:Fractal:Vector:V_TemplateLineage:
+  .default = ""
+  .description = {"FR": "Lineage complet du template", "EN": "Full template lineage"}
+
+Object:Structure:Fractal:Vector:V_TemplateList:
+  .type = "query"
+  .query = "read :Template:PageTemplate --fields=lineage,name,description"
+  .description = {"FR": "Liste de tous les templates", "EN": "List of all templates"}
+
+#endregion
+
+#region === HEAD ELEMENT ===
+
+Object:Structure:Fractal:Vector:V_HeadComplete:
+  .type = "query"
+  .description = {"FR": "Element Head avec toutes ses listes", "EN": "Head element with all lists"}
+  .query = "read :HTMLElement:Head.@template={V_TemplateLineage} ++MetaList ++Title ++LinkList ++ScriptList"
+
+Object:Structure:Fractal:Vector:V_HeadLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaList:
+  .type = "query"
+  .description = {"FR": "Liste des balises meta", "EN": "Meta tags list"}
+  .query = "read :HTMLElement:Meta.@parent={V_HeadLineage} --order=order"
+
+Object:Structure:Fractal:Vector:V_Title:
+  .type = "query"
+  .description = {"FR": "Titre de la page", "EN": "Page title"}
+  .query = "read :HTMLElement:Title.@parent={V_HeadLineage}"
+
+Object:Structure:Fractal:Vector:V_LinkList:
+  .type = "query"
+  .description = {"FR": "Liste des balises link (CSS, fonts)", "EN": "Link tags list (CSS, fonts)"}
+  .query = "read :HTMLElement:Link.@parent={V_HeadLineage} --order=order"
+
+Object:Structure:Fractal:Vector:V_ScriptHeadList:
+  .type = "query"
+  .description = {"FR": "Scripts dans le head", "EN": "Scripts in head"}
+  .query = "read :HTMLElement:Script.@parent={V_HeadLineage}.position=head --order=order"
+
+#endregion
+
+#region === BODY STRUCTURE ===
+
+Object:Structure:Fractal:Vector:V_BodyComplete:
+  .type = "query"
+  .description = {"FR": "Element Body avec structure complète", "EN": "Body element with full structure"}
+  .query = "read :HTMLElement:Body.@template={V_TemplateLineage} ++HeaderElement ++ContainerElement ++FooterElement"
+
+Object:Structure:Fractal:Vector:V_BodyLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_BodyClassList:
+  .default = ""
+  .description = {"FR": "Classes CSS du body", "EN": "Body CSS classes"}
+
+Object:Structure:Fractal:Vector:V_BodyDataList:
+  .default = ""
+  .description = {"FR": "Attributs data-* du body", "EN": "Body data-* attributes"}
+
+#endregion
+
+#region === HEADER ===
+
+Object:Structure:Fractal:Vector:V_HeaderComplete:
+  .type = "query"
+  .description = {"FR": "Header avec nav et logo", "EN": "Header with nav and logo"}
+  .query = "read :HTMLElement:Header.@template={V_TemplateLineage} ++NavElement ++LogoElement ++BrandElement"
+
+Object:Structure:Fractal:Vector:V_HeaderLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_LogoElement:
+  .type = "query"
+  .query = "read :HTMLElement:Logo.@header={V_HeaderLineage}"
+
+Object:Structure:Fractal:Vector:V_BrandElement:
+  .type = "query"
+  .query = "read :HTMLElement:Brand.@header={V_HeaderLineage}"
+
+#endregion
+
+#region === NAVIGATION ===
+
+Object:Structure:Fractal:Vector:V_NavComplete:
+  .type = "query"
+  .description = {"FR": "Navigation avec items récursifs", "EN": "Navigation with recursive items"}
+  .query = "read :HTMLElement:Nav.@template={V_TemplateLineage} ++NavItemList --depth=5"
+
+Object:Structure:Fractal:Vector:V_NavLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_NavItemList:
+  .type = "query"
+  .description = {"FR": "Items de navigation avec sous-menus", "EN": "Nav items with submenus"}
+  .query = "read :HTMLElement:NavItem.@nav={V_NavLineage} ++SubNavItemList --order=order --depth=3"
+
+Object:Structure:Fractal:Vector:V_NavItemActive:
+  .default = ""
+  .description = {"FR": "Item de nav actif", "EN": "Active nav item"}
+
+#endregion
+
+#region === CONTAINER ===
+
+Object:Structure:Fractal:Vector:V_ContainerComplete:
+  .type = "query"
+  .description = {"FR": "Container avec sidebar et sections", "EN": "Container with sidebar and sections"}
+  .query = "read :HTMLElement:Container.@template={V_TemplateLineage} ++SidebarElement ++SectionList ++MainElement"
+
+Object:Structure:Fractal:Vector:V_ContainerLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ContainerLayout:
+  .default = "default"
+  .description = {"FR": "Layout: default, fullwidth, sidebar-left, sidebar-right, grid", "EN": "Layout type"}
+
+Object:Structure:Fractal:Vector:V_ContainerColumns:
+  .default = "1"
+  .description = {"FR": "Nombre de colonnes si grid", "EN": "Number of columns if grid"}
+
+#endregion
+
+#region === SIDEBAR ===
+
+Object:Structure:Fractal:Vector:V_SidebarComplete:
+  .type = "query"
+  .description = {"FR": "Sidebar avec widgets", "EN": "Sidebar with widgets"}
+  .query = "read :HTMLElement:Sidebar.@template={V_TemplateLineage} ++WidgetList --depth=3"
+
+Object:Structure:Fractal:Vector:V_SidebarLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SidebarPosition:
+  .default = "left"
+  .description = {"FR": "Position: left, right", "EN": "Position: left, right"}
+
+Object:Structure:Fractal:Vector:V_SidebarCollapsible:
+  .default = "false"
+
+Object:Structure:Fractal:Vector:V_WidgetList:
+  .type = "query"
+  .description = {"FR": "Liste des widgets sidebar", "EN": "Sidebar widgets list"}
+  .query = "read :HTMLElement:Widget.@sidebar={V_SidebarLineage} --order=order"
+
+#endregion
+
+#region === SECTIONS ===
+
+Object:Structure:Fractal:Vector:V_SectionList:
+  .type = "query"
+  .description = {"FR": "Liste des sections du container", "EN": "Container sections list"}
+  .query = "read :HTMLElement:Section.@container={V_ContainerLineage} ++ModuleElement ++ComponentList --order=order --depth=5"
+
+Object:Structure:Fractal:Vector:V_SectionComplete:
+  .type = "query"
+  .description = {"FR": "Section complète avec tous enfants", "EN": "Complete section with all children"}
+  .query = "read :HTMLElement:Section:{V_SectionName} ++* --depth=10"
+
+Object:Structure:Fractal:Vector:V_SectionLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SectionName:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SectionTitle:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_SectionLayout:
+  .default = "default"
+  .description = {"FR": "Layout de section: default, cards, grid, list", "EN": "Section layout"}
+
+#endregion
+
+#region === MODULES ===
+
+Object:Structure:Fractal:Vector:V_ModuleComplete:
+  .type = "query"
+  .description = {"FR": "Module avec ses composants", "EN": "Module with components"}
+  .query = "read :HTMLElement:Module:{V_ModuleName} ++ComponentList ++SlotList --depth=5"
+
+Object:Structure:Fractal:Vector:V_ModuleLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ModuleName:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ModuleList:
+  .type = "query"
+  .description = {"FR": "Liste des modules disponibles", "EN": "Available modules list"}
+  .query = "read :HTMLElement:Module --fields=lineage,name,description"
+
+#endregion
+
+#region === COMPONENTS ===
+
+Object:Structure:Fractal:Vector:V_ComponentList:
+  .type = "query"
+  .description = {"FR": "Liste des composants d'une section/module", "EN": "Components list of section/module"}
+  .query = "read :Component.@parent={V_ParentLineage} --order=order"
+
+Object:Structure:Fractal:Vector:V_ComponentComplete:
+  .type = "query"
+  .description = {"FR": "Composant avec slots et enfants", "EN": "Component with slots and children"}
+  .query = "read :Component:{V_ComponentName} ++SlotList ++ChildList --depth=5"
+
+Object:Structure:Fractal:Vector:V_ComponentLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComponentName:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ComponentType:
+  .default = ""
+  .description = {"FR": "Type: Accordion, Card, Table, List, Form, Tree, Modal, Nav", "EN": "Component type"}
+
+Object:Structure:Fractal:Vector:V_ParentLineage:
+  .default = ""
+  .description = {"FR": "Lineage du parent (section, module, etc.)", "EN": "Parent lineage"}
+
+#endregion
+
+#region === FOOTER ===
+
+Object:Structure:Fractal:Vector:V_FooterComplete:
+  .type = "query"
+  .description = {"FR": "Footer avec colonnes et liens", "EN": "Footer with columns and links"}
+  .query = "read :HTMLElement:Footer.@template={V_TemplateLineage} ++FooterColumnList ++CopyrightElement"
+
+Object:Structure:Fractal:Vector:V_FooterLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_FooterColumnList:
+  .type = "query"
+  .query = "read :HTMLElement:FooterColumn.@footer={V_FooterLineage} ++LinkList --order=order"
+
+Object:Structure:Fractal:Vector:V_CopyrightText:
+  .default = ""
+
+#endregion
+
+#region === MODAL ===
+
+Object:Structure:Fractal:Vector:V_ModalComplete:
+  .type = "query"
+  .description = {"FR": "Modal avec header, body, footer", "EN": "Modal with header, body, footer"}
+  .query = "read :HTMLElement:Modal.@template={V_TemplateLineage} ++ModalHeader ++ModalBody ++ModalFooter"
+
+Object:Structure:Fractal:Vector:V_ModalLineage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ModalList:
+  .type = "query"
+  .description = {"FR": "Liste des modals du template", "EN": "Template modals list"}
+  .query = "read :HTMLElement:Modal.@template={V_TemplateLineage}"
+
+Object:Structure:Fractal:Vector:V_ModalId:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ModalTitle:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_ModalSize:
+  .default = "md"
+  .description = {"FR": "Taille: sm, md, lg, xl, fullscreen", "EN": "Size: sm, md, lg, xl, fullscreen"}
+
+#endregion
+
+#region === SCRIPTS (END BODY) ===
+
+Object:Structure:Fractal:Vector:V_ScriptEndList:
+  .type = "query"
+  .description = {"FR": "Scripts en fin de body", "EN": "Scripts at end of body"}
+  .query = "read :HTMLElement:Script.@template={V_TemplateLineage}.position=end --order=order"
+
+Object:Structure:Fractal:Vector:V_ScriptInlineList:
+  .type = "query"
+  .description = {"FR": "Scripts inline", "EN": "Inline scripts"}
+  .query = "read :HTMLElement:Script.@template={V_TemplateLineage}.type=inline --order=order"
+
+#endregion
+
+#region === HTML ATTRIBUTES ===
+
+Object:Structure:Fractal:Vector:V_HtmlLang:
+  .default = "fr"
+
+Object:Structure:Fractal:Vector:V_HtmlDir:
+  .default = "ltr"
+
+Object:Structure:Fractal:Vector:V_HtmlClassList:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_HtmlDataTheme:
+  .default = "light"
+
+#endregion
+
+#region === SEO & META ===
+
+Object:Structure:Fractal:Vector:V_MetaCharset:
+  .default = "UTF-8"
+
+Object:Structure:Fractal:Vector:V_MetaViewport:
+  .default = "width=device-width, initial-scale=1.0"
+
+Object:Structure:Fractal:Vector:V_MetaDescription:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaKeywords:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaAuthor:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaRobots:
+  .default = "index, follow"
+
+Object:Structure:Fractal:Vector:V_MetaOgTitle:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaOgDescription:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaOgImage:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaOgUrl:
+  .default = ""
+
+Object:Structure:Fractal:Vector:V_MetaTwitterCard:
+  .default = "summary_large_image"
+
+#endregion
+
+#region === QUERIES COMBINÉES ===
+
+Object:Structure:Fractal:Vector:V_PageTemplateRecursive:
+  .type = "query"
+  .description = {"FR": "Query unique - TOUT le template récursif", "EN": "Single query - ALL recursive template"}
+  .query = "read Template:PageTemplate:{V_TemplateName} ++HeadElement ++BodyElement ++HeaderElement ++NavElement ++ContainerElement ++SidebarElement ++SectionList ++FooterElement ++ModalList ++ScriptEndList --depth=15"
+
+Object:Structure:Fractal:Vector:V_PageStructureOnly:
+  .type = "query"
+  .description = {"FR": "Structure seule sans contenu", "EN": "Structure only without content"}
+  .query = "read Template:PageTemplate:{V_TemplateName} --fields=lineage,name,layout,sidebar,grid,columns ++HeadElement ++BodyElement --depth=3"
+
+Object:Structure:Fractal:Vector:V_PageContentOnly:
+  .type = "query"
+  .description = {"FR": "Contenu des sections uniquement", "EN": "Sections content only"}
+  .query = "read :HTMLElement:Section.@template={V_TemplateLineage} ++ModuleElement ++ComponentList --depth=10"
+
+#endregion
+
+#region === TEMPLATE GENERATION ===
+
+Object:Structure:Fractal:Vector:V_GenerateHtmlPage:
+  .type = "query"
+  .description = {"FR": "Génère le HTML complet de la page", "EN": "Generate complete page HTML"}
+  .query = "read Template:PageTemplate:{V_TemplateName} ++* --depth=15 --format=html"
+
+Object:Structure:Fractal:Vector:V_GenerateHtmlFragment:
+  .type = "query"
+  .description = {"FR": "Génère un fragment HTML (section, component)", "EN": "Generate HTML fragment"}
+  .query = "read {V_FragmentLineage} ++* --depth=10 --format=html"
+
+Object:Structure:Fractal:Vector:V_FragmentLineage:
+  .default = ""
+
+#endregion
+
+#region === DATA BINDING ===
+
+Object:Structure:Fractal:Vector:V_DataSource:
+  .default = ""
+  .description = {"FR": "Source de données pour le template", "EN": "Data source for template"}
+
+Object:Structure:Fractal:Vector:V_DataQuery:
+  .type = "query"
+  .description = {"FR": "Query pour récupérer les données", "EN": "Query to fetch data"}
+  .query = "{V_DataSource}"
+
+Object:Structure:Fractal:Vector:V_DataMapping:
+  .default = ""
+  .description = {"FR": "Mapping data -> template slots", "EN": "Data to template slots mapping"}
+
+#endregion

@@ -1,0 +1,386 @@
+"""
+EURKAI_COCKPIT — Data Transfer Objects (DTOs)
+Version: 1.0.0
+
+
+
+Pydantic models for API request/response validation.
+Follows C01 contracts strictly.
+"""
+
+from __future__ import annotations
+
+import re
+from datetime import datetime
+from enum import Enum
+from typing import Any, Optional
+
+from pydantic import BaseModel, Field, field_validator
+
+
+
+# === TEST/CLI COMPAT: dict-like access for Pydantic models ===
+class _DictLikeModelMixin:
+    def __getitem__(self, key):
+        return getattr(self, key)
+    def get(self, key, default=None):
+        return getattr(self, key, default)
+
+
+# =============================================================================
+# ENUMS
+# =============================================================================
+
+class RunStatus(str, Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    SUCCESS = "success"
+    FAILED = "failed"
+
+
+class InputOutputType(str, Enum):
+    STRING = "string"
+    NUMBER = "number"
+    BOOLEAN = "boolean"
+    OBJECT = "object"
+    ARRAY = "array"
+    FILE = "file"
+
+
+# =============================================================================
+# META & RESPONSE WRAPPERS (C01 Contract 4)
+# =============================================================================
+
+class ResponseMeta(BaseModel):
+    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
+    version: str = "1.0.0"
+
+
+class ErrorDetail(BaseModel):
+    code: str
+    message: str
+    details: Optional[dict[str, Any]] = None
+
+
+class SuccessResponse(BaseModel):
+    success: bool = True
+    data: Any
+    meta: ResponseMeta = Field(default_factory=ResponseMeta)
+
+
+class ErrorResponse(BaseModel):
+    success: bool = False
+    error: ErrorDetail
+    meta: ResponseMeta = Field(default_factory=ResponseMeta)
+
+
+# =============================================================================
+# PROJECT DTOs
+# =============================================================================
+
+class ProjectCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    description: Optional[str] = None
+
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    description: Optional[str] = None
+
+
+class ProjectOut(_DictLikeModelMixin, BaseModel):
+    id: str
+    name: str
+    description: Optional[str]
+    root_path: str = ""
+    tags: list[str] = Field(default_factory=list)
+    created_at: str
+    updated_at: str
+
+
+# =============================================================================
+# BRIEF DTOs
+# =============================================================================
+
+class BriefPolicy(BaseModel):
+    passes_in_a_row: int = 2
+    max_iters: int = 8
+
+
+class BriefCreate(BaseModel):
+    project_id: str
+    title: str = Field(..., min_length=1, max_length=300)
+    goal: Optional[str] = None
+    system_prompt: Optional[str] = None
+    user_prompt: str
+    variables: Optional[dict[str, Any]] = Field(default_factory=dict)
+    expected_output: Optional[str] = None
+    tags: Optional[list[str]] = Field(default_factory=list)
+    policy: Optional[BriefPolicy] = None
+
+
+class BriefUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=300)
+    goal: Optional[str] = None
+    system_prompt: Optional[str] = None
+    user_prompt: Optional[str] = None
+    variables: Optional[dict[str, Any]] = None
+    expected_output: Optional[str] = None
+    tags: Optional[list[str]] = None
+    policy: Optional[BriefPolicy] = None
+
+
+class BriefOut(_DictLikeModelMixin, BaseModel):
+    id: str
+    project_id: str
+    title: str
+    goal: Optional[str]
+    system_prompt: Optional[str]
+    user_prompt: str
+    variables: dict[str, Any]
+    expected_output: Optional[str]
+    tags: list[str]
+    policy: BriefPolicy
+    created_at: str
+    updated_at: str
+
+
+# =============================================================================
+# RUN DTOs
+# =============================================================================
+
+class RunOut(_DictLikeModelMixin, BaseModel):
+    id: str
+    brief_id: str
+    status: RunStatus
+    output: Optional[str]
+    logs: Optional[str]
+    model: Optional[str]
+    duration_ms: Optional[int]
+    created_at: str
+    finished_at: Optional[str]
+
+
+class RunCreate(BaseModel):
+    """Internal use - runs are created via POST /briefs/{id}/run"""
+    model: Optional[str] = None
+
+
+# =============================================================================
+# SECRET DTOs
+# =============================================================================
+
+class SecretCreate(BaseModel):
+    key: str = Field(..., min_length=1, max_length=100)
+    value: str
+    project_id: Optional[str] = None  # NULL = global
+
+
+class SecretUpdate(BaseModel):
+    value: str
+
+
+class SecretOut(_DictLikeModelMixin, BaseModel):
+    """Secrets are NEVER exposed with values in listing"""
+    id: str
+    key: str
+    project_id: Optional[str]
+    created_at: str
+    updated_at: str
+
+
+class SecretUnlock(BaseModel):
+    master_password: str
+
+
+class SecretUnlockResponse(BaseModel):
+    session_token: str
+    ttl: int = 300  # 5 minutes
+
+
+class SecretCopyResponse(BaseModel):
+    value: str
+
+
+# =============================================================================
+# CONFIG DTOs
+# =============================================================================
+
+class ConfigUpdate(BaseModel):
+    value: str
+
+
+class ConfigOut(_DictLikeModelMixin, BaseModel):
+    key: str
+    value: str
+    updated_at: str
+
+    @property
+    def value_json(self):
+        """Return JSON-decoded value if possible, else raw string."""
+        import json
+        try:
+            return json.loads(self.value)
+        except Exception:
+            return self.value
+
+
+
+# =============================================================================
+# MODULE MANIFEST DTOs (C01 MANIFESTS.md)
+# =============================================================================
+
+    @property
+    def value_json(self):
+        """Return JSON-decoded value if possible, else raw string."""
+        import json
+        try:
+            return json.loads(self.value)
+        except Exception:
+            return self.value
+
+
+class ManifestInput(BaseModel):
+    name: str
+    type: InputOutputType
+    required: bool = True
+    description: Optional[str] = None
+    default: Optional[Any] = None
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        if not re.match(r"^[a-z][a-z0-9_]*$", v):
+            raise ValueError("Input name must be snake_case")
+        return v
+
+
+class ManifestOutput(BaseModel):
+    name: str
+    type: InputOutputType
+    description: Optional[str] = None
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        if not re.match(r"^[a-z][a-z0-9_]*$", v):
+            raise ValueError("Output name must be snake_case")
+        return v
+
+
+class ManifestConstraints(BaseModel):
+    min_memory_mb: Optional[int] = None
+    requires_gpu: Optional[bool] = None
+    timeout_seconds: Optional[int] = None
+
+
+class ModuleManifestCreate(BaseModel):
+    """
+    Module manifest following C01 MANIFESTS.md spec.
+    No entry_point in v1 (backend doesn't execute modules).
+    """
+    name: str = Field(..., min_length=3, max_length=50)
+    version: str
+    description: Optional[str] = None
+    inputs: list[ManifestInput] = Field(default_factory=list)
+    outputs: list[ManifestOutput] = Field(default_factory=list)
+    constraints: Optional[ManifestConstraints] = None
+    tags: list[str] = Field(default_factory=list)
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        if not re.match(r"^[a-z][a-z0-9-]*[a-z0-9]$", v):
+            raise ValueError("Module name must be kebab-case (e.g., 'my-module')")
+        return v
+
+    @field_validator("version")
+    @classmethod
+    def validate_version(cls, v: str) -> str:
+        if not re.match(r"^\d+\.\d+\.\d+$", v):
+            raise ValueError("Version must be semver (e.g., '1.0.0')")
+        return v
+
+
+
+class ModuleManifest(BaseModel):
+    """Input DTO used by Storage/tests for module registration."""
+    name: str
+    version: str = "0.0.0"
+    description: str | None = None
+
+    # tests pass list[dict] and simple dicts -> keep permissive
+    inputs: list[dict] = Field(default_factory=list)
+    outputs: list[dict] = Field(default_factory=list)
+
+    constraints: dict = Field(default_factory=dict)
+    requirements: dict = Field(default_factory=dict)
+
+    tags: list[str] = Field(default_factory=list)
+    enabled: bool = True
+
+
+class ModuleManifestOut(_DictLikeModelMixin, BaseModel):
+    id: str
+    name: str
+    version: str
+    description: Optional[str]
+    inputs: list[ManifestInput]
+    outputs: list[ManifestOutput]
+    constraints: Optional[ManifestConstraints]
+    tags: list[str]
+    registered_at: str
+
+
+    @property
+    def manifest_json(self):
+        """Return a dict representation of the manifest."""
+        # best-effort: prefer embedded fields if present
+        return self.model_dump(exclude_none=True)
+
+
+class CompatibilityMapping(BaseModel):
+    from_: str = Field(..., alias="from")
+    to: str
+    type: str
+
+    class Config:
+        populate_by_name = True
+
+
+class CompatibilityResult(BaseModel):
+    compatible: bool
+    mappings: list[CompatibilityMapping]
+    missing_required: list[str]
+    suggestion: Optional[str] = None
+
+
+# =============================================================================
+# BACKUP DTOs
+# =============================================================================
+
+class BackupOut(_DictLikeModelMixin, BaseModel):
+    id: str
+    timestamp: str
+    commit_sha: Optional[str]
+    status: str  # success | failed | dry_run
+    notes: Optional[str]
+
+
+class BackupTrigger(BaseModel):
+    notes: Optional[str] = None
+
+
+# =============================================================================
+# TAG DTOs
+# =============================================================================
+
+class TagCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=50)
+    color: str = "#888888"
+
+
+class TagOut(BaseModel):
+    id: str
+    name: str
+    color: str

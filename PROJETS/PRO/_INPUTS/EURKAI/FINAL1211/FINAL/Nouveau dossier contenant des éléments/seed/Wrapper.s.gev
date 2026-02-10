@@ -1,0 +1,157 @@
+# ============================================================================
+# EURKAI - Wrapper
+# seed/Wrapper.s.gev
+# Wrapper avec hooks before/after pour encapsuler du contenu
+# ============================================================================
+
+## ============================================
+## Object:Wrapper:
+## Wrapper générique - encapsule du contenu avec before/after
+## ============================================
+
+Object:Wrapper:
+  .name = {}
+  .description = {}
+  
+  ## Hook before - inséré AVANT le contenu
+  .before = {}
+  
+  ## Hook after - inséré APRÈS le contenu
+  .after = {}
+  
+  ## Contenu à wrapper (placeholder ou référence)
+  .content = {}
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:
+## Wrapper pour balises HTML
+## before = <tag attributes>
+## after = </tag>
+## ============================================
+
+Object:Wrapper:HTMLWrapper:
+  .name = {}
+  
+  ## Tag HTML (div, section, nav, header, etc.)
+  .tag = {"default": "div"}
+  
+  ## Attributs HTML
+  .id = {}
+  .class = {}
+  .role = {}
+  .style = {}
+  
+  ## Attributs data-*
+  .dataAttributes = {"type": "list"}
+  
+  ## Attributs aria-*
+  .ariaAttributes = {"type": "list"}
+  
+  ## Hook before - généré automatiquement: <tag id="" class="" ...>
+  .before = {}
+  
+  ## Hook after - généré automatiquement: </tag>
+  .after = {}
+  
+  ## Contenu (enfants à wrapper)
+  .content = {}
+  
+  ## Auto-fermant (img, input, br, hr, meta, link)
+  .selfClosing = {"type": "boolean", "default": false}
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:DoctypeWrapper:
+## Wrapper pour DOCTYPE + html
+## ============================================
+
+Object:Wrapper:HTMLWrapper:DoctypeWrapper:
+  .before = "<!DOCTYPE html>\n<html lang=\"{{lang}}\">"
+  .after = "</html>"
+  .lang = {"default": "fr"}
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:HeadWrapper:
+## Wrapper pour <head>
+## ============================================
+
+Object:Wrapper:HTMLWrapper:HeadWrapper:
+  .tag = "head"
+  .before = "<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+  .after = "</head>"
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:BodyWrapper:
+## Wrapper pour <body>
+## ============================================
+
+Object:Wrapper:HTMLWrapper:BodyWrapper:
+  .tag = "body"
+  ## before/after générés dynamiquement avec id/class
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:SectionWrapper:
+## Wrapper pour <section>, <article>, <aside>, etc.
+## ============================================
+
+Object:Wrapper:HTMLWrapper:SectionWrapper:
+  .tag = {"default": "section"}
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:NavWrapper:
+## Wrapper pour <nav>
+## ============================================
+
+Object:Wrapper:HTMLWrapper:NavWrapper:
+  .tag = "nav"
+  .role = "navigation"
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:AnchorWrapper:
+## Wrapper pour <a>
+## ============================================
+
+Object:Wrapper:HTMLWrapper:AnchorWrapper:
+  .tag = "a"
+  .href = {}
+  .target = {}
+  .title = {}
+  ## before = <a href="{{href}}" ...>
+  ## after = </a>
+
+## ============================================
+## Object:Wrapper:HTMLWrapper:VoidWrapper:
+## Wrapper pour éléments auto-fermants (img, input, meta, link, br, hr)
+## ============================================
+
+Object:Wrapper:HTMLWrapper:VoidWrapper:
+  .tag = {}
+  .selfClosing = true
+  ## before = <tag attributes>
+  ## after = "" (vide)
+
+## ============================================
+## Object:Wrapper:CommentWrapper:
+## Wrapper pour commentaires HTML
+## ============================================
+
+Object:Wrapper:CommentWrapper:
+  .before = "<!-- "
+  .after = " -->"
+
+## ============================================
+## Object:Wrapper:ConditionalWrapper:
+## Wrapper conditionnel (if/else)
+## ============================================
+
+Object:Wrapper:ConditionalWrapper:
+  .condition = {}
+  ## Expression ERK à évaluer
+  
+  .before = {}
+  .after = {}
+  
+  ## Contenu si condition true
+  .contentTrue = {}
+  
+  ## Contenu si condition false
+  .contentFalse = {}

@@ -1,0 +1,146 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T10:53:18.759Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/3ae21967-5f0c-4423-9238-c573f176e6bd",
+    "title": "Duplicate Meta Registration in Methods - Claude",
+    "conversationId": "3ae21967-5f0c-4423-9238-c573f176e6bd",
+    "suggestedFilename": "claude_duplicate_meta_registration_in_methods_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 15,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "user",
+        "content": "les metas des methods essaient de s'enregistrer deux fois, pourquoi ?",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "assistant",
+        "content": "rien n'est réglé et les méthodes sont traitées deux fois (du coup les metas aussi)",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "user",
+        "content": "ça n'explique pas pourquoi le code essaie d'enregistrer deux fois les méthodes. en fait les models sont traités deux fois, c'est la cause première",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "assistant",
+        "content": "en effet, je voulais pour le moment limiter les fichiers à traiter, j'ai supprimé cette limite mais ça ne change rien les metodes sont ajoutées deux fois et les metas des methodes aussi",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 3,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "user",
+        "content": "je ne peux pas, il y a trop de fichiers, essayons déjà ta solution 1",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_5",
+        "role": "user",
+        "content": "j'enlève juste la ligne ?",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 5,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_6",
+        "role": "assistant",
+        "content": "sans recursive, ça ne parcourt plus rien",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 6,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_7",
+        "role": "user",
+        "content": "donne moi le fichier corrigé, je ne veux pzs faire d'erreur",
+        "timestamp": "2025-07-08T10:53:18.758Z",
+        "originalIndex": 7,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_8",
+        "role": "assistant",
+        "content": "j'ai maintenant cette erreur [ERREUR] Une erreur est survenue lors de la création de metod 'perform_audit : 'int' object is not subscriptable. en l'occcurence perform_audit est bbien enregistrée mais ça veut dire que le code essaye de l'ajouter une deuxième fois. de plus, j'aimerais éviter que le script scanne deux fois les répertoires, ça ralentit beaucoup le processus",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 8,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_9",
+        "role": "user",
+        "content": "les modèles ne s'enrgistrent plus en double, mais j'ai quand meme ce type d'erreur :[ERREUR] Une erreur est survenue lors de la création de metod 'create_report : 'int' object is not subscriptable",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 9,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_10",
+        "role": "assistant",
+        "content": "j'ai encore [ERREUR] Une erreur est survenue lors de la création de metod : 'int' object is not subscriptable",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 11,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_11",
+        "role": "user",
+        "content": "[ERREUR] Une erreur est survenue lors de la création de metod : 'int' object is not subscriptable",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 12,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_12",
+        "role": "assistant",
+        "content": "superquery ne. peut pas retourner d'entier.",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 13,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_13",
+        "role": "user",
+        "content": "[ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta : Échec de la création de l'object_meta {'object_id': 1058, 'meta_key_id': 1, 'meta_value': 'model'} on crée la meta 1058 url : app/models/entities/ai/avatar.py [DEBUG] META à créer si elle n'existe pas : 'url'[ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta : Échec de la création de l'object_meta {'object_id': 1061, 'meta_key_id': 1, 'meta_value': 'method'} méth {'name': 'create', 'is_static': False, 'params': []} on va créer metod {'name': 'create', 'is_static': False, 'params': []} ce sontt les seules erreurs qui reestent",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 15,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_14",
+        "role": "assistant",
+        "content": "ok mais le cas de figure ne devrait pas se produire, je veux régler le pb, pas le compenser",
+        "timestamp": "2025-07-08T10:53:18.759Z",
+        "originalIndex": 16,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 9975,
+      "bodyText": 693351
+    }
+  }
+}

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #1e1e1e; color: #d4d4d4; height: 100vh; display: flex; flex-direction: column; }
+.header { background: #252526; border-bottom: 1px solid #3c3c3c; display: flex; align-items: center; padding: 0 8px; }
+.logo { padding: 12px; color: #cccccc; font-weight: bold; cursor: pointer; }
+.logo::before { content: '◆ '; color: #569cd6; }
+.logo:hover { color: #569cd6; }
+.tabs { display: flex; flex: 1; }
+.tab { padding: 12px 20px; cursor: pointer; border-bottom: 2px solid transparent; color: #808080; }
+.tab:hover { color: #d4d4d4; background: rgba(255,255,255,0.05); }
+.tab.active { color: #d4d4d4; border-bottom-color: #569cd6; }
+.project-info { padding: 8px 12px; font-size: 12px; color: #808080; }
+.project-info .name { color: #4ec9b0; }
+.header-actions { display: flex; gap: 8px; padding: 0 12px; }
+.header-btn { background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; padding: 4px 8px; color: #808080; cursor: pointer; font-size: 11px; }
+.header-btn:hover { border-color: #569cd6; color: #569cd6; }
+.version { padding: 12px; color: #555; font-size: 12px; }
+.main { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 280px; min-width: 150px; background: #252526; border-right: 1px solid #3c3c3c; display: flex; flex-direction: column; position: relative; }
+.resizer { width: 5px; background: transparent; cursor: col-resize; position: absolute; right: 0; top: 0; bottom: 0; z-index: 10; }
+.resizer:hover, .resizer.active { background: #569cd6; }
+.sidebar-header { padding: 12px; border-bottom: 1px solid #3c3c3c; display: flex; justify-content: space-between; }
+.sidebar-title { font-size: 11px; text-transform: uppercase; color: #808080; }
+.object-count { background: #569cd6; color: #1e1e1e; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.search { padding: 8px 12px; }
+.search input { width: 100%; padding: 8px; background: #3c3c3c; border: 1px solid #3c3c3c; border-radius: 4px; color: #d4d4d4; }
+.search input:focus { outline: none; border-color: #569cd6; }
+.tree { flex: 1; overflow: auto; padding: 8px; }
+.tree ul { list-style: none; padding-left: 16px; }
+.tree > ul { padding-left: 0; }
+.tree-node { display: flex; align-items: center; gap: 6px; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-size: 13px; }
+.tree-node:hover { background: #2a2d2e; }
+.tree-node.selected { background: #094771; }
+.tree-toggle { width: 12px; color: #808080; font-size: 10px; }
+.tree-node .icon { color: #569cd6; }
+.tree-node .count { color: #808080; font-size: 11px; }
+.content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.tab-panel { display: none; flex: 1; overflow: auto; padding: 20px; }
+.tab-panel.active { display: block; }
+.no-project { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #808080; text-align: center; padding: 40px; }
+.no-project .icon { font-size: 64px; margin-bottom: 20px; opacity: 0.3; }
+.no-project h2 { color: #d4d4d4; margin-bottom: 12px; }
+.no-project p { margin-bottom: 24px; max-width: 400px; }
+.btn-primary { padding: 10px 20px; background: #0e639c; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: 500; }
+.btn-primary:hover { background: #1177bb; }
+.btn-secondary { padding: 10px 20px; background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; color: #d4d4d4; cursor: pointer; font-weight: 500; }
+.btn-secondary:hover { background: #2a2d2e; }
+.btn-warning { padding: 10px 20px; background: #d97706; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: 500; }
+.btn-warning:hover { background: #b45309; }
+.walker-error { background: rgba(244,135,113,0.1); border-left: 3px solid #f48771; padding: 12px; margin: 8px 0; border-radius: 4px; }
+.walker-error-title { color: #f48771; font-weight: bold; margin-bottom: 4px; }
+.walker-error-detail { color: #808080; font-size: 12px; margin-left: 16px; }
+.walker-ok { color: #4ec9b0; }
+.walker-summary { display: flex; gap: 16px; margin-bottom: 16px; padding: 12px; background: #252526; border-radius: 4px; }
+.stats { display: flex; gap: 16px; margin-bottom: 20px; }
+.stat { background: #252526; padding: 16px 24px; border-radius: 4px; text-align: center; border: 1px solid #3c3c3c; }
+.stat-value { font-size: 28px; font-weight: bold; color: #569cd6; }
+.stat-label { color: #808080; font-size: 12px; margin-top: 4px; }
+.object-detail { background: #252526; border-radius: 4px; padding: 20px; border: 1px solid #3c3c3c; }
+.object-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.object-header h2 { color: #4ec9b0; margin: 0; }
+.object-alias { color: #569cd6; font-family: monospace; font-size: 12px; margin-left: 12px; }
+.object-actions { display: flex; gap: 8px; }
+.action-btn { background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; padding: 6px 10px; cursor: pointer; color: #808080; }
+.action-btn:hover { border-color: #569cd6; color: #569cd6; }
+.object-lineage { color: #808080; font-family: monospace; font-size: 12px; margin-bottom: 4px; }
+.object-source { color: #6a9955; font-size: 11px; margin-bottom: 16px; }
+.section { margin-top: 16px; }
+.section-header { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #3c3c3c; cursor: pointer; }
+.section-title { font-size: 12px; text-transform: uppercase; color: #808080; }
+.section-toggle { color: #808080; }
+.section-content { padding: 12px 0; }
+.section-content.collapsed { display: none; }
+.add-btn { background: transparent; border: 1px solid #3c3c3c; border-radius: 4px; padding: 2px 8px; color: #808080; cursor: pointer; font-size: 11px; }
+.add-btn:hover { border-color: #4ec9b0; color: #4ec9b0; }
+.attrs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.attrs-table th, .attrs-table td { padding: 8px; text-align: left; border-bottom: 1px solid #3c3c3c; }
+.attrs-table th { color: #808080; font-weight: normal; width: 35%; }
+.vector-value { color: #4ec9b0; cursor: help; }
+.vector-unresolved { color: #dcdcaa; cursor: help; font-style: italic; }
+.raw-value { color: #ce9178; }
+.relation-target { color: #569cd6; cursor: pointer; }
+.relation-target:hover { text-decoration: underline; }
+.from { color: #808080; font-size: 11px; margin-left: 8px; }
+.edit-btn { background: transparent; border: none; color: #808080; cursor: pointer; margin-left: 8px; opacity: 0; }
+.attrs-table tr:hover .edit-btn { opacity: 1; }
+.edit-btn:hover { color: #569cd6; }
+.empty { color: #808080; font-style: italic; font-size: 12px; }
+.form-group { margin-bottom: 16px; position: relative; }
+.form-group label { display: block; color: #808080; font-size: 12px; margin-bottom: 6px; text-transform: uppercase; }
+.form-input { width: 100%; padding: 10px; background: #3c3c3c; border: 1px solid #3c3c3c; border-radius: 4px; color: #d4d4d4; }
+.form-input:focus { outline: none; border-color: #569cd6; }
+select.form-input { cursor: pointer; }
+.autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: #252526; border: 1px solid #569cd6; border-radius: 4px; max-height: 200px; overflow: auto; z-index: 100; display: none; }
+.autocomplete-list.show { display: block; }
+.autocomplete-item { padding: 8px 12px; cursor: pointer; font-size: 13px; }
+.autocomplete-item:hover, .autocomplete-item.selected { background: #094771; }
+.autocomplete-item .type { color: #808080; font-size: 11px; margin-left: 8px; }
+.right-sidebar { width: 220px; background: #252526; border-left: 1px solid #3c3c3c; display: flex; flex-direction: column; }
+.right-sidebar.collapsed { width: 32px; }
+.right-sidebar.collapsed .sidebar-content { display: none; }
+.sidebar-toggle { padding: 8px; cursor: pointer; text-align: center; border-bottom: 1px solid #3c3c3c; color: #808080; }
+.sidebar-toggle:hover { background: #2a2d2e; }
+.sidebar-content { padding: 12px; overflow: auto; flex: 1; }
+.sidebar-section-title { font-size: 10px; text-transform: uppercase; color: #808080; margin-bottom: 8px; }
+.source-file { padding: 4px 8px; margin: 2px 0; font-size: 11px; color: #808080; background: #2a2d2e; border-radius: 4px; cursor: pointer; }
+.source-file:hover { color: #569cd6; }
+.themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.theme-file { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #252526; border: 1px solid #3c3c3c; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.theme-file:hover { border-color: #569cd6; background: #2a2d2e; }
+.theme-icon { font-size: 24px; }
+.theme-name { flex: 1; color: #d4d4d4; font-size: 13px; }
+.theme-btn { background: none; border: none; color: #808080; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+.theme-btn:hover { background: #3c3c3c; color: #569cd6; }
+.accordion { border: 1px solid #3c3c3c; border-radius: 4px; overflow: hidden; }
+.accordion-item { border-bottom: 1px solid #3c3c3c; }
+.accordion-item:last-child { border-bottom: none; }
+.accordion-header { padding: 12px 16px; background: #252526; cursor: pointer; display: flex; justify-content: space-between; }
+.accordion-header:hover { background: #2a2d2e; }
+.accordion-header h4 { margin: 0; color: #569cd6; font-size: 14px; }
+.accordion-content { padding: 16px; background: #2a2d2e; display: none; }
+.accordion-content.open { display: block; }
+.accordion-content p { color: #808080; font-size: 13px; margin: 4px 0; }
+.accordion-content strong { color: #4ec9b0; }
+.create-form { max-width: 500px; }
+.walker-config { background: #252526; padding: 20px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #3c3c3c; }
+
+</style>
+</head>
+<body>
+<div class="header">
+    <div class="logo" onclick="openHtmlPreview()" title="Ouvrir en HTML">EURKAI Cockpit</div>
+    <div class="tabs"><div class="tab" data-tab="schemas">📐 Schémas</div><div class="tab" data-tab="instances">📦 Instances</div><div class="tab" data-tab="aliases">🏷 Alias</div><div class="tab" data-tab="walker">🚶 Walker</div><div class="tab active" data-tab="library">📚 Library</div><div class="tab" data-tab="themes">🎨 Themes</div><div class="tab" data-tab="console">🖥 Console</div></div>
+    <div class="header-actions">
+      <button class="header-btn" onclick="openHtmlPreview()" title="Ouvrir dans le navigateur">🌐 HTML</button>
+      <button class="header-btn" onclick="refreshProject()" title="Rafraîchir">🔄</button>
+    </div>
+    <div class="project-info">📁 <span class="name">EURKAI</span></div>
+    <div class="version">v0.10.10</div>
+  </div><div class="main"><div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Types</span>
+        <span class="object-count">0</span>
+      </div>
+      <div class="search">
+        <input type="text" id="searchInput" placeholder="Rechercher...">
+      </div>
+      <div class="tree" id="tree"></div>
+      <div class="resizer" id="resizer"></div>
+    </div><div class="content"><div class="tab-panel" id="panel-schemas">
+      <div class="stats">
+        <div class="stat"><div class="stat-value">0</div><div class="stat-label">Types</div></div>
+        <div class="stat"><div class="stat-value">0</div><div class="stat-label">Vecteurs</div></div>
+        <div class="stat"><div class="stat-value">0</div><div class="stat-label">Alias</div></div>
+      </div>
+      <div class="object-detail" id="objectDetail">
+        <p class="empty">Sélectionnez un type dans l'arbre</p>
+      </div>
+    </div><div class="tab-panel" id="panel-instances">
+      <h2 style="color:#569cd6;margin-bottom:20px;">📦 Instances</h2>
+      <p class="empty">Panel instances</p>
+    </div><div class="tab-panel" id="panel-aliases">
+      <h2 style="color:#569cd6;margin-bottom:20px;">🏷 Alias</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#4ec9b0;margin-bottom:16px;">➕ Créer un Alias</h3>
+          <div class="form-group">
+            <label>Nom (@alias)</label>
+            <input type="text" id="aliasName" class="form-input" placeholder="@MonAlias">
+          </div>
+          <div class="form-group">
+            <label>Cible (lineage)</label>
+            <input type="text" id="aliasTarget" class="form-input" placeholder="Object:Method:Walk">
+          </div>
+          <div class="form-group">
+            <label>Query (optionnel)</label>
+            <input type="text" id="aliasQuery" class="form-input" placeholder=".type == 'Method'">
+          </div>
+          <button class="btn-primary" onclick="createAlias()">Créer</button>
+        </div>
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#dcdcaa;margin-bottom:16px;">📋 Alias existants</h3>
+          <div id="aliasList"><p class="empty">Aucun alias</p></div>
+        </div>
+      </div>
+    </div><div class="tab-panel" id="panel-walker">
+      <div class="walker-config">
+        <h3 style="color:#4ec9b0;margin-bottom:16px;">📦 Configuration</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label>Objet (point d'entrée)</label>
+            <input type="text" id="walkerDict" class="form-input" list="objectList" placeholder="Object:Element:Body" value="Object">
+            <datalist id="objectList"></datalist>
+          </div>
+          <div class="form-group">
+            <label>Scénario (scan)</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+              <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;">
+                <input type="radio" name="walkerScan" value="pass" checked> pass
+              </label>
+              <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;">
+                <input type="radio" name="walkerScan" value="ghost"> ghost
+              </label>
+              <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;">
+                <input type="radio" name="walkerScan" value="other"> autre...
+              </label>
+            </div>
+            <div id="customScanGroup" style="display:none;margin-top:8px;">
+              <input type="text" id="walkerCustomScan" class="form-input" placeholder="nom du scan">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Direction</label>
+            <select id="walkerDirection" class="form-input">
+              <option value="down">⬇️ Descendants</option>
+              <option value="up">⬆️ Ancêtres</option>
+              <option value="both">↕️ Les deux</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:8px;">
+          <div class="form-group">
+            <label>Profondeur (-1 = infini)</label>
+            <input type="number" id="walkerDepth" class="form-input" value="-1" min="-1">
+          </div>
+          <div class="form-group">
+            <label>Sortie</label>
+            <select id="walkerOutput" class="form-input">
+              <option value="list">📋 Liste</option>
+              <option value="tree">🌳 Arbre</option>
+              <option value="flat">📄 Flat</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;align-items:flex-end;">
+            <button class="btn-primary" onclick="runWalker('walk')" style="flex:1;">🚀 Walk</button>
+          </div>
+        </div>
+      </div>
+      <div style="background:#1e1e1e;padding:12px;border-radius:4px;margin-bottom:12px;">
+        <div style="color:#808080;font-size:11px;margin-bottom:4px;">RÉSUMÉ RAPIDE</div>
+        <div id="walkerQuickStats" style="display:flex;gap:12px;flex-wrap:wrap;">
+          <span style="color:#4ec9b0;">--</span>
+        </div>
+      </div>
+      <div id="walkerResult"></div>
+    </div><div class="tab-panel active" id="panel-library">
+      <h2 style="color:#569cd6;margin-bottom:20px;">📚 Librairie EURKAI</h2>
+      <div class="accordion" id="libraryAccordion"></div>
+    </div><div class="tab-panel" id="panel-themes">
+      <h2 style="color:#569cd6;margin-bottom:20px;">🎨 Themes & Templates</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#4ec9b0;margin-bottom:16px;">📄 Fichiers HTML (0)</h3>
+          <div style="max-height:200px;overflow-y:auto;"><p class="empty">Aucun fichier HTML</p></div>
+        </div>
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#dcdcaa;margin-bottom:16px;">🚀 Déployer Website</h3>
+          <div class="form-group">
+            <label>Website</label>
+            <select id="websiteSelect" class="form-input">
+              <option value=">-- Sélectionner --</option>
+              
+            </select>
+          </div>
+          <button class="btn-primary" onclick="deployWebsite()" style="margin-top:12px;width:100%;">🚀 Déployer</button>
+          <div id="deployResult" style="margin-top:12px;"></div>
+        </div>
+      </div>
+      <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+        <h3 style="color:#c586c0;margin-bottom:16px;">🌐 Websites (0)</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;"><p class="empty">Aucun Website</p></div>
+      </div>
+    </div><div class="tab-panel" id="panel-console">
+      <h2 style="color:#569cd6;margin-bottom:20px;">🖥 Console</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#4ec9b0;margin-bottom:16px;">🔍 Query</h3>
+          <div class="form-group">
+            <label>Pattern (lineage, V_, @alias, regex)</label>
+            <input type="text" id="queryInput" class="form-input" placeholder="Object:Method:* | V_* | @Walker">
+          </div>
+          <button class="btn-primary" onclick="runQuery()" style="margin-top:8px;">Exécuter</button>
+          <div id="queryResult" style="margin-top:16px;max-height:300px;overflow-y:auto;"></div>
+        </div>
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#dcdcaa;margin-bottom:16px;">✅ Test Règle</h3>
+          <div class="form-group">
+            <label>Cible (lineage, V_, @alias)</label>
+            <input type="text" id="ruleTarget" class="form-input" placeholder="Object:Method:Walk">
+          </div>
+          <div class="form-group">
+            <label>Règle (ERK expression)</label>
+            <input type="text" id="ruleExpr" class="form-input" placeholder=".name HAS | .scan == 'pass'">
+          </div>
+          <button class="btn-secondary" onclick="testRule()" style="margin-top:8px;">Tester</button>
+          <div id="ruleResult" style="margin-top:16px;font-size:24px;font-weight:bold;"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#c586c0;margin-bottom:16px;">📝 Résoudre</h3>
+          <div style="display:flex;gap:12px;">
+            <input type="text" id="resolveInput" class="form-input" placeholder="V_ObjectName | @Walker" style="flex:1;">
+            <button class="btn-primary" onclick="resolveValue()">Résoudre</button>
+          </div>
+          <div id="resolveResult" style="margin-top:16px;padding:12px;background:#1e1e1e;border-radius:4px;font-family:monospace;max-height:300px;overflow-y:auto;"></div>
+        </div>
+        <div style="background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;">
+          <h3 style="color:#6a9955;margin-bottom:16px;">🧮 ERK Eval</h3>
+          <div class="form-group">
+            <label>Expression ERK</label>
+            <input type="text" id="erkExpr" class="form-input" placeholder="AND(true, false) | IF(5 > 3, 'yes', 'no')">
+          </div>
+          <div class="form-group">
+            <label>Contexte JSON (optionnel)</label>
+            <input type="text" id="erkContext" class="form-input" placeholder='{"x": 5}'>
+          </div>
+          <button class="btn-secondary" onclick="evalErk()" style="margin-top:8px;">Évaluer</button>
+          <div id="erkResult" style="margin-top:16px;padding:12px;background:#1e1e1e;border-radius:4px;font-family:monospace;"></div>
+        </div>
+      </div>
+    </div></div></div>
+<script>
+const vscode = typeof acquireVsCodeApi !== 'undefined' ? acquireVsCodeApi() : { postMessage: console.log };
+const hasProject = true;
+const objects = [];
+const treeData = { name: 'Object', lineage: 'Object', children: [] };
+const vectors = {};
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const panelId = 'panel-' + tab.dataset.tab;
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        panel.classList.add('active');
+    });
+});
+
+// Search
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', e => {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('.tree-node').forEach(n => {
+            const name = n.querySelector('.name');
+            if (name) n.style.display = name.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
+        });
+    });
+}
+
+// Radio scan
+document.querySelectorAll('input[name="walkerScan"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const customGroup = document.getElementById('customScanGroup');
+        if (customGroup) customGroup.style.display = this.value === 'other' ? 'block' : 'none';
+    });
+});
+
+// Functions
+function openHtmlPreview() { vscode.postMessage({ command: 'openHtmlPreview' }); }
+function refreshProject() { vscode.postMessage({ command: 'refreshProject' }); }
+function selectObject(l) { vscode.postMessage({ command: 'selectObject', lineage: l }); }
+function gotoObject(l) { vscode.postMessage({ command: 'gotoObject', lineage: l }); }
+function runWalker(action) {
+    const dict = document.getElementById('walkerDict')?.value || 'Object';
+    const scan = document.querySelector('input[name="walkerScan"]:checked')?.value || 'pass';
+    vscode.postMessage({ command: 'runWalker', action, dict, scan });
+}
+function runQuery() {
+    const q = document.getElementById('queryInput')?.value || '';
+    vscode.postMessage({ command: 'runQuery', query: q });
+}
+function testRule() {
+    const target = document.getElementById('ruleTarget')?.value || '';
+    const expr = document.getElementById('ruleExpr')?.value || '';
+    vscode.postMessage({ command: 'testRule', target, expr });
+}
+function resolveValue() {
+    const input = document.getElementById('resolveInput')?.value || '';
+    vscode.postMessage({ command: 'resolveValue', input });
+}
+function evalErk() {
+    const expr = document.getElementById('erkExpr')?.value || '';
+    const ctx = document.getElementById('erkContext')?.value || '{}';
+    vscode.postMessage({ command: 'evalErk', expr, context: ctx });
+}
+function createAlias() {
+    const name = document.getElementById('aliasName')?.value || '';
+    const target = document.getElementById('aliasTarget')?.value || '';
+    const query = document.getElementById('aliasQuery')?.value || '';
+    vscode.postMessage({ command: 'createAlias', aliasName: name, target, query });
+}
+function deployWebsite() { vscode.postMessage({ command: 'deployWebsite' }); }
+</script>
+</body>
+</html>

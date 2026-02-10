@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>EURKAI Cockpit</title>
+  <style>
+    :root {
+      --bg: #f5f7fa; --surface: #fff; --border: #e1e5eb; --text: #1a1a2e;
+      --muted: #6b7280; --accent: #4f46e5; --accent-light: #eef2ff;
+      --success: #10b981; --success-bg: #d1fae5;
+      --warning: #f59e0b; --warning-bg: #fef3c7;
+      --danger: #dc2626; --danger-bg: #fef2f2;
+      --hover: #f9fafb; --radius: 6px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; color: var(--text); background: var(--bg); height: 100vh; overflow: hidden; }
+    
+    .app { display: flex; flex-direction: column; height: 100vh; }
+    
+    /* Tabs */
+    .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 16px; }
+    .tab { padding: 12px 20px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-content { display: none; flex: 1; overflow: hidden; }
+    .tab-content.active { display: flex; }
+    
+    /* Objects Tab */
+    .objects-tab { display: flex; flex: 1; }
+    .left { width: 320px; min-width: 240px; max-width: 50vw; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: relative; }
+    .resize { position: absolute; right: 0; top: 0; bottom: 0; width: 5px; cursor: col-resize; }
+    .resize:hover, .resize.active { background: var(--accent); }
+    .left-head { padding: 16px; border-bottom: 1px solid var(--border); }
+    .left-head h1 { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--accent); display: flex; align-items: center; justify-content: space-between; }
+    .refresh-btn { background: none; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--muted); }
+    .refresh-btn:hover { background: var(--hover); color: var(--accent); border-color: var(--accent); }
+    .left-head input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; }
+    .left-head input:focus { outline: none; border-color: var(--accent); }
+    .left-body { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 12px; }
+    .tree-container { flex: 1; overflow-y: auto; }
+    
+    .lists-panel { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); max-height: 180px; overflow-y: auto; flex-shrink: 0; }
+    .lists-panel-header { padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+    .lists-panel-body { padding: 4px; display: flex; flex-wrap: wrap; gap: 4px; }
+    .list-drag-item { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 11px; cursor: grab; border-radius: var(--radius); color: var(--text); background: var(--bg); border: 1px solid var(--border); }
+    .list-drag-item:hover { background: var(--accent-light); border-color: var(--accent); }
+
+    .quick-add { padding: 12px; border-top: 1px solid var(--border); background: var(--bg); }
+    .quick-add-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+    .quick-add input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; margin-bottom: 6px; font-family: monospace; }
+    .quick-add input:focus { outline: none; border-color: var(--accent); }
+    .quick-add .row { display: flex; gap: 6px; }
+    .quick-add button { padding: 8px 14px; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; flex-shrink: 0; }
+
+    .tree-node { user-select: none; }
+    .tree-row { display: flex; align-items: center; gap: 4px; padding: 5px 8px; border-radius: var(--radius); cursor: pointer; }
+    .tree-row:hover { background: var(--hover); }
+    .tree-row.selected { background: var(--accent-light); }
+    .toggle { width: 16px; font-size: 10px; color: var(--muted); transition: transform 0.15s; flex-shrink: 0; }
+    .toggle.open { transform: rotate(90deg); }
+    .toggle.none { visibility: hidden; }
+    .tree-label { flex: 1; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tree-count { font-size: 11px; color: var(--muted); background: var(--bg); padding: 1px 6px; border-radius: 10px; }
+    .tree-kids { margin-left: 16px; border-left: 1px solid var(--border); display: none; }
+    .tree-kids.open { display: block; }
+
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .main-head { padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .breadcrumb { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .breadcrumb span { cursor: pointer; }
+    .breadcrumb span:hover { color: var(--accent); }
+    .main-title { font-size: 20px; font-weight: 700; }
+    .main-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+
+    .main-drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 20px; text-align: center; color: var(--muted); font-size: 13px; }
+    .main-drop-zone.active { border-color: var(--accent); background: var(--accent-light); }
+
+    .list-zone { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .list-zone.collapsed .list-zone-content { display: none; }
+    .list-zone.collapsed .list-zone-header { border-bottom: none; }
+    .list-zone-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; cursor: pointer; }
+    .list-zone-header:hover { background: var(--hover); }
+    .accordion-toggle { font-size: 10px; color: var(--muted); transition: transform 0.15s; }
+    .list-zone.collapsed .accordion-toggle { transform: rotate(-90deg); }
+    .list-zone-header .list-name { flex: 1; }
+    .list-zone-header .list-count { font-size: 11px; color: var(--muted); background: var(--surface); padding: 1px 6px; border-radius: 10px; }
+    .list-zone-header .add-toggle { background: var(--accent); border: none; color: #fff; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .list-zone-header .remove-list { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 2px 4px; border-radius: 4px; }
+    .list-zone-header .remove-list:hover { background: var(--danger-bg); color: var(--danger); }
+    .list-zone-content { display: block; }
+    .list-zone-add { display: none; gap: 6px; padding: 8px 12px; background: var(--accent-light); border-bottom: 1px solid var(--border); }
+    .list-zone-add.open { display: flex; }
+    .list-zone-add input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; font-family: monospace; }
+    .list-zone-add button { padding: 6px 12px; border: none; border-radius: var(--radius); background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .list-zone-body { padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+    .list-drop-target { border: 2px dashed var(--border); border-radius: var(--radius); padding: 12px; text-align: center; color: var(--muted); font-size: 11px; background: var(--bg); }
+    .list-drop-target.drop-active { border-color: var(--accent); background: var(--accent-light); }
+    .list-zone-items { display: flex; flex-direction: column; gap: 3px; }
+    .list-item { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: var(--bg); border-radius: var(--radius); font-size: 12px; cursor: pointer; border-left: 3px solid transparent; }
+    .list-item:hover { background: var(--accent-light); }
+    .list-item.owned { border-left-color: var(--success); }
+    .list-item.inherited { border-left-color: var(--accent); }
+    .list-item.injected { border-left-color: var(--warning); }
+    .list-item-handle { color: var(--muted); cursor: grab; font-size: 10px; }
+    .list-item-label { flex: 1; font-family: monospace; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+    .list-item-provenance { font-size: 9px; padding: 2px 5px; border-radius: 3px; text-transform: uppercase; font-weight: 600; }
+    .list-item-provenance.owned { background: var(--success-bg); color: #065f46; }
+    .list-item-provenance.inherited { background: var(--accent-light); color: #3730a3; }
+    .list-item-provenance.injected { background: var(--warning-bg); color: #92400e; }
+    .list-item-source { font-size: 9px; color: var(--muted); max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+    .list-item-nav { padding: 2px 6px; border: none; background: none; color: var(--accent); cursor: pointer; font-size: 11px; border-radius: 4px; }
+    .list-item-parent { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: var(--accent-light); border-radius: var(--radius); font-size: 12px; cursor: grab; border-left: 3px solid var(--accent); margin-bottom: 4px; }
+    .list-item-parent:hover { background: var(--hover); }
+    .list-item-parent .list-item-nav { opacity: 1; }
+    .list-item-wrapper { margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; background: var(--surface); }
+    .list-item-wrapper .list-zone { margin-left: 0 !important; border: none; }
+
+    .trash-zone { position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px; border-radius: 50%; background: var(--danger-bg); border: 3px dashed var(--danger); display: none; align-items: center; justify-content: center; font-size: 28px; z-index: 1000; }
+    .trash-zone.visible { display: flex; }
+    .trash-zone.active { background: var(--danger); border-style: solid; transform: scale(1.2); }
+
+    /* Console Tab */
+    .console-tab { display: flex; flex: 1; flex-direction: column; }
+    .console-toolbar { display: flex; gap: 8px; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border); align-items: center; }
+    .console-toolbar button { padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .console-toolbar button:hover { background: var(--hover); border-color: var(--accent); color: var(--accent); }
+    .console-toolbar button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .console-toolbar button.primary:hover { opacity: 0.9; }
+    .console-toolbar button.success { background: var(--success); color: #fff; border-color: var(--success); }
+    .console-toolbar .spacer { flex: 1; }
+    .console-toolbar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--surface); }
+    
+    .console-main { display: flex; flex: 1; overflow: hidden; }
+    .console-input-panel { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+    .console-input-header { padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
+    .console-input { flex: 1; padding: 16px; font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace; font-size: 13px; line-height: 1.6; border: none; resize: none; background: var(--surface); }
+    .console-input:focus { outline: none; }
+    
+    .console-output-panel { flex: 1; display: flex; flex-direction: column; background: var(--surface); }
+    .console-output-header { padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+    .console-output-tabs { display: flex; gap: 4px; }
+    .console-output-tab { padding: 4px 12px; border-radius: var(--radius); font-size: 11px; cursor: pointer; background: transparent; border: 1px solid transparent; }
+    .console-output-tab:hover { background: var(--hover); }
+    .console-output-tab.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+    .console-output { flex: 1; padding: 16px; overflow: auto; font-family: 'SF Mono', 'Monaco', monospace; font-size: 12px; line-height: 1.6; }
+    .console-output pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+    
+    .result-success { color: var(--success); }
+    .result-error { color: var(--danger); }
+    .result-warning { color: var(--warning); }
+    .result-info { color: var(--accent); }
+    .result-section { margin-bottom: 16px; padding: 12px; border-radius: var(--radius); background: var(--bg); }
+    .result-section-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+    .result-item { padding: 4px 0; border-bottom: 1px solid var(--border); }
+    .result-item:last-child { border-bottom: none; }
+    .result-lineage { color: var(--accent); font-weight: 500; }
+    .result-attr { color: var(--muted); }
+    .result-value { color: var(--text); }
+    .validation-result { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--radius); margin-bottom: 8px; }
+    .validation-result.valid { background: var(--success-bg); color: #065f46; }
+    .validation-result.invalid { background: var(--danger-bg); color: var(--danger); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="tabs">
+    <div class="tab active" data-tab="objects">📦 Objects</div>
+    <div class="tab" data-tab="console">⚡ Console ERK</div>
+  </div>
+  
+  <div class="tab-content active" id="tab-objects">
+    <div class="objects-tab">
+      <div class="left" id="left">
+        <div class="left-head">
+          <h1><span>◆ EURKAI</span><button class="refresh-btn" id="refreshBtn">↻ Refresh</button></h1>
+          <input type="text" id="search" placeholder="Rechercher...">
+        </div>
+        <div class="left-body">
+          <div class="tree-container"><div id="tree"></div></div>
+          <div class="lists-panel">
+            <div class="lists-panel-header">Listes disponibles</div>
+            <div class="lists-panel-body" id="listsPanel"></div>
+          </div>
+        </div>
+        <div class="quick-add">
+          <div class="quick-add-title">Ajout libre</div>
+          <input type="text" id="qaLineage" placeholder="Lineage (ex: Object:Attribute:Name)">
+          <div class="row">
+            <input type="text" id="qaList" placeholder="Liste (ex: AttributeList)">
+            <button id="qaBtn">+</button>
+          </div>
+        </div>
+        <div class="resize" id="resize"></div>
+      </div>
+      <div class="main">
+        <div class="main-head" id="mainHead" style="display:none">
+          <div class="breadcrumb" id="breadcrumb"></div>
+          <div class="main-title" id="objTitle">-</div>
+        </div>
+        <div class="main-body" id="mainBody">
+          <div class="empty" id="empty"><div class="empty-icon">◇</div><div>Sélectionnez un objet</div></div>
+          <div id="listsContainer" style="display:none"></div>
+          <div class="main-drop-zone" id="mainDropZone" style="display:none">Glissez une liste ici</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="tab-content" id="tab-console">
+    <div class="console-tab">
+      <div class="console-toolbar">
+        <button class="primary" id="runBtn">▶ Exécuter</button>
+        <button id="validateBtn">✓ Valider</button>
+        <button id="parseBtn">🔍 Parser</button>
+        <div class="spacer"></div>
+        <select id="outputFormat">
+          <option value="parsed">Parsed</option>
+          <option value="json">JSON</option>
+          <option value="gev">GEV</option>
+        </select>
+        <button id="clearBtn">Effacer</button>
+        <button class="success" id="saveBtn">💾 Enregistrer</button>
+      </div>
+      <div class="console-main">
+        <div class="console-input-panel">
+          <div class="console-input-header"><span>Code ERK</span><span class="line-count" id="lineCount">0 lignes</span></div>
+          <textarea class="console-input" id="erkInput" placeholder="# Code ERK...
+
+:Object:Test:MyObject:
+  .description = &quot;Test&quot;
+  IN TestList
+"></textarea>
+        </div>
+        <div class="console-output-panel">
+          <div class="console-output-header">
+            <span>Résultat</span>
+            <div class="console-output-tabs">
+              <div class="console-output-tab active" data-output="result">Résultat</div>
+              <div class="console-output-tab" data-output="validation">Validation</div>
+              <div class="console-output-tab" data-output="ast">AST</div>
+            </div>
+          </div>
+          <div class="console-output" id="consoleOutput">
+            <div class="empty"><div class="empty-icon">⚡</div><div>Cliquez sur Exécuter</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="trash-zone" id="trash">🗑</div>
+
+<script>
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  };
+});
+
+// Console
+const erkInput = document.getElementById('erkInput');
+const consoleOutput = document.getElementById('consoleOutput');
+const lineCount = document.getElementById('lineCount');
+
+erkInput.addEventListener('input', () => {
+  lineCount.textContent = erkInput.value.split('\n').length + ' lignes';
+});
+
+document.querySelectorAll('.console-output-tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.console-output-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  };
+});
+
+function showOutput(html) { consoleOutput.innerHTML = html; }
+
+document.getElementById('runBtn').onclick = async () => {
+  const code = erkInput.value;
+  if (!code.trim()) { showOutput('<div class="result-warning">⚠️ Aucun code</div>'); return; }
+  try {
+    const resp = await fetch('/api/erk/execute', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+    const result = await resp.json();
+    displayResult(result);
+  } catch (err) { showOutput('<div class="result-error">❌ ' + err.message + '</div>'); }
+};
+
+document.getElementById('validateBtn').onclick = async () => {
+  const code = erkInput.value;
+  if (!code.trim()) { showOutput('<div class="result-warning">⚠️ Aucun code</div>'); return; }
+  try {
+    const resp = await fetch('/api/erk/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+    const result = await resp.json();
+    displayValidation(result);
+  } catch (err) { showOutput('<div class="result-error">❌ ' + err.message + '</div>'); }
+};
+
+document.getElementById('parseBtn').onclick = async () => {
+  const code = erkInput.value;
+  if (!code.trim()) { showOutput('<div class="result-warning">⚠️ Aucun code</div>'); return; }
+  try {
+    const resp = await fetch('/api/erk/parse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+    const result = await resp.json();
+    const format = document.getElementById('outputFormat').value;
+    if (format === 'json') showOutput('<pre>' + JSON.stringify(result.parsed, null, 2) + '</pre>');
+    else if (format === 'gev') showOutput('<pre>' + (result.gev || JSON.stringify(result.parsed, null, 2)) + '</pre>');
+    else showOutput('<pre>' + JSON.stringify(result.parsed, null, 2) + '</pre>');
+  } catch (err) { showOutput('<div class="result-error">❌ ' + err.message + '</div>'); }
+};
+
+document.getElementById('clearBtn').onclick = () => { erkInput.value = ''; lineCount.textContent = '0 lignes'; showOutput('<div class="empty"><div class="empty-icon">⚡</div><div>Effacé</div></div>'); };
+
+document.getElementById('saveBtn').onclick = async () => {
+  const code = erkInput.value;
+  if (!code.trim()) { showOutput('<div class="result-warning">⚠️ Aucun code</div>'); return; }
+  try {
+    const resp = await fetch('/api/erk/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+    const result = await resp.json();
+    if (result.ok) showOutput('<div class="result-success">✅ Enregistré: ' + result.file + '</div>');
+    else showOutput('<div class="result-error">❌ ' + result.error + '</div>');
+  } catch (err) { showOutput('<div class="result-error">❌ ' + err.message + '</div>'); }
+};
+
+function displayResult(result) {
+  if (result.error) { showOutput('<div class="result-error">❌ ' + result.error + '</div>'); return; }
+  let html = '';
+  if (result.objects?.length) {
+    html += '<div class="result-section"><div class="result-section-title">Objets</div>';
+    result.objects.forEach(o => { html += '<div class="result-item"><span class="result-lineage">' + o.lineage + '</span></div>'; });
+    html += '</div>';
+  }
+  if (result.memberships?.length) {
+    html += '<div class="result-section"><div class="result-section-title">Memberships</div>';
+    result.memberships.forEach(m => { html += '<div class="result-item"><span class="result-lineage">' + m[0] + '</span> <span class="result-attr">IN</span> <span class="result-value">' + m[1] + '</span></div>'; });
+    html += '</div>';
+  }
+  if (!html) html = '<div class="result-info">ℹ️ OK</div>';
+  showOutput(html);
+}
+
+function displayValidation(result) {
+  let html = result.valid 
+    ? '<div class="validation-result valid">✅ Valide</div>' 
+    : '<div class="validation-result invalid">❌ Invalide</div>';
+  if (result.errors?.length) {
+    html += '<div class="result-section"><div class="result-section-title">Erreurs</div>';
+    result.errors.forEach(e => { html += '<div class="result-item result-error">L' + (e.line||'?') + ': ' + e.message + '</div>'; });
+    html += '</div>';
+  }
+  showOutput(html);
+}
+
+// Objects Tab
+let current = null, expanded = new Set(), selected = null, dragData = null, currentLists = [], allObjects = [];
+const $ = id => document.getElementById(id);
+function last(oid) { const p = (oid||'').split(':').filter(Boolean); return p[p.length-1] || oid; }
+function lineageChain(oid) { const p = (oid||'').split(':').filter(Boolean), c = []; for (let i=1; i<=p.length; i++) c.push(p.slice(0,i).join(':')); return c; }
+function isList(oid) { return oid && last(oid).endsWith('List'); }
+function getTypePrefixForList(listName) { const name = listName.endsWith('List') ? listName.slice(0, -4) : listName; return name === 'Object' ? 'Object:' : 'Object:' + name + ':'; }
+
+async function api(path) { return (await fetch(path)).json(); }
+async function addMembership(lineage, list) { return (await fetch('/api/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({lineage, parentList:list}) })).json(); }
+async function removeMembership(element, fromList) { return (await fetch('/api/remove', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({element, list: fromList}) })).json(); }
+
+const trash = $('trash');
+function showTrash() { trash.classList.add('visible'); }
+function hideTrash() { trash.classList.remove('visible', 'active'); }
+trash.addEventListener('dragover', e => { e.preventDefault(); trash.classList.add('active'); });
+trash.addEventListener('dragleave', () => trash.classList.remove('active'));
+trash.addEventListener('drop', async e => {
+  e.preventDefault();
+  if (dragData?.fromList && dragData?.oid) { await removeMembership(dragData.oid, dragData.fromList); hideTrash(); dragData = null; if (current) await loadObj(current); }
+  else hideTrash();
+});
+
+function renderTree(node, container) {
+  if (!node) return;
+  if (node.oid === '__ROOT__') { (node.children||[]).forEach(c => renderTree(c, container)); return; }
+  const oid = node.oid;
+  if (isList(oid)) return;
+  const hasKids = node.children?.filter(c => !isList(c.oid)).length > 0;
+  const isOpen = expanded.has(oid), isSel = selected === oid;
+  
+  const div = document.createElement('div'); div.className = 'tree-node';
+  const row = document.createElement('div'); row.className = 'tree-row' + (isSel ? ' selected' : ''); row.draggable = true;
+  const tog = document.createElement('span'); tog.className = 'toggle ' + (hasKids ? (isOpen ? 'open' : '') : 'none'); tog.textContent = '▶';
+  if (hasKids) tog.onclick = e => { e.stopPropagation(); expanded.has(oid) ? expanded.delete(oid) : expanded.add(oid); refresh(); };
+  const lbl = document.createElement('span'); lbl.className = 'tree-label'; lbl.textContent = last(oid); lbl.title = oid;
+  row.appendChild(tog); row.appendChild(lbl);
+  
+  const nonListKids = (node.children || []).filter(c => !isList(c.oid));
+  if (nonListKids.length > 0) { const cnt = document.createElement('span'); cnt.className = 'tree-count'; cnt.textContent = nonListKids.length; row.appendChild(cnt); }
+  
+  row.onclick = () => { selected = oid; if (hasKids && !expanded.has(oid)) expanded.add(oid); loadObj(oid); refresh(); };
+  row.ondragstart = e => { dragData = {type: 'object', oid}; row.classList.add('dragging'); e.dataTransfer.setData('text/plain', oid); };
+  row.ondragend = () => { row.classList.remove('dragging'); setTimeout(() => { dragData = null; }, 100); };
+  
+  div.appendChild(row);
+  if (hasKids) { const kids = document.createElement('div'); kids.className = 'tree-kids' + (isOpen ? ' open' : ''); nonListKids.forEach(c => renderTree(c, kids)); div.appendChild(kids); }
+  container.appendChild(div);
+}
+
+function collectObjects(node) {
+  if (!node) return;
+  if (node.oid === '__ROOT__') { (node.children||[]).forEach(c => collectObjects(c)); return; }
+  if (!isList(node.oid)) allObjects.push(node.oid);
+  (node.children || []).forEach(c => collectObjects(c));
+}
+
+function renderListsPanel() {
+  const panel = $('listsPanel'); panel.innerHTML = '';
+  const listNames = [...new Set(allObjects.map(oid => last(oid) + 'List'))].sort();
+  listNames.forEach(listName => {
+    const item = document.createElement('div'); item.className = 'list-drag-item'; item.draggable = true; item.textContent = listName;
+    item.ondragstart = e => { 
+      // Une liste est un objet - on utilise le même type
+      dragData = {type: 'object', oid: listName}; 
+      e.dataTransfer.setData('text/plain', listName); 
+      console.log('Drag start list as object:', listName);
+    };
+    item.ondragend = () => { dragData = null; };
+    panel.appendChild(item);
+  });
+}
+
+async function loadObj(oid) {
+  current = oid; selected = oid;
+  $('mainHead').style.display = 'block'; $('empty').style.display = 'none';
+  $('listsContainer').style.display = 'flex'; $('listsContainer').style.flexDirection = 'column'; $('listsContainer').style.gap = '12px';
+  $('mainDropZone').style.display = 'block';
+  
+  const bc = $('breadcrumb'); bc.innerHTML = '';
+  lineageChain(oid).forEach((p,i) => { if (i>0) bc.appendChild(document.createTextNode(' › ')); const s = document.createElement('span'); s.textContent = last(p); s.onclick = () => { selected = p; loadObj(p); refresh(); }; bc.appendChild(s); });
+  $('objTitle').textContent = last(oid);
+  
+  // Récupérer les données depuis /api/tree
+  const treeData = await api('/api/tree');
+  
+  // Liste racine pour cet objet (ex: ObjectList pour Object)
+  const objName = last(oid);
+  const objectListName = objName + 'List';
+  
+  console.log('Loaded', oid, 'rootList:', objectListName);
+  
+  // Afficher les listes récursivement
+  const listsContainer = $('listsContainer'); 
+  listsContainer.innerHTML = '';
+  
+  currentLists = [objectListName];
+  listsContainer.appendChild(createListZone(objectListName, treeData.lists, 0));
+}
+
+function createListZone(listName, allLists, depth = 0) {
+  // Trouver les membres de cette liste
+  const listData = allLists.find(l => l.list === listName);
+  const members = listData ? listData.members : [];
+  
+  const zone = document.createElement('div'); 
+  zone.className = 'list-zone' + (depth === 0 ? '' : ' collapsed'); 
+  zone.dataset.list = listName;
+  zone.style.marginLeft = (depth * 16) + 'px';
+  
+  const header = document.createElement('div'); header.className = 'list-zone-header';
+  header.innerHTML = `<span class="accordion-toggle">▼</span><span>📋</span><span class="list-name">${listName}</span><span class="list-count">${members.length}</span><button class="add-toggle" title="Ajouter">+</button>`;
+  header.onclick = e => { if (!e.target.classList.contains('add-toggle')) zone.classList.toggle('collapsed'); };
+  header.querySelector('.add-toggle').onclick = e => { e.stopPropagation(); zone.querySelector('.list-zone-add').classList.toggle('open'); zone.classList.remove('collapsed'); };
+  
+  const content = document.createElement('div'); content.className = 'list-zone-content';
+  
+  // Zone d'ajout manuel
+  const addForm = document.createElement('div'); addForm.className = 'list-zone-add';
+  addForm.innerHTML = `<input type="text" placeholder="Lineage..."><button>Ajouter</button>`;
+  addForm.querySelector('button').onclick = async () => { 
+    const input = addForm.querySelector('input'), lineage = input.value.trim(); 
+    if (!lineage) return; 
+    const res = await addMembership(lineage, listName); 
+    if (res.ok === false) { alert(res.error); return; }
+    input.value = ''; 
+    await refresh();
+    if (current) await loadObj(current); 
+  };
+  addForm.querySelector('input').onkeydown = e => { if (e.key === 'Enter') addForm.querySelector('button').click(); };
+  
+  const body = document.createElement('div'); body.className = 'list-zone-body';
+  
+  // Zone de drop
+  const dropTarget = document.createElement('div'); dropTarget.className = 'list-drop-target'; dropTarget.textContent = 'Glissez un objet ici';
+  dropTarget.ondragover = e => { e.preventDefault(); dropTarget.classList.add('drop-active'); };
+  dropTarget.ondragleave = () => dropTarget.classList.remove('drop-active');
+  dropTarget.ondrop = async e => { 
+    e.preventDefault(); 
+    dropTarget.classList.remove('drop-active'); 
+    if (dragData?.type === 'object' && dragData.oid) { 
+      const res = await addMembership(dragData.oid, listName); 
+      if (res.ok === false) { alert(res.error); }
+      dragData = null; 
+      await refresh();
+      if (current) await loadObj(current); 
+    } 
+  };
+  body.appendChild(dropTarget);
+  
+  // Items
+  const items = document.createElement('div'); items.className = 'list-zone-items';
+  members.forEach(memberOid => {
+    const memberName = last(memberOid);
+    const memberListName = memberName + 'List';
+    // Vérifier si la liste de ce membre existe et a des membres
+    const memberListData = allLists.find(l => l.list === memberListName);
+    const hasSubMembers = memberListData && memberListData.members && memberListData.members.length > 0;
+    
+    const wrapper = document.createElement('div');
+    wrapper.className = 'list-item-wrapper';
+    
+    // Label de l'objet (draggable)
+    const item = document.createElement('div'); item.className = 'list-item'; item.draggable = true;
+    item.innerHTML = `<span class="list-item-handle">⋮⋮</span><span class="list-item-label" title="${memberOid}">${memberName}</span><button class="list-item-nav" title="Naviguer">→</button>`;
+    item.querySelector('.list-item-nav').onclick = e => { e.stopPropagation(); selected = memberOid; loadObj(memberOid); };
+    item.ondragstart = e => { dragData = { type: 'object', oid: memberOid, fromList: listName }; item.classList.add('dragging'); e.dataTransfer.setData('text/plain', memberOid); showTrash(); };
+    item.ondragend = () => { item.classList.remove('dragging'); hideTrash(); };
+    wrapper.appendChild(item);
+    
+    // Si a des sous-membres, ajouter l'accordéon récursif
+    if (hasSubMembers && depth < 5) {
+      const subZone = createListZone(memberListName, allLists, depth + 1);
+      wrapper.appendChild(subZone);
+    }
+    
+    items.appendChild(wrapper);
+  });
+  
+  body.appendChild(items);
+  content.appendChild(addForm);
+  content.appendChild(body);
+  zone.appendChild(header);
+  zone.appendChild(content);
+  return zone;
+}
+
+const mainDropZone = $('mainDropZone');
+mainDropZone.ondragover = e => { e.preventDefault(); mainDropZone.classList.add('active'); };
+mainDropZone.ondragleave = () => mainDropZone.classList.remove('active');
+mainDropZone.ondrop = async e => { 
+  e.preventDefault(); 
+  mainDropZone.classList.remove('active'); 
+  if (dragData?.type === 'list' && dragData.listName) { 
+    // Créer le membership: listName IN current:ObjectList (ou ObjectList si current est Object)
+    const targetList = current === 'Object' ? 'ObjectList' : last(current) + ':ObjectList';
+    console.log('Drop list:', dragData.listName, 'into', targetList);
+    await addMembership(dragData.listName, 'ObjectList');
+    await refresh();
+    if (current) await loadObj(current);
+  } 
+  dragData = null; 
+};
+
+async function refresh() {
+  const d = await api('/api/tree'); $('tree').innerHTML = ''; allObjects = [];
+  collectObjects(d.objects); renderTree(d.objects, $('tree')); renderListsPanel();
+}
+
+$('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('.tree-node').forEach(n => { const lbl = n.querySelector('.tree-label'); if (lbl) n.style.display = (!q || lbl.textContent.toLowerCase().includes(q) || lbl.title.toLowerCase().includes(q)) ? '' : 'none'; });
+});
+
+const resize = $('resize'), left = $('left'); let resizing = false;
+resize.onmousedown = () => { resizing = true; resize.classList.add('active'); };
+document.onmousemove = e => { if (resizing) left.style.width = Math.max(200, Math.min(600, e.clientX)) + 'px'; };
+document.onmouseup = () => { resizing = false; resize.classList.remove('active'); };
+
+$('qaBtn').onclick = async () => {
+  const lineage = $('qaLineage').value.trim(), list = $('qaList').value.trim();
+  if (!lineage) return;
+  if (list) await addMembership(lineage, list);
+  else await fetch('/api/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({lineage, parentList: 'ObjectList'}) });
+  $('qaLineage').value = ''; await refresh();
+};
+
+$('refreshBtn').onclick = refresh;
+refresh();
+</script>
+</body>
+</html>

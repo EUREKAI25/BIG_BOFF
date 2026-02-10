@@ -1,0 +1,230 @@
+{
+  "total_validations": 0,
+  "total_passed": 0,
+  "total_failures": 0,
+  "pass_rate": 0,
+  "all_validations": [],
+  "failures": [],
+  "face_validation": {
+    "total_validations": 0,
+    "passed": 0,
+    "rejected": 0,
+    "pass_rate": 0,
+    "rejected_details": [],
+    "config": {
+      "threshold": 0.8,
+      "tolerance": 0.3
+    }
+  },
+  "costs": {
+    "tokens_input": 0,
+    "tokens_output": 0,
+    "calls": 0
+  },
+  "config": {
+    "global_min_score": 0.75,
+    "validation_criteria": {
+      "face_shape": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Forme du visage IDENTIQUE"
+      },
+      "face_features": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Traits du visage = MÊME PERSONNE"
+      },
+      "skin_tone": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Teinte de peau exacte"
+      },
+      "age": {
+        "min": 0.7,
+        "ref": "character_analysis",
+        "label": "Âge apparent"
+      },
+      "body_type": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Corpulence IDENTIQUE"
+      },
+      "body_build": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Carrure IDENTIQUE"
+      },
+      "hair_color": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Couleur cheveux exacte"
+      },
+      "hair_length": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Longueur IDENTIQUE"
+      },
+      "hair_type": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Texture IDENTIQUE"
+      },
+      "hair_style": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "Coiffure IDENTIQUE si same_day"
+      },
+      "glasses_present": {
+        "min": 0.95,
+        "ref": "user_photo",
+        "label": "Lunettes présentes si ref en a"
+      },
+      "glasses_style": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Style monture IDENTIQUE"
+      },
+      "clothing_style": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "MÊME vêtement"
+      },
+      "clothing_color": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "Couleur IDENTIQUE"
+      },
+      "clothing_pattern": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "Motif IDENTIQUE"
+      },
+      "clothing_fit": {
+        "min": 0.7,
+        "ref": "previous",
+        "label": "Coupe IDENTIQUE"
+      },
+      "accessories_present": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "MÊMES accessoires"
+      },
+      "accessories_color": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "Couleur accessoires IDENTIQUE"
+      },
+      "accessories_pattern": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "Motif IDENTIQUE"
+      },
+      "location_match_pitch": {
+        "min": 0.7,
+        "ref": "pitch",
+        "label": "Lieu correspond à description"
+      },
+      "location_consistency": {
+        "min": 0.85,
+        "ref": "start_current",
+        "label": "MÊME lieu que start"
+      },
+      "background_elements": {
+        "min": 0.8,
+        "ref": "start_current",
+        "label": "Arrière-plan IDENTIQUE"
+      },
+      "shot_type_match": {
+        "min": 0.8,
+        "ref": "pitch",
+        "label": "Type de plan respecté"
+      },
+      "camera_angle_match": {
+        "min": 0.8,
+        "ref": "pitch",
+        "label": "Angle caméra respecté"
+      },
+      "lighting_direction_match": {
+        "min": 0.7,
+        "ref": "pitch",
+        "label": "Direction lumière respectée"
+      },
+      "lighting_temperature_match": {
+        "min": 0.8,
+        "ref": "pitch",
+        "label": "Température couleur respectée"
+      },
+      "depth_of_field_match": {
+        "min": 0.7,
+        "ref": "pitch",
+        "label": "Profondeur de champ respectée"
+      },
+      "palette_compliance": {
+        "min": 0.7,
+        "ref": "scene_palette",
+        "label": "Couleurs dans la palette"
+      },
+      "emotion_match": {
+        "min": 0.8,
+        "ref": "pitch",
+        "label": "Émotion correspond"
+      },
+      "expression_readable": {
+        "min": 0.8,
+        "ref": "none",
+        "label": "Émotion clairement lisible"
+      },
+      "positive_expression": {
+        "min": 0.8,
+        "ref": "none",
+        "label": "Expression POSITIVE: content, épanoui, souriant"
+      },
+      "no_exaggeration": {
+        "min": 0.9,
+        "ref": "none",
+        "label": "Pas de surjeu"
+      },
+      "natural_pose": {
+        "min": 0.8,
+        "ref": "none",
+        "label": "Pose naturelle"
+      },
+      "gaze_correct": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Regard PAS vers caméra"
+      },
+      "no_camera_look": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Ne regarde JAMAIS l'objectif"
+      },
+      "no_mirror": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Aucun miroir"
+      },
+      "no_text": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Aucun texte visible"
+      },
+      "no_watermark": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Aucun watermark"
+      },
+      "no_deformation": {
+        "min": 0.9,
+        "ref": "none",
+        "label": "Aucune déformation"
+      },
+      "action_match": {
+        "min": 0.7,
+        "ref": "pitch",
+        "label": "Action correspond"
+      }
+    },
+    "model": "gemini-2.5-flash"
+  }
+}

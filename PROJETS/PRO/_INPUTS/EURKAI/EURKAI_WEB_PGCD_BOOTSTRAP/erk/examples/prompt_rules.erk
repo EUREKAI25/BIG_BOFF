@@ -1,0 +1,5 @@
+# ERK:PromptRules
+must Object:Prompt.role in ["system","user","assistant"]
+
+when Object:Prompt.role = "system"
+then Object:Prompt.context != ""

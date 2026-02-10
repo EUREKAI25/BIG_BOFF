@@ -1,0 +1,54 @@
+# ================================================================
+# INSTANCES: Agent
+# Runtime - créées à la volée par user/agent
+# ================================================================
+
+Object:Entity:Agent:ArchitectAgent:MainArchitect:
+  .name = "MainArchitect"
+  .description = "Agent architecte principal du système"
+  .role = architect
+  .temperature = 0.3
+  .model = claude-3-opus
+  .maxTokens = 8192
+  .specialization = schema
+  .provider = anthropic
+
+Object:Entity:Agent:ArchitectAgent:RulesArchitect:
+  .name = "RulesArchitect"
+  .description = "Agent spécialisé dans les règles métier"
+  .role = architect
+  .temperature = 0.2
+  .model = claude-3-opus
+  .maxTokens = 4096
+  .specialization = rules
+  .provider = anthropic
+
+Object:Entity:Agent:OrchestratorAgent:MainOrchestrator:
+  .name = "MainOrchestrator"
+  .description = "Agent orchestrateur principal"
+  .role = orchestrator
+  .temperature = 0.5
+  .model = claude-3-sonnet
+  .maxTokens = 4096
+  .maxConcurrent = 5
+  .provider = anthropic
+
+Object:Entity:Agent:GeneratorAgent:ContentGenerator:
+  .name = "ContentGenerator"
+  .description = "Agent générateur de contenu"
+  .role = generator
+  .temperature = 0.8
+  .model = claude-3-sonnet
+  .maxTokens = 8192
+  .outputFormat = markdown
+  .provider = anthropic
+
+Object:Entity:Agent:GeneratorAgent:CodeGenerator:
+  .name = "CodeGenerator"
+  .description = "Agent générateur de code"
+  .role = generator
+  .temperature = 0.4
+  .model = claude-3-opus
+  .maxTokens = 16000
+  .outputFormat = json
+  .provider = anthropic

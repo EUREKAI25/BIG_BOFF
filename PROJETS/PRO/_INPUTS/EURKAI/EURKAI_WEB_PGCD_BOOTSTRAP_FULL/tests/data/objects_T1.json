@@ -1,0 +1,49 @@
+{
+  "objects": [
+    {
+      "id": "Object",
+      "type": "core",
+      "attrs": [
+        "name",
+        "description"
+      ],
+      "methods": [],
+      "rels": []
+    },
+    {
+      "id": "Object:Prompt",
+      "type": "core",
+      "inherits_from": "Object",
+      "attrs": [
+        "role",
+        "context",
+        "mission",
+        "objective",
+        "constraints"
+      ],
+      "methods": [
+        "build()",
+        "to_text()"
+      ],
+      "rels": [
+        "related_to:Object"
+      ]
+    },
+    {
+      "id": "Object:Response",
+      "type": "core",
+      "inherits_from": "Object",
+      "attrs": [
+        "content",
+        "score",
+        "flags"
+      ],
+      "methods": [
+        "summarize()"
+      ],
+      "rels": [
+        "related_to:Object:Prompt"
+      ]
+    }
+  ]
+}

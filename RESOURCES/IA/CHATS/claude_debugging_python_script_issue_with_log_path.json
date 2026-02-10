@@ -1,0 +1,210 @@
+{
+  "conversationMetadata": {
+    "platform": "claude",
+    "extractedAt": "2025-07-08T10:55:52.821Z",
+    "extractorVersion": "1.1",
+    "url": "https://claude.ai/chat/d0697995-b753-43d1-8cf5-27dfcc8131e3",
+    "title": "Debugging Python script issue with log path - Claude",
+    "conversationId": "d0697995-b753-43d1-8cf5-27dfcc8131e3",
+    "suggestedFilename": "claude_debugging_python_script_issue_with_log_path_2025-07-08.json"
+  },
+  "conversation": {
+    "messageCount": 23,
+    "messages": [
+      {
+        "id": "claude_msg_0",
+        "role": "user",
+        "content": "LCHIMIE % python \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/test.py\" [TEST] Démarrage du test de save_debug_log() [INFO] Log de debug sauvegardé dans /Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/logs/1741361886_log_debug.json Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/test.py\", line 72, in <module> test_all_logs() ~~~~~~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/test.py\", line 66, in test_all_logs test_debug_log() ~~~~~~~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/test.py\", line 25, in test_debug_log log_path = os.path.join(log.LOG_PATH, \"log_debug.json\") ^^^^^^^^^^^^ AttributeError: 'Log' object has no attribute 'LOG_PATH' (venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE %",
+        "timestamp": "2025-07-08T10:55:52.818Z",
+        "originalIndex": 0,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_1",
+        "role": "assistant",
+        "content": "j'ai créé le code que tu as corrigé afin de pouvoir traquer ce qui se passe à l'installation de ma base de données car il y a des. erreurs. je veux donc suivre exactement ce qui se passe, combien de fois les actions sont effectuées pour debugger. j'avais commencé à préparer des logs mais ça ne fonctionne pas dc je veux que tu modifies ces deux fichiers (object et scan) pour adapter les logs à la classe log, comme test.py. j'ai indiqué dans le code tous les endroits à mettre à jour avec # LOGS À CORRIGER # puis j'ai commenté ce que j'avais fait au préalable. avant de me donner le code complet dis moi ce que tu as compris et si tu vois d'autres corrections à faire",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 1,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_2",
+        "role": "user",
+        "content": "je l'ai fait pcq par ailleurs le code ne fonctionne pas, il faudra débugger ensuite.vas-y tu pux continuer",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 2,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_3",
+        "role": "assistant",
+        "content": "object est incomplet recommence",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 3,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_4",
+        "role": "user",
+        "content": "le ficier est trop long, on a été coupé. continue à partir de # Traitement de la classe if stripped_line.startswith(\"class\"): parts = line.split(\"(\") object_name = parts[0].split()[1].strip(\":\") parent_class = parts[1].split(\")\")[0] if len(parts) > 1 else None # Log de la classe détectée logger.save_log({ \"action\": \"class_detected\", \"object_name\": object_name, \"parent_class\": parentclass, \"filepath\": filepath }, \"extraction/classes\", f\"class{object_name}.json\") # Détection des méthodes statiques elif stripped_line.startswith(\"@staticmethod\") or stripped_line.startswith(\"@classmethod\"): isstatic = True # Détection de init elif \"def init\" in stripped_line: in_init = True current_method = \"init\" methods[current_method] = { 'is_static': False, 'params': [], 'returns': [], 'comments': [] } # Log de la méthode init logger.save_log({ \"action\": \"init_method_detected\", \"object_name\": objectname, \"filepath\": filepath }, \"extraction/methods\", f\"init{object_name}.json\") # Détection des autres méthodes elif stripped_line.startswith(\"def \") and \"def init\" not in stripped_line: in_init = False method_parts = stripped_line.split(\"def \")[1].split(\"(\") current_method = method_parts[0] methods[current_method] = { 'is_static': isstatic, '",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 4,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_5",
+        "role": "user",
+        "content": "ça ne va pas, c'est trop long pour le chat mais j'ai assembler les parties moi-même. confirmes-tu que c'est ok ?",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 5,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_6",
+        "role": "assistant",
+        "content": "LCHIMIE % flask run * Tip: There are .env files present. Install python-dotenv to use them. [DEBUG] Vérification de la première installation... [DEBUG] Exécution de is_first_install() [DEBUG] Aucune table détectée -> is_first_install() retourne True [DEBUG] Exécution de is_first_install() [DEBUG] Aucune table détectée -> is_first_install() retourne True [INFO] Première installation détectée. [INFO] Création des tables... [INFO] Insertion des données initiales de l'agence... [INFO] Enregistrement des objets métiers... [INFO] Log de debug sauvegardé dans /Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/logs/1741365491_log_debug.json [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta type pour objet 21: Échec de la création de l'object_meta {'object_id': 21, 'meta_key_id': 1, 'meta_value': 'action'} [ERREUR] SQLite lors de l'insertion dans la table 'objects_metas' : UNIQUE constraint failed: objects_metas.object_id, objects_metas.meta_key_id, objects_metas.meta_value [ERREUR] Une erreur est survenue lors de la création de la méta type pour objet 23: Échec de la création de l'object_meta {'object_id': 23, 'meta_key_id': 1, 'meta_value': 'action'} [ERREUR] Une erreur est survenue : 'actionss' * Tip: There are .env files present. Install python-dotenv to use them. [DEBUG] Vérification de la première installation... [DEBUG] Exécution de is_first_install() [DEBUG] Des tables existent déjà -> is_first_install() retourne False [INFO] L'application Flask a été initialisée avec succès ! * Debug mode: off WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead. * Running on http://127.0.0.1:5000 Press CTRL+C to quiton voit déjà tout de suite qu'on a tenté de créer les metas deux fois. par ailleurs le répertoire objects/create comporte 989 elements et objects/created 285...",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 6,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_7",
+        "role": "user",
+        "content": "\"actionss\" vient de stats[object_type + \"s\"] += 1 . j'ai enelevé cette ligne elle ne sert plus 2=; oui, mais je préfèrerais. comprendre pourquoi on essaie deux fois et corriger ça, c'est pllus propre",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 7,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_8",
+        "role": "assistant",
+        "content": "non il n'y en a pasObject.process_pending_relations() n'est appelé qu'une fois, en fin d'object4. non il n'y en a pas(venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE % flask r un Tip: There are .env files present. Install python-dotenv to use them. Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/bin/flask\", line 10, in <module> sys.exit(main()) ~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 1129, in main cli.main() ~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 1082, in main rv = self.invoke(ctx) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 1697, in invoke return processresult(sub_ctx.command.invoke(sub_ctx)) ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 1443, in invoke return ctx.invoke(self.callback, ctx.params) ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 788, in invoke return __callback(*args, kwargs) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/decorators.py\", line 92, in new_func return ctx.invoke(f, obj, args, **kwargs) ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 788, in invoke return __callback(args, kwargs) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 977, in run_command raise e from None File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 961, in run_command app: WSGIApplication = info.load_app() # pyright: ignore ~~~~~~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 353, in load_app app = locate_app(import_name, None, raise_if_not_found=False) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 245, in locate_app import**(module_name) ~~~~~~~~~~^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/init.py\", line 3, in <module> from app.models.core.database import Database File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/database.py\", line 6, in <module> from app.departments.Technology_Department.devOps.actions.create_initial_objects import create_initial_objects File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/departments/Technology_Department/devOps/actions/create_initial_objects.py\", line 3, in <module> from app.utils.setup.scan_and_register_objects import scan_and_register_objects File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/utils/setup/scan_and_register_objects.py\", line 4, in <module> from app.departments.Technology_Department.devOps.actions.process_file import process_file File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/departments/Technology_Department/devOps/actions/process_file.py\", line 2, in <module> from app.models.core.method import Method File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/method.py\", line 7, in <module> from app.models.core.meta import Meta File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/meta.py\", line 60 # ^ SyntaxError: expected 'except' or 'finally' block (venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE %",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 8,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_9",
+        "role": "user",
+        "content": "(venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE % flask r un * Tip: There are .env files present. Install python-dotenv to use them. Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/bin/flask\", line 10, in <module> sys.exit(main()) ~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 1129, in main cli.main() ~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 1082, in main rv = self.invoke(ctx) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 1697, in invoke return processresult(sub_ctx.command.invoke(sub_ctx)) ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 1443, in invoke return ctx.invoke(self.callback, ctx.params) ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 788, in invoke return __callback(*args, kwargs) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/decorators.py\", line 92, in new_func return ctx.invoke(f, obj, args, **kwargs) ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/click/core.py\", line 788, in invoke return __callback(args, kwargs) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 977, in run_command raise e from None File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 961, in run_command app: WSGIApplication = info.load_app() # pyright: ignore ~~~~~~~~~~~~~^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 353, in load_app app = locate_app(import_name, None, raise_if_not_found=False) File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 245, in locate_app import**(module_name) ~~~~~~~~~~^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/init.py\", line 3, in <module> from app.models.core.database import Database File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/database.py\", line 6, in <module> from app.departments.Technology_Department.devOps.actions.create_initial_objects import create_initial_objects File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/departments/Technology_Department/devOps/actions/create_initial_objects.py\", line 3, in <module> from app.utils.setup.scan_and_register_objects import scan_and_register_objects File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/utils/setup/scan_and_register_objects.py\", line 4, in <module> from app.departments.Technology_Department.devOps.actions.process_file import process_file File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/departments/Technology_Department/devOps/actions/process_file.py\", line 2, in <module> from app.models.core.method import Method File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/method.py\", line 7, in <module> from app.models.core.meta import Meta File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/meta.py\", line 86 log.save_log({ ^^^ IndentationError: expected an indented block after 'except' statement on line 84 (venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE %",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 9,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_10",
+        "role": "assistant",
+        "content": "j'ai cette erreur une centaine de fois ou pplus :[ERREUR] Une erreur est survenue lors de la création de la méta type pour objet 300: 'Meta' object has no attribute 'get_meta_key_id'",
+        "timestamp": "2025-07-08T10:55:52.819Z",
+        "originalIndex": 10,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_11",
+        "role": "assistant",
+        "content": "voici la bdd, je te laisse corriger",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 11,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_12",
+        "role": "user",
+        "content": "(venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE % flask r un * Tip: There are .env files present. Install python-dotenv to use them. Usage: flask run [OPTIONS] Try 'flask run --help' for help. Error: While importing 'app', an ImportError was raised: Traceback (most recent call last): File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE en cours/venv/lib/python3.13/site-packages/flask/cli.py\", line 245, in locate_app import(module_name) ~~~~~~~~~~^^^^^^^^^^^^^ File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/init.py\", line 3, in <module> from app.models.core.database import Database File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/database.py\", line 6, in <module> from app.departments.Technology_Department.devOps.actions.create_initial_objects import create_initial_objects File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/departments/Technology_Department/devOps/actions/create_initial_objects.py\", line 3, in <module> from app.utils.setup.scan_and_register_objects import scan_and_register_objects File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/utils/setup/scan_and_register_objects.py\", line 4, in <module> from app.departments.Technology_Department.devOps.actions.process_file import process_file File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/departments/Technology_Department/devOps/actions/process_file.py\", line 2, in <module> from app.models.core.method import Method File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/method.py\", line 7, in <module> from app.models.core.meta import Meta File \"/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/meta.py\", line 5, in <module> from app.models.core.database import Database ImportError: cannot import name 'Database' from partially initialized module 'app.models.core.database' (most likely due to a circular import) (/Users/nathalie/Dropbox/PROJETS/_INSTALCHIMIE/app/models/core/database.py) (venv) venvnathalie@Nathalies-MacBook-Pro _INSTALCHIMIE %",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 12,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_13",
+        "role": "assistant",
+        "content": "donne moi le fichier complèt",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 13,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_14",
+        "role": "user",
+        "content": "[ERREUR] Une erreur est survenue lors de la création de la méta url pour objet 282: 'Object' object has no attribute 'execute_query'",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 14,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_15",
+        "role": "assistant",
+        "content": "c'est le fichier meta que tu viens de me donner ! self.db.execute_query(query, params)",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 15,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_16",
+        "role": "user",
+        "content": "meta est le seul endroit où on appelle execute_query",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 16,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_17",
+        "role": "assistant",
+        "content": "ce sont les trois seuls fichiers où create_meta apparait mais ce ne sont pas des objets",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 17,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_18",
+        "role": "user",
+        "content": "j'ai toujours ce genre d'erreur : [ERREUR] Une erreur est survenue lors de la création de la méta url pour objet 71: 'Object' object has no attribute 'execute_query'",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 18,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_19",
+        "role": "user",
+        "content": "à quel endroit on create_meta sur une instance de Method ou Object ?",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 19,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_20",
+        "role": "assistant",
+        "content": "je crois que j'ai trouvé : dans meta on fait # Vérifier si la clé existe déjà existing_key = self.get_meta_key(key) if existing_key: return existing_key[\"id\"] et get_meta_key fait return self.db.execute_query(query)",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 20,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_21",
+        "role": "user",
+        "content": "ajoute une mligne de debug, ce n'est pas normal que cette fonction soit appelée pour autre chose qu'une meta",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 21,
+        "extractionMethod": "precise"
+      },
+      {
+        "id": "claude_msg_22",
+        "role": "assistant",
+        "content": "donne la moi complète. pour le mome c'est def get_meta_keys(self): \"\"\" Récupère toutes les clés de métadonnées. Returns: list: Liste des clés de métadonnées \"\"\" query = \"SELECT * FROM metas_definitions\" return self.db.execute_query(query)",
+        "timestamp": "2025-07-08T10:55:52.820Z",
+        "originalIndex": 22,
+        "extractionMethod": "precise"
+      }
+    ]
+  },
+  "technicalInfo": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "pageLanguage": "fr-FR",
+    "extractionSuccess": true,
+    "error": null,
+    "domInfo": {
+      "totalElements": 6093,
+      "bodyText": 703406
+    }
+  }
+}

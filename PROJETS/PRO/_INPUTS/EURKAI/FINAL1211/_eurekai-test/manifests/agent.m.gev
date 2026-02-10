@@ -1,0 +1,39 @@
+# ================================================================
+# MANIFEST: Agent
+# Auto-généré - index complet du module
+# ================================================================
+
+Object:Manifest:AgentManifest:
+  .name = "AgentManifest"
+  .version = "1.0.0"
+  .lastCompile = 2025-12-14T00:30:00Z
+  
+  # Fichiers sources
+  .seed = seeds/agent.s.gev
+  .vectors = vectors/agent.v.gev
+  .schema = schemas/agent.t.gev
+  .rules = rules/agent.r.gev
+  .config = config/agent.c.gev
+  .instances = instances/agent.i.gev
+  
+  # Statistiques
+  .objectCount = 23
+  .vectorCount = 11
+  .ruleCount = 10
+  .instanceCount = 5
+  
+  # Dépendances
+  .requires = Object:Permission,Object:Config:Project
+  
+  # Ordre de chargement
+  .loadOrder = config,vectors,schema,rules,seed,instances
+  
+  # Validation
+  .validated = true
+  .errors = 0
+  .warnings = 0
+
+Object:Rule:CreateRule:rul:
+  .name = "rul"
+  .target = "Object:Manifest"
+  .type = "create"

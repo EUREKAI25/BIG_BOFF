@@ -1,0 +1,449 @@
+# ============================================================================
+# EURKAI Seed v0.9.8
+# seed/object.s.gev
+# ============================================================================
+
+#region === OBJECT ===
+
+Object:
+  .name = V_ObjectName
+  .description = V_ObjectDescription
+
+#endregion
+
+#region === STRUCTURE ===
+
+Object:Structure:
+  .name = V_StructureName
+
+Object:Structure:Dict:
+  .name = V_DictName
+
+Object:Structure:List:
+  .name = V_ListName
+
+Object:Structure:List:OrderedList:
+  .name = V_OrderedListName
+
+Object:Structure:Element:
+  .name = V_ElementName
+
+Object:Structure:Fractal:
+  .name = V_FractalName
+
+Object:Structure:Fractal:Vector:
+  .name = V_VectorName
+
+Object:Structure:Fractal:Plane:
+  .name = V_PlaneName
+
+Object:Structure:File:
+  .name = V_FileName
+  .path = V_FilePath
+  .format = V_FileFormat
+  .createdAt = V_FileCreatedAt
+  .updatedAt = V_FileUpdatedAt
+
+Object:Structure:File:GevFile:
+  .name = V_GevFileName
+  .extension = ".gev"
+
+Object:Structure:File:GevFile:SeedFile:
+  .name = V_SeedFileName
+
+Object:Structure:File:GevFile:ManifestFile:
+  .name = V_ManifestFileName
+
+Object:Structure:File:GevFile:VectorFile:
+  .name = V_VectorFileName
+
+Object:Structure:File:TSFile:
+  .name = V_TSFileName
+  .extension = ".ts"
+
+Object:Structure:File:TSFile:MRGFile:
+  .name = V_MRGFileName
+  .description = V_MRGFileDescription
+
+#endregion
+
+#region === ATTRIBUTE ===
+
+Object:Attribute:
+  .name = V_AttributeName
+
+Object:Attribute:Name:
+  .name = V_AttributeNameName
+
+Object:Attribute:Description:
+  .name = V_AttributeDescriptionName
+
+Object:Attribute:Scan:
+  .name = V_AttributeScanName
+
+Object:Attribute:Version:
+  .name = V_AttributeVersionName
+
+Object:Attribute:Path:
+  .name = V_AttributePathName
+
+Object:Attribute:CreatedAt:
+  .name = V_AttributeCreatedAtName
+
+Object:Attribute:UpdatedAt:
+  .name = V_AttributeUpdatedAtName
+
+#endregion
+
+#region === MANIFEST ===
+
+Object:Manifest:
+  .name = V_ManifestName
+
+#endregion
+
+#region === ENTITY ===
+
+Object:Entity:
+  .name = V_EntityName
+
+Object:Entity:Agent:
+  .name = V_AgentName
+
+Object:Entity:Agent:AIAgent:
+  .name = V_AIAgentName
+
+Object:Entity:Agent:AIAgent:Walker:
+  .name = V_WalkerName
+  .description = V_WalkerDescription
+
+#endregion
+
+#region === EVENT ===
+
+Object:Event:
+  .name = V_EventName
+
+Object:Event:Hook:
+  .name = V_HookName
+
+Object:Event:Hook:BeforeHook:
+  .name = V_BeforeHookName
+
+Object:Event:Hook:AfterHook:
+  .name = V_AfterHookName
+
+#endregion
+
+#region === METHOD ===
+
+Object:Method:
+  .name = V_MethodName
+  .beforeHookList = V_MethodBeforeHookList
+  .afterHookList = V_MethodAfterHookList
+
+Object:Method:CentralMethod:
+  .name = V_CentralMethodName
+
+Object:Method:CentralMethod:Create:
+  .name = V_CreateName
+
+Object:Method:CentralMethod:Read:
+  .name = V_ReadName
+
+Object:Method:CentralMethod:Update:
+  .name = V_UpdateName
+
+Object:Method:CentralMethod:Delete:
+  .name = V_DeleteName
+
+Object:Method:CentralMethod:Orchestrate:
+  .name = V_OrchestrateName
+
+Object:Method:CentralMethod:Engage:
+  .name = V_EngageName
+
+#endregion
+
+#region === SUPERTOOL ===
+
+Object:Method:SuperTool:
+  .name = V_SuperToolName
+
+Object:Method:SuperTool:SuperCreate:
+  .name = V_SuperCreateName
+  .centralMethod = Create
+
+Object:Method:SuperTool:SuperRead:
+  .name = V_SuperReadName
+  .centralMethod = Read
+
+Object:Method:SuperTool:SuperUpdate:
+  .name = V_SuperUpdateName
+  .centralMethod = Update
+
+Object:Method:SuperTool:SuperDelete:
+  .name = V_SuperDeleteName
+  .centralMethod = Delete
+
+Object:Method:SuperTool:SuperOrchestrate:
+  .name = V_SuperOrchestrateName
+  .centralMethod = Orchestrate
+
+Object:Method:SuperTool:SuperEngage:
+  .name = V_SuperEngageName
+  .centralMethod = Engage
+
+#endregion
+
+#region === SECONDARY METHOD ===
+
+Object:Method:SecondaryMethod:
+  .name = V_SecondaryMethodName
+
+Object:Method:SecondaryMethod:GlobalRecursiveMethod:
+  .name = V_MRGName
+  .description = V_MRGDescription
+  .version = V_MRGVersion
+  .updatedAt = V_MRGUpdatedAt
+  GlobalRecursiveMethod depends_on Orchestrate
+
+Object:Method:SecondaryMethod:Convert:
+  .name = V_ConvertName
+  Convert depends_on Update
+
+Object:Method:SecondaryMethod:Walk:
+  .name = V_WalkName
+  .description = V_WalkDescription
+  .beforeHookList = V_WalkBeforeHookList
+  .afterHookList = V_WalkAfterHookList
+  Walk depends_on Orchestrate
+  Log IN Walk.beforeHookList
+  Log IN Walk.afterHookList
+
+Object:Method:SecondaryMethod:Log:
+  .name = V_LogName
+  .logTarget = V_LogTarget
+  Log depends_on Engage
+
+Object:Method:SecondaryMethod:Scan:
+  .name = V_ScanName
+  Scan depends_on Read
+
+Object:Method:SecondaryMethod:Scan:Pass:
+  .name = V_PassName
+  .scan = "pass"
+
+Object:Method:SecondaryMethod:Scan:Ghost:
+  .name = V_GhostName
+  .scan = "ghost"
+
+Object:Method:SecondaryMethod:Scan:Check:
+  .name = V_CheckName
+
+Object:Method:SecondaryMethod:Scan:Check:Format:
+  .name = V_CheckFormatName
+  .scan = "check:format"
+
+Object:Method:SecondaryMethod:Scan:Check:Vectors:
+  .name = V_CheckVectorsName
+  .scan = "check:vectors"
+
+Object:Method:SecondaryMethod:Scan:Check:Orphan:
+  .name = V_CheckOrphanName
+  .scan = "check:orphan"
+
+#endregion
+
+#region === SCENARIO ===
+
+Object:Method:Scenario:
+  .name = V_ScenarioName
+
+Object:Method:Scenario:Step:
+  .name = V_StepName
+
+Object:Method:Scenario:Step:GetStep:
+  .name = V_GetStepName
+  .order = 1
+
+Object:Method:Scenario:Step:ExecuteStep:
+  .name = V_ExecuteStepName
+  .order = 2
+
+Object:Method:Scenario:Step:ValidateStep:
+  .name = V_ValidateStepName
+  .order = 3
+
+Object:Method:Scenario:Step:RenderStep:
+  .name = V_RenderStepName
+  .order = 4
+
+#endregion
+
+#region === REPORT ===
+
+Object:Report:
+  .name = V_ReportName
+
+Object:Report:Walker:
+  .name = V_ReportWalkerName
+
+#endregion
+
+#region === BEHAVIOR ===
+
+Object:Behavior:
+  .name = V_BehaviorName
+
+Object:Behavior:TraverseBehavior:
+  .name = V_TraverseBehaviorName
+
+Object:Behavior:LoopBehavior:
+  .name = V_LoopBehaviorName
+
+#endregion
+
+#region === CONFIG ===
+
+Object:Config:
+  .name = V_ConfigName
+
+#endregion
+
+#region === RESULT ===
+
+Object:Result:
+  .name = V_ResultName
+  .success = V_ResultSuccess
+  .dict = V_ResultDict
+  .scenario = V_ResultScenario
+  .message = V_ResultMessage
+  .createdAt = V_ResultCreatedAt
+
+Object:Result:WalkResult:
+  .name = V_WalkResultName
+  .total = V_WalkResultTotal
+  .pass = V_WalkResultPass
+  .ghost = V_WalkResultGhost
+  .ok = V_WalkResultOk
+  .errors = V_WalkResultErrors
+  .skip = V_WalkResultSkip
+  .scriptId = V_WalkResultScriptId
+
+Object:Result:CheckResult:
+  .name = V_CheckResultName
+  .details = V_CheckResultDetails
+
+#endregion
+
+#region === RULE ===
+
+
+Object:Rule:
+  .name = V_RuleName
+  .description = V_RuleDescription
+  .question = V_RuleQuestion
+  .severity = V_RuleSeverity
+  .constraintlevel = V_RuleConstraintLevel
+  .scope = V_RuleScope
+  .condition = V_RuleCondition
+  .errorMessage = V_RuleErrorMessage
+  .erk = V_RuleErk
+
+
+Object:Rule:RequiredAttribute:
+  .name = V_RequiredAttributeRuleName
+  .attribute = V_RuleAttribute
+
+Object:Rule:Pattern:
+  .name = V_PatternRuleName
+  .pattern = V_RulePattern
+
+
+Object:Rule:StructuralRule:
+  .erk = V_StructuralRuleErk
+  .name = V_StructuralRuleName
+  .description = V_StructuralRuleDescription
+  .question = V_StructuralRuleQuestion
+
+Object:Rule:StructuralRule:SchemaRule:
+  .constraint.pattern = V_SchemaRuleConstraintPattern
+  .constraint.required_keyword = V_SchemaRuleRequiredKeyword
+  .constraint.required_slot = V_SchemaRuleRequiredSlot
+  .erk = V_SchemaRuleErk
+
+Object:Rule:StructuralRule:SchemaRule:AttributeDeclaredRule:
+  .erk = V_AttributeDeclaredRuleErk
+
+# rule.s.gev
+
+Object:Rule: 
+  .name = V_RuleName
+  .description = V_RuleDescription
+  .question = V_RuleQuestion
+  .severity = V_RuleSeverity
+  .constraint.level = V_RuleConstraintLevel
+  .scope = V_RuleScope
+  .condition = V_RuleCondition
+  .errorMessage = V_RuleErrorMessage
+  .erk = V_RuleErk
+
+Object:Rule:StructuralRule:
+  .erk = V_StructuralRuleErk
+
+Object:Rule:StructuralRule:SchemaRule:
+  .constraint.pattern = V_SchemaRuleConstraintPattern
+  .constraint.required_keyword = V_SchemaRuleRequiredKeyword
+  .constraint.required_slot = V_SchemaRuleRequiredSlot
+  .erk = V_SchemaRuleErk
+
+Object:Rule:StructuralRule:FormatRule:
+  .constraint.regex = V_FormatRuleRegex
+  .constraint.format = V_FormatRuleFormat
+  .erk = V_FormatRuleErk
+
+Object:Rule:StructuralRule:CardinalityRule:
+  .constraint.min = V_CardinalityRuleMin
+  .constraint.max = V_CardinalityRuleMax
+  .erk = V_CardinalityRuleErk
+
+Object:Rule:BehavioralRule:
+  .trigger = V_BehavioralRuleTrigger
+  .action = V_BehavioralRuleAction
+  .erk = V_BehavioralRuleErk
+
+Object:Rule:BehavioralRule:StateRule:
+  .fromState = V_StateRuleFromState
+  .toState = V_StateRuleToState
+  .allowedTransitions = V_StateRuleAllowedTransitions
+  .erk = V_StateRuleErk
+
+Object:Rule:BehavioralRule:PermissionRule:
+  .actor = V_PermissionRuleActor
+  .action = V_PermissionRuleAction
+  .resource = V_PermissionRuleResource
+  .erk = V_PermissionRuleErk
+
+Object:Rule:ValidationRule:
+  .validator = V_ValidationRuleValidator
+  .onSuccess = V_ValidationRuleOnSuccess
+  .onFailure = V_ValidationRuleOnFailure
+  .erk = V_ValidationRuleErk
+
+Object:Rule:ComputedRule:
+  .formula = V_ComputedRuleFormula
+  .dependencies = V_ComputedRuleDependencies
+  .cache = V_ComputedRuleCache
+  .erk = V_ComputedRuleErk
+
+#endregion
+
+#region === QUERY ===
+
+Object:Query:
+  .name = V_QueryName
+  .pattern = V_QueryPattern
+  .description = V_QueryDescription
+
+#endregion

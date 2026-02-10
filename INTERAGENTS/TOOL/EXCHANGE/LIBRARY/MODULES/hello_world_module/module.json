@@ -1,0 +1,38 @@
+{
+  "id": "module_hello_world",
+  "type": "Module",
+  "elementlist": [],
+  "inheritedlist": [],
+  "ownedlist": [],
+  "injectedlist": [],
+  "attributelist": [
+    { "id": "name", "type": "Attribute", "value": "Hello World Module" },
+    { "id": "state", "type": "Attribute", "value": "idea" },
+    { "id": "tags", "type": "Attribute", "value": ["lab", "backend", "endpoint", "demo"] },
+    { "id": "layer", "type": "Attribute", "value": "library" }
+  ],
+  "rulelist": [
+    {
+      "id": "permissions_derived_from_state",
+      "type": "Rule",
+      "value": {
+        "mode": "derived",
+        "note": "Permissions are derived from state+layer+role; override allowed via optionlist."
+      }
+    }
+  ],
+  "methodlist": [],
+  "relationlist": [
+    { "id": "registry_link", "type": "Relation", "value": { "registry": "library_catalog", "bucket": "modules" } }
+  ],
+  "optionlist": [
+    {
+      "id": "overrides",
+      "type": "Option",
+      "value": {
+        "permission_override": null,
+        "scope_override": null
+      }
+    }
+  ]
+}

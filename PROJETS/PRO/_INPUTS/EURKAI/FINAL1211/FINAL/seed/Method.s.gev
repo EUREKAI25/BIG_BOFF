@@ -1,0 +1,216 @@
+# ============================================================================
+# EURKAI Seed - Method
+# seed/Method.s.gev
+# ============================================================================
+
+#region === METHOD BASE ===
+
+Object:Method:
+  .name = V_MethodName
+  .description = V_MethodDescription
+  .question = V_MethodQuestion
+  .beforeHookList = V_MethodBeforeHookList
+  .afterHookList = V_MethodAfterHookList
+
+#endregion
+
+#region === CENTRAL METHOD ===
+
+Object:Method:CentralMethod:
+  .name = V_CentralMethodName
+  .description = V_CentralMethodDescription
+
+Object:Method:CentralMethod:Create:
+  .name = V_CreateName
+  .description = V_CreateDescription
+
+Object:Method:CentralMethod:Read:
+  .name = V_ReadName
+  .description = V_ReadDescription
+
+Object:Method:CentralMethod:Update:
+  .name = V_UpdateName
+  .description = V_UpdateDescription
+
+Object:Method:CentralMethod:Delete:
+  .name = V_DeleteName
+  .description = V_DeleteDescription
+
+Object:Method:CentralMethod:Orchestrate:
+  .name = V_OrchestrateName
+  .description = V_OrchestrateDescription
+
+Object:Method:CentralMethod:Engage:
+  .name = V_EngageName
+  .description = V_EngageDescription
+
+#endregion
+
+#region === SUPERTOOL ===
+
+Object:Method:SuperTool:
+  .name = V_SuperToolName
+  .description = V_SuperToolDescription
+
+Object:Method:SuperTool:SuperCreate:
+  .name = V_SuperCreateName
+  .description = V_SuperCreateDescription
+  .centralMethod = Create
+
+Object:Method:SuperTool:SuperRead:
+  .name = V_SuperReadName
+  .description = V_SuperReadDescription
+  .centralMethod = Read
+
+Object:Method:SuperTool:SuperUpdate:
+  .name = V_SuperUpdateName
+  .description = V_SuperUpdateDescription
+  .centralMethod = Update
+
+Object:Method:SuperTool:SuperDelete:
+  .name = V_SuperDeleteName
+  .description = V_SuperDeleteDescription
+  .centralMethod = Delete
+
+Object:Method:SuperTool:SuperOrchestrate:
+  .name = V_SuperOrchestrateName
+  .description = V_SuperOrchestrateDescription
+  .centralMethod = Orchestrate
+
+Object:Method:SuperTool:SuperEngage:
+  .name = V_SuperEngageName
+  .description = V_SuperEngageDescription
+  .centralMethod = Engage
+
+#endregion
+
+#region === SECONDARY METHOD ===
+
+Object:Method:SecondaryMethod:
+  .name = V_SecondaryMethodName
+  .description = V_SecondaryMethodDescription
+
+Object:Method:SecondaryMethod:GlobalRecursiveMethod:
+  .name = V_MRGName
+  .description = V_MRGDescription
+  .version = V_MRGVersion
+  .updatedAt = V_MRGUpdatedAt
+  GlobalRecursiveMethod depends_on Orchestrate
+
+Object:Method:SecondaryMethod:Convert:
+  .name = V_ConvertName
+  .description = V_ConvertDescription
+  Convert depends_on Update
+
+Object:Method:SecondaryMethod:Walk:
+  .name = V_WalkName
+  .description = V_WalkDescription
+  .beforeHookList = V_WalkBeforeHookList
+  .afterHookList = V_WalkAfterHookList
+  Walk depends_on Orchestrate
+  Log IN Walk.beforeHookList
+  Log IN Walk.afterHookList
+
+Object:Method:SecondaryMethod:Log:
+  .name = V_LogName
+  .description = V_LogDescription
+  .logTarget = V_LogTarget
+  Log depends_on Engage
+
+Object:Method:SecondaryMethod:Scan:
+  .name = V_ScanName
+  .description = V_ScanDescription
+  Scan depends_on Read
+
+Object:Method:SecondaryMethod:Scan:Pass:
+  .name = V_PassName
+  .description = V_PassDescription
+  .scan = "pass"
+
+Object:Method:SecondaryMethod:Scan:Ghost:
+  .name = V_GhostName
+  .description = V_GhostDescription
+  .scan = "ghost"
+
+Object:Method:SecondaryMethod:Scan:Check:
+  .name = V_CheckName
+  .description = V_CheckDescription
+
+Object:Method:SecondaryMethod:Scan:Check:Format:
+  .name = V_CheckFormatName
+  .description = V_CheckFormatDescription
+  .scan = "check:format"
+
+Object:Method:SecondaryMethod:Scan:Check:Vectors:
+  .name = V_CheckVectorsName
+  .description = V_CheckVectorsDescription
+  .scan = "check:vectors"
+
+Object:Method:SecondaryMethod:Scan:Check:Orphan:
+  .name = V_CheckOrphanName
+  .description = V_CheckOrphanDescription
+  .scan = "check:orphan"
+
+Object:Method:SecondaryMethod:Hook:
+  .name = V_SecondaryHookName
+  .description = V_SecondaryHookDescription
+  .targetAttribute = V_SecondaryHookTargetAttribute
+  .targetValue = V_SecondaryHookTargetValue
+
+#endregion
+
+#region === SCENARIO ===
+
+Object:Method:Scenario:
+  .name = V_ScenarioName
+  .description = V_ScenarioDescription
+  .question = V_ScenarioQuestion
+
+Object:Method:Scenario:Step:
+  .name = V_StepName
+  .description = V_StepDescription
+
+Object:Method:Scenario:Step:GetStep:
+  .name = V_GetStepName
+  .description = V_GetStepDescription
+  .order = 1
+
+Object:Method:Scenario:Step:ExecuteStep:
+  .name = V_ExecuteStepName
+  .description = V_ExecuteStepDescription
+  .order = 2
+
+Object:Method:Scenario:Step:ValidateStep:
+  .name = V_ValidateStepName
+  .description = V_ValidateStepDescription
+  .order = 3
+
+Object:Method:Scenario:Step:RenderStep:
+  .name = V_RenderStepName
+  .description = V_RenderStepDescription
+  .order = 4
+
+Object:Method:Scenario:MaintenanceScenario:
+  .name = V_MaintenanceScenarioName
+  .description = V_MaintenanceScenarioDescription
+  .query = V_MaintenanceScenarioQuery
+  .ruleList = V_MaintenanceScenarioRuleList
+
+#endregion
+
+#region === ORCHESTRATE DEPLOY ===
+
+Object:Method:Orchestrate:Deploy:
+  .name = V_DeployName
+  .description = V_DeployDescription
+  .scan = "deploy"
+  .direction = "down"
+  .depth = -1
+  .beforeHook = "update:scan:deploy"
+  .afterHook = "update:scan:pass"
+  .optionList = V_DeployableInstances
+  .optionQuery = "Object:Interface:PageInterface:*"
+  .outputDir = "output"
+  .outputFormat = "html"
+
+#endregion

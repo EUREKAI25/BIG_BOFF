@@ -1,0 +1,683 @@
+{
+  "version": "rules.v1",
+  "generated_at": "2026-01-15T04:24:36",
+  "notes": {
+    "choice_mapping": "Yes: a Choice is typically represented as an option in a test.manifest.option (discrete mode selection such as radius_mode/elevation_mode/stroke_mode/layout_width_mode/onBrand_policy).",
+    "occurrence_extraction_filters": [
+      "Exclude pure black/white (and near-black/near-white) from candidate 'maincolor' selection when theme is multicolor, because they dominate bg/text.",
+      "Optionally exclude extreme luminance buckets (very low and very high L) when selecting brand/accent candidates; keep them for roles bg/text.",
+      "Compute occurrences per role-region (background surfaces vs interactive elements) rather than globally across the DOM."
+    ]
+  },
+  "categories": [
+    {
+      "category": "Contrast",
+      "subcategories": [
+        {
+          "subcategory": "Text",
+          "rules": [
+            {
+              "id": "R1",
+              "name": "TextOnBg",
+              "description": "Primary text must be readable on global background (text on bg) in each mode (light/dark).",
+              "source_object": "ContrastPolicy",
+              "validation": {
+                "methods": [
+                  "apca",
+                  "wcag_ratio"
+                ],
+                "preferred": "apca",
+                "inputs": [
+                  "tokens.text",
+                  "tokens.bg",
+                  "typography.base_font_size",
+                  "typography.base_font_weight"
+                ],
+                "thresholds": {
+                  "apca_min": "TBD (depends on text size/weight role)",
+                  "wcag_ratio_min": "TBD (e.g., 4.5:1 for normal text)"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "margin"
+              ]
+            },
+            {
+              "id": "R2",
+              "name": "TextOnSurface",
+              "description": "Primary text must be readable on content surfaces (text on surface/card).",
+              "source_object": "ContrastPolicy",
+              "validation": {
+                "methods": [
+                  "apca",
+                  "wcag_ratio"
+                ],
+                "preferred": "apca",
+                "inputs": [
+                  "tokens.text",
+                  "tokens.surface",
+                  "typography.base_font_size",
+                  "typography.base_font_weight"
+                ],
+                "thresholds": {
+                  "apca_min": "TBD",
+                  "wcag_ratio_min": "TBD"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "margin"
+              ]
+            },
+            {
+              "id": "R3",
+              "name": "TextOnBrand",
+              "description": "Text on brand-colored surfaces (e.g., primary buttons) must be readable (onBrand on brand).",
+              "source_object": "ContrastPolicy",
+              "validation": {
+                "methods": [
+                  "apca",
+                  "wcag_ratio"
+                ],
+                "preferred": "apca",
+                "inputs": [
+                  "tokens.onBrand",
+                  "tokens.brand",
+                  "typography.button_font_size",
+                  "typography.button_font_weight"
+                ],
+                "thresholds": {
+                  "apca_min": "TBD",
+                  "wcag_ratio_min": "TBD"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "margin"
+              ],
+              "failure_semantics": "incompatible_choice_or_algorithm (reject initial choice if constrained)."
+            },
+            {
+              "id": "R4",
+              "name": "MutedStillReadable",
+              "description": "Muted/secondary text must remain readable on bg/surface (lower threshold allowed).",
+              "source_object": "ContrastPolicy",
+              "validation": {
+                "methods": [
+                  "apca",
+                  "wcag_ratio"
+                ],
+                "preferred": "apca",
+                "inputs": [
+                  "tokens.muted",
+                  "tokens.bg",
+                  "typography.body_font_size",
+                  "typography.body_font_weight"
+                ],
+                "thresholds": {
+                  "apca_min": "TBD (lower than R1)",
+                  "wcag_ratio_min": "TBD (lower than R1)"
+                }
+              },
+              "severity": "warn",
+              "metric_output": [
+                "pass_fail",
+                "margin"
+              ]
+            },
+            {
+              "id": "R5",
+              "name": "LinkDistinguishable",
+              "description": "Links must be distinguishable from body text via underline and/or color difference meeting a minimum distinguishability rule.",
+              "source_object": "ContrastPolicy",
+              "validation": {
+                "methods": [
+                  "css_rule_presence",
+                  "color_delta"
+                ],
+                "preferred": "css_rule_presence",
+                "inputs": [
+                  "css.a_hover_text_decoration",
+                  "tokens.link",
+                  "tokens.text"
+                ],
+                "thresholds": {
+                  "must_have_underline_on_hover": true,
+                  "min_color_deltaE_oklab": "TBD (if underline not guaranteed)"
+                }
+              },
+              "severity": "warn",
+              "metric_output": [
+                "pass_fail",
+                "margin"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "TonalHierarchy",
+      "subcategories": [
+        {
+          "subcategory": "Surfaces",
+          "rules": [
+            {
+              "id": "R6",
+              "name": "SurfaceOrdering_Light",
+              "description": "In light mode: background must be lighter than surface, and surface lighter than border/separators (ordering in OKLCH L).",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "oklch_L_ordering"
+                ],
+                "inputs": [
+                  "tokens.bg",
+                  "tokens.surface",
+                  "tokens.border"
+                ],
+                "thresholds": {
+                  "ordering": "L(bg) > L(surface) > L(border)",
+                  "min_delta_L": "TBD (see R8)"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "margins"
+              ]
+            },
+            {
+              "id": "R7",
+              "name": "SurfaceOrdering_Dark",
+              "description": "In dark mode: background must be darker than surface, and surface darker than border/separators (ordering in OKLCH L).",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "oklch_L_ordering"
+                ],
+                "inputs": [
+                  "tokens_dark.bg",
+                  "tokens_dark.surface",
+                  "tokens_dark.border"
+                ],
+                "thresholds": {
+                  "ordering": "L(bg) < L(surface) < L(border)",
+                  "min_delta_L": "TBD"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "margins"
+              ]
+            },
+            {
+              "id": "R8",
+              "name": "MinDeltas",
+              "description": "Minimum tonal deltas between bg/surface/border to avoid flatness.",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "oklch_delta_L",
+                  "deltaE_oklab"
+                ],
+                "preferred": "oklch_delta_L",
+                "inputs": [
+                  "tokens.bg",
+                  "tokens.surface",
+                  "tokens.border"
+                ],
+                "thresholds": {
+                  "min_delta_L_bg_surface": "TBD",
+                  "min_delta_L_surface_border": "TBD",
+                  "min_deltaE_oklab": "optional"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "margins"
+              ]
+            },
+            {
+              "id": "R9",
+              "name": "MaxDeltas",
+              "description": "Maximum tonal deltas between bg/surface/border to avoid harsh breaks.",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "oklch_delta_L"
+                ],
+                "inputs": [
+                  "tokens.bg",
+                  "tokens.surface",
+                  "tokens.border"
+                ],
+                "thresholds": {
+                  "max_delta_L_bg_surface": "TBD",
+                  "max_delta_L_surface_border": "TBD"
+                }
+              },
+              "severity": "warn",
+              "metric_output": [
+                "pass_fail",
+                "margins"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "ColorSpace",
+      "subcategories": [
+        {
+          "subcategory": "Gamut",
+          "rules": [
+            {
+              "id": "R10",
+              "name": "InGamut",
+              "description": "All produced colors must be in target gamut (default sRGB).",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "in_gamut_check",
+                  "gamut_mapping_check"
+                ],
+                "preferred": "in_gamut_check",
+                "inputs": [
+                  "all_tokens_colors"
+                ],
+                "thresholds": {
+                  "target_gamut": "srgb",
+                  "allow_mapping": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "count_out_of_gamut"
+              ]
+            },
+            {
+              "id": "R11",
+              "name": "ChromaCap",
+              "description": "Chroma must remain within safe bounds for the given lightness to avoid clipping and neon artifacts.",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "oklch_chroma_cap",
+                  "channel_clip_check"
+                ],
+                "preferred": "oklch_chroma_cap",
+                "inputs": [
+                  "all_tokens_oklch"
+                ],
+                "thresholds": {
+                  "cap_function": "C <= f(L) (TBD function family)"
+                }
+              },
+              "severity": "warn",
+              "metric_output": [
+                "pass_fail",
+                "violations"
+              ]
+            },
+            {
+              "id": "R12",
+              "name": "BWConsistency",
+              "description": "If bw=true, palette must be near-achromatic except declared exceptions (e.g., semantic colors).",
+              "source_object": "ColorSpacePolicy",
+              "validation": {
+                "methods": [
+                  "oklch_chroma_statistics"
+                ],
+                "inputs": [
+                  "all_tokens_oklch",
+                  "manifest.bw",
+                  "exceptions.semantic_colors"
+                ],
+                "thresholds": {
+                  "median_C_max": "TBD",
+                  "max_C_exception_allowed": "TBD"
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "stats"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Identity",
+      "subcategories": [
+        {
+          "subcategory": "Palette",
+          "rules": [
+            {
+              "id": "R13",
+              "name": "HueLock",
+              "description": "Brand hue must not drift from the base anchor. For strict CSS-identical validation, epsilon should be 0 (exact).",
+              "source_object": "Harmony",
+              "validation": {
+                "methods": [
+                  "oklch_hue_diff"
+                ],
+                "inputs": [
+                  "anchors.brand_oklch.h",
+                  "tokens.brand_oklch.h"
+                ],
+                "thresholds": {
+                  "epsilon_degrees": 0
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "delta_h"
+              ]
+            },
+            {
+              "id": "R14",
+              "name": "PaletteRelativityTrace",
+              "description": "Every derived token must have a declared relative operator provenance (no invented absolute colors).",
+              "source_object": "Harmony",
+              "validation": {
+                "methods": [
+                  "provenance_graph_check"
+                ],
+                "inputs": [
+                  "token_provenance_graph"
+                ],
+                "thresholds": {
+                  "all_derived_tokens_must_have_provenance": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "missing_provenance"
+              ]
+            }
+          ]
+        },
+        {
+          "subcategory": "Components",
+          "rules": [
+            {
+              "id": "R15",
+              "name": "ComponentRecipeMatch",
+              "description": "Component style modes (elevation/border/shadow/radius/stroke) used by generator must match modes inferred from the scraped site (or provided as constraints).",
+              "source_object": "ComponentRecipeLibrary",
+              "validation": {
+                "methods": [
+                  "choice_equality_check"
+                ],
+                "inputs": [
+                  "choices.radius_mode.expected",
+                  "choices.radius_mode.actual",
+                  "choices.elevation_mode.expected",
+                  "choices.elevation_mode.actual",
+                  "choices.stroke_mode.expected",
+                  "choices.stroke_mode.actual"
+                ],
+                "thresholds": {
+                  "must_match": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "mismatches"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Mode",
+      "subcategories": [
+        {
+          "subcategory": "Transform",
+          "rules": [
+            {
+              "id": "R16",
+              "name": "ModeTransformStableHue",
+              "description": "Light↔dark transform must be deterministic and preserve brand hue family (unless explicitly allowed).",
+              "source_object": "ModeTransformPolicy",
+              "validation": {
+                "methods": [
+                  "transform_declared_check",
+                  "hue_preservation_check"
+                ],
+                "inputs": [
+                  "mode_transform.function_id",
+                  "anchors.brand_oklch.h",
+                  "tokens_dark.brand_oklch.h"
+                ],
+                "thresholds": {
+                  "epsilon_degrees": 0
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "delta_h_dark"
+              ]
+            },
+            {
+              "id": "R17",
+              "name": "ModeRevalidateContrast",
+              "description": "All contrast rules must pass in both modes (light and dark).",
+              "source_object": "ValidationRunner",
+              "validation": {
+                "methods": [
+                  "composite_rule_check"
+                ],
+                "inputs": [
+                  "results.R1..R5 for light",
+                  "results.R1..R5 for dark"
+                ],
+                "thresholds": {
+                  "all_pass": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Typography",
+      "subcategories": [
+        {
+          "subcategory": "Base",
+          "rules": [
+            {
+              "id": "R18",
+              "name": "FontCategoryApplied",
+              "description": "Font category (sans/serif/mono) and base stack must match the anchored constraint (scraped or declared).",
+              "source_object": "TypographyAnalyzer",
+              "validation": {
+                "methods": [
+                  "css_font_family_contains",
+                  "stack_hash_check"
+                ],
+                "preferred": "css_font_family_contains",
+                "inputs": [
+                  "css.root_font_family",
+                  "anchors.fontcategory",
+                  "anchors.fontstack_hash_optional"
+                ],
+                "thresholds": {
+                  "category_must_match": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail"
+              ]
+            },
+            {
+              "id": "R19",
+              "name": "BaseFontAndLineHeight",
+              "description": "Base font size and line height must match anchors; all other sizes are relative to these bases.",
+              "source_object": "TypographyAnalyzer",
+              "validation": {
+                "methods": [
+                  "css_var_equality_check",
+                  "relative_formula_check"
+                ],
+                "inputs": [
+                  "css.vars.--base-font-size",
+                  "anchors.mainfontsize",
+                  "css.vars.--base-line-height",
+                  "anchors.mainloopheight"
+                ],
+                "thresholds": {
+                  "must_match": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "mismatches"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Layout",
+      "subcategories": [
+        {
+          "subcategory": "Spacing",
+          "rules": [
+            {
+              "id": "R20",
+              "name": "SpacingScaleConsistency",
+              "description": "Main spacing unit must be respected; all gaps/gutters/paddings/radius (if relative) must be declared functions of mainspace.",
+              "source_object": "LayoutAnalyzer",
+              "validation": {
+                "methods": [
+                  "relative_formula_check",
+                  "ratio_histogram_check"
+                ],
+                "preferred": "relative_formula_check",
+                "inputs": [
+                  "anchors.mainspace",
+                  "css.vars.--gap",
+                  "css.vars.--gutter",
+                  "all_spacing_tokens"
+                ],
+                "thresholds": {
+                  "all_spacing_tokens_must_reference_mainspace": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "missing_relations"
+              ]
+            }
+          ]
+        },
+        {
+          "subcategory": "Media",
+          "rules": [
+            {
+              "id": "R21",
+              "name": "MainImageHeightRule",
+              "description": "Media block sizing must follow the anchored mainimgheight rule; variants must be relative and deterministic.",
+              "source_object": "LayoutAnalyzer",
+              "validation": {
+                "methods": [
+                  "css_rule_check",
+                  "dom_snapshot_check"
+                ],
+                "inputs": [
+                  "anchors.mainimgheight",
+                  "css.rules.hero_media_height",
+                  "dom.hero_media_box"
+                ],
+                "thresholds": {
+                  "must_match": true
+                }
+              },
+              "severity": "warn",
+              "metric_output": [
+                "pass_fail",
+                "mismatches"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Reproduction",
+      "subcategories": [
+        {
+          "subcategory": "CSS",
+          "rules": [
+            {
+              "id": "R22",
+              "name": "CSSIdentical",
+              "description": "Generated CSS must be identical to baseline after deterministic normalization (to avoid irrelevant diffs).",
+              "source_object": "ValidationRunner",
+              "validation": {
+                "methods": [
+                  "css_normalize_and_hash"
+                ],
+                "inputs": [
+                  "generated.css",
+                  "baseline.css"
+                ],
+                "thresholds": {
+                  "hash_equal": true
+                }
+              },
+              "severity": "error",
+              "metric_output": [
+                "pass_fail",
+                "generated_hash",
+                "baseline_hash"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "purpose": "diagnostic (pass/fail remains authoritative)",
+    "score_type": "weighted_margin_sum",
+    "rule_weights": {
+      "Contrast": 3,
+      "TonalHierarchy": 2,
+      "ColorSpace": 2,
+      "Identity": 2,
+      "Mode": 2,
+      "Typography": 1,
+      "Layout": 1,
+      "Reproduction": 5
+    },
+    "aggregation": "sum(clamp(margin_i)) by rule, then weighted by category",
+    "note": "Use score for visibility/ranking only; acceptance requires all error rules pass."
+  }
+}

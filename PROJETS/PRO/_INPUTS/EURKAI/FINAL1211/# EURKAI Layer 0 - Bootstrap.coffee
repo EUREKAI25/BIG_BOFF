@@ -1,0 +1,177 @@
+# EURKAI Layer 0 - Bootstrap
+# seed/object.s.gev
+
+Object:
+  .name = "Object"
+  .description.FR = ""
+  .description.EN = ""
+  .elementList = V_ObjectElementList
+
+# ========== STRUCTURE ==========
+
+Object:Structure:
+  .name = "Structure"
+  .transversal = true
+  related_to Object
+
+Object:Structure:Dict:
+  .name = "Dict"
+  related_to Object
+
+Object:Structure:List:
+  .name = "List"
+
+Object:Structure:List:OrderedList:
+  .name = "OrderedList"
+  .sortRule = V_SortRule
+
+Object:Structure:Element:
+  .name = "Element"
+  .cardinality = "undefined"
+
+# ========== ATTRIBUTE ==========
+
+Object:Attribute:
+  .name = "Attribute"
+  .multiple = "undefined"
+
+Object:Attribute:ElementList:
+  .name = "ElementList"
+  ElementList IN Object.AttributeList
+
+Object:Attribute:AttributeList:
+  .name = "AttributeList"
+  AttributeList IN Object.ElementList
+
+Object:Attribute:MethodList:
+  .name = "MethodList"
+  MethodList IN Object.ElementList
+
+Object:Attribute:RuleList:
+  .name = "RuleList"
+  RuleList IN Object.ElementList
+
+Object:Attribute:RelationList:
+  .name = "RelationList"
+  RelationList IN Object.ElementList
+
+Object:Attribute:OptionList:
+  .name = "OptionList"
+  OptionList IN Object.ElementList
+
+Object:Attribute:ChildList:
+  .name = "ChildList"
+  ChildList IN Object.ElementList
+
+Object:Attribute:Automated:
+  .name = "Automated"
+  .automated = true
+
+# ========== METHOD ==========
+
+Object:Method:
+  .name = "Method"
+  .input = V_MethodInput
+  .output = V_MethodOutput
+  .hookBeforeList = V_MethodHookBeforeList
+  .hookAfterList = V_MethodHookAfterList
+
+Object:Method:CentralMethod:
+  .name = "CentralMethod"
+
+Object:Method:CentralMethod:Create:
+  .name = "Create"
+
+Object:Method:CentralMethod:Read:
+  .name = "Read"
+
+Object:Method:CentralMethod:Update:
+  .name = "Update"
+
+Object:Method:CentralMethod:Delete:
+  .name = "Delete"
+
+Object:Method:SecondaryMethod:
+  .name = "SecondaryMethod"
+
+Object:Method:SecondaryMethod:Generate:
+  .name = "Generate"
+  Generate IN Automated.MethodList
+
+Object:Method:SecondaryMethod:Validate:
+  .name = "Validate"
+
+Object:Method:Scenario:
+  .name = "Scenario"
+  .milestoneList = V_ScenarioMilestoneList
+
+Object:Method:Scenario:Step:
+  .name = "Step"
+  .method = V_StepMethod
+
+Object:Method:Scenario:Step:GetStep:
+  .name = "GetStep"
+  .order = 1
+
+Object:Method:Scenario:Step:ExecuteStep:
+  .name = "ExecuteStep"
+  .order = 2
+
+Object:Method:Scenario:Step:ValidateStep:
+  .name = "ValidateStep"
+  .order = 3
+
+Object:Method:Scenario:Step:RenderStep:
+  .name = "RenderStep"
+  .order = 4
+
+Object:Method:Scenario:Milestone:
+  .name = "Milestone"
+  .order = V_MilestoneOrder
+  .stepList = V_MilestoneStepList
+
+# ========== RULE ==========
+
+Object:Rule:
+  .name = "Rule"
+  .condition = V_RuleCondition
+
+Object:Rule:ValidationRule:
+  .name = "ValidationRule"
+
+Object:Rule:CreateRule:
+  .name = "CreateRule"
+
+Object:Rule:FormatRule:
+  .name = "FormatRule"
+  .pattern = V_FormatPattern
+
+# ========== RELATION ==========
+
+Object:Relation:
+  .name = "Relation"
+
+Object:Relation:InheritsFrom:
+  .name = "inherits_from"
+
+Object:Relation:DependsOn:
+  .name = "depends_on"
+
+Object:Relation:RelatedTo:
+  .name = "related_to"
+
+Object:Relation:In:
+  .name = "IN"
+
+# ========== CONFIG ==========
+
+Object:Config:
+  .name = "Config"
+
+Object:Config:Vector:
+  .name = "Vector"
+  .automated = true
+
+Object:Config:Alias:
+  .name = "Alias"
+  .automated = true

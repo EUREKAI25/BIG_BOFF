@@ -1,0 +1,104 @@
+# ============================================================================
+# SEEDS: Structure de base des objets
+# ============================================================================
+
+# --- Entités de base ---
+
+Object:Entity:
+  .name = V_Name
+  .description = V_Description
+
+Object:Entity:Agent:
+  .name = V_Name
+  .description = V_Description
+  .role = V_Role
+  .model = V_Model
+  .temperature = V_Temperature
+  .maxTokens = V_MaxTokens
+  .permissions = V_Permissions
+
+Object:Entity:Agent:AIAgent:
+  .name = V_Name
+  .description = V_Description
+  .role = V_Role
+  .model = V_Model
+  .temperature = V_Temperature
+  .maxTokens = V_MaxTokens
+  .provider = V_Provider
+
+Object:Entity:Agent:ArchitectAgent:
+  .name = V_Name
+  .description = V_Description
+  .role = "architect"
+  .model = V_Model
+  .temperature = V_Temperature
+  .maxTokens = V_MaxTokens
+  .specialization = "general"
+
+Object:Entity:Agent:GeneratorAgent:
+  .name = V_Name
+  .description = V_Description
+  .role = "generator"
+  .model = V_Model
+  .temperature = V_Temperature
+  .maxTokens = V_MaxTokens
+  .outputType = "text"
+  .
+
+Object:Entity:Agent:OrchestratorAgent:
+  .name = V_Name
+  .description = V_Description
+  .role = "orchestrator"
+  .model = V_Model
+  .temperature = V_Temperature
+  .maxTokens = V_MaxTokens
+
+# --- Types de données ---
+
+Object:Data:
+  .name = V_Name
+  .description = V_Description
+
+Object:Data:Document:
+  .name = V_Name
+  .description = V_Description
+  .format = "text"
+  .encoding = "utf-8"
+
+Object:Data:Document:Markdown:
+  .name = V_Name
+  .description = V_Description
+  .format = "markdown"
+  .extension = ".md"
+
+Object:Data:Document:JSON:
+  .name = V_Name
+  .description = V_Description
+  .format = "json"
+  .extension = ".json"
+
+Object:Data:Document:YAML:
+  .name = V_Name
+  .description = V_Description
+  .format = "yaml"
+  .extension = ".yaml"
+
+# --- Workflows ---
+
+Object:Workflow:
+  .name = V_Name
+  .description = V_Description
+  .status = "pending"
+
+Object:Workflow:Pipeline:
+  .name = V_Name
+  .description = V_Description
+  .type = "sequential"
+  .status = "pending"
+
+Object:Workflow:Pipeline:GEVR:
+  .name = V_Name
+  .description = V_Description
+  .type = "gevr"
+  .stages = ["get", "execute", "validate", "render"]
+  .status = "pending"

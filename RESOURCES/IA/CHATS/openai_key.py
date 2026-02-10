@@ -1,0 +1,4 @@
+# openai_key.py
+# Clé API OpenAI centralisée
+
+OPENAI_API_KEY = "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"

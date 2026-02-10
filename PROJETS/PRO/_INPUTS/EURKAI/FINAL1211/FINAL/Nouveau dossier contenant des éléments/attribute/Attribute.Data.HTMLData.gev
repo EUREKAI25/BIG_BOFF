@@ -1,0 +1,48 @@
+## Object:Attribute:Data:
+## Attributs data-* HTML
+
+Object:Attribute:Data:
+  .vector = {"required": true}
+  .DataAttributeList = {"type": "list", "of": "Object:Attribute:Data"}
+
+## ============================================
+## Object:Attribute:Data:HTMLData:
+## Attributs data-erk-* propriétaires EURKAI
+## ============================================
+
+Object:Attribute:Data:HTMLData:
+  .erkId = {"required": true}
+  ## data-erk-id = identifiant unique (= vector de l'élément)
+  
+  .action = {}
+  ## data-erk-action: click, submit, change, hover, scroll, etc.
+  
+  .category = {}
+  ## data-erk-category: CTA, navigation, form, content, etc.
+  
+  .label = {}
+  ## data-erk-label: description lisible
+  
+  .target = {}
+  ## data-erk-target: référence vers élément cible
+  
+  .state = {}
+  ## data-erk-state: active, loading, error, success, etc.
+  
+  .config = {"type": "dict"}
+  ## data-erk-config: configuration JSON
+  
+  .HTMLDataList = {"type": "list", "of": "Object:Attribute:Data:HTMLData"}
+
+## Exemple d'instance:
+##
+## btn_signup:
+##   .erkId = "btn-signup-hero-001"
+##   .action = "click"
+##   .category = "CTA"
+##   .label = "signup"
+##   
+##   => <button data-erk-id="btn-signup-hero-001" 
+##              data-erk-action="click" 
+##              data-erk-category="CTA" 
+##              data-erk-label="signup">

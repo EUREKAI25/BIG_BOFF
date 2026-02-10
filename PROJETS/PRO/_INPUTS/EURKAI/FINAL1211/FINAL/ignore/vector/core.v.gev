@@ -1,0 +1,325 @@
+# EURKAI Core Vectors
+# vector/core.v.gev
+
+# ========== OBJECT ==========
+
+Object:Config:Vector:V_ObjectName:
+  .type = "string"
+  .default = {"FR": "Objet"}
+
+Object:Config:Vector:V_ObjectDescription:
+  .type = "string"
+  .default = {"FR": "Racine de tous les objets", "EN": "Root of all objects"}
+
+Object:Config:Vector:V_ObjectElementList:
+  .type = "array"
+  .method = "getMergedList"
+  .default = ["AttributeList", "MethodList", "RuleList", "RelationList", "OptionList", "ChildList"]
+
+Object:Attribute:AttributeList:
+  .name = "AttributeList"
+  .description.FR = "Liste des attributs d'un objet"
+  .description.EN = "List of attributes of an object"
+  AttributeList IN Object.ElementList
+
+Object:Attribute:MethodList:
+  .name = "MethodList"
+  .description.FR = "Liste des méthodes d'un objet"
+  .description.EN = "List of methods of an object"
+  MethodList IN ElementList.ChildList
+  MethodList IN Object.ElementList
+
+Object:Attribute:RuleList:
+  .name = "RuleList"
+  .description.FR = "Liste des règles d'un objet"
+  .description.EN = "List of rules of an object"
+  RuleList IN ElementList.ChildList
+  RuleList IN Object.ElementList
+
+Object:Attribute:RelationList:
+  .name = "RelationList"
+  .description.FR = "Liste des relations d'un objet"
+  .description.EN = "List of relations of an object"
+  RelationList IN ElementList.ChildList
+  RelationList IN Object.ElementList
+
+Object:Attribute:OptionList:
+  .name = "OptionList"
+  .description.FR = "Liste des options d'un objet"
+  .description.EN = "List of options of an object"
+  OptionList IN ElementList.ChildList
+  OptionList IN Object.ElementList
+
+Object:Attribute:ChildList:
+  .name = "ChildList"
+  .description.FR = "Liste des enfants d'un objet"
+  .description.EN = "List of children of an object"
+  ChildList IN ElementList.ChildList
+  ChildList IN Object.ElementList
+
+# ========== STRUCTURE ==========
+
+Object:Config:Vector:V_StructureName:
+  .type = "string"
+  .default = {"FR": "Structure", "EN": "Structure"}
+
+Object:Config:Vector:V_StructureDescription:
+  .type = "string"
+  .default = {"FR": "Définit comment un objet est structuré", "EN": "Defines how an object is structured"}
+
+Object:Config:Vector:V_DictName:
+  .type = "string"
+  .default = {"FR": "Dictionnaire", "EN": "Dictionary"}
+
+Object:Config:Vector:V_DictDescription:
+  .type = "string"
+  .default = {"FR": "Tout objet est un dictionnaire clé-valeur", "EN": "Every object is a key-value dictionary"}
+
+Object:Config:Vector:V_ListName:
+  .type = "string"
+  .default = {"FR": "Liste", "EN": "List"}
+
+Object:Config:Vector:V_ListDescription:
+  .type = "string"
+  .default = {"FR": "Dictionnaire avec clés sans impact", "EN": "Dictionary with irrelevant keys"}
+
+Object:Config:Vector:V_OrderedListName:
+  .type = "string"
+  .default = {"FR": "Liste ordonnée", "EN": "Ordered List"}
+
+Object:Config:Vector:V_OrderedListDescription:
+  .type = "string"
+  .default = {"FR": "Liste avec clés classées selon une règle de tri", "EN": "List with keys sorted by a rule"}
+
+Object:Config:Vector:V_SortRule:
+  .type = "string"
+  .default = ""
+
+Object:Config:Vector:V_ElementName:
+  .type = "string"
+  .default = {"FR": "Élément", "EN": "Element"}
+
+Object:Config:Vector:V_ElementDescription:
+  .type = "string"
+  .default = {"FR": "Objet faisant partie d'une liste", "EN": "Object that belongs to a list"}
+
+Object:Config:Vector:V_ElementCardinality:
+  .type = "enum"
+  .options = ["multiple", "single", "undefined"]
+  .default = "undefined"
+
+# ========== ATTRIBUTE ==========
+
+Object:Config:Vector:V_AttributeName:
+  .type = "string"
+  .default = {"FR": "Attribut", "EN": "Attribute"}
+
+Object:Config:Vector:V_AttributeDescription:
+  .type = "string"
+  .default = {"FR": "Élément descriptif d'un objet", "EN": "Descriptive element of an object"}
+
+Object:Config:Vector:V_AttributeMultiple:
+  .type = "enum"
+  .options = ["multiple", "single", "undefined"]
+  .default = "undefined"
+
+Object:Config:Vector:V_ElementListName:
+  .type = "string"
+  .default = {"FR": "Liste des éléments", "EN": "Element List"}
+
+Object:Config:Vector:V_ElementListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des listes d'éléments d'un objet", "EN": "List of element lists of an object"}
+
+Object:Config:Vector:V_AttributeListName:
+  .type = "string"
+  .default = {"FR": "Liste des attributs", "EN": "Attribute List"}
+
+Object:Config:Vector:V_AttributeListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des attributs d'un objet", "EN": "List of attributes of an object"}
+
+Object:Config:Vector:V_MethodListName:
+  .type = "string"
+  .default = {"FR": "Liste des méthodes", "EN": "Method List"}
+
+Object:Config:Vector:V_MethodListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des méthodes d'un objet", "EN": "List of methods of an object"}
+
+Object:Config:Vector:V_RuleListName:
+  .type = "string"
+  .default = {"FR": "Liste des règles", "EN": "Rule List"}
+
+Object:Config:Vector:V_RuleListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des règles d'un objet", "EN": "List of rules of an object"}
+
+Object:Config:Vector:V_RelationListName:
+  .type = "string"
+  .default = {"FR": "Liste des relations", "EN": "Relation List"}
+
+Object:Config:Vector:V_RelationListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des relations d'un objet", "EN": "List of relations of an object"}
+
+Object:Config:Vector:V_OptionListName:
+  .type = "string"
+  .default = {"FR": "Liste des options", "EN": "Option List"}
+
+Object:Config:Vector:V_OptionListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des options d'un objet", "EN": "List of options of an object"}
+
+Object:Config:Vector:V_ChildListName:
+  .type = "string"
+  .default = {"FR": "Liste des enfants", "EN": "Child List"}
+
+Object:Config:Vector:V_ChildListDescription:
+  .type = "string"
+  .default = {"FR": "Liste des enfants d'un objet", "EN": "List of children of an object"}
+
+Object:Config:Vector:V_AutomatedName:
+  .type = "string"
+  .default = {"FR": "Automatisé", "EN": "Automated"}
+
+Object:Config:Vector:V_AutomatedDescription:
+  .type = "string"
+  .default = {"FR": "Attribut pour objets auto-générés", "EN": "Attribute for auto-generated objects"}
+
+# ========== RELATION ==========
+
+Object:Config:Vector:V_RelationName:
+  .type = "string"
+  .default = {"FR": "Relation", "EN": "Relation"}
+
+Object:Config:Vector:V_RelationDescription:
+  .type = "string"
+  .default = {"FR": "Lien entre deux objets", "EN": "Link between two objects"}
+
+Object:Config:Vector:V_InheritsFromName:
+  .type = "string"
+  .default = {"FR": "Hérite de", "EN": "Inherits from"}
+
+Object:Config:Vector:V_InheritsFromDescription:
+  .type = "string"
+  .default = {"FR": "Héritage de type (implicite via lineage)", "EN": "Type inheritance (implicit via lineage)"}
+
+Object:Config:Vector:V_DependsOnName:
+  .type = "string"
+  .default = {"FR": "Dépend de", "EN": "Depends on"}
+
+Object:Config:Vector:V_DependsOnDescription:
+  .type = "string"
+  .default = {"FR": "Dépendance fonctionnelle", "EN": "Functional dependency"}
+
+Object:Config:Vector:V_RelatedToName:
+  .type = "string"
+  .default = {"FR": "Lié à", "EN": "Related to"}
+
+Object:Config:Vector:V_RelatedToDescription:
+  .type = "string"
+  .default = {"FR": "Association libre", "EN": "Free association"}
+
+Object:Config:Vector:V_InName:
+  .type = "string"
+  .default = {"FR": "Dans", "EN": "In"}
+
+Object:Config:Vector:V_InDescription:
+  .type = "string"
+  .default = {"FR": "Appartenance à une liste", "EN": "Membership in a list"}
+
+Object:Config:Vector:V_ObjectScan:
+  .type = "string"
+  .default = ["pass"]
+  .optionList = V_ObjectScanOptions 
+
+Object:Config:Vector:V_ObjectScanOptions:
+  .type = "string"
+  .default = ["pass", "visit", "ghost"]
+
+V_WalkHookList:
+  .type = "dict"
+  .default = {
+    "HookBefore": "",
+    "HookAfter": "ScanReset",
+    "HookFailure": ""
+  }
+
+V_RuleName = "Rule"
+V_RuleDescription = ""
+V_RuleQuestion = ""
+V_RuleSeverity = "info"
+V_RuleConstraintLevel = "MAY"
+V_RuleScope = []
+V_RuleCondition = ""
+V_RuleErrorMessage = ""
+V_RuleErk = |
+  EXEC Rule.Validate(
+    input = {
+      target: $target,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+V_StructuralRuleErk = |
+  EXEC Rule.Validate(
+    input = {
+      target: $target,
+      source_text: $source_text,
+      source_kind: $source_kind,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+
+
+V_StructuralRuleName = "Règle structurelle"
+V_StructuralRuleDescription = "Règle qui décrit la forme attendue d'un objet (attributs, types, relations, bundles, format)."
+V_StructuralRuleQuestion = "Quelle règle de structure s'applique à cet objet ?"
+V_StructuralRuleSeverity = "info"
+V_StructuralRuleConstraintLevel = "MAY"
+V_StructuralRuleScope = []
+V_StructuralRuleCondition = ""
+V_StructuralRuleErrorMessage = ""
+V_SchemaRuleConstraintPattern = ""
+V_SchemaRuleRequiredKeyword = ""
+
+
+V_SchemaRuleName = "Règle de schéma"
+V_SchemaRuleDescription = "Contraintes sur présence/absence d'attributs, types attendus, cardinalités et structure."
+V_SchemaRuleQuestion = "Quels attributs/types/cardis doivent exister pour cet objet ?"
+V_SchemaRuleSeverity = "info"
+V_SchemaRuleConstraintLevel = "MAY"
+V_SchemaRuleScope = []
+V_SchemaRuleCondition = ""
+V_SchemaRuleErrorMessage = ""
+V_SchemaRuleErk = |
+  EXEC Rule.Validate.Schema(
+    input = {
+      target: $target,
+      schema: $schema,
+      context: $context
+    },
+    output = {
+      ok: $ok,
+      issue: $issue
+    }
+  )
+  IF($ok, OK(), ISSUE($issue))
+  
+  V_AttributeDeclaredRuleErk = |
+  FOREACH attr IN $target.attributeList {
+    attrType = attr.name.toUpperFirst()
+    EXISTS("Object:Attribute:" + attrType) 
+      OR ISSUE("Attribut ." + attr.name + " non déclaré dans Object:Attribute")
+  }

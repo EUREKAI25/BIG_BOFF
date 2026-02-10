@@ -1,0 +1,9 @@
+# NOTES DE NATHALIE - ON N'EN FAIT RIEN POUR LE MOMENT.  à 
+
+- pouvoir entrée une idée et que ça se transforme en projet déployable puis mvp cahier des charges etc 
+- tag de tout 
+- penser eurkai optimal 
+- bibliothèque de scripts
+- automatiser déploiement de projets avec claude
+- **MEDIAS** : un répertoire par type de fichier (voire un seul plat) + catalogue taggé + moteur de recherche ultra simple. Tout repose sur les tags, pas sur l'arborescence.
+
