@@ -3,7 +3,7 @@
 > Ce fichier est tenu à jour par Claude à chaque action.
 > En cas de plantage ou nouvelle session, lire ce fichier pour reprendre.
 
-**Dernière MAJ** : 2026-02-10 18:30
+**Dernière MAJ** : 2026-02-10 21:00
 
 > **RÈGLE IMPÉRATIVE** : ce fichier DOIT être mis à jour après CHAQUE tâche terminée,
 > pas en fin de session. En cas de crash ou de conversation fermée, c'est la seule
@@ -16,12 +16,14 @@
 | Projet | Statut | Dernière action |
 |---|---|---|
 | Ménage / Catalogage | [x] terminé | Catalogue 63 662 items, doublons traités, consolidations faites |
-| BIG_BOFF Search | [x] v2 complète | 84 423+ éléments, contacts/lieux/relations + formulaire ajout |
+| **BIG_BOFF Search** | [x] v2 complète | 84 423+ éléments, contacts/lieux/relations, P0 Distribution ✅ |
+| **BIG_BOFF P2P** | 💡 documenté | Pivot architecture partage décentralisé, MVP 10 semaines, freemium features |
 | SUBLYM MVP | [x] pipeline créé | Photos-only, 0.29 EUR / 8 photos / 2 min |
 | **PIPELINE AGENCE** | [x] v1 construite | Orchestrateur autonome idée→prod, dispatcher/min, Brevo notifs |
 | **EURKAI refonte** | [x] structuré | Architecture fractale documentée, ancien archivé, workflow optimisé |
-| **TIP_CALCULATOR** | [x] terminé | Premier projet complet : brief → CDC → specs → code fonctionnel ✓ |
+| **TIP_CALCULATOR** | ✅ déployé | Premier projet complet A→Z : https://eurekai25.github.io/tip-calculator/ |
 | **PROCESS + STANDARDS** | [x] créés | Règles standardisées création projet + qualité code (HTML/CSS/JS/Python/modules) |
+| **SUBLYM v8** | 🟢 en cours | Pipeline optimisé 168→9 appels (-95%), 10-15min→1-2min, ~2.70€→0.15€ |
 
 ---
 
@@ -142,24 +144,55 @@ Workflow manuel optimisé (ci-dessus) suffit pour l'instant. Pipeline autonome =
 - [x] Nettoyage massif tags : 17 814 tags supprimés (test_*, génériques, stop words, code, hash), 1 061 items parasites (.map/cache/dist), fusion singulier/pluriel, DB 184→93 Mo
 - [x] Scripts d'indexation protégés : is_valid_tag() centralisé dans config.py, should_index_path() pour exclure cache/dist/vendor
 
+### P0 Distribution ✅ (2026-02-10)
+- [x] Configuration centralisée : config_loader.py + ~/.bigboff/config.json
+- [x] Setup DB automatisé : setup_db.py idempotent (12 tables)
+- [x] Dépendances formalisées : requirements.txt
+- [x] Documentation : README.md mis à jour, DISTRIBUTION_TODO.md (P0-P3)
+
+### Pivot P2P documenté (2026-02-10)
+- [x] MOBILE_ROADMAP.md : Stratégie PWA, 4 phases, MVP 4-5j
+- [x] ARCHITECTURE_PARTAGE.md : Identité décentralisée, relay server, E2E, 10 phases
+- [x] DECISIONS_PRODUIT.md : Données mobile, chiffrement, découverte, freemium, vues
+
 ### En cours
 - [~] Backfill snippets Gmail : 2 660 / 19 234 faits. Relancer : `python3 src/index_emails.py --snippets`
 - [~] Re-fetch transcriptions YouTube : IP bloquée temporairement. Relancer : `python3 src/youtube_transcripts.py`
 
-### À faire
+### À faire (version actuelle)
 - [ ] 2 comptes Gmail restants (nathaliecbrigitte + nbrigitte45 — 2FA requise)
 - [ ] Formulaire ajout vault dans l'UI (endpoint POST existe déjà)
 - [ ] Actions en masse emails (sélection multiple → supprimer / marquer spam)
-- [ ] Tags manuels sur éléments existants (ajouter/supprimer depuis l'UI)
+- [ ] Tags manuels sur éléments existants (ajouter/supprendre depuis l'UI)
 - [ ] Comptes bancaires (Open Banking)
+
+### À faire (pivot P2P — Phase 1)
+- [ ] Créer module identity.py (génération clés RSA-4096)
+- [ ] Table users locale
+- [ ] API /api/auth/register
+- [ ] UI premier lancement (génération identité)
 
 ---
 
-## SUBLYM MVP
+## SUBLYM Pipeline (génération scénarios vidéo)
 
-> Pipeline de génération photos pour l'app Sublym.
+> Pipeline de génération de vidéos de manifestation de rêves — Photo-réaliste, cohérence AI, optimisation coût/temps
 
 ### Fait
+- [x] Projet structuré selon standards EURKAI (`PROJETS/PRO/SUBLYM/`)
+- [x] Analyse pipeline_v7 : 168 appels LLM, 10-15min, ~2.70€
+- [x] Architecture v8 batch conçue : 9 appels, 1-2min, ~0.15€ (-95%)
+- [x] Code pipeline_v8_batch.py créé (Pydantic schemas, few-shot, temp 0.3)
+- [x] Documentation complète : _SUIVI.md, README.md, SPECS_OPTIMISATION.md
+- [x] requirements.txt, .env.example
+
+### En cours
+- [ ] Test comparatif v7 vs v8 sur 1 rêve (validation qualité)
+- [ ] Ajustement prompts si nécessaire
+- [ ] Stress test 10 rêves variés
+- [ ] Intégration IMAGE AGENT + VIDEO AGENT
+
+### Ancien (photos-only)
 - [x] Pipeline photos-only dans `sublym-dream-app/generation/` (6 fichiers)
 - [x] 1 scène = 1 photo, GPT-4o-mini + Flux Kontext Pro = **0.29 EUR / 8 photos / 2 min**
 - [x] Backend branche : webhook + job status + docker-compose

@@ -9,7 +9,7 @@
 
 **Statut** : 🟢 actif
 **Cree** : 2026-02-08
-**Derniere MAJ** : 2026-02-10 19:45
+**Derniere MAJ** : 2026-02-10 21:00
 
 ---
 
@@ -164,6 +164,70 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 
 ---
 
+## Pivot P2P — Architecture de partage décentralisée
+
+> **Date décision** : 2026-02-10
+> **Vision** : Outil transmis viralement entre utilisateurs (QR code/SMS), sans authentification traditionnelle, partage granulaire par tags, freemium sur fonctionnalités (pas volume)
+
+### Documentation créée
+
+| Fichier | Contenu |
+|---|---|
+| **MOBILE_ROADMAP.md** | Stratégie PWA — 4 phases (PWA base, VPS, Auth, Optimisations), MVP 4-5j |
+| **ARCHITECTURE_PARTAGE.md** | Architecture technique complète — identité décentralisée (RSA-4096), relay server, 2 modes partage (consultation/clone), permissions ACL, E2E encryption, 10 phases implémentation (8-10 semaines) |
+| **DECISIONS_PRODUIT.md** | Décisions actées — données indexées mobile (tout), chiffrement E2E obligatoire, découverte QR/SMS, freemium features (illimité gratuit), design minimaliste, vues (Planning/Liste/Budget + premium Kanban/Timeline/Map/Graph) |
+
+### Concepts clés
+
+**Identité décentralisée** : Pas de login/pwd, clés pub/priv (RSA-4096) générées à l'install, User ID = hash(public_key)
+
+**2 modes de partage** :
+- **Consultation** : B voit données de A en temps réel, révocable instantanément
+- **Partage** : Clone vers base de B, sync continue, snapshot figé si révoqué
+
+**Permissions granulaires** : ACL par tag/élément/groupe, vérification côté relay
+
+**Relay server** : Ne stocke QUE métadonnées (permissions, sync logs), PAS les données utilisateurs
+
+**E2E encryption** : AES-256-GCM + RSA-4096, transparent pour l'utilisateur, relay ne peut pas déchiffrer
+
+**Découverte** : QR code ou SMS avec tokens temporaires uniquement, pas d'annuaire public
+
+**Freemium** : Basé sur fonctionnalités (multi-support, vues avancées, IA), PAS sur volume
+- Gratuit : éléments illimités, 1 support, vues core (Liste/Planning/Budget)
+- Premium 5€/mois : multi-support, vues premium, OCR, transcription, IA
+
+**Coûts serveur** : Volume non limitant, relay léger (métadonnées uniquement), 100k users = 25€/mois VPS
+
+### Timeline implémentation
+
+| Phase | Durée | Description |
+|---|---|---|
+| Ph1 : Identité | 1 sem | Clés pub/priv, auth décentralisée |
+| Ph2 : Relay | 1 sem | Serveur VPS Ionos, sync basique |
+| Ph3 : Permissions | 1 sem | ACL par tag/élément/groupe |
+| Ph4 : QR + SMS | 3j | QR code scan, liens token temporaire |
+| Ph5 : Consultation | 3j | Voir données temps réel |
+| Ph6 : Partage | 1 sem | Clone + sync continue |
+| Ph7 : Groupes | 3j | Créer/gérer groupes |
+| Ph8 : Multi-support | 3j | QR activation type WhatsApp Web |
+| Ph9 : Freemium | 1 sem | Licences, paiement Stripe |
+| Ph10 : E2E | 3j | Chiffrement obligatoire (libsodium) |
+| Ph11 : Mobile UI | 1 sem | Responsive, gestes tactiles, PWA |
+| Ph12 : Vues premium | 1 sem | Kanban, Timeline, Map, Graph |
+
+**Total MVP P2P** : ~10 semaines (2.5 mois)
+
+### Métriques succès post-launch
+
+| Objectif | 6 mois | 1 an | 2 ans |
+|---|---|---|---|
+| Users actifs | 1 000 | 10 000 | 100 000 |
+| Conversion premium | 10% (100) | 15% (1 500) | 20% (20 000) |
+| Revenus/mois | 500€ | 7 500€ | 100 000€ |
+
+---
+
 ## A faire
 
 ### Court terme
@@ -225,6 +289,12 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | F34 | **Fetch métadonnées URL** | BeautifulSoup, OpenGraph/meta tags, gratuit/scalable | fait |
 | F35 | **Cache métadonnées URL** | Table SQLite, évite refetch, 98% succès | fait |
 | F36 | **Nettoyage tags URL parasites** | Suppression fbclid/mibextid/utm_* (191 tags), STOP_WORDS étendu | fait |
+| F37 | **Configuration centralisée** | config_loader.py, ~/.bigboff/config.json, expansion ~ et $VAR | fait |
+| F38 | **Setup DB automatisé** | setup_db.py idempotent (12 tables), création indexes | fait |
+| F39 | **Config par défaut** | config.default.json template, paths personnalisables | fait |
+| F40 | **Dépendances Python** | requirements.txt (beautifulsoup4, requests, Pillow) | fait |
+| F41 | **Documentation distribution** | README.md mis à jour, DISTRIBUTION_TODO.md (P0-P3) | fait |
+| F42 | **Architecture P2P documentée** | MOBILE_ROADMAP.md, ARCHITECTURE_PARTAGE.md, DECISIONS_PRODUIT.md | fait |
 
 ### Fonctionnalites prevues
 
@@ -294,3 +364,11 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | 2026-02-10 | Cache métadonnées URL — Table SQLite, 49 URLs cachées, 98% succès, évite refetch |
 | 2026-02-10 | Nettoyage base existante — 191 tags URL parasites supprimés (campaign:128, mibextid:34...) |
 | 2026-02-10 | Extension STOP_WORDS — fbclid, mibextid, gclid, igshid, utm_* (config.py + index_notes.py) |
+| 2026-02-10 | **P0 Distribution** — config_loader.py (load/merge/expand), setup_db.py (12 tables) |
+| 2026-02-10 | Configuration centralisée — config.default.json + ~/.bigboff/config.json override |
+| 2026-02-10 | Dépendances formalisées — requirements.txt (beautifulsoup4, requests, Pillow) |
+| 2026-02-10 | README.md mis à jour — installation avec config_loader --init, setup_db.py |
+| 2026-02-10 | DISTRIBUTION_TODO.md — checklist P0-P3, P0 ✅ (centralisation config) |
+| 2026-02-10 | **Pivot P2P** — MOBILE_ROADMAP.md (PWA, 4 phases, VPS, 4-5j MVP) |
+| 2026-02-10 | Architecture partage — ARCHITECTURE_PARTAGE.md (identité décentralisée, relay, E2E) |
+| 2026-02-10 | Décisions produit — DECISIONS_PRODUIT.md (données, chiffrement, découverte, freemium) |
