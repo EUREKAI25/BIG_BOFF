@@ -9,6 +9,14 @@ import sqlite3
 from collections import Counter
 from pathlib import Path
 
+# Import config loader pour chemins centralisés
+try:
+    from config_loader import load_config
+    _config = load_config()
+except ImportError:
+    # Fallback si config_loader pas disponible (ancien mode)
+    _config = None
+
 try:
     import snowballstemmer
     _stemmer = snowballstemmer.stemmer('french')
@@ -28,9 +36,17 @@ except (ImportError, OSError):
 
 # ── Chemins ──────────────────────────────────────────
 
-DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
-DROPBOX_ROOT = "/Users/nathalie/Dropbox"
-ACCOUNTS_PATH = str(Path(__file__).parent / "email_accounts.json")
+# Utilise config_loader si disponible, sinon fallback hardcodé
+if _config:
+    DB_PATH = _config['paths']['db_path']
+    DROPBOX_ROOT = _config['paths']['dropbox_root']
+    ACCOUNTS_PATH = _config['paths']['email_accounts_file']
+else:
+    # Fallback (ancien mode, compatibilité)
+    DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
+    DROPBOX_ROOT = "/Users/nathalie/Dropbox"
+    ACCOUNTS_PATH = str(Path(__file__).parent / "email_accounts.json")
+
 SRC_DIR = Path(__file__).parent
 
 # ── Conventions ID (ranges négatifs) ─────────────────

@@ -1,0 +1,48 @@
+{
+  "_comment": "Configuration BIG_BOFF Search - Copier vers ~/.bigboff/config.json et adapter",
+
+  "paths": {
+    "db_path": "~/.bigboff/catalogue.db",
+    "dropbox_root": "~/Dropbox/____BIG_BOFF___",
+    "export_dir": "/tmp/bigboff_export",
+    "thumbnails_dir": "~/.bigboff/thumbnails",
+    "saved_images_dir": "~/.bigboff/saved_images",
+    "email_accounts_file": "~/.bigboff/email_accounts.json",
+    "vault_master_key_file": "~/.bigboff/vault_master.key"
+  },
+
+  "server": {
+    "host": "127.0.0.1",
+    "port": 7777
+  },
+
+  "indexing": {
+    "excluded_extensions": [
+      ".pyc", ".pyo", ".class", ".o", ".obj", ".exe", ".dll", ".so",
+      ".dylib", ".a", ".lib", ".log", ".tmp", ".cache", ".DS_Store",
+      ".git", ".gitignore", ".gitkeep", ".gitmodules"
+    ],
+    "excluded_paths": [
+      "node_modules", ".git", "__pycache__", ".venv", "venv",
+      "dist", "build", ".cache", ".pytest_cache", ".mypy_cache",
+      "vendor", ".next", ".nuxt"
+    ],
+    "stop_words_file": null,
+    "tags_3_whitelist_file": null
+  },
+
+  "features": {
+    "enable_email_indexing": true,
+    "enable_notes_indexing": true,
+    "enable_vault": true,
+    "enable_video_extraction": true,
+    "enable_url_metadata_fetch": true,
+    "enable_thumbnails": true
+  },
+
+  "performance": {
+    "thumbnail_cache_size_mb": 500,
+    "url_metadata_timeout_seconds": 5,
+    "imap_connection_timeout_seconds": 30
+  }
+}
