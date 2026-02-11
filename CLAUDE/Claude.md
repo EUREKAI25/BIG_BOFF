@@ -106,6 +106,9 @@ Catégories de tags :
 - [ ] Veille : détecter les nouveaux dossiers sans `_SUIVI.md`
 - [ ] Veille : détecter les `_SUIVI.md` obsolètes (dernière MAJ > 30j)
 - [ ] Alerte : lister les projets 🟣 en début de session
+- [ ] **TODO** : vérifier le contenu de `CLAUDE/TODO/` en début de session
+- [ ] **DROPBOX** : consulter `CLAUDE/DROPBOX/` pour ressources EURKAI
+- [ ] **EURKAI** : vérifier conformité règles EURKAI avant toute validation
 - [ ] Rapport : résumé des actions en fin de session, MAJ des suivis
 - [ ] **Auto-brief** : mettre à jour `_AUTO_BRIEF.md` après chaque action significative
 

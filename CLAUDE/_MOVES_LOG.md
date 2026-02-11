@@ -3,13 +3,18 @@
 > Tout déplacement, renommage ou archivage est consigné ici.
 > Ce fichier est nettoyé régulièrement une fois les mouvements confirmés.
 
-**Dernière MAJ** : 2026-02-08
+**Dernière MAJ** : 2026-02-11
 
 ---
 
 ## Mouvements en attente de validation
 
-_Aucun pour le moment._
+### 2026-02-11 — Archivage fichiers TODO TIP_CALCULATOR
+
+| # | Source | Destination | Raison |
+|---|---|---|---|
+| T1 | `CLAUDE/TODO/BRIEF_TIP_CALCULATOR.md` | `PROJETS/PRO/TIP_CALCULATOR/PIPELINE/` | Projet terminé — archivé dans son pipeline |
+| T2 | `CLAUDE/TODO/test_bidon.json` | `PROJETS/PRO/TIP_CALCULATOR/PIPELINE/` | Export ChatGPT source — archivé dans son pipeline |
 
 ### 2026-02-08 — Suppression BIGBOFF par Nathalie
 
