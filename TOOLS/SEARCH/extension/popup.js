@@ -147,31 +147,43 @@ async function checkServer() {
 let debounceTimer;
 
 function onInput() {
+  console.log("[DEBUG] onInput appelé, valeur:", input.value);
   clearTimeout(debounceTimer);
   const q = input.value.trim();
   if (q.length < 1) {
     hideAutocomplete();
     return;
   }
+  console.log("[DEBUG] Programmation fetchAutocomplete pour:", q);
   debounceTimer = setTimeout(() => fetchAutocomplete(q), 150);
 }
 
 async function fetchAutocomplete(q) {
+  console.log("[DEBUG] fetchAutocomplete démarré pour:", q);
   try {
     const data = await apiFetch("autocomplete", { q });
+    console.log("[DEBUG] Réponse API:", data.tags.length, "tags reçus");
     // Filtrer les tags déjà sélectionnés
     const selected = new Set([...state.includeTags, ...state.excludeTags]);
     state.autocompleteItems = data.tags.filter(t => !selected.has(t.tag));
+    console.log("[DEBUG] Après filtrage:", state.autocompleteItems.length, "tags à afficher");
     state.autocompleteIndex = -1;
     renderAutocomplete();
-  } catch {
+  } catch (err) {
+    console.error("[DEBUG] Erreur fetchAutocomplete:", err);
     hideAutocomplete();
   }
 }
 
 function renderAutocomplete() {
+  console.log("[DEBUG] renderAutocomplete appelé avec", state.autocompleteItems.length, "items");
   if (state.autocompleteItems.length === 0) {
+    console.log("[DEBUG] Aucun item à afficher, masquage");
     hideAutocomplete();
+    return;
+  }
+  if (!autocompleteEl) {
+    console.error("[DEBUG] autocompleteEl est null !");
     return;
   }
   autocompleteEl.innerHTML = state.autocompleteItems.map((t, i) => `
@@ -182,6 +194,7 @@ function renderAutocomplete() {
     </div>
   `).join("");
   autocompleteEl.style.display = "block";
+  console.log("[DEBUG] Autocomplétion affichée");
 
   // Click handlers
   autocompleteEl.querySelectorAll(".item").forEach(el => {
@@ -428,7 +441,7 @@ function renderResults(results) {
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
           ${snippetHtml}
-          <div class="result-meta">${r.date_modif || "?"}</div>
+          ${r.date_modif ? `<div class="result-meta">${r.date_modif}</div>` : ""}
         </div>`;
     }
     if (r.type === "note") {
@@ -443,7 +456,7 @@ function renderResults(results) {
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="note" title="Supprimer cette note"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
-          <div class="result-meta">${r.date_modif || "?"}</div>
+          ${r.date_modif ? `<div class="result-meta">${r.date_modif}</div>` : ""}
         </div>`;
     }
     if (r.type === "video") {
@@ -459,7 +472,7 @@ function renderResults(results) {
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="video" title="Supprimer cette vidéo"><i class="fa-solid fa-trash"></i></button>
           </div>
-          <div class="result-meta">${esc(r.platform || "")} · ${r.date_modif || "?"}</div>
+          <div class="result-meta">${esc(r.platform || "")}${r.date_modif ? ` · ${r.date_modif}` : ""}</div>
         </div>`;
     }
     if (r.type === "event") {
@@ -540,7 +553,7 @@ function renderResults(results) {
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="file" title="Supprimer ce fichier" style="margin-left:0"><i class="fa-solid fa-trash"></i></button>
           </span>
         </div>
-        <div class="result-meta">${formatSize(r.taille)} · ${r.date_modif || "?"}</div>
+        <div class="result-meta">${formatSize(r.taille)}${r.date_modif ? ` · ${r.date_modif}` : ""}</div>
       </div>`;
   }).join("");
 
@@ -659,7 +672,13 @@ function refresh() {
 
 // ── Keyboard ────────────────────────────────────────
 
-input.addEventListener("input", onInput);
+console.log("[DEBUG] Ajout de l'event listener 'input' sur:", input);
+if (!input) {
+  console.error("[ERREUR] L'élément input est null !");
+} else {
+  input.addEventListener("input", onInput);
+  console.log("[DEBUG] Event listener 'input' ajouté avec succès");
+}
 
 input.addEventListener("keydown", (e) => {
   const items = state.autocompleteItems;
