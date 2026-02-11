@@ -161,16 +161,47 @@ API complète et fonctionnelle. Background tasks pour audits asynchrones. Prêt 
 
 ---
 
-## Phase 5 : Frontend (8h) — ⚪ À FAIRE
+## Phase 5 : Frontend (8h) — ✅ TERMINÉE
+
+**Début** : 2026-02-12 00:20
+**Fin** : 2026-02-12 00:35
 
 ### Tâches
-- [ ] Landing page
-- [ ] Pricing tableau
-- [ ] Page résultats audit
-- [ ] Intégration Stripe Checkout
-- [ ] Page succès paiement
-- [ ] Export PDF
-- [ ] Responsive
+- [x] Landing page
+- [x] Pricing tableau
+- [x] Page résultats audit
+- [x] Intégration Stripe Checkout
+- [x] Page succès paiement
+- [x] Export PDF (boutons téléchargement)
+- [x] Responsive
+
+### Actions réalisées
+✅ **CSS Design System** (style.css) :
+  - Variables CSS pour theming (primary, success, warning, danger)
+  - Components: hero, form-card, score-gauge, recommendations, pricing
+  - Responsive grids (@media queries)
+  - Animations (hover, transitions, spinner)
+
+✅ **JavaScript Frontend** (app.js) :
+  - startAudit() : Create audit + redirect
+  - pollAuditStatus() : Polling every 2s (max 60 attempts)
+  - getAuditResults() : Fetch full results
+  - createCheckout() : Stripe session
+  - renderScoreGauge() : SVG circular progress (0-100)
+  - waitForAuditCompletion() : Auto-reload on completion
+
+✅ **Templates HTML** :
+  - landing.html : Hero + audit form + pricing grid (3 plans)
+  - results.html : Score gauge + competitors + gaps + recommendations with upgrade CTA
+  - success.html : Payment confirmation + next steps
+
+✅ **Routes main.py** :
+  - GET / : Landing page (Jinja2 template)
+  - GET /results/{audit_id} : Results avec statut temps réel (processing/failed/completed)
+  - GET /success : Payment success redirect
+
+### Note
+Frontend complet et fonctionnel ! Flow utilisateur : Landing → Form submit → Results (polling) → Upgrade → Success → Download. Prêt pour Phase 6 (Tests & Deploy).
 
 ---
 
