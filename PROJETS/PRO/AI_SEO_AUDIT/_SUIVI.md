@@ -77,9 +77,10 @@ Créer un **outil de prospection commercial** automatisé et scalable permettant
 - [x] Phase 1 : Setup (9 min) ✅
 - [x] Phase 2 : Objets EURKAI (10 min) ✅
 - [x] Phase 3 : Agents & Orchestrateur (20 min) ✅
+- [x] Phase 4 : API Endpoints (15 min) ✅
 
 ### À faire
-- [ ] Phase 4 : API Endpoints (6h)
+- [ ] Phase 5 : Frontend (1-2h)
 - [ ] Phase 3 : Agents & Orchestrateur (8h)
 - [ ] Phase 4 : API Endpoints (6h)
 - [ ] Phase 5 : Frontend (8h)

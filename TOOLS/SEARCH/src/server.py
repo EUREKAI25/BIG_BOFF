@@ -2024,26 +2024,55 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             items_params = filtered_ids
 
         # Tags co-occurrents (exclure ceux déjà sélectionnés)
+        # Utiliser tag_display pour afficher les formes originales
         all_selected = set(include) | set(exclude)
         if all_selected:
             all_placeholders = ",".join("?" * len(all_selected))
             cooc_query = f"""
-                SELECT t2.tag, COUNT(*) as cnt
-                FROM tags t2
-                WHERE t2.item_id IN ({items_query})
-                  AND t2.tag NOT IN ({all_placeholders})
-                GROUP BY t2.tag
-                ORDER BY cnt DESC
+                WITH tag_counts AS (
+                    SELECT t2.tag, t2.tag_display, COUNT(*) as cnt
+                    FROM tags t2
+                    WHERE t2.item_id IN ({items_query})
+                      AND t2.tag NOT IN ({all_placeholders})
+                    GROUP BY t2.tag, t2.tag_display
+                ),
+                best_display AS (
+                    SELECT tag,
+                           (SELECT tag_display FROM tag_counts tc2
+                            WHERE tc2.tag = tc1.tag
+                            ORDER BY cnt DESC, LENGTH(tag_display) DESC
+                            LIMIT 1) as display,
+                           SUM(cnt) as total_cnt
+                    FROM tag_counts tc1
+                    GROUP BY tag
+                )
+                SELECT display, total_cnt
+                FROM best_display
+                ORDER BY total_cnt DESC
                 LIMIT 15
             """
             c.execute(cooc_query, items_params + list(all_selected))
         else:
             cooc_query = f"""
-                SELECT t2.tag, COUNT(*) as cnt
-                FROM tags t2
-                WHERE t2.item_id IN ({items_query})
-                GROUP BY t2.tag
-                ORDER BY cnt DESC
+                WITH tag_counts AS (
+                    SELECT t2.tag, t2.tag_display, COUNT(*) as cnt
+                    FROM tags t2
+                    WHERE t2.item_id IN ({items_query})
+                    GROUP BY t2.tag, t2.tag_display
+                ),
+                best_display AS (
+                    SELECT tag,
+                           (SELECT tag_display FROM tag_counts tc2
+                            WHERE tc2.tag = tc1.tag
+                            ORDER BY cnt DESC, LENGTH(tag_display) DESC
+                            LIMIT 1) as display,
+                           SUM(cnt) as total_cnt
+                    FROM tag_counts tc1
+                    GROUP BY tag
+                )
+                SELECT display, total_cnt
+                FROM best_display
+                ORDER BY total_cnt DESC
                 LIMIT 15
             """
             c.execute(cooc_query, items_params)

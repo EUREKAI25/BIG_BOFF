@@ -1,12 +1,15 @@
 """FastAPI main application."""
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.ext.asyncio import AsyncSession
 import os
 
 # Import routes
 from .routes import audit, payment, export
+from ..database.session import get_db
+from ..services.audit_service import AuditService
 
 app = FastAPI(
     title="AI SEO Audit API",
@@ -29,44 +32,56 @@ app.add_middleware(
 # Mount static files
 app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
+# Configure templates
+templates = Jinja2Templates(directory="src/templates")
 
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    """Landing page (will be templated in Phase 5)."""
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>AI SEO Audit</title>
-        <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                   margin: 0; padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                   min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-            .container { background: white; padding: 60px; border-radius: 12px; max-width: 600px;
-                        box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; }
-            h1 { color: #1a202c; margin-bottom: 20px; }
-            p { color: #4a5568; font-size: 18px; line-height: 1.6; }
-            .status { background: #f0fff4; border: 2px solid #9ae6b4; padding: 20px; border-radius: 8px;
-                     margin-top: 30px; }
-            .status h3 { color: #2f855a; margin: 0 0 10px 0; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>🚀 AI SEO Audit</h1>
-            <p>API backend is running!</p>
-            <div class="status">
-                <h3>✅ Status: Operational</h3>
-                <p>Phase 1 (Setup) in progress</p>
-            </div>
-            <p style="margin-top: 30px; font-size: 14px; color: #718096;">
-                Docs: <a href="/docs" style="color: #667eea;">/docs</a> |
-                ReDoc: <a href="/redoc" style="color: #667eea;">/redoc</a>
-            </p>
-        </div>
-    </body>
-    </html>
-    """
+
+@app.get("/")
+async def landing_page(request: Request):
+    """Landing page with audit form."""
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+
+@app.get("/results/{audit_id}")
+async def results_page(request: Request, audit_id: str, db: AsyncSession = Depends(get_db)):
+    """Results page showing audit results."""
+    try:
+        audit = await AuditService.get_audit(db, audit_id)
+        if not audit:
+            raise HTTPException(status_code=404, detail="Audit not found")
+
+        # Convert to dict for template
+        audit_data = {
+            "audit_id": str(audit.id),
+            "company_name": audit.company_name,
+            "sector": audit.sector,
+            "plan": audit.plan,
+            "status": audit.status,
+            "current_step": audit.current_step,
+            "progress": audit.progress,
+            "error_message": audit.error_message,
+            "queries_count": len(audit.queries) if audit.queries else 0,
+            "results": audit.results or {},
+        }
+
+        return templates.TemplateResponse("results.html", {
+            "request": request,
+            "audit": audit_data
+        })
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/success")
+async def success_page(request: Request, audit_id: str = None):
+    """Payment success page."""
+    return templates.TemplateResponse("success.html", {
+        "request": request,
+        "audit_id": audit_id
+    })
 
 
 @app.get("/health")
