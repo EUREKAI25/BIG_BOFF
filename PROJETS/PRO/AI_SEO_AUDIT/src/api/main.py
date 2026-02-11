@@ -5,8 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 import os
 
-# Import routes (will be created in Phase 4)
-# from .routes import audit, payment, export
+# Import routes
+from .routes import audit, payment, export
 
 app = FastAPI(
     title="AI SEO Audit API",
@@ -80,7 +80,7 @@ async def health():
     }
 
 
-# Routes will be added in Phase 4
-# app.include_router(audit.router, prefix="/api/audit", tags=["Audit"])
-# app.include_router(payment.router, prefix="/api/payment", tags=["Payment"])
-# app.include_router(export.router, prefix="/api/export", tags=["Export"])
+# Include API routes
+app.include_router(audit.router, prefix="/api/audit", tags=["Audit"])
+app.include_router(payment.router, prefix="/api/payment", tags=["Payment"])
+app.include_router(export.router, prefix="/api/export", tags=["Export"])

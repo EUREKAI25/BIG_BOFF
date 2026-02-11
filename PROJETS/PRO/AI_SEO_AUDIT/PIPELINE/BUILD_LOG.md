@@ -108,16 +108,56 @@ Architecture EURKAI fractale complète et fonctionnelle. Prêt pour Phase 4 (API
 
 ---
 
-## Phase 4 : API Endpoints (6h) — ⚪ À FAIRE
+## Phase 4 : API Endpoints (6h) — ✅ TERMINÉE
+
+**Début** : 2026-02-12 00:05
+**Fin** : 2026-02-12 00:20
 
 ### Tâches
-- [ ] POST /api/audit/create
-- [ ] GET /api/audit/{id}/status
-- [ ] GET /api/audit/{id}/results
-- [ ] POST /api/payment/create-checkout
-- [ ] POST /api/payment/webhook
-- [ ] GET /api/export/{id}/guide.pdf
-- [ ] Tests API
+- [x] Pydantic schemas (15+ schemas request/response)
+- [x] AuditService (business logic layer)
+- [x] POST /api/audit/create (+ background tasks)
+- [x] GET /api/audit/{id}/status (polling)
+- [x] GET /api/audit/{id}/results (full results)
+- [x] POST /api/payment/create-checkout (Stripe)
+- [x] POST /api/payment/webhook (Stripe events)
+- [x] GET /api/export/{id}/guide.pdf
+- [x] GET /api/export/{id}/recommendations.json
+- [x] GET /api/export/{id}/mockups.zip (pro only)
+- [x] Tests API (5 tests)
+- [x] Routes connectées à main.py
+
+### Actions réalisées
+✅ **Schemas** (schemas.py) :
+  - AuditCreateRequest, AuditStatusResponse, AuditResultsResponse
+  - PaymentCreateRequest, PaymentCreateResponse
+  - CompetitorInfo, GapInfo, RecommendationInfo
+  - ErrorResponse, HealthResponse
+
+✅ **AuditService** (audit_service.py) :
+  - create_audit() : Create DB record
+  - run_audit() : Execute orchestrator + save results
+  - get_audit() : Retrieve by ID
+  - _get_or_create_user(), _save_queries()
+
+✅ **Audit Routes** (routes/audit.py) :
+  - POST /create : Create + start background task
+  - GET /{id}/status : Polling (progress 0-100)
+  - GET /{id}/results : Full results with competitors/gaps/recommendations
+
+✅ **Payment Routes** (routes/payment.py) :
+  - POST /create-checkout : Stripe session (mock for MVP)
+  - POST /webhook : Handle Stripe events (checkout.session.completed, charge.refunded)
+
+✅ **Export Routes** (routes/export.py) :
+  - GET /{id}/guide.pdf : PDF export (starter+pro)
+  - GET /{id}/recommendations.json : JSON export
+  - GET /{id}/mockups.zip : HTML mockups (pro only)
+
+✅ **Tests API** : 5 tests (health, root, docs, routes registration)
+
+### Note
+API complète et fonctionnelle. Background tasks pour audits asynchrones. Prêt pour Phase 5 (Frontend).
 
 ---
 

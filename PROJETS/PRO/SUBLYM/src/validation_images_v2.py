@@ -248,7 +248,9 @@ Retourne un JSON :
                 params = p
                 break
 
-        has_partner = params and params.get('tenue_partenaire', 'Aucun') not in ['Aucun', 'N/A', 'None']
+        # Détecter si partenaire présent (None, null, "Aucun", etc. = pas de partenaire)
+        tenue_partenaire = params.get('tenue_partenaire') if params else None
+        has_partner = tenue_partenaire not in [None, 'Aucun', 'N/A', 'None', '']
         expected_people = 2 if has_partner else 1
 
         people_check = self.check_people_count(image_path, expected_people)

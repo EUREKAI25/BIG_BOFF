@@ -133,7 +133,7 @@ async function apiFetch(endpoint, params = {}) {
 async function checkServer() {
   try {
     const data = await apiFetch("stats");
-    statsEl.textContent = `${data.total_items.toLocaleString()} fichiers · ${data.unique_tags.toLocaleString()} tags [v1.3]`;
+    statsEl.textContent = `${data.total_items.toLocaleString()} fichiers · ${data.unique_tags.toLocaleString()} tags [v1.4]`;
     errorBanner.style.display = "none";
     return true;
   } catch {
@@ -445,7 +445,7 @@ function renderResults(results) {
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
           ${snippetHtml}
-          ${r.date_modif ? `<div class="result-meta">${r.date_modif}</div>` : ""}
+          ${r.date_modif ? `<div class="result-meta">${formatDate(r.date_modif)}</div>` : ""}
         </div>`;
     }
     if (r.type === "note") {
@@ -460,7 +460,7 @@ function renderResults(results) {
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="note" title="Supprimer cette note"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="result-meta">${esc(r.chemin)}</div>
-          ${r.date_modif ? `<div class="result-meta">${r.date_modif}</div>` : ""}
+          ${r.date_modif ? `<div class="result-meta">${formatDate(r.date_modif)}</div>` : ""}
         </div>`;
     }
     if (r.type === "video") {
@@ -476,7 +476,7 @@ function renderResults(results) {
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="video" title="Supprimer cette vidéo"><i class="fa-solid fa-trash"></i></button>
           </div>
-          <div class="result-meta">${esc(r.platform || "")}${r.date_modif ? ` · ${r.date_modif}` : ""}</div>
+          <div class="result-meta">${esc(r.platform || "")}${r.date_modif ? ` · ${formatDate(r.date_modif)}` : ""}</div>
         </div>`;
     }
     if (r.type === "event") {
@@ -557,7 +557,7 @@ function renderResults(results) {
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="file" title="Supprimer ce fichier" style="margin-left:0"><i class="fa-solid fa-trash"></i></button>
           </span>
         </div>
-        <div class="result-meta">${formatSize(r.taille)}${r.date_modif ? ` · ${r.date_modif}` : ""}</div>
+        <div class="result-meta">${formatSize(r.taille)}${r.date_modif ? ` · ${formatDate(r.date_modif)}` : ""}</div>
       </div>`;
   }).join("");
 
@@ -725,6 +725,16 @@ function esc(str) {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  // Convertir YYYY-MM-DD en DD/MM/YYYY
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    return `${match[3]}/${match[2]}/${match[1]}`;
+  }
+  return dateStr; // Retourner tel quel si le format ne correspond pas
 }
 
 function formatSize(bytes) {
