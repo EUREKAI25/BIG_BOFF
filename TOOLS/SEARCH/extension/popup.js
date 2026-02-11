@@ -11,6 +11,7 @@ const state = {
   excludeTags: [],
   autocompleteIndex: -1,
   autocompleteItems: [],
+  autocompleteQuery: "",  // Stocker la query pour éviter les race conditions
   currentOffset: 0,
   pageSize: 50,
   totalResults: 0,
@@ -132,7 +133,7 @@ async function apiFetch(endpoint, params = {}) {
 async function checkServer() {
   try {
     const data = await apiFetch("stats");
-    statsEl.textContent = `${data.total_items.toLocaleString()} fichiers · ${data.unique_tags.toLocaleString()} tags`;
+    statsEl.textContent = `${data.total_items.toLocaleString()} fichiers · ${data.unique_tags.toLocaleString()} tags [v1.3]`;
     errorBanner.style.display = "none";
     return true;
   } catch {
@@ -168,6 +169,7 @@ async function fetchAutocomplete(q) {
     state.autocompleteItems = data.tags.filter(t => !selected.has(t.tag));
     console.log("[DEBUG] Après filtrage:", state.autocompleteItems.length, "tags à afficher");
     state.autocompleteIndex = -1;
+    state.autocompleteQuery = q; // Stocker la query pour le highlight
     renderAutocomplete();
   } catch (err) {
     console.error("[DEBUG] Erreur fetchAutocomplete:", err);
@@ -186,10 +188,11 @@ function renderAutocomplete() {
     console.error("[DEBUG] autocompleteEl est null !");
     return;
   }
+  const query = state.autocompleteQuery || input.value.trim();
   autocompleteEl.innerHTML = state.autocompleteItems.map((t, i) => `
     <div class="item ${i === state.autocompleteIndex ? 'selected' : ''}"
          data-tag="${esc(t.tag)}">
-      <span>${highlight(t.tag, input.value.trim())}</span>
+      <span>${highlight(t.tag, query)}</span>
       <span class="count">${t.count.toLocaleString()}</span>
     </div>
   `).join("");
@@ -211,6 +214,7 @@ function hideAutocomplete() {
 }
 
 function highlight(text, query) {
+  if (!query || !text) return esc(text || "");
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
   if (idx < 0) return esc(text);
   return esc(text.slice(0, idx)) +

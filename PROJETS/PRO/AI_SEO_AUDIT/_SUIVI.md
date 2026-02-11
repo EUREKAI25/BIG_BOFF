@@ -73,9 +73,12 @@ Créer un **outil de prospection commercial** automatisé et scalable permettant
   - Plan MVP 36h détaillé (6 phases)
   - Post-MVP 2 semaines (multi-IA, multilingue)
 
+### Fait
+- [x] Phase 1 : Setup (9 min) ✅
+- [x] Phase 2 : Objets EURKAI (10 min) ✅
+
 ### À faire
-- [~] Phase 1 : Setup (4h) - en cours
-- [ ] Phase 2 : Objets EURKAI (6h)
+- [~] Phase 3 : Agents & Orchestrateur (8h) - en cours
 - [ ] Phase 3 : Agents & Orchestrateur (8h)
 - [ ] Phase 4 : API Endpoints (6h)
 - [ ] Phase 5 : Frontend (8h)
