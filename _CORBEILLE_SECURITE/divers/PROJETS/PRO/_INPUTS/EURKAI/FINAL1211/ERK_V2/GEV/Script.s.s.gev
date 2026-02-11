@@ -1,0 +1,44 @@
+# ============================================================================
+# EURKAI Seed - Script
+# ============================================================================
+
+Object:Script:
+.name = "Script"
+
+Object:Script:ERKScript:
+.name = "ERKScript"
+.scriptType = "erk"
+
+Object:Script:ERKScript:OnClickTreeNode:
+.name = "OnClickTreeNode"
+.on = "click"
+.target = ".tree-node"
+.do = "SelectObject({{uuid}})"
+
+Object:Script:ERKScript:OnDragStart:
+.name = "OnDragStart"
+.on = "dragstart"
+.target = ".tree-node"
+.do = "SetDragged({{uuid}})"
+
+Object:Script:ERKScript:OnDrop:
+.name = "OnDrop"
+.on = "drop"
+.target = ".tree-node"
+.do = "MoveObject(DRAGGED, {{lineage}})"
+
+Object:Script:ERKScript:OnClickEditable:
+.name = "OnClickEditable"
+.on = "click"
+.target = ".editable"
+.do = "InlineEdit({{uuid}}, {{key}})"
+
+Object:Script:ERKScript:OnClickSource:
+.name = "OnClickSource"
+.on = "click"
+.target = ".detail-source"
+.do = "OpenSource({{source}}, {{line}})"
+
+Object:Script:JSScript:
+.name = "JSScript"
+.scriptType = "javascript"

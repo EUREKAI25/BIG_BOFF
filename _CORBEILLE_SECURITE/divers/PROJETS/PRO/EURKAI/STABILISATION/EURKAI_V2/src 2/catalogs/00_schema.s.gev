@@ -1,0 +1,148 @@
+# ===========================================================================
+# EURKAI SEEDS - Schémas fondamentaux
+# ===========================================================================
+# Définit les types de base dont tout hérite
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# ROOT OBJECT
+# ---------------------------------------------------------------------------
+Object:
+    .name = "Object"
+    .description = "Racine de tous les objets"
+    .scan = "pass"
+
+# ---------------------------------------------------------------------------
+# STRUCTURE
+# ---------------------------------------------------------------------------
+Object:Structure:
+    .description = "Types structurels"
+
+Object:Structure:Attribute:
+    .description = "Attribut d'un objet"
+    .type = "string"
+    .required = false
+    .default = ""
+
+Object:Structure:Method:
+    .description = "Méthode exécutable"
+    .input = ""
+    .output = ""
+    .scenario = ""
+
+Object:Structure:Rule:
+    .description = "Règle de validation"
+    .condition = ""
+    .action = ""
+
+Object:Structure:Relation:
+    .description = "Relation entre objets"
+    .type = "IN"
+    .source = ""
+    .target = ""
+
+# ---------------------------------------------------------------------------
+# CONFIG
+# ---------------------------------------------------------------------------
+Object:Config:
+    .description = "Configuration système"
+
+Object:Config:Vector:
+    .description = "Variable réutilisable"
+    .type = "string"
+    .default = ""
+    .erk = ""
+
+Object:Config:Alias:
+    .description = "Alias vers un objet"
+    .target = ""
+    .query = ""
+
+# ---------------------------------------------------------------------------
+# SCRIPT
+# ---------------------------------------------------------------------------
+Object:Script:
+    .description = "Script exécutable"
+    .lang = "erk"
+    .code = ""
+
+Object:Script:ERKScript:
+    .description = "Script ERK"
+    .lang = "erk"
+
+Object:Script:JSScript:
+    .description = "Script JavaScript (bridge uniquement)"
+    .lang = "js"
+
+# ---------------------------------------------------------------------------
+# UI
+# ---------------------------------------------------------------------------
+Object:UI:
+    .description = "Éléments d'interface"
+
+Object:UI:CSS:
+    .description = "Feuille de style"
+    .css = ""
+
+Object:UI:Template:
+    .description = "Template de page"
+    .html = ""
+
+Object:UI:Module:
+    .description = "Module d'interface réutilisable"
+    .html = ""
+    .css = ""
+    .script = ""
+
+Object:UI:Module:Panel:
+    .description = "Panneau de contenu"
+    .id = ""
+    .active = false
+
+Object:UI:Module:Tab:
+    .description = "Onglet de navigation"
+    .id = ""
+    .icon = ""
+    .label = ""
+    .active = false
+
+# ---------------------------------------------------------------------------
+# METHOD TYPES
+# ---------------------------------------------------------------------------
+Object:Method:
+    .description = "Méthode générique"
+
+Object:Method:Central:
+    .description = "Méthode CRUD centrale"
+
+Object:Method:Central:Create:
+    .description = "Création d'objet"
+
+Object:Method:Central:Read:
+    .description = "Lecture d'objet"
+
+Object:Method:Central:Update:
+    .description = "Mise à jour d'objet"
+
+Object:Method:Central:Delete:
+    .description = "Suppression d'objet"
+
+Object:Method:Secondary:
+    .description = "Méthode secondaire"
+
+Object:Method:Secondary:Walk:
+    .description = "Parcours d'arbre"
+    .direction = "down"
+    .depth = -1
+    .filter = ""
+
+Object:Method:Secondary:Render:
+    .description = "Rendu de template"
+    .template = ""
+    .data = ""
+
+Object:Method:Secondary:Resolve:
+    .description = "Résolution de vecteur"
+    .input = ""
+    .output = ""
+

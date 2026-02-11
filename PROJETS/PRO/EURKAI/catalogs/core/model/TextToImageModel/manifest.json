@@ -1,0 +1,51 @@
+{
+  "ident": "core.model.TextToImageModel",
+  "type": "Object:Core:Model:TextToImageModel",
+  "extends": "Object:Core:Model",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "description": "Modèle de génération d'images depuis texte",
+
+  "attributes_override": {
+    "model_type": {
+      "type": "string",
+      "required": true,
+      "fixed": "text2img",
+      "description": "Type fixé à text2img"
+    },
+    "output": {
+      "type": "Object:Core:Output",
+      "description": "Output avec result.image_url",
+      "schema": {
+        "result": {
+          "image_url": "string",
+          "width": "integer",
+          "height": "integer"
+        },
+        "token_amount": null
+      }
+    },
+    "default_size": {
+      "type": "object",
+      "required": false,
+      "default": {"width": 1024, "height": 1024},
+      "description": "Taille par défaut des images"
+    }
+  },
+
+  "methods_override": {
+    "execute": {
+      "description": "Génère une image depuis un prompt",
+      "parameters": {
+        "prompt": "string",
+        "data": {
+          "width": "integer (optional)",
+          "height": "integer (optional)",
+          "steps": "integer (optional)",
+          "guidance_scale": "float (optional)"
+        }
+      },
+      "returns": "Object:Core:Output (avec image_url)"
+    }
+  }
+}

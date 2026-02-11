@@ -3,7 +3,7 @@
 > Ce fichier est tenu à jour par Claude à chaque action.
 > En cas de plantage ou nouvelle session, lire ce fichier pour reprendre.
 
-**Dernière MAJ** : 2026-02-11 17:30
+**Dernière MAJ** : 2026-02-11 23:26
 
 > **RÈGLE IMPÉRATIVE** : ce fichier DOIT être mis à jour après CHAQUE tâche terminée,
 > pas en fin de session. En cas de crash ou de conversation fermée, c'est la seule
@@ -22,8 +22,19 @@
 | **PIPELINE AGENCE** | [x] v1 construite | Orchestrateur autonome idée→prod, dispatcher/min, Brevo notifs |
 | **EURKAI refonte** | [x] structuré | Architecture fractale documentée, ancien archivé, workflow optimisé |
 | **TIP_CALCULATOR** | ✅ déployé | Premier projet complet A→Z : https://eurekai25.github.io/tip-calculator/ |
-| **PROCESS + STANDARDS** | ✅ complétés | Validations formulaires, GitHub mono-repo, règles EURKAI obligatoires |
+| **PROCESS + STANDARDS** | ✅ complétés | Validations formulaires HTML auto, GitHub mono-repo, règles EURKAI obligatoires |
+| **AI_SEO_AUDIT** | 🟢 en cours | SPECS validées ✅, prêt pour BUILD MVP (36h, 6 phases) |
 | **SUBLYM v8** | 🟢 en cours | Pipeline optimisé 168→9 appels (-95%), 10-15min→1-2min, ~2.70€→0.15€ |
+
+---
+
+## ⚠️ ACTION PROCHAINE SESSION
+
+**OBLIGATOIRE** : Pousser le commit vers GitHub
+- Commit créé : 2026-02-11 (workflow optimisé + AI_SEO_AUDIT)
+- Statut : ✅ Local OK, ⚠️ Push échoué (erreur réseau / repo vide)
+- **Action** : Exécuter `git push origin main` ou `git push -u origin main` en début de session
+- Localisation : `/Users/nathalie/Dropbox/____BIG_BOFF___/`
 
 ---
 

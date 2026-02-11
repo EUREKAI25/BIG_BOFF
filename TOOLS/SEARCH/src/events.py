@@ -147,41 +147,59 @@ def _row_to_dict(row):
 
 
 def _event_tags(title, date_start, tags_raw="", subtype="generic"):
-    """Génère les tags automatiques pour un événement."""
-    tags = {"event"}
+    """Génère les tags automatiques pour un événement.
+
+    Retourne une liste de tuples (tag_display, tag_normalized).
+    """
+    from config import normalize_tag
+
+    seen = {}  # normalized -> display (pour éviter les doublons)
+
+    # Tag principal
+    seen["event"] = "event"
 
     # Sous-type
     if subtype and subtype != "generic":
-        tags.add(subtype)  # anniversaire, rendez_vous
+        seen[subtype] = subtype  # anniversaire, rendez_vous
 
     # Mots du titre
-    tags.update(extract_keywords(title))
+    for tag_display, tag_normalized in extract_keywords(title):
+        if tag_normalized not in seen:
+            seen[tag_normalized] = tag_display
 
     # Tags manuels
     if tags_raw:
         for t in tags_raw.split(","):
             t = t.strip().lower()
             if t and t not in STOP_WORDS:
-                tags.add(t)
+                normalized = normalize_tag(t)
+                if normalized not in seen:
+                    seen[normalized] = t
 
     # Mois + année de la date
     dt = _parse_dt(date_start)
     if dt:
         mois = MOIS_FR.get(dt.month)
         if mois:
-            tags.add(mois)
-        tags.add(str(dt.year))
+            seen[mois] = mois
+        year = str(dt.year)
+        seen[year] = year
 
-    return tags
+    return [(display, normalized) for normalized, display in seen.items()]
 
 
 def _save_tags(conn, event_id, tags):
-    """Insère les tags d'un événement dans la table tags."""
+    """Insère les tags d'un événement dans la table tags.
+
+    Args:
+        tags: liste de tuples (tag_display, tag_normalized)
+    """
     c = conn.cursor()
     item_id = -(event_id + ID_OFFSET_EVENT)
-    for tag in tags:
+    for tag_display, tag_normalized in tags:
         try:
-            c.execute("INSERT INTO tags (item_id, tag) VALUES (?, ?)", (item_id, tag))
+            c.execute("INSERT INTO tags (item_id, tag, tag_display) VALUES (?, ?, ?)",
+                      (item_id, tag_normalized, tag_display))
         except Exception:
             pass
 

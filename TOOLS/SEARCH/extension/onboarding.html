@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Onboarding BIG_BOFF Identity</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+    /* Overlay modal */
+    #onboarding-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Carte principale */
+    #onboarding-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      width: 460px;
+      max-width: 90vw;
+      padding: 32px;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Header */
+    #onboarding-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    #onboarding-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    #onboarding-header p {
+      font-size: 14px;
+      color: #777;
+    }
+
+    /* Étapes */
+    .onboarding-step {
+      display: none;
+    }
+
+    .onboarding-step.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Étape 1 : Formulaire */
+    .ob-form-group {
+      margin-bottom: 20px;
+    }
+
+    .ob-form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .ob-form-group input[type="text"],
+    .ob-form-group input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.2s ease;
+    }
+
+    .ob-form-group input:focus {
+      outline: none;
+      border-color: #FF6B35;
+    }
+
+    .ob-checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .ob-checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .ob-checkbox-group label {
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #password-section {
+      display: none;
+      margin-top: 12px;
+    }
+
+    /* Boutons */
+    .ob-btn {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ob-btn-primary {
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+      color: white;
+    }
+
+    .ob-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .ob-btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .ob-btn-secondary {
+      background: #f5f5f5;
+      color: #555;
+      margin-top: 8px;
+    }
+
+    .ob-btn-secondary:hover {
+      background: #e8e8e8;
+    }
+
+    /* Étape 2 : Loading */
+    #step-loading {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 20px;
+      border: 4px solid #f0f0f0;
+      border-top-color: #FF6B35;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #step-loading p {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    #step-loading small {
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Étape 3 : Succès */
+    #step-success {
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      animation: scaleIn 0.4s ease;
+    }
+
+    @keyframes scaleIn {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: white;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    #step-success h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    #step-success p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .user-id-display {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-family: "SF Mono", "Monaco", "Courier New", monospace;
+      font-size: 13px;
+      color: #333;
+      word-break: break-all;
+    }
+
+    .ob-btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ob-btn-group .ob-btn {
+      width: auto;
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="onboarding-overlay">
+    <div id="onboarding-card">
+
+      <!-- Header -->
+      <div id="onboarding-header">
+        <h1>Identité décentralisée</h1>
+        <p>Générez votre identité cryptographique unique</p>
+      </div>
+
+      <!-- Étape 1 : Formulaire -->
+      <div id="step-form" class="onboarding-step active">
+        <div class="ob-form-group">
+          <label for="alias-input">Alias (optionnel)</label>
+          <input type="text" id="alias-input" placeholder="Votre nom ou pseudo">
+        </div>
+
+        <div class="ob-checkbox-group">
+          <input type="checkbox" id="protect-checkbox">
+          <label for="protect-checkbox">Protéger avec un mot de passe</label>
+        </div>
+
+        <div id="password-section">
+          <div class="ob-form-group">
+            <label for="password-input">Mot de passe</label>
+            <input type="password" id="password-input" placeholder="Minimum 8 caractères">
+          </div>
+        </div>
+
+        <button class="ob-btn ob-btn-primary" id="generate-btn">Générer mon identité</button>
+      </div>
+
+      <!-- Étape 2 : Loading -->
+      <div id="step-loading" class="onboarding-step">
+        <div class="spinner"></div>
+        <p>Génération en cours...</p>
+        <small>Création des clés cryptographiques RSA-4096 + Ed25519</small>
+      </div>
+
+      <!-- Étape 3 : Succès -->
+      <div id="step-success" class="onboarding-step">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+
+        <h2>Identité créée !</h2>
+        <p>Votre User ID unique :</p>
+
+        <div class="user-id-display" id="user-id-display">
+          bigboff_...
+        </div>
+
+        <div class="ob-btn-group">
+          <button class="ob-btn ob-btn-secondary" id="backup-btn">Sauvegarder</button>
+          <button class="ob-btn ob-btn-primary" id="start-btn">Commencer</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API = "http://127.0.0.1:7777";
+
+    // État
+    let currentStep = 1;
+    let generatedUserId = null;
+
+    // Éléments DOM
+    const steps = {
+      form: document.getElementById("step-form"),
+      loading: document.getElementById("step-loading"),
+      success: document.getElementById("step-success")
+    };
+
+    const protectCheckbox = document.getElementById("protect-checkbox");
+    const passwordSection = document.getElementById("password-section");
+    const aliasInput = document.getElementById("alias-input");
+    const passwordInput = document.getElementById("password-input");
+    const generateBtn = document.getElementById("generate-btn");
+    const startBtn = document.getElementById("start-btn");
+    const backupBtn = document.getElementById("backup-btn");
+    const userIdDisplay = document.getElementById("user-id-display");
+
+    // Toggle section mot de passe
+    protectCheckbox.addEventListener("change", () => {
+      passwordSection.style.display = protectCheckbox.checked ? "block" : "none";
+      if (protectCheckbox.checked) {
+        passwordInput.focus();
+      }
+    });
+
+    // Afficher une étape
+    function showStep(step) {
+      Object.values(steps).forEach(el => el.classList.remove("active"));
+
+      if (step === 1) steps.form.classList.add("active");
+      else if (step === 2) steps.loading.classList.add("active");
+      else if (step === 3) steps.success.classList.add("active");
+
+      currentStep = step;
+    }
+
+    // Générer l'identité
+    generateBtn.addEventListener("click", async () => {
+      const alias = aliasInput.value.trim() || "User";
+      const protect = protectCheckbox.checked;
+      const password = protect ? passwordInput.value : null;
+
+      // Validation
+      if (protect && (!password || password.length < 8)) {
+        alert("Le mot de passe doit contenir au moins 8 caractères");
+        return;
+      }
+
+      // Passer à l'étape loading
+      showStep(2);
+
+      try {
+        const response = await fetch(`${API}/api/identity/init`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ alias, password })
+        });
+
+        const result = await response.json();
+
+        if (result.error) {
+          alert(`Erreur : ${result.error}`);
+          showStep(1);
+          return;
+        }
+
+        if (result.success) {
+          generatedUserId = result.user_id;
+          userIdDisplay.textContent = result.user_id;
+
+          // Petit délai pour effet UX
+          setTimeout(() => showStep(3), 500);
+        }
+      } catch (error) {
+        console.error("Erreur génération identité :", error);
+        alert("Erreur de connexion au serveur. Vérifiez qu'il est démarré.");
+        showStep(1);
+      }
+    });
+
+    // Bouton Commencer
+    startBtn.addEventListener("click", () => {
+      // Fermer l'onboarding
+      document.getElementById("onboarding-overlay").remove();
+
+      // Recharger la popup principale si elle existe
+      if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+      }
+    });
+
+    // Bouton Sauvegarder (backup)
+    backupBtn.addEventListener("click", async () => {
+      try {
+        // Récupérer l'identité complète
+        const response = await fetch(`${API}/api/identity/public_key`);
+        const identity = await response.json();
+
+        // Créer un fichier JSON
+        const backup = {
+          user_id: identity.user_id,
+          public_key_rsa: identity.public_key_rsa,
+          public_key_ed25519: identity.public_key_ed25519,
+          backup_date: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        // Télécharger
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `bigboff_identity_${identity.user_id.slice(8, 16)}.json`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Erreur backup :", error);
+        alert("Erreur lors de la sauvegarde");
+      }
+    });
+  </script>
+</body>
+</html>

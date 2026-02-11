@@ -30,10 +30,9 @@ def main():
     notes = c.fetchall()
     for note_id, title, body in notes:
         text = f"{title or ''} {body or ''}"
-        tags = extract_keywords(text)
+        tags = extract_keywords(text)  # retourne [(original, normalized), ...]
         item_id = -(note_id + ID_OFFSET_NOTE)
-        for tag_display in tags:
-            tag_normalized = normalize_tag(tag_display)
+        for tag_display, tag_normalized in tags:
             batch.append((item_id, tag_normalized, tag_display))
     print(f"  → {len(notes)} notes, {len(batch)} tags")
 
@@ -44,11 +43,10 @@ def main():
     email_count = 0
     for email_id, subject, from_addr, to_addr in emails:
         text = f"{subject or ''} {from_addr or ''} {to_addr or ''}"
-        tags = extract_keywords(text)
+        tags = extract_keywords(text)  # retourne [(original, normalized), ...]
         if tags:
             item_id = -(email_id + ID_OFFSET_EMAIL)
-            for tag_display in tags:
-                tag_normalized = normalize_tag(tag_display)
+            for tag_display, tag_normalized in tags:
                 batch.append((item_id, tag_normalized, tag_display))
             email_count += 1
     print(f"  → {len(emails)} emails, {email_count} avec tags")
@@ -59,15 +57,15 @@ def main():
     vaults = c.fetchall()
     for vault_id, service, login, project, category in vaults:
         text = f"{service or ''} {login or ''} {project or ''} {category or ''}"
-        tags = extract_keywords(text)
+        tags = list(extract_keywords(text))  # [(original, normalized), ...]
         # Tags de catégorie
         if category:
-            tags.add(category.lower())
-        tags.add("vault")
+            cat_lower = category.lower()
+            tags.append((cat_lower, normalize_tag(cat_lower)))
+        tags.append(("vault", "vault"))
         item_id = -(vault_id + ID_OFFSET_VAULT)
-        for tag_display in tags:
+        for tag_display, tag_normalized in tags:
             if is_valid_tag(tag_display):
-                tag_normalized = normalize_tag(tag_display)
                 batch.append((item_id, tag_normalized, tag_display))
     print(f"  → {len(vaults)} entrées vault")
 
@@ -78,18 +76,17 @@ def main():
         events = c.fetchall()
         for event_id, title, location, desc, tags_raw in events:
             text = f"{title or ''} {location or ''} {desc or ''}"
-            tags = extract_keywords(text)
+            tags = list(extract_keywords(text))  # [(original, normalized), ...]
             # Tags utilisateur
             if tags_raw:
                 for t in tags_raw.split(","):
                     t = t.strip()
                     if t and is_valid_tag(t):
-                        tags.add(t)
-            tags.add("event")
+                        tags.append((t, normalize_tag(t)))
+            tags.append(("event", "event"))
             item_id = -(event_id + ID_OFFSET_EVENT)
-            for tag_display in tags:
+            for tag_display, tag_normalized in tags:
                 if is_valid_tag(tag_display):
-                    tag_normalized = normalize_tag(tag_display)
                     batch.append((item_id, tag_normalized, tag_display))
         print(f"  → {len(events)} events")
     except sqlite3.OperationalError:
@@ -102,20 +99,20 @@ def main():
         contacts = c.fetchall()
         for contact_id, typ, nom, prenom, tags_raw in contacts:
             text = f"{nom or ''} {prenom or ''}"
-            tags = extract_keywords(text)
-            tags.add("contact")
+            tags = list(extract_keywords(text))  # [(original, normalized), ...]
+            tags.append(("contact", "contact"))
             if typ:
-                tags.add(typ.lower())
+                typ_lower = typ.lower()
+                tags.append((typ_lower, normalize_tag(typ_lower)))
             # Tags utilisateur
             if tags_raw:
                 for t in tags_raw.split(","):
                     t = t.strip()
                     if t and is_valid_tag(t):
-                        tags.add(t)
+                        tags.append((t, normalize_tag(t)))
             item_id = -(contact_id + ID_OFFSET_CONTACT)
-            for tag_display in tags:
+            for tag_display, tag_normalized in tags:
                 if is_valid_tag(tag_display):
-                    tag_normalized = normalize_tag(tag_display)
                     batch.append((item_id, tag_normalized, tag_display))
         print(f"  → {len(contacts)} contacts")
     except sqlite3.OperationalError:
@@ -128,18 +125,17 @@ def main():
         lieux = c.fetchall()
         for lieu_id, nom, adresse, tags_raw in lieux:
             text = f"{nom or ''} {adresse or ''}"
-            tags = extract_keywords(text)
-            tags.add("lieu")
+            tags = list(extract_keywords(text))  # [(original, normalized), ...]
+            tags.append(("lieu", "lieu"))
             # Tags utilisateur
             if tags_raw:
                 for t in tags_raw.split(","):
                     t = t.strip()
                     if t and is_valid_tag(t):
-                        tags.add(t)
+                        tags.append((t, normalize_tag(t)))
             item_id = -(lieu_id + ID_OFFSET_LIEU)
-            for tag_display in tags:
+            for tag_display, tag_normalized in tags:
                 if is_valid_tag(tag_display):
-                    tag_normalized = normalize_tag(tag_display)
                     batch.append((item_id, tag_normalized, tag_display))
         print(f"  → {len(lieux)} lieux")
     except sqlite3.OperationalError:

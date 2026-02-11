@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDC — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f7fafc;
+            padding: 40px 20px;
+            line-height: 1.7;
+            color: #2d3748;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 36px;
+            color: #1a202c;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #718096;
+            margin-bottom: 40px;
+        }
+        .metadata {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            border-left: 4px solid #667eea;
+        }
+        .metadata p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        h2 {
+            font-size: 28px;
+            color: #2d3748;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        h3 {
+            font-size: 22px;
+            color: #2d3748;
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            font-size: 18px;
+            color: #4a5568;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        p {
+            margin-bottom: 15px;
+            color: #4a5568;
+            font-size: 16px;
+        }
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+            color: #4a5568;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 15px;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:hover {
+            background: #f7fafc;
+        }
+        code {
+            background: #f7fafc;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #d63384;
+        }
+        pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 20px;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            margin: 25px 0;
+        }
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+        .checkbox-item {
+            padding: 10px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 6px;
+        }
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 250px;
+            font-size: 14px;
+        }
+        .nav h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .nav a {
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            padding: 5px 0;
+        }
+        .nav a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        @media print {
+            .nav { display: none; }
+            body { padding: 0; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <h4>📑 Navigation</h4>
+        <a href="#section1">1. Contexte</a>
+        <a href="#section2">2. Objectifs MVP</a>
+        <a href="#section3">3. Fonctionnalités</a>
+        <a href="#section4">4. Architecture</a>
+        <a href="#section5">5. Conformité EURKAI</a>
+        <a href="#section6">6. Contraintes</a>
+        <a href="#section7">7. Critères validation</a>
+        <a href="#section8">8. Risques</a>
+        <a href="#section9">9. Planning</a>
+        <a href="#section10">10. Évolutions</a>
+    </div>
+
+    <div class="container">
+        <h1>CDC — AI_SEO_AUDIT</h1>
+        <p class="subtitle">Cahier des Charges — Service d'audit et d'optimisation de la visibilité des entreprises dans les réponses IA</p>
+
+        <div class="metadata">
+            <p><strong>Date :</strong> 2026-02-11</p>
+            <p><strong>Version :</strong> MVP Mono-IA</p>
+            <p><strong>Statut :</strong> 🟡 En validation</p>
+        </div>
+
+        <h2 id="section1">1. Contexte et problématique</h2>
+
+        <h3>1.1 Contexte général</h3>
+        <p>Les intelligences artificielles conversationnelles (ChatGPT, Claude, Gemini, Perplexity) sont devenues des intermédiaires directs de recommandation. Les utilisateurs leur posent des questions comme :</p>
+        <ul>
+            <li>"Meilleur restaurant français près de chez moi"</li>
+            <li>"Agence web spécialisée en IA"</li>
+            <li>"Coach sportif certifié à Paris"</li>
+        </ul>
+
+        <div class="highlight info">
+            <strong>Différence fondamentale avec Google :</strong>
+            <ul>
+                <li>Pas de publicité (Google Ads)</li>
+                <li>Pas de SEO classique (backlinks, PageRank)</li>
+                <li>Critères propres aux IA : cohérence sémantique, signaux de crédibilité, structuration de l'information</li>
+            </ul>
+        </div>
+
+        <h3>1.2 Problématique</h3>
+        <p>Les entreprises ne savent pas :</p>
+        <ol>
+            <li>Si elles sont visibles dans les réponses IA</li>
+            <li>Pourquoi certains concurrents sont recommandés à leur place</li>
+            <li>Comment optimiser leur présence pour les IA</li>
+        </ol>
+        <p><strong>Conséquence :</strong> Elles risquent de perdre des clients qui utilisent les IA pour trouver des prestataires.</p>
+
+        <h3>1.3 Opportunité</h3>
+        <p>Créer un service d'audit automatisé permettant de :</p>
+        <ul>
+            <li>Mesurer objectivement la visibilité IA</li>
+            <li>Identifier les écarts avec la concurrence</li>
+            <li>Fournir des solutions actionnables</li>
+        </ul>
+
+        <h2 id="section2">2. Objectifs du MVP</h2>
+
+        <h3>2.1 Scope MVP (Phase 1)</h3>
+        <div class="highlight success">
+            <strong>Périmètre :</strong>
+            <ul>
+                <li><strong>1 seule IA :</strong> ChatGPT (API OpenAI)</li>
+                <li><strong>1 secteur test :</strong> Restauration</li>
+                <li><strong>1 langue :</strong> Français</li>
+                <li><strong>1 zone géographique :</strong> Paris (extensible)</li>
+            </ul>
+            <p><strong>Durée estimée :</strong> 2-3 jours de développement</p>
+        </div>
+
+        <h3>2.2 Objectifs mesurables</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Objectif</th>
+                    <th>Critère de succès</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Audit automatisé</td>
+                    <td>Interroger ChatGPT avec 5-10 requêtes pertinentes par entreprise</td>
+                </tr>
+                <tr>
+                    <td>Analyse comparative</td>
+                    <td>Identifier 3-5 concurrents cités par ChatGPT</td>
+                </tr>
+                <tr>
+                    <td>Diagnostic</td>
+                    <td>Identifier 3 causes principales d'absence/faible visibilité</td>
+                </tr>
+                <tr>
+                    <td>Interface fonctionnelle</td>
+                    <td>Formulaire + résultats affichés en &lt; 2 minutes</td>
+                </tr>
+                <tr>
+                    <td>Coût par audit</td>
+                    <td>&lt; 0.50 EUR (appels API OpenAI)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="section3">3. Fonctionnalités détaillées</h2>
+
+        <h3>3.1 F01 : Paramétrage audit</h3>
+        <p><strong>Description :</strong> Interface permettant de configurer l'audit.</p>
+        <p><strong>Champs requis :</strong></p>
+        <ul>
+            <li>Nom de l'entreprise (texte, 100 chars max)</li>
+            <li>Secteur d'activité (liste déroulante prédéfinie)</li>
+            <li>Zone géographique (texte ou sélection ville)</li>
+            <li>Langue (FR par défaut, extensible)</li>
+        </ul>
+        <p><strong>Champs optionnels :</strong></p>
+        <ul>
+            <li>Site web (URL, pour extraction automatique de contexte)</li>
+            <li>Description courte (200 chars, sinon scraping site)</li>
+        </ul>
+        <p><strong>Sortie :</strong> Objet <code>AuditSession</code> créé en base de données, ID d'audit généré (ex: <code>audit_20260211_001</code>)</p>
+
+        <h3>3.2 F02 : Génération requêtes métier</h3>
+        <p><strong>Description :</strong> Génération automatique de requêtes pertinentes selon le secteur.</p>
+        <p><strong>Template secteur "Restauration" :</strong></p>
+        <pre>
+- "Meilleur restaurant {type_cuisine} à {ville}"
+- "Restaurant {type_cuisine} près de {quartier}"
+- "Où manger {type_cuisine} à {ville} ?"
+- "Restaurant {type_cuisine} recommandé à {ville}"
+- "Bon restaurant {type_cuisine} {ville}"</pre>
+        <p><strong>Variables dynamiques :</strong></p>
+        <ul>
+            <li><code>{type_cuisine}</code> : français, italien, japonais, etc.</li>
+            <li><code>{ville}</code> : Paris, Lyon, etc.</li>
+            <li><code>{quartier}</code> : Marais, Montmartre, etc.</li>
+        </ul>
+
+        <h3>3.3 F03 : Interrogation ChatGPT</h3>
+        <p><strong>Description :</strong> Appels API OpenAI pour chaque requête générée.</p>
+        <p><strong>Paramètres API :</strong></p>
+        <ul>
+            <li>Modèle : <code>gpt-4o-mini</code> (compromis coût/qualité)</li>
+            <li>Température : 0.7 (cohérence avec variation)</li>
+            <li>Max tokens : 500 par réponse</li>
+            <li>System prompt : "Tu es un assistant de recommandation. Réponds de manière concise et factuelle."</li>
+        </ul>
+        <p><strong>Gestion erreurs :</strong> Retry automatique (max 3 tentatives), timeout 30s</p>
+
+        <h3>3.4 F04 : Extraction mentions</h3>
+        <p><strong>Description :</strong> Parser les réponses pour extraire les entreprises mentionnées.</p>
+        <p><strong>Indicateurs calculés :</strong></p>
+        <ul>
+            <li><strong>Taux de mention :</strong> % de requêtes où l'entreprise est citée</li>
+            <li><strong>Position moyenne :</strong> rang moyen quand citée</li>
+            <li><strong>Concurrents identifiés :</strong> liste des autres entreprises citées</li>
+            <li><strong>Fréquence concurrents :</strong> nombre de citations par concurrent</li>
+        </ul>
+
+        <h3>3.5 F05 : Diagnostic automatisé</h3>
+        <p><strong>Description :</strong> Identifier les causes probables d'absence ou faible visibilité.</p>
+        <p><strong>Causes possibles :</strong></p>
+        <ol>
+            <li>Manque de présence en ligne (pas de site, pas de profil Google)</li>
+            <li>Informations incohérentes (nom différent sur différents supports)</li>
+            <li>Absence de signaux d'autorité (pas d'avis clients, pas de presse)</li>
+            <li>Manque de contexte sectoriel (description vague, mots-clés absents)</li>
+            <li>Zone géographique mal définie (adresse imprécise)</li>
+        </ol>
+
+        <h3>3.6 F06 : Affichage résultats</h3>
+        <p><strong>Description :</strong> Interface web affichant les résultats de l'audit.</p>
+        <p><strong>Sections affichées :</strong></p>
+        <ol>
+            <li>Score global (0-100)</li>
+            <li>Visibilité par requête (tableau détaillé)</li>
+            <li>Concurrents principaux (top 5)</li>
+            <li>Diagnostic (3 causes + recommandations)</li>
+            <li>Coût audit (transparence)</li>
+        </ol>
+
+        <h2 id="section4">4. Architecture technique</h2>
+
+        <h3>4.1 Stack validée</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Couche</th>
+                    <th>Technologie</th>
+                    <th>Justification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Backend</strong></td>
+                    <td>Python 3.12+</td>
+                    <td>Conforme projets EURKAI, ecosystem ML riche</td>
+                </tr>
+                <tr>
+                    <td><strong>Framework web</strong></td>
+                    <td>Flask ou FastAPI</td>
+                    <td>FastAPI = async + validation Pydantic (recommandé)</td>
+                </tr>
+                <tr>
+                    <td><strong>Base de données</strong></td>
+                    <td>PostgreSQL 15+</td>
+                    <td>Relationnel robuste, JSON support</td>
+                </tr>
+                <tr>
+                    <td><strong>Cache</strong></td>
+                    <td>Redis 7+</td>
+                    <td>Cache résultats, rate limiting</td>
+                </tr>
+                <tr>
+                    <td><strong>Frontend</strong></td>
+                    <td>HTML/CSS/JS vanilla</td>
+                    <td>Simplicité MVP, pas de framework lourd</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4.2 Architecture de base</h3>
+        <pre>
+┌─────────────────┐
+│   Frontend      │
+│  (HTML/CSS/JS)  │
+└────────┬────────┘
+         │ HTTP
+         ↓
+┌─────────────────┐
+│   FastAPI       │
+│  (server.py)    │
+├─────────────────┤
+│ Routes:         │
+│ POST /audit     │
+│ GET /results/:id│
+└────────┬────────┘
+         │
+    ┌────┴─────┬──────────┐
+    ↓          ↓          ↓
+┌─────────┐ ┌──────┐ ┌────────┐
+│PostgreSQL│ │Redis │ │OpenAI  │
+│ (audits) │ │(cache│ │  API   │
+└──────────┘ └──────┘ └────────┘</pre>
+
+        <h3>4.3 Base de données</h3>
+        <p><strong>Tables principales :</strong></p>
+        <ul>
+            <li><code>audits</code> : sessions d'audit (company, sector, queries, results, metrics)</li>
+            <li><code>competitors</code> : concurrents identifiés (audit_id, name, mention_count)</li>
+            <li><code>diagnoses</code> : diagnostics générés (audit_id, cause, confidence, recommendation)</li>
+        </ul>
+
+        <h3>4.4 Endpoints API</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Méthode</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>/api/audit</code></td>
+                    <td>POST</td>
+                    <td>Lancer un audit</td>
+                </tr>
+                <tr>
+                    <td><code>/api/audit/:id</code></td>
+                    <td>GET</td>
+                    <td>Récupérer résultats</td>
+                </tr>
+                <tr>
+                    <td><code>/api/stats</code></td>
+                    <td>GET</td>
+                    <td>Statistiques globales</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="section5">5. Conformité EURKAI</h2>
+
+        <h3>5.1 Objets EURKAI identifiés</h3>
+        <p><strong>Objets métier :</strong></p>
+        <ul>
+            <li><code>AuditSession</code> (extends <code>domain.service.Audit</code>)</li>
+            <li><code>AIProvider</code> (extends <code>interface.adapter.APIAdapter</code>)</li>
+            <li><code>CompetitorAnalysis</code> (extends <code>domain.service.Analysis</code>)</li>
+            <li><code>Diagnosis</code> (extends <code>domain.product.Deliverable</code>)</li>
+        </ul>
+
+        <p><strong>Objets système :</strong></p>
+        <ul>
+            <li><code>SectorTemplate</code> (extends <code>config.template.Template</code>)</li>
+        </ul>
+
+        <p><strong>Objets flow :</strong></p>
+        <ul>
+            <li><code>AuditProcess</code> (extends <code>flow.process.Process</code>)</li>
+        </ul>
+
+        <h3>5.2 Modules réutilisables</h3>
+        <p>Modules EURKAI potentiels à créer :</p>
+        <ul>
+            <li><strong>Module API_AGGREGATOR :</strong> orchestration multi-API IA</li>
+            <li><strong>Module SEMANTIC_ANALYZER :</strong> analyse cohérence sémantique</li>
+            <li><strong>Module COMPETITOR_TRACKER :</strong> suivi concurrence</li>
+        </ul>
+
+        <h3>5.3 Architecture fractale</h3>
+        <pre>
+ORCHESTRATOR (AuditOrchestrator)
+  ├─ AGENT_QUERY (génère requêtes)
+  ├─ AGENT_FETCH (appelle ChatGPT)
+  ├─ AGENT_ANALYZE (extrait mentions)
+  ├─ AGENT_DIAGNOSE (identifie causes)
+  └─ VALIDATOR (conformité résultats)</pre>
+
+        <h2 id="section6">6. Contraintes et limites MVP</h2>
+
+        <h3>6.1 Contraintes techniques</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Contrainte</th>
+                    <th>Impact</th>
+                    <th>Mitigation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rate limiting OpenAI</td>
+                    <td>Max 10 000 req/min</td>
+                    <td>Cache + queue si volume élevé</td>
+                </tr>
+                <tr>
+                    <td>Coût API</td>
+                    <td>~0.30-0.50 EUR/audit</td>
+                    <td>Limiter à 10 requêtes/audit</td>
+                </tr>
+                <tr>
+                    <td>Parsing imprécis</td>
+                    <td>Faux positifs/négatifs</td>
+                    <td>Validation manuelle premiers audits</td>
+                </tr>
+                <tr>
+                    <td>Variabilité IA</td>
+                    <td>Réponses différentes</td>
+                    <td>Moyenne sur 2-3 runs (Phase 2)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>6.2 Limites MVP</h3>
+        <div class="highlight warning">
+            <strong>Ce que le MVP NE fait PAS :</strong>
+            <ul>
+                <li>❌ Multi-IA (seulement ChatGPT)</li>
+                <li>❌ Multi-secteurs (seulement restauration)</li>
+                <li>❌ Multi-langues (seulement FR)</li>
+                <li>❌ Génération solutions automatiques</li>
+                <li>❌ Suivi historique évolution</li>
+                <li>❌ Authentification utilisateurs</li>
+                <li>❌ Paiement intégré</li>
+            </ul>
+            <p><em>Ces fonctionnalités seront ajoutées en Phase 2+</em></p>
+        </div>
+
+        <h2 id="section7">7. Critères de validation MVP</h2>
+
+        <h3>7.1 Critères fonctionnels</h3>
+        <div class="checkbox-item">☐ Formulaire paramétrage fonctionnel (5 champs)</div>
+        <div class="checkbox-item">☐ Génération automatique de 5-10 requêtes pertinentes</div>
+        <div class="checkbox-item">☐ Appels ChatGPT réussis (&gt; 90% de succès)</div>
+        <div class="checkbox-item">☐ Extraction mentions avec précision &gt; 80%</div>
+        <div class="checkbox-item">☐ Affichage résultats complet en &lt; 2 minutes</div>
+        <div class="checkbox-item">☐ Diagnostic avec 3 causes + recommandations</div>
+
+        <h3>7.2 Critères techniques</h3>
+        <div class="checkbox-item">☐ Code conforme standards EURKAI</div>
+        <div class="checkbox-item">☐ Base de données PostgreSQL opérationnelle</div>
+        <div class="checkbox-item">☐ Tests unitaires (coverage &gt; 70%)</div>
+        <div class="checkbox-item">☐ Documentation API (FastAPI auto-docs)</div>
+        <div class="checkbox-item">☐ Logs structurés (debug, info, error)</div>
+
+        <h3>7.3 Critères business</h3>
+        <div class="checkbox-item">☐ Coût audit &lt; 0.50 EUR</div>
+        <div class="checkbox-item">☐ Temps audit &lt; 2 minutes</div>
+        <div class="checkbox-item">☐ Résultats actionnables (3 recommandations claires)</div>
+        <div class="checkbox-item">☐ Potentiel d'upsell identifié (Phase 2+)</div>
+
+        <h2 id="section8">8. Risques et dépendances</h2>
+
+        <h3>8.1 Risques techniques</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Risque</th>
+                    <th>Probabilité</th>
+                    <th>Impact</th>
+                    <th>Mitigation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rate limiting OpenAI</td>
+                    <td>Moyenne</td>
+                    <td>Moyen</td>
+                    <td>Cache + retry logic</td>
+                </tr>
+                <tr>
+                    <td>Parsing imprécis</td>
+                    <td>Haute</td>
+                    <td>Moyen</td>
+                    <td>Validation manuelle + amélioration itérative</td>
+                </tr>
+                <tr>
+                    <td>Changement API OpenAI</td>
+                    <td>Faible</td>
+                    <td>Fort</td>
+                    <td>Abstraction adapter, monitoring</td>
+                </tr>
+                <tr>
+                    <td>Variabilité réponses IA</td>
+                    <td>Haute</td>
+                    <td>Faible</td>
+                    <td>Moyenne sur runs multiples (Phase 2)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>8.2 Dépendances externes</h3>
+        <ul>
+            <li><strong>OpenAI API :</strong> service critique, pas de fallback MVP</li>
+            <li><strong>PostgreSQL :</strong> local OK, production nécessitera hébergement</li>
+            <li><strong>Redis :</strong> optionnel MVP, recommandé production</li>
+        </ul>
+
+        <h2 id="section9">9. Planning et jalons</h2>
+
+        <h3>9.1 Découpage tâches MVP</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tâche</th>
+                    <th>Durée</th>
+                    <th>Dépendances</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Setup environnement (venv, deps)</td>
+                    <td>0.5h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Setup DB PostgreSQL + tables</td>
+                    <td>0.5h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Endpoint POST /api/audit</td>
+                    <td>1h</td>
+                    <td>Setup DB</td>
+                </tr>
+                <tr>
+                    <td>Génération requêtes secteur</td>
+                    <td>1h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Intégration OpenAI API</td>
+                    <td>1.5h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Extraction mentions</td>
+                    <td>2h</td>
+                    <td>Intégration OpenAI</td>
+                </tr>
+                <tr>
+                    <td>Diagnostic automatisé</td>
+                    <td>1.5h</td>
+                    <td>Extraction mentions</td>
+                </tr>
+                <tr>
+                    <td>Endpoint GET /api/audit/:id</td>
+                    <td>0.5h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Frontend formulaire</td>
+                    <td>1h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Frontend affichage résultats</td>
+                    <td>1.5h</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Tests unitaires</td>
+                    <td>1.5h</td>
+                    <td>Tous endpoints</td>
+                </tr>
+                <tr>
+                    <td>Documentation</td>
+                    <td>0.5h</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Total estimé :</strong> 13h (soit ~2 jours effectifs)</p>
+
+        <h3>9.2 Jalons</h3>
+        <ol>
+            <li><strong>J0 (maintenant) :</strong> CDC validé ✓</li>
+            <li><strong>J0+1h :</strong> SPECS générées, objets EURKAI validés</li>
+            <li><strong>J0+4h :</strong> Backend fonctionnel (API + DB)</li>
+            <li><strong>J0+6h :</strong> Frontend basique</li>
+            <li><strong>J1 :</strong> MVP complet fonctionnel</li>
+            <li><strong>J2 :</strong> Tests + validation + déploiement local</li>
+        </ol>
+
+        <h2 id="section10">10. Évolutions futures (post-MVP)</h2>
+
+        <h3>Phase 2 : Multi-IA (1 semaine)</h3>
+        <ul>
+            <li>Intégration Claude, Gemini, Perplexity</li>
+            <li>Comparaison inter-IA</li>
+            <li>Score agrégé</li>
+        </ul>
+
+        <h3>Phase 3 : Solutions automatisées (2 semaines)</h3>
+        <ul>
+            <li>Génération contenus optimisés</li>
+            <li>Données structurées (JSON-LD)</li>
+            <li>Export livrables (PDF professionnel)</li>
+        </ul>
+
+        <h3>Phase 4 : Internationalisation (1 semaine)</h3>
+        <ul>
+            <li>Multi-langues (EN, ES, DE)</li>
+            <li>Multi-géo (adaptation locale)</li>
+        </ul>
+
+        <h3>Phase 5 : Scalabilité (1 semaine)</h3>
+        <ul>
+            <li>Queue jobs (Celery + Redis)</li>
+            <li>Dashboard admin</li>
+            <li>Suivi historique</li>
+        </ul>
+
+        <hr style="margin: 60px 0; border: none; border-top: 2px solid #e2e8f0;">
+
+        <div class="highlight success">
+            <h3>✅ Validation et prochaines étapes</h3>
+            <p><strong>Statut CDC :</strong> 🟡 En attente validation Nathalie</p>
+            <p><strong>Prochaine étape :</strong> Génération SPECS (architecture détaillée, objets EURKAI, code)</p>
+            <p><strong>À valider :</strong></p>
+            <ul>
+                <li>☐ Fonctionnalités décrites OK ?</li>
+                <li>☐ Architecture technique validée ?</li>
+                <li>☐ Critères de succès MVP réalistes ?</li>
+                <li>☐ Planning 2-3 jours faisable ?</li>
+                <li>☐ Précisions ou ajustements nécessaires ?</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

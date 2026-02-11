@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation CDC — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+        .content { padding: 40px; }
+        .cdc-info { background: #f7fafc; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 30px; border-radius: 6px; }
+        .cdc-info h2 { color: #2d3748; font-size: 20px; margin-bottom: 15px; }
+        .cdc-info ul { list-style: none; padding-left: 0; }
+        .cdc-info li { padding: 8px 0; color: #4a5568; }
+        .cdc-info li strong { color: #2d3748; display: inline-block; min-width: 200px; }
+        .question-block { margin-bottom: 35px; padding: 25px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .question-block h3 { color: #2d3748; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; }
+        .question-block h3 .tag { background: #667eea; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 10px; text-transform: uppercase; }
+        .option { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
+        .option input[type="radio"] { margin-right: 12px; cursor: pointer; }
+        .option label { cursor: pointer; display: block; padding-left: 28px; position: relative; }
+        .option label strong { color: #2d3748; display: block; margin-bottom: 5px; }
+        .option label .description { color: #718096; font-size: 14px; line-height: 1.5; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+        textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 100px; margin-top: 10px; }
+        textarea:focus { outline: none; border-color: #667eea; }
+        .actions { display: flex; gap: 15px; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e2e8f0; }
+        .btn { flex: 1; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-secondary { background: white; color: #667eea; border: 2px solid #667eea; }
+        .btn-secondary:hover { background: #f0f4ff; }
+        .result { display: none; padding: 30px; background: #f0fff4; border: 2px solid #9ae6b4; border-radius: 8px; margin-top: 30px; }
+        .result h3 { color: #2f855a; margin-bottom: 15px; }
+        .result .success-message { font-size: 16px; color: #2f855a; margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; }
+        .result button { background: #2f855a; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .result button:hover { background: #276749; }
+        .required-warning { display: none; padding: 15px; background: #fff5f5; border: 2px solid #fc8181; border-radius: 6px; color: #c53030; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Validation CDC</h1>
+            <p>AI_SEO_AUDIT — Cahier des Charges</p>
+        </div>
+
+        <div class="content">
+            <div class="cdc-info">
+                <h2>📄 Résumé du CDC</h2>
+                <ul>
+                    <li><strong>Fonctionnalités :</strong> 6 fonctions détaillées (F01-F06)</li>
+                    <li><strong>Stack :</strong> FastAPI + PostgreSQL + Redis + OpenAI API</li>
+                    <li><strong>Architecture :</strong> Conforme EURKAI (objets, modules, fractale)</li>
+                    <li><strong>Planning :</strong> 13h de dev (~2 jours effectifs)</li>
+                    <li><strong>Coût audit :</strong> < 0.50 EUR par audit</li>
+                    <li><strong>Fichier :</strong> <code>PIPELINE/02_CDC.md</code> (15 pages)</li>
+                </ul>
+            </div>
+
+            <form id="validationForm">
+                <div class="required-warning" id="requiredWarning">
+                    ⚠️ Merci de répondre à toutes les questions avant de valider.
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Fonctions</span> Les 6 fonctionnalités (F01-F06) te conviennent ?</h3>
+                    <div class="option"><input type="radio" name="q1" id="q1a" value="ok"><label for="q1a"><strong>✅ OK — Fonctionnalités claires et complètes</strong><span class="description">Les 6 fonctions couvrent bien le besoin MVP.</span></label></div>
+                    <div class="option"><input type="radio" name="q1" id="q1b" value="ajuster"><label for="q1b"><strong>🔄 À ajuster</strong><span class="description">Certaines fonctions à préciser ou modifier (détailler dans précisions).</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Archi tech</span> Architecture FastAPI + PostgreSQL + Redis validée ?</h3>
+                    <div class="option"><input type="radio" name="q2" id="q2a" value="valide"><label for="q2a"><strong>✅ Validée — Stack OK</strong><span class="description">FastAPI + PostgreSQL + Redis + OpenAI convient pour MVP.</span></label></div>
+                    <div class="option"><input type="radio" name="q2" id="q2b" value="modifier"><label for="q2b"><strong>🔄 Modifier stack</strong><span class="description">Préférence pour une autre stack (préciser dans champ texte).</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Planning</span> Planning 2-3 jours réaliste ?</h3>
+                    <div class="option"><input type="radio" name="q3" id="q3a" value="realiste"><label for="q3a"><strong>✅ Réaliste</strong><span class="description">13h de dev sur 2 jours semble faisable.</span></label></div>
+                    <div class="option"><input type="radio" name="q3" id="q3b" value="trop_optimiste"><label for="q3b"><strong>⚠️ Trop optimiste</strong><span class="description">Prévoir plus de temps (préciser dans champ texte).</span></label></div>
+                    <div class="option"><input type="radio" name="q3" id="q3c" value="trop_prudent"><label for="q3c"><strong>⚡ Trop prudent</strong><span class="description">Peut être fait plus rapidement.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Précisions</span> Ajustements, questions ou précisions sur le CDC ?</h3>
+                    <textarea id="comments" name="comments" placeholder="Précise ici tout ce que tu veux ajuster, modifier ou clarifier..."></textarea>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Validation</span> Avec ces éléments, valides-tu le CDC pour passer aux SPECS ?</h3>
+                    <div class="option"><input type="radio" name="q4" id="q4a" value="valider"><label for="q4a"><strong>✅ Valider — CDC OK, on passe aux SPECS</strong><span class="description">Le CDC est complet. Claude génère les SPECS techniques détaillées.</span></label></div>
+                    <div class="option"><input type="radio" name="q4" id="q4b" value="ajuster"><label for="q4b"><strong>🔄 Ajuster — CDC OK mais à préciser</strong><span class="description">Le CDC est bon mais nécessite quelques ajustements (voir précisions).</span></label></div>
+                    <div class="option"><input type="radio" name="q4" id="q4c" value="revoir"><label for="q4c"><strong>❌ Revoir — CDC à refaire</strong><span class="description">Le CDC ne convient pas, Claude doit le refaire.</span></label></div>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">🔄 Réinitialiser</button>
+                    <button type="submit" class="btn btn-primary">✅ Valider et enregistrer</button>
+                </div>
+            </form>
+
+            <div class="result" id="result">
+                <h3>✅ Validation enregistrée !</h3>
+                <div class="success-message">
+                    Le fichier de validation a été téléchargé.<br>
+                    Place-le dans <code>/tmp/claude_validation_CDC_AI_SEO_AUDIT.json</code><br>
+                    <strong>Claude continuera automatiquement vers les SPECS.</strong>
+                </div>
+                <button onclick="window.close()">Fermer cette fenêtre</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                const groupName = radio.name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                    r.closest('.option').classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('validationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            const q4 = document.querySelector('input[name="q4"]:checked');
+
+            if (!q1 || !q2 || !q3 || !q4) {
+                document.getElementById('requiredWarning').style.display = 'block';
+                document.getElementById('requiredWarning').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            document.getElementById('requiredWarning').style.display = 'none';
+
+            const comments = document.getElementById('comments').value;
+            const validationData = {
+                type: "cdc",
+                project: "AI_SEO_AUDIT",
+                responses: {
+                    fonctionnalites: q1.value,
+                    architecture_tech: q2.value,
+                    planning: q3.value,
+                    validation_globale: q4.value,
+                    precisions: comments
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            // Envoyer au serveur local (tentative)
+            try {
+                const response = await fetch('http://127.0.0.1:7777/api/validation/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(validationData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error('Endpoint non disponible');
+                }
+            } catch (error) {
+                // Fallback : télécharger le JSON
+                const jsonBlob = new Blob([JSON.stringify(validationData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(jsonBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'claude_validation_CDC_AI_SEO_AUDIT.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

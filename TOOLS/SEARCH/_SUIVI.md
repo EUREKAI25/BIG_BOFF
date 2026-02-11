@@ -226,6 +226,65 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | Conversion premium | 10% (100) | 15% (1 500) | 20% (20 000) |
 | Revenus/mois | 500€ | 7 500€ | 100 000€ |
 
+### État d'avancement
+
+**Phase 1 : Identité décentralisée** ✅ (0.3 sem)
+- [x] Module identity.py (645 lignes) - RSA-4096 + Ed25519
+- [x] 7 endpoints API /api/identity/*
+- [x] UI onboarding modal 3 étapes
+
+**Phase 2 : Relay Server + Sync** ✅ (0.3 sem)
+- [x] relay_db_setup.py - Tables users, challenges, sync_log
+- [x] relay_server.py (565 lignes) - Port 8888, JWT auth
+- [x] sync.py (487 lignes) - CLI sync push/pull
+
+**Phase 3 : Permissions + ACL** ✅ (0.4 sem)
+- [x] Table permissions + API /api/permissions/*
+- [x] permissions.py CLI (275 lignes)
+- [x] Vérification ACL côté relay
+
+**Phase 4 : QR codes partage** ✅ (0.5 sem)
+- [x] qr_share.py (291 lignes) - Génération QR + signature Ed25519
+- [x] qr_scanner.js (312 lignes) - Scan caméra + modal preview
+- [x] Intégration extension Chrome
+
+**Phase 5 : Mode Consultation** ✅ (0.5 sem)
+- [x] /api/consult/* (3 endpoints relay)
+- [x] sync.py consult command
+- [x] UI dropdown source + badge 📡 bleu
+- [x] Cache temporaire TTL 1h
+
+**Phase 6 : Mode Partage** ✅ (0.5 sem)
+- [x] is_shared_copy (items + sync_log)
+- [x] /api/share/* (clone, sync, revoke)
+- [x] sync.py share clone/sync (~330 lignes)
+- [x] UI modal mode + badge 📡 vert
+- [x] Tests : test_phase6_share.sh (100% pass)
+
+**Phase 7 : Groupes** ✅ (0.3 sem)
+- [x] Tables groups + group_members
+- [x] /api/groups/* (7 endpoints + do_DELETE)
+- [x] groups.py CLI (~400 lignes)
+- [x] UI modal création groupe
+- [x] Tests : test_phase7_groups.sh (100% pass)
+
+**Phase 8 : Multi-device** ✅ (0.1 sem - MVP structure)
+- [x] Table device_sessions
+- [x] Schema complet (API différée post-MVP)
+- [x] Tests : test_phase8_multidevice.sh (100% pass)
+
+**Test d'intégration Ph6-7-8** ✅
+- [x] test_integration_ph6_7_8.sh (100% pass)
+- Validation : 2 partages + 1 groupe 3 membres + 2 appareils
+
+**Phases 1-8 : 2.9 semaines** (vs 5.5 estimées) = **Accélération 1.9x** 🚀🚀
+
+**Prochaines phases :**
+- [ ] Phase 9 : Freemium (licences, Stripe)
+- [ ] Phase 10 : E2E encryption (libsodium)
+- [ ] Phase 11 : Mobile UI responsive
+- [ ] Phase 12 : Vues premium (Kanban, Timeline, Map, Graph)
+
 ---
 
 ## A faire

@@ -1,0 +1,395 @@
+# ============================================================================
+# EURKAI Bootstrap v3.1 - Seed
+# Tout est ERK - Scripts ERK inclus
+# ============================================================================
+
+# === CORE ===
+Object:
+  .name = "Object"
+  .list = "ElementList"
+
+# === ATTRIBUTE ===
+Object:Attribute:
+  .name = "Attribute"
+
+Object:Attribute:Label:
+  .name = "Label"
+Object:Attribute:Label:Name:
+  .name = "Name"
+Object:Attribute:Label:Lineage:
+  .name = "Lineage"
+Object:Attribute:Label:Alias:
+  .name = "Alias"
+
+Object:Attribute:Automated:
+  .name = "Automated"
+  .automated = true
+Object:Attribute:Automated:CreatedAt:
+  .name = "CreatedAt"
+Object:Attribute:Automated:UpdatedAt:
+  .name = "UpdatedAt"
+
+# === RELATION ===
+Object:Relation:
+  .name = "Relation"
+
+# === RULE ===
+Object:Rule:
+  .name = "Rule"
+
+# === METHOD ===
+Object:Method:
+  .name = "Method"
+
+Object:Method:CentralMethod:
+  .name = "CentralMethod"
+Object:Method:CentralMethod:Create:
+  .name = "Create"
+Object:Method:CentralMethod:Read:
+  .name = "Read"
+Object:Method:CentralMethod:Update:
+  .name = "Update"
+Object:Method:CentralMethod:Delete:
+  .name = "Delete"
+Object:Method:CentralMethod:Orchestrate:
+  .name = "Orchestrate"
+Object:Method:CentralMethod:Engage:
+  .name = "Engage"
+
+Object:Method:SecondaryMethod:
+  .name = "SecondaryMethod"
+Object:Method:SecondaryMethod:GlobalRecursiveMethod:
+  .name = "GlobalRecursiveMethod"
+GlobalRecursiveMethod depends_on Orchestrate
+
+Object:Method:SuperTool:
+  .name = "SuperTool"
+Object:Method:SuperTool:SuperCreate:
+  .name = "SuperCreate"
+Object:Method:SuperTool:SuperRead:
+  .name = "SuperRead"
+Object:Method:SuperTool:SuperUpdate:
+  .name = "SuperUpdate"
+Object:Method:SuperTool:SuperDelete:
+  .name = "SuperDelete"
+Object:Method:SuperTool:SuperOrchestrate:
+  .name = "SuperOrchestrate"
+Object:Method:SuperTool:SuperEngage:
+  .name = "SuperEngage"
+
+# === MANIFEST ===
+Object:Manifest:
+  .name = "Manifest"
+Object:Manifest:SourceManifest:
+  .name = "SourceManifest"
+Object:Manifest:GeneratedManifest:
+  .name = "GeneratedManifest"
+  .automated = true
+
+# === VECTOR ===
+Object:Vector:
+  .name = "Vector"
+
+# === QUERY ===
+Object:Query:
+  .name = "Query"
+Object:Query:GetAllObjects:
+  .name = "GetAllObjects"
+  .erk = "SELECT * FROM Object ORDER BY lineage"
+Object:Query:GetGevFiles:
+  .name = "GetGevFiles"
+  .erk = "SELECT * FROM Object WHERE .source ENDSWITH '.gev' GROUP BY .source"
+Object:Query:GetChildren:
+  .name = "GetChildren"
+  .erk = "SELECT * FROM Object WHERE .parent = SELECTED_OBJECT.lineage ORDER BY name"
+Object:Query:GetRelations:
+  .name = "GetRelations"
+  .erk = "SELECT * FROM Relation WHERE .sourceUUID = SELECTED_OBJECT.uuid"
+Object:Query:GetRules:
+  .name = "GetRules"
+  .erk = "SELECT * FROM Rule WHERE .sourceUUID = SELECTED_OBJECT.uuid"
+
+# === SCRIPT ===
+Object:Script:
+  .name = "Script"
+
+# --- Scripts ERK (nouveau!) ---
+Object:Script:ERKScript:
+  .name = "ERKScript"
+  .scriptType = "erk"
+
+Object:Script:ERKScript:OnClickTreeNode:
+  .name = "OnClickTreeNode"
+  .on = "click"
+  .target = ".tree-node"
+  .do = "SelectObject({{uuid}})"
+
+Object:Script:ERKScript:OnDragStart:
+  .name = "OnDragStart"
+  .on = "dragstart"
+  .target = ".tree-node"
+  .do = "SetDragged({{uuid}})"
+
+Object:Script:ERKScript:OnDrop:
+  .name = "OnDrop"
+  .on = "drop"
+  .target = ".tree-node"
+  .do = "MoveObject(DRAGGED, {{lineage}})"
+
+Object:Script:ERKScript:OnClickEditable:
+  .name = "OnClickEditable"
+  .on = "click"
+  .target = ".editable"
+  .do = "InlineEdit({{uuid}}, {{key}})"
+
+Object:Script:ERKScript:OnClickSource:
+  .name = "OnClickSource"
+  .on = "click"
+  .target = ".detail-source"
+  .do = "OpenSource({{source}}, {{line}})"
+
+# --- Scripts JS (legacy, pour compatibilité) ---
+Object:Script:JSScript:
+  .name = "JSScript"
+  .scriptType = "javascript"
+
+# === PLACEHOLDER ===
+Object:Placeholder:
+  .name = "Placeholder"
+Object:Placeholder:Name:
+  .name = "PlaceholderName"
+  .pattern = "{{name}}"
+  .source = ".name"
+Object:Placeholder:Lineage:
+  .name = "PlaceholderLineage"
+  .pattern = "{{lineage}}"
+  .source = ".lineage"
+Object:Placeholder:UUID:
+  .name = "PlaceholderUUID"
+  .pattern = "{{uuid}}"
+  .source = ".uuid"
+Object:Placeholder:Source:
+  .name = "PlaceholderSource"
+  .pattern = "{{source}}"
+  .source = ".source"
+Object:Placeholder:SourceColor:
+  .name = "PlaceholderSourceColor"
+  .pattern = "{{sourceColor}}"
+  .source = "COLORMAP(.source)"
+Object:Placeholder:SourceLabel:
+  .name = "PlaceholderSourceLabel"
+  .pattern = "{{sourceLabel}}"
+  .source = "FILENAME(.source)"
+
+# === TEMPLATE ===
+Object:Template:
+  .name = "Template"
+
+# === ELEMENT ===
+Object:Element:
+  .name = "Element"
+  .tag = "div"
+
+# === MODULE ===
+Object:Module:
+  .name = "Module"
+
+# === SCENARIO ===
+Object:Scenario:
+  .name = "Scenario"
+
+# ============================================================================
+# SCENARIOS SYSTEME
+# ============================================================================
+
+Object:Scenario:Bootstrap:
+  .name = "Bootstrap"
+  .steps = ["RenderCockpit()"]
+
+Object:Scenario:RenderCockpit:
+  .name = "RenderCockpit"
+  .steps = ["GetTemplate(CockpitTemplate)", "ForEach(ElementList, RenderElement)", "InjectScripts(ScriptList)", "Return(html)"]
+
+Object:Scenario:RenderElement:
+  .name = "RenderElement"
+  .steps = ["BuildTag(.tag, .class)", "RenderContent(.content)", "ForEach(ElementList, RenderElement)", "ForEach(ModuleList, RenderModule)", "CloseTag()"]
+
+Object:Scenario:RenderModule:
+  .name = "RenderModule"
+  .steps = ["GetData(.dataSource)", "ForEach(TemplateList, ApplyTemplate)", "Return(html)"]
+
+Object:Scenario:CreateObject:
+  .name = "CreateObject"
+  .steps = ["Create(lineage, attributes)", "Return(created)"]
+
+Object:Scenario:UpdateObject:
+  .name = "UpdateObject"
+  .steps = ["Update(uuid, attributes)", "Return(updated)"]
+
+Object:Scenario:MoveObject:
+  .name = "MoveObject"
+  .steps = ["MoveObject(uuid, newParent)", "Return(moved)"]
+
+Object:Scenario:DeleteObject:
+  .name = "DeleteObject"
+  .steps = ["Delete(uuid)", "Return(deleted)"]
+
+# ============================================================================
+# COCKPIT TEMPLATE
+# ============================================================================
+
+Object:Template:CockpitTemplate:
+  .name = "CockpitTemplate"
+  .html = "<div id='cockpit'>{{content}}</div>"
+CockpitTemplate IN SourceManifest.TemplateList
+
+# === Templates pour modules ===
+Object:Template:TreeNodeTemplate:
+  .name = "TreeNodeTemplate"
+  .html = "<li><div class='tree-node' data-uuid='{{uuid}}' data-lineage='{{lineage}}' draggable='true'><span class='tree-toggle'>{{toggle}}</span><span class='tree-icon' style='background:{{sourceColor}}'></span><span class='tree-name'>{{name}}</span>{{#if hasChildren}}<span class='tree-count'>({{childCount}})</span>{{/if}}</div>{{#if hasChildren}}<ul style='display:none'>{{#each children}}{{> TreeNodeTemplate}}{{/each}}</ul>{{/if}}</li>"
+
+Object:Template:FileItemTemplate:
+  .name = "FileItemTemplate"
+  .html = "<div class='file-item' data-path='{{path}}'>📄 {{relativePath}}</div>"
+  .action = "OpenFile"
+
+Object:Template:DetailHeaderTemplate:
+  .name = "DetailHeaderTemplate"
+  .html = "<div class='detail-header'><h2>{{name}}</h2><div class='detail-lineage'>{{lineage}}</div><div class='detail-meta'><span class='detail-uuid'>UUID: {{uuid}}</span><span class='detail-source' data-source='{{source}}' data-line='{{line}}' style='background:{{sourceColor}};color:#1e1e1e'>{{sourceLabel}}</span></div></div>"
+
+Object:Template:AttributeRowTemplate:
+  .name = "AttributeRowTemplate"
+  .html = "<tr><th>{{key}}</th><td class='{{editableClass}}' data-uuid='{{uuid}}' data-key='{{key}}'>{{value}}<span class='attr-source' data-source='{{attrSource}}' data-line='{{attrLine}}' style='background:{{attrSourceColor}};color:#1e1e1e' title='{{inheritedFrom}}'>{{attrSourceLabel}}</span></td></tr>"
+
+Object:Template:RelationRowTemplate:
+  .name = "RelationRowTemplate"
+  .html = "<tr><th>{{type}}</th><td><span class='link' data-target='{{targetName}}'>{{targetName}}</span><span class='attr-source' data-source='{{source}}' data-line='{{line}}' style='background:{{sourceColor}};color:#1e1e1e'>{{sourceLabel}}</span></td></tr>"
+
+Object:Template:RuleRowTemplate:
+  .name = "RuleRowTemplate"
+  .html = "<tr><th>{{type}}</th><td><span class='link' data-target='{{targetName}}'>{{targetName}}</span><span class='attr-source' data-source='{{source}}' data-line='{{line}}' style='background:{{sourceColor}};color:#1e1e1e'>{{sourceLabel}}</span></td></tr>"
+
+
+Object:Template:ChildItemTemplate:
+  .name = "ChildItemTemplate"
+  .html = "<div class='child-item'><span class='link' data-uuid='{{uuid}}'><span class='child-dot' style='background:{{sourceColor}}'></span>{{name}}</span><button class='delete-btn' data-uuid='{{uuid}}'>×</button></div>"
+
+# === Modules ===
+Object:Module:TreeModule:
+  .name = "TreeModule"
+  .dataSource = "QUERY(GetAllObjects)"
+  .recursive = true
+TreeModule IN CockpitTemplate.ModuleList
+TreeNodeTemplate IN TreeModule.TemplateList
+OnClickTreeNode IN TreeModule.ScriptList
+OnDragStart IN TreeModule.ScriptList
+OnDrop IN TreeModule.ScriptList
+
+Object:Module:FileListModule:
+  .name = "FileListModule"
+  .dataSource = "QUERY(GetGevFiles)"
+FileListModule IN CockpitTemplate.ModuleList
+FileItemTemplate IN FileListModule.TemplateList
+
+Object:Module:DetailModule:
+  .name = "DetailModule"
+  .dataSource = "SELECTED_OBJECT"
+DetailModule IN CockpitTemplate.ModuleList
+DetailHeaderTemplate IN DetailModule.TemplateList
+OnClickSource IN DetailModule.ScriptList
+
+Object:Module:AttributeListModule:
+  .name = "AttributeListModule"
+  .dataSource = "SELECTED_OBJECT.attributes"
+  .showSource = true
+  .editable = true
+AttributeListModule IN DetailModule.ModuleList
+AttributeRowTemplate IN AttributeListModule.TemplateList
+OnClickEditable IN AttributeListModule.ScriptList
+
+Object:Module:RelationListModule:
+  .name = "RelationListModule"
+  .dataSource = "QUERY(GetRelations)"
+  .showSource = true
+RelationListModule IN DetailModule.ModuleList
+RelationRowTemplate IN RelationListModule.TemplateList
+
+Object:Module:RuleListModule:
+  .name = "RuleListModule"
+  .dataSource = "QUERY(GetRule)"
+  .showSource = true
+RuleListModule IN DetailModule.ModuleList
+ChildItemTemplate IN ChildListModule.TemplateList
+
+Object:Module:ChildListModule:
+  .name = "ChildListModule"
+  .dataSource = "QUERY(GetChildren)"
+  .showSource = true
+ChildListModule IN DetailModule.ModuleList
+ChildItemTemplate IN ChildListModule.TemplateList
+
+# === Elements (Layout) ===
+Object:Element:CockpitLayout:
+  .name = "CockpitLayout"
+  .tag = "div"
+  .class = "cockpit-layout"
+CockpitLayout IN CockpitTemplate.ElementList
+
+Object:Element:Sidebar:
+  .name = "Sidebar"
+  .tag = "div"
+  .class = "sidebar"
+Sidebar IN CockpitLayout.ElementList
+
+Object:Element:SidebarHeader:
+  .name = "SidebarHeader"
+  .tag = "div"
+  .class = "sidebar-header"
+  .content = "<span class='sidebar-title'>EURKAI</span><span class='object-count'>{{objectCount}}</span>"
+SidebarHeader IN Sidebar.ElementList
+
+Object:Element:SidebarSearch:
+  .name = "SidebarSearch"
+  .tag = "div"
+  .class = "sidebar-search"
+  .content = "<input type='text' placeholder='Rechercher...'>"
+SidebarSearch IN Sidebar.ElementList
+
+Object:Element:SidebarTabs:
+  .name = "SidebarTabs"
+  .tag = "div"
+  .class = "sidebar-tabs"
+  .content = "<div class='tab active' data-tab='objects'>Objets</div><div class='tab' data-tab='files'>Fichiers ({{fileCount}})</div>"
+SidebarTabs IN Sidebar.ElementList
+
+Object:Element:SidebarContent:
+  .name = "SidebarContent"
+  .tag = "div"
+  .class = "sidebar-content"
+SidebarContent IN Sidebar.ElementList
+TreeModule IN SidebarContent.ModuleList
+FileListModule IN SidebarContent.ModuleList
+
+Object:Element:Main:
+  .name = "Main"
+  .tag = "div"
+  .class = "main"
+Main IN CockpitLayout.ElementList
+
+Object:Element:MainHeader:
+  .name = "MainHeader"
+  .tag = "div"
+  .class = "main-header"
+  .content = "<span>{{projectName}}</span><div class='header-actions'><button data-action='Refresh'>↻ Refresh</button><button data-action='SelectProject'>📁 Projet</button></div>"
+MainHeader IN Main.ElementList
+
+Object:Element:MainContent:
+  .name = "MainContent"
+  .tag = "div"
+  .class = "main-content"
+MainContent IN Main.ElementList
+DetailModule IN MainContent.ModuleList
+
+# ============================================================================
+# FIN
+# ============================================================================

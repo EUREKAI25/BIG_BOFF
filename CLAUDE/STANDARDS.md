@@ -3,7 +3,7 @@
 > Standards à respecter pour toute génération de code dans les projets BIG_BOFF/EURKAI.
 > Ces règles garantissent qualité, maintenabilité, accessibilité et cohérence.
 
-**Dernière MAJ** : 2026-02-10
+**Dernière MAJ** : 2026-02-10 19:00
 
 ---
 
@@ -420,9 +420,93 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 ---
 
-## 11. Modules EURKAI
+## 11. Architecture orientée objet EURKAI
 
-### 11.1 Structure standard
+### 11.1 Principes fondamentaux
+
+**TOUT est objet** : `env`, `function`, `method`, `class`, `module`, `scenario`, `user`, `facture`, etc.
+
+**Hiérarchie universelle** :
+```
+Object (racine)
+  ├─ ident : <objecttype>_<slug>
+  ├─ created_at : YYYY-MM-DD
+  ├─ version : semver
+  ├─ parent : référence parent (null si racine)
+  ├─ attributes : {} (spécifiques à chaque type)
+  ├─ methods : { validate(), test(), serialize() }
+  └─ [héritage vers tous objets]
+```
+
+**Règles EURKAI** :
+
+1. **Atome = function**
+   - Une function fait UNE chose
+   - Réutilisable, testable isolément
+
+2. **Method = import function**
+   - Method n'implémente pas, elle importe
+   - Flexibilité totale (changer function sans casser method)
+
+3. **Scenario = orchestration**
+   - Articule des methods
+   - Ne fait rien par lui-même
+   - Toute method est scenario (même si appelle 1 seule function)
+
+4. **Injection dynamique**
+   - Methods transversales (ex: `FiscalRule.calculer_tva()`)
+   - Injectées dynamiquement selon contexte
+   - Exemple :
+     ```javascript
+     if (facture.pays === 'FR') {
+       inject(facture, FiscalRule.calculer_tva);
+     }
+     ```
+
+5. **Héritage systématique**
+   - Chaque objet hérite d'un parent
+   - Transmet attributs + methods
+   - Exemple : `Facture` ← `Justificatif` ← `Object`
+
+### 11.2 Process de création d'objet
+
+**Pour TOUT type d'objet** (module, class, user, etc.) :
+
+```
+Besoin de <objet>
+  → 1. Chercher exact match dans catalogue
+  → 2. Si non trouvé, chercher parent potentiel (héritage)
+  → 3. Si non trouvé, créer :
+       a. Définir schéma (hérité d'Object + spécifique)
+       b. Attributs obligatoires
+       c. Methods (validation, test, métier)
+       d. Injection dynamique si transversal
+       e. Enregistrer dans catalogue approprié
+```
+
+**Catalogues** :
+- `EURKAI/MODULES/catalogue.json` (modules réutilisables)
+- `EURKAI/CORE/objects/catalogue.json` (objets métier)
+- Un catalogue par grande catégorie
+
+### 11.3 Validation (étape SPECS)
+
+Au moment des SPECS, Claude génère **formulaire GitHub Pages** soumettant :
+
+- **Objets à créer** pour le projet
+- **Parent proposé** pour chaque objet (avec justification)
+- **Attributs spécifiques**
+- **Methods nécessaires**
+- **Modules existants** à réutiliser vs nouveaux
+- **Recommandations Claude** (pourquoi tel parent, alternatives)
+
+Nathalie valide/ajuste → Claude applique.
+
+---
+
+## 12. Modules EURKAI
+
+### 12.1 Structure standard
 
 ```
 MODULES/<nom_module>/
@@ -435,10 +519,47 @@ MODULES/<nom_module>/
 └── .gitignore
 ```
 
-### 11.2 MANIFEST.json
+### 12.2 Catalogue centralisé
+
+**Fichier** : `EURKAI/MODULES/catalogue.json`
+
+Tous les modules y sont enregistrés avec :
+- `ident` : Identifiant unique `module_<slug>` (ex: `module_auth`)
+- `name` : Nom court
+- `description` : Description fonctionnelle
+- `created_at` : Date création (YYYY-MM-DD)
+- `version` : Semver (1.0.0)
+- `endpoint` : Point d'accès API
+- `manifest` : Chemin vers MANIFEST.json
+- `dependencies` : Modules requis (array)
+
+**Exemple catalogue** :
+```json
+{
+  "modules": [
+    {
+      "ident": "module_auth",
+      "name": "auth",
+      "description": "Authentification JWT + session",
+      "created_at": "2026-02-10",
+      "version": "1.0.0",
+      "endpoint": "/api/auth",
+      "manifest": "MODULES/AUTH/MANIFEST.json",
+      "dependencies": []
+    }
+  ],
+  "meta": {
+    "last_updated": "2026-02-10",
+    "total_count": 1
+  }
+}
+```
+
+### 12.3 MANIFEST.json (fichier module)
 
 ```json
 {
+  "ident": "module_tip_calculator",
   "name": "tip-calculator",
   "version": "1.0.0",
   "description": "Calculateur de pourboire réutilisable",
@@ -459,8 +580,12 @@ MODULES/<nom_module>/
 }
 ```
 
-### 11.3 Règles
+### 12.4 Règles
 
+- **Création** : dès le 1er besoin réel (pas "au cas où")
+- **Endpoint** : tout module est accessible via API
+- **Catalogue** : toujours enregistrer dans `catalogue.json`
+- **Identifiant** : format `module_<slug>` (ex: `module_auth`)
 - **Agnostique** : pas de dépendance projet-spécifique
 - **Testable** : tests unitaires fournis
 - **Documenté** : README avec exemples
@@ -468,22 +593,22 @@ MODULES/<nom_module>/
 
 ---
 
-## 12. Application de ces standards
+## 13. Application de ces standards
 
-### 12.1 Avant de coder
+### 13.1 Avant de coder
 
 1. Lire BRIEF + CDC + SPECS
 2. Consulter ce fichier STANDARDS.md
 3. Vérifier si modules réutilisables existent
 4. Planifier structure fichiers
 
-### 12.2 Pendant le dev
+### 13.2 Pendant le dev
 
 - Appliquer standards au fur et à mesure
 - Commenter code complexe
 - Tester régulièrement
 
-### 12.3 Avant validation
+### 13.3 Avant validation
 
 - [ ] Code respecte tous les standards applicables
 - [ ] Tests passent
@@ -493,7 +618,7 @@ MODULES/<nom_module>/
 
 ---
 
-## 13. Évolutions
+## 14. Évolutions
 
 Ce fichier évolue avec l'expérience. Ajouter/modifier standards au fil des projets.
 

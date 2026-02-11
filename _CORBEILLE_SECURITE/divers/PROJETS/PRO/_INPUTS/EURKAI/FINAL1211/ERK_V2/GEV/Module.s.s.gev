@@ -1,0 +1,58 @@
+# ============================================================================
+# EURKAI Seed - Module
+# ============================================================================
+
+Object:Module:
+.name = "Module"
+
+Object:Module:TreeModule:
+.name = "TreeModule"
+.dataSource = "QUERY(GetAllObjects)"
+.recursive = true
+
+TreeModule IN CockpitTemplate.ModuleList
+TreeNodeTemplate IN TreeModule.TemplateList
+OnClickTreeNode IN TreeModule.ScriptList
+OnDragStart IN TreeModule.ScriptList
+OnDrop IN TreeModule.ScriptList
+
+Object:Module:FileListModule:
+.name = "FileListModule"
+.dataSource = "QUERY(GetGevFiles)"
+
+FileListModule IN CockpitTemplate.ModuleList
+FileItemTemplate IN FileListModule.TemplateList
+
+Object:Module:DetailModule:
+.name = "DetailModule"
+.dataSource = "SELECTED_OBJECT"
+
+DetailModule IN CockpitTemplate.ModuleList
+DetailHeaderTemplate IN DetailModule.TemplateList
+OnClickSource IN DetailModule.ScriptList
+
+Object:Module:AttributeListModule:
+.name = "AttributeListModule"
+.dataSource = "SELECTED_OBJECT.attributes"
+.showSource = true
+.editable = true
+
+AttributeListModule IN DetailModule.ModuleList
+AttributeRowTemplate IN AttributeListModule.TemplateList
+OnClickEditable IN AttributeListModule.ScriptList
+
+Object:Module:RelationListModule:
+.name = "RelationListModule"
+.dataSource = "QUERY(GetRelations)"
+.showSource = true
+
+RelationListModule IN DetailModule.ModuleList
+RelationRowTemplate IN RelationListModule.TemplateList
+
+Object:Module:ChildListModule:
+.name = "ChildListModule"
+.dataSource = "QUERY(GetChildren)"
+.showSource = true
+
+ChildListModule IN DetailModule.ModuleList
+ChildItemTemplate IN ChildListModule.TemplateList

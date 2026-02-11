@@ -1,0 +1,352 @@
+# ===========================================================================
+# COCKPIT TEMPLATE - Structure HTML principale
+# ===========================================================================
+
+UI:Template:CockpitTemplate:
+    .html = "{{content}}"
+
+# ---------------------------------------------------------------------------
+# HEADER
+# ---------------------------------------------------------------------------
+UI:Module:Header:
+    .html = "<div class=\"header\">
+    <div class=\"logo\" onclick=\"openHtmlPreview()\" title=\"Ouvrir en HTML\">EURKAI Cockpit</div>
+    <div class=\"tabs\">{{tabs}}</div>
+    <div class=\"header-actions\">
+      <button class=\"header-btn\" onclick=\"openHtmlPreview()\" title=\"Ouvrir dans le navigateur\">🌐 HTML</button>
+      <button class=\"header-btn\" onclick=\"refreshProject()\" title=\"Rafraîchir\">🔄</button>
+    </div>
+    <div class=\"project-info\">📁 <span class=\"name\">{{projectName}}</span></div>
+    <div class=\"version\">{{version}}</div>
+  </div>"
+    .projectName = "EURKAI"
+    .version = "v0.10.10"
+
+UI:Module:Tab:
+    .html = "<div class=\"tab{{#if active}} active{{/if}}\" data-tab=\"{{id}}\">{{icon}} {{label}}</div>"
+
+# Instances des tabs
+UI:Module:Tab:TabSchemas:
+    .id = "schemas"
+    .icon = "📐"
+    .label = "Schémas"
+
+UI:Module:Tab:TabInstances:
+    .id = "instances"
+    .icon = "📦"
+    .label = "Instances"
+
+UI:Module:Tab:TabAliases:
+    .id = "aliases"
+    .icon = "🏷"
+    .label = "Alias"
+
+UI:Module:Tab:TabWalker:
+    .id = "walker"
+    .icon = "🚶"
+    .label = "Walker"
+
+UI:Module:Tab:TabLibrary:
+    .id = "library"
+    .icon = "📚"
+    .label = "Library"
+    .active = true
+
+UI:Module:Tab:TabThemes:
+    .id = "themes"
+    .icon = "🎨"
+    .label = "Themes"
+
+UI:Module:Tab:TabConsole:
+    .id = "console"
+    .icon = "🖥"
+    .label = "Console"
+
+# Relations tabs
+TabSchemas IN Header.TabList
+TabInstances IN Header.TabList
+TabAliases IN Header.TabList
+TabWalker IN Header.TabList
+TabLibrary IN Header.TabList
+TabThemes IN Header.TabList
+TabConsole IN Header.TabList
+
+# ---------------------------------------------------------------------------
+# MAIN LAYOUT
+# ---------------------------------------------------------------------------
+UI:Module:Main:
+    .html = "<div class=\"main\">{{content}}</div>"
+
+# ---------------------------------------------------------------------------
+# SIDEBAR
+# ---------------------------------------------------------------------------
+UI:Module:Sidebar:
+    .html = "<div class=\"sidebar\" id=\"sidebar\">
+      <div class=\"sidebar-header\">
+        <span class=\"sidebar-title\">Types</span>
+        <span class=\"object-count\">{{objectCount}}</span>
+      </div>
+      <div class=\"search\">
+        <input type=\"text\" id=\"searchInput\" placeholder=\"Rechercher...\">
+      </div>
+      <div class=\"tree\" id=\"tree\"></div>
+      <div class=\"resizer\" id=\"resizer\"></div>
+    </div>"
+    .objectCount = "0"
+
+# ---------------------------------------------------------------------------
+# CONTENT
+# ---------------------------------------------------------------------------
+UI:Module:Content:
+    .html = "<div class=\"content\">{{panels}}</div>"
+
+# ---------------------------------------------------------------------------
+# PANEL SCHEMAS
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelSchemas:
+    .id = "schemas"
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <div class=\"stats\">
+        <div class=\"stat\"><div class=\"stat-value\">{{typeCount}}</div><div class=\"stat-label\">Types</div></div>
+        <div class=\"stat\"><div class=\"stat-value\">{{vectorCount}}</div><div class=\"stat-label\">Vecteurs</div></div>
+        <div class=\"stat\"><div class=\"stat-value\">{{aliasCount}}</div><div class=\"stat-label\">Alias</div></div>
+      </div>
+      <div class=\"object-detail\" id=\"objectDetail\">
+        <p class=\"empty\">Sélectionnez un type dans l'arbre</p>
+      </div>
+    </div>"
+    .typeCount = "0"
+    .vectorCount = "0"
+    .aliasCount = "0"
+
+# ---------------------------------------------------------------------------
+# PANEL INSTANCES
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelInstances:
+    .id = "instances"
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <h2 style=\"color:#569cd6;margin-bottom:20px;\">📦 Instances</h2>
+      <p class=\"empty\">Panel instances</p>
+    </div>"
+
+# ---------------------------------------------------------------------------
+# PANEL ALIASES
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelAliases:
+    .id = "aliases"
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <h2 style=\"color:#569cd6;margin-bottom:20px;\">🏷 Alias</h2>
+      <div style=\"display:grid;grid-template-columns:1fr 1fr;gap:20px;\">
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#4ec9b0;margin-bottom:16px;\">➕ Créer un Alias</h3>
+          <div class=\"form-group\">
+            <label>Nom (@alias)</label>
+            <input type=\"text\" id=\"aliasName\" class=\"form-input\" placeholder=\"@MonAlias\">
+          </div>
+          <div class=\"form-group\">
+            <label>Cible (lineage)</label>
+            <input type=\"text\" id=\"aliasTarget\" class=\"form-input\" placeholder=\"Object:Method:Walk\">
+          </div>
+          <div class=\"form-group\">
+            <label>Query (optionnel)</label>
+            <input type=\"text\" id=\"aliasQuery\" class=\"form-input\" placeholder=\".type == 'Method'\">
+          </div>
+          <button class=\"btn-primary\" onclick=\"createAlias()\">Créer</button>
+        </div>
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#dcdcaa;margin-bottom:16px;\">📋 Alias existants</h3>
+          <div id=\"aliasList\">{{aliasListContent}}</div>
+        </div>
+      </div>
+    </div>"
+    .aliasListContent = "<p class=\"empty\">Aucun alias</p>"
+
+# ---------------------------------------------------------------------------
+# PANEL WALKER
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelWalker:
+    .id = "walker"
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <div class=\"walker-config\">
+        <h3 style=\"color:#4ec9b0;margin-bottom:16px;\">📦 Configuration</h3>
+        <div style=\"display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;\">
+          <div class=\"form-group\">
+            <label>Objet (point d'entrée)</label>
+            <input type=\"text\" id=\"walkerDict\" class=\"form-input\" list=\"objectList\" placeholder=\"Object:Element:Body\" value=\"Object\">
+            <datalist id=\"objectList\">{{objectOptions}}</datalist>
+          </div>
+          <div class=\"form-group\">
+            <label>Scénario (scan)</label>
+            <div style=\"display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;\">
+              <label style=\"display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;\">
+                <input type=\"radio\" name=\"walkerScan\" value=\"pass\" checked> pass
+              </label>
+              <label style=\"display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;\">
+                <input type=\"radio\" name=\"walkerScan\" value=\"ghost\"> ghost
+              </label>
+              <label style=\"display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;background:#1e1e1e;border-radius:4px;border:1px solid #3c3c3c;\">
+                <input type=\"radio\" name=\"walkerScan\" value=\"other\"> autre...
+              </label>
+            </div>
+            <div id=\"customScanGroup\" style=\"display:none;margin-top:8px;\">
+              <input type=\"text\" id=\"walkerCustomScan\" class=\"form-input\" placeholder=\"nom du scan\">
+            </div>
+          </div>
+          <div class=\"form-group\">
+            <label>Direction</label>
+            <select id=\"walkerDirection\" class=\"form-input\">
+              <option value=\"down\">⬇️ Descendants</option>
+              <option value=\"up\">⬆️ Ancêtres</option>
+              <option value=\"both\">↕️ Les deux</option>
+            </select>
+          </div>
+        </div>
+        <div style=\"display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:8px;\">
+          <div class=\"form-group\">
+            <label>Profondeur (-1 = infini)</label>
+            <input type=\"number\" id=\"walkerDepth\" class=\"form-input\" value=\"-1\" min=\"-1\">
+          </div>
+          <div class=\"form-group\">
+            <label>Sortie</label>
+            <select id=\"walkerOutput\" class=\"form-input\">
+              <option value=\"list\">📋 Liste</option>
+              <option value=\"tree\">🌳 Arbre</option>
+              <option value=\"flat\">📄 Flat</option>
+            </select>
+          </div>
+          <div class=\"form-group\" style=\"display:flex;align-items:flex-end;\">
+            <button class=\"btn-primary\" onclick=\"runWalker('walk')\" style=\"flex:1;\">🚀 Walk</button>
+          </div>
+        </div>
+      </div>
+      <div style=\"background:#1e1e1e;padding:12px;border-radius:4px;margin-bottom:12px;\">
+        <div style=\"color:#808080;font-size:11px;margin-bottom:4px;\">RÉSUMÉ RAPIDE</div>
+        <div id=\"walkerQuickStats\" style=\"display:flex;gap:12px;flex-wrap:wrap;\">
+          <span style=\"color:#4ec9b0;\">--</span>
+        </div>
+      </div>
+      <div id=\"walkerResult\"></div>
+    </div>"
+    .objectOptions = ""
+
+# ---------------------------------------------------------------------------
+# PANEL LIBRARY
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelLibrary:
+    .id = "library"
+    .active = true
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <h2 style=\"color:#569cd6;margin-bottom:20px;\">📚 Librairie EURKAI</h2>
+      <div class=\"accordion\" id=\"libraryAccordion\">{{libraryContent}}</div>
+    </div>"
+    .libraryContent = ""
+
+# ---------------------------------------------------------------------------
+# PANEL THEMES
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelThemes:
+    .id = "themes"
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <h2 style=\"color:#569cd6;margin-bottom:20px;\">🎨 Themes & Templates</h2>
+      <div style=\"display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;\">
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#4ec9b0;margin-bottom:16px;\">📄 Fichiers HTML ({{htmlFileCount}})</h3>
+          <div style=\"max-height:200px;overflow-y:auto;\">{{htmlFiles}}</div>
+        </div>
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#dcdcaa;margin-bottom:16px;\">🚀 Déployer Website</h3>
+          <div class=\"form-group\">
+            <label>Website</label>
+            <select id=\"websiteSelect\" class=\"form-input\">
+              <option value=\"\">-- Sélectionner --</option>
+              {{websiteOptions}}
+            </select>
+          </div>
+          <button class=\"btn-primary\" onclick=\"deployWebsite()\" style=\"margin-top:12px;width:100%;\">🚀 Déployer</button>
+          <div id=\"deployResult\" style=\"margin-top:12px;\"></div>
+        </div>
+      </div>
+      <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+        <h3 style=\"color:#c586c0;margin-bottom:16px;\">🌐 Websites ({{websiteCount}})</h3>
+        <div style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;\">{{websiteList}}</div>
+      </div>
+    </div>"
+    .htmlFileCount = "0"
+    .htmlFiles = "<p class=\"empty\">Aucun fichier HTML</p>"
+    .websiteCount = "0"
+    .websiteList = "<p class=\"empty\">Aucun Website</p>"
+    .websiteOptions = ""
+
+# ---------------------------------------------------------------------------
+# PANEL CONSOLE
+# ---------------------------------------------------------------------------
+UI:Module:Panel:PanelConsole:
+    .id = "console"
+    .html = "<div class=\"tab-panel{{#if active}} active{{/if}}\" id=\"panel-{{id}}\">
+      <h2 style=\"color:#569cd6;margin-bottom:20px;\">🖥 Console</h2>
+      <div style=\"display:grid;grid-template-columns:1fr 1fr;gap:20px;\">
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#4ec9b0;margin-bottom:16px;\">🔍 Query</h3>
+          <div class=\"form-group\">
+            <label>Pattern (lineage, V_, @alias, regex)</label>
+            <input type=\"text\" id=\"queryInput\" class=\"form-input\" placeholder=\"Object:Method:* | V_* | @Walker\">
+          </div>
+          <button class=\"btn-primary\" onclick=\"runQuery()\" style=\"margin-top:8px;\">Exécuter</button>
+          <div id=\"queryResult\" style=\"margin-top:16px;max-height:300px;overflow-y:auto;\"></div>
+        </div>
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#dcdcaa;margin-bottom:16px;\">✅ Test Règle</h3>
+          <div class=\"form-group\">
+            <label>Cible (lineage, V_, @alias)</label>
+            <input type=\"text\" id=\"ruleTarget\" class=\"form-input\" placeholder=\"Object:Method:Walk\">
+          </div>
+          <div class=\"form-group\">
+            <label>Règle (ERK expression)</label>
+            <input type=\"text\" id=\"ruleExpr\" class=\"form-input\" placeholder=\".name HAS | .scan == 'pass'\">
+          </div>
+          <button class=\"btn-secondary\" onclick=\"testRule()\" style=\"margin-top:8px;\">Tester</button>
+          <div id=\"ruleResult\" style=\"margin-top:16px;font-size:24px;font-weight:bold;\"></div>
+        </div>
+      </div>
+      <div style=\"display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;\">
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#c586c0;margin-bottom:16px;\">📝 Résoudre</h3>
+          <div style=\"display:flex;gap:12px;\">
+            <input type=\"text\" id=\"resolveInput\" class=\"form-input\" placeholder=\"V_ObjectName | @Walker\" style=\"flex:1;\">
+            <button class=\"btn-primary\" onclick=\"resolveValue()\">Résoudre</button>
+          </div>
+          <div id=\"resolveResult\" style=\"margin-top:16px;padding:12px;background:#1e1e1e;border-radius:4px;font-family:monospace;max-height:300px;overflow-y:auto;\"></div>
+        </div>
+        <div style=\"background:#252526;padding:20px;border-radius:4px;border:1px solid #3c3c3c;\">
+          <h3 style=\"color:#6a9955;margin-bottom:16px;\">🧮 ERK Eval</h3>
+          <div class=\"form-group\">
+            <label>Expression ERK</label>
+            <input type=\"text\" id=\"erkExpr\" class=\"form-input\" placeholder=\"AND(true, false) | IF(5 > 3, 'yes', 'no')\">
+          </div>
+          <div class=\"form-group\">
+            <label>Contexte JSON (optionnel)</label>
+            <input type=\"text\" id=\"erkContext\" class=\"form-input\" placeholder='{\"x\": 5}'>
+          </div>
+          <button class=\"btn-secondary\" onclick=\"evalErk()\" style=\"margin-top:8px;\">Évaluer</button>
+          <div id=\"erkResult\" style=\"margin-top:16px;padding:12px;background:#1e1e1e;border-radius:4px;font-family:monospace;\"></div>
+        </div>
+      </div>
+    </div>"
+
+# ---------------------------------------------------------------------------
+# COMPOSITION
+# ---------------------------------------------------------------------------
+Header IN CockpitTemplate.ModuleList
+Main IN CockpitTemplate.ModuleList
+
+Sidebar IN Main.ModuleList
+Content IN Main.ModuleList
+
+PanelSchemas IN Content.PanelList
+PanelInstances IN Content.PanelList
+PanelAliases IN Content.PanelList
+PanelWalker IN Content.PanelList
+PanelLibrary IN Content.PanelList
+PanelThemes IN Content.PanelList
+PanelConsole IN Content.PanelList
+

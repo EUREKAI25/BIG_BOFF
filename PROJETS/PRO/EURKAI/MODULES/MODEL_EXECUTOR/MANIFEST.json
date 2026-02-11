@@ -1,0 +1,40 @@
+{
+  "ident": "module_model_executor",
+  "name": "model_executor",
+  "description": "Interface universelle pour appeler n'importe quel modèle IA (text2text, text2img, img2video, etc.) avec une méthode unique model_execute()",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "endpoint": "/api/model/execute",
+  "manifest": "MODULES/MODEL_EXECUTOR/MANIFEST.json",
+  "dependencies": [],
+  "inputs": {
+    "model_type": "Type de modèle (text2text, text2img, img2text, img2video, text2audio)",
+    "prompt": "Prompt ou instruction pour le modèle",
+    "data": "Données complémentaires (image, video, paramètres)",
+    "provider": "Provider spécifique (optionnel, override config)"
+  },
+  "outputs": {
+    "result": "Résultat du modèle (texte, URL image, URL vidéo, etc.)",
+    "metadata": "Métadonnées (coût, temps, tokens, etc.)"
+  },
+  "providers": [
+    "openai",
+    "anthropic",
+    "replicate",
+    "minimax",
+    "elevenlabs",
+    "gemini",
+    "runway",
+    "fal"
+  ],
+  "model_types": [
+    "text2text",
+    "text2img",
+    "img2text",
+    "img2video",
+    "text2audio",
+    "text2video",
+    "audio2text",
+    "img2img"
+  ]
+}

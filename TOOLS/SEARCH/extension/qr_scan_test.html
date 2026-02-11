@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIG_BOFF - Scan QR Partage</title>
+    <link rel="stylesheet" href="fa/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        #qr-reader {
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 3px solid #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 0;
+        }
+
+        #start-scan {
+            background: #4CAF50;
+            color: white;
+        }
+
+        #start-scan:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        #start-scan:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #stop-scan {
+            background: #f44336;
+            color: white;
+            display: none;
+        }
+
+        #stop-scan:hover {
+            background: #da190b;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box i {
+            color: #2196F3;
+            margin-right: 8px;
+        }
+
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.scanning {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <i class="fa-solid fa-qrcode"></i>
+            Scanner QR Partage
+        </h1>
+        <p class="subtitle">BIG_BOFF Search — Phase 4 P2P</p>
+
+        <div class="info-box">
+            <i class="fa-solid fa-info-circle"></i>
+            <strong>Comment ça marche :</strong><br>
+            1. Cliquez sur "Démarrer le scan"<br>
+            2. Autorisez l'accès à la caméra<br>
+            3. Pointez vers un QR code de partage<br>
+            4. Acceptez ou refusez le partage
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="qr-reader" style="display:none;"></div>
+
+        <button id="start-scan">
+            <i class="fa-solid fa-camera"></i>
+            Démarrer le scan
+        </button>
+
+        <button id="stop-scan">
+            <i class="fa-solid fa-stop"></i>
+            Arrêter le scan
+        </button>
+    </div>
+
+    <!-- html5-qrcode library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- QR Scanner module -->
+    <script src="qr_scanner.js"></script>
+
+    <script>
+        const scanner = new QRScanner();
+        const startBtn = document.getElementById('start-scan');
+        const stopBtn = document.getElementById('stop-scan');
+        const readerDiv = document.getElementById('qr-reader');
+        const statusDiv = document.getElementById('status');
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+        }
+
+        startBtn.addEventListener('click', async () => {
+            readerDiv.style.display = 'block';
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            showStatus('🔍 Scan en cours... Pointez vers un QR code', 'scanning');
+
+            await scanner.start(
+                'qr-reader',
+                (shareData) => {
+                    // Succès
+                    showStatus('✅ QR code détecté !', 'success');
+                    readerDiv.style.display = 'none';
+                    stopBtn.style.display = 'none';
+                    startBtn.style.display = 'block';
+
+                    // Afficher preview
+                    showSharePreview(
+                        shareData,
+                        (data) => {
+                            // Accept
+                            acceptShare(data);
+                            showStatus('✅ Partage accepté !', 'success');
+                            setTimeout(() => {
+                                statusDiv.style.display = 'none';
+                            }, 3000);
+                        },
+                        () => {
+                            // Refuse
+                            showStatus('❌ Partage refusé', 'error');
+                            setTimeout(() => {
+                                statusDiv.style.display = 'none';
+                            }, 3000);
+                        }
+                    );
+                },
+                (error) => {
+                    // Erreur
+                    console.error('Erreur scan:', error);
+                    showStatus('❌ ' + error.message, 'error');
+                    readerDiv.style.display = 'none';
+                    stopBtn.style.display = 'none';
+                    startBtn.style.display = 'block';
+                }
+            );
+        });
+
+        stopBtn.addEventListener('click', async () => {
+            await scanner.stop();
+            readerDiv.style.display = 'none';
+            stopBtn.style.display = 'none';
+            startBtn.style.display = 'block';
+            showStatus('⏸️ Scan arrêté', 'error');
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -263,6 +263,83 @@ def setup_database(db_path: str = None):
     """)
     tables_created.append("favorites")
 
+    # ────────────────────────────────────────────────────────────
+    # Table permissions (Phase 3 - Partage P2P)
+    # ────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS permissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            owner_user_id TEXT NOT NULL,
+            target_user_id TEXT,
+            target_group_id TEXT,
+            scope_type TEXT NOT NULL,
+            scope_value TEXT,
+            mode TEXT DEFAULT 'consultation',
+            permissions TEXT DEFAULT '["read"]',
+            granted_at TEXT,
+            revoked_at TEXT,
+            UNIQUE(owner_user_id, target_user_id, scope_type, scope_value)
+        )
+    """)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_permissions_owner ON permissions(owner_user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_permissions_target ON permissions(target_user_id)")
+    tables_created.append("permissions")
+
+    # ────────────────────────────────────────────────────────────
+    # Table groups (Phase 7 - Groupes)
+    # ────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS groups (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            owner_user_id TEXT NOT NULL,
+            created_at TEXT
+        )
+    """)
+    tables_created.append("groups")
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS group_members (
+            group_id TEXT,
+            user_id TEXT,
+            role TEXT DEFAULT 'member',
+            joined_at TEXT,
+            UNIQUE(group_id, user_id)
+        )
+    """)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_group_members_group ON group_members(group_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_group_members_user ON group_members(user_id)")
+    tables_created.append("group_members")
+
+    # ────────────────────────────────────────────────────────────
+    # Migration Phase 5 : Ajouter source_user_id
+    # ────────────────────────────────────────────────────────────
+    tables_to_migrate = ["items", "contacts", "lieux", "events"]
+
+    for table in tables_to_migrate:
+        try:
+            c.execute(f"ALTER TABLE {table} ADD COLUMN source_user_id TEXT DEFAULT NULL")
+            print(f"✅ Colonne source_user_id ajoutée à {table}")
+        except sqlite3.OperationalError:
+            # Colonne déjà existante
+            pass
+
+        # Index pour filtrage efficace
+        c.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_source ON {table}(source_user_id)")
+
+    # ────────────────────────────────────────────────────────────
+    # Migration Phase 6 : Ajouter is_shared_copy
+    # ────────────────────────────────────────────────────────────
+    try:
+        c.execute("ALTER TABLE items ADD COLUMN is_shared_copy INTEGER DEFAULT 0")
+        print("✅ Colonne is_shared_copy ajoutée à items")
+    except sqlite3.OperationalError:
+        # Colonne déjà existante
+        pass
+
+    # Index pour filtrage partage vs local
+    c.execute("CREATE INDEX IF NOT EXISTS idx_items_shared ON items(is_shared_copy)")
+
     conn.commit()
     conn.close()
 

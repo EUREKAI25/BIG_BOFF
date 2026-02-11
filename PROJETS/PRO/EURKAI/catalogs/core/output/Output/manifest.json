@@ -1,0 +1,52 @@
+{
+  "ident": "core.output.Output",
+  "type": "Object:Core:Output",
+  "extends": "Object",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "description": "Output générique - tout résultat d'exécution (function, method, model, scenario)",
+
+  "attributes": {
+    "ident": {
+      "type": "string",
+      "required": true,
+      "description": "Identifiant unique de l'output"
+    },
+    "created_at": {
+      "type": "datetime",
+      "required": true,
+      "description": "Date de création"
+    },
+    "version": {
+      "type": "string",
+      "required": true,
+      "description": "Version de l'objet"
+    },
+    "result": {
+      "type": "any",
+      "required": true,
+      "description": "Résultat concret (texte, URL, données structurées)"
+    },
+    "price": {
+      "type": "float",
+      "required": true,
+      "description": "Coût en USD de la génération"
+    },
+    "duration_seconds": {
+      "type": "float",
+      "required": true,
+      "description": "Durée d'exécution en secondes"
+    }
+  },
+
+  "methods": {
+    "validate": {
+      "description": "Valide la structure de l'output",
+      "returns": "boolean"
+    },
+    "serialize": {
+      "description": "Sérialise l'output en JSON",
+      "returns": "string"
+    }
+  }
+}

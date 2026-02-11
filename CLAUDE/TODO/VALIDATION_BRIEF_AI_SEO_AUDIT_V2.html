@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation BRIEF — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+        .content { padding: 40px; }
+        .brief-info { background: #f7fafc; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 30px; border-radius: 6px; }
+        .brief-info h2 { color: #2d3748; font-size: 20px; margin-bottom: 15px; }
+        .brief-info ul { list-style: none; padding-left: 0; }
+        .brief-info li { padding: 8px 0; color: #4a5568; }
+        .brief-info li strong { color: #2d3748; display: inline-block; min-width: 200px; }
+        .question-block { margin-bottom: 35px; padding: 25px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .question-block h3 { color: #2d3748; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; }
+        .question-block h3 .tag { background: #667eea; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 10px; text-transform: uppercase; }
+        .option { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
+        .option input[type="radio"] { margin-right: 12px; cursor: pointer; }
+        .option label { cursor: pointer; display: block; padding-left: 28px; position: relative; }
+        .option label strong { color: #2d3748; display: block; margin-bottom: 5px; }
+        .option label .description { color: #718096; font-size: 14px; line-height: 1.5; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+        textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 100px; margin-top: 10px; }
+        textarea:focus { outline: none; border-color: #667eea; }
+        .actions { display: flex; gap: 15px; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e2e8f0; }
+        .btn { flex: 1; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-secondary { background: white; color: #667eea; border: 2px solid #667eea; }
+        .btn-secondary:hover { background: #f0f4ff; }
+        .result { display: none; padding: 30px; background: #f0fff4; border: 2px solid #9ae6b4; border-radius: 8px; margin-top: 30px; }
+        .result h3 { color: #2f855a; margin-bottom: 15px; }
+        .result .success-message { font-size: 16px; color: #2f855a; margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; }
+        .result button { background: #2f855a; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .result button:hover { background: #276749; }
+        .required-warning { display: none; padding: 15px; background: #fff5f5; border: 2px solid #fc8181; border-radius: 6px; color: #c53030; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Validation BRIEF</h1>
+            <p>AI_SEO_AUDIT — Référencement pour intelligences artificielles</p>
+        </div>
+
+        <div class="content">
+            <div class="brief-info">
+                <h2>📄 Résumé du BRIEF</h2>
+                <ul>
+                    <li><strong>Projet :</strong> AI_SEO_AUDIT</li>
+                    <li><strong>Objectif :</strong> Service d'audit et optimisation de la visibilité des entreprises dans les réponses IA</li>
+                    <li><strong>Scope :</strong> Audit automatisé multi-IA → Diagnostic → Solutions prêtes à intégrer</li>
+                    <li><strong>Stack envisagée :</strong> Python + Flask/FastAPI + PostgreSQL + Redis</li>
+                    <li><strong>Durée estimée MVP :</strong> 2-3 jours (mono-IA) ou 1 semaine (multi-IA)</li>
+                    <li><strong>Prix envisagé :</strong> 49-99€ par audit</li>
+                </ul>
+            </div>
+
+            <form id="validationForm">
+                <div class="required-warning" id="requiredWarning">
+                    ⚠️ Merci de répondre à toutes les questions avant de valider.
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Nom</span> Nom du projet : AI_SEO_AUDIT ou autre ?</h3>
+                    <div class="option"><input type="radio" name="q1" id="q1a" value="AI_SEO_AUDIT"><label for="q1a"><strong>AI_SEO_AUDIT (Recommandé)</strong><span class="description">Nom descriptif et explicite, conforme à la convention UPPERCASE_SNAKE_CASE.</span></label></div>
+                    <div class="option"><input type="radio" name="q1" id="q1b" value="autre"><label for="q1b"><strong>Autre nom</strong><span class="description">Tu préfères un autre nom, à préciser dans le champ texte ci-dessous.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Scope MVP</span> Commencer par mono-IA ou multi-IA d'emblée ?</h3>
+                    <div class="option"><input type="radio" name="q2" id="q2a" value="mono"><label for="q2a"><strong>Mono-IA (ChatGPT) — MVP rapide (Recommandé)</strong><span class="description">MVP en 2-3 jours, test du concept avec 1 seule IA. Plus rapide pour valider l'approche avant d'investir dans le multi-IA.</span></label></div>
+                    <div class="option"><input type="radio" name="q2" id="q2b" value="multi"><label for="q2b"><strong>Multi-IA d'emblée (ChatGPT + Claude + Gemini)</strong><span class="description">MVP plus complet dès le départ (1 semaine), valeur ajoutée immédiate avec comparaison inter-IA. Plus long mais plus convaincant.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Stack tech</span> Stack technique : Python/Flask/PostgreSQL ou autre ?</h3>
+                    <div class="option"><input type="radio" name="q3" id="q3a" value="python_flask"><label for="q3a"><strong>Python + Flask/FastAPI + PostgreSQL + Redis (Recommandé)</strong><span class="description">Stack robuste, scalable, conforme aux projets EURKAI existants (BIG_BOFF Search, Pipeline).</span></label></div>
+                    <div class="option"><input type="radio" name="q3" id="q3b" value="autre_stack"><label for="q3b"><strong>Autre stack</strong><span class="description">Tu préfères une autre stack technique, à préciser dans le champ texte.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Précisions</span> Ajustements, questions ou précisions ?</h3>
+                    <textarea id="comments" name="comments" placeholder="Précise ici tout ce que tu veux ajuster, modifier ou clarifier..."></textarea>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Validation</span> Avec ces choix, valides-tu ce BRIEF pour passer à l'étape suivante ?</h3>
+                    <div class="option"><input type="radio" name="q4" id="q4a" value="valider"><label for="q4a"><strong>✅ Valider — Tout est OK, on passe au CDC</strong><span class="description">Le brief est clair et complet avec ces paramètres. Claude crée le projet structuré et passe à l'étape CDC (Cahier des Charges).</span></label></div>
+                    <div class="option"><input type="radio" name="q4" id="q4b" value="ajuster"><label for="q4b"><strong>🔄 Ajuster — Brief OK mais quelques modifications</strong><span class="description">Le brief est bon dans l'ensemble, mais tu veux préciser ou modifier certains points (voir champ précisions).</span></label></div>
+                    <div class="option"><input type="radio" name="q4" id="q4c" value="revoir"><label for="q4c"><strong>❌ Revoir — Brief à refaire</strong><span class="description">Le brief ne correspond pas à ta vision ou manque d'éléments importants. Claude doit le refaire.</span></label></div>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">🔄 Réinitialiser</button>
+                    <button type="submit" class="btn btn-primary">✅ Valider et enregistrer</button>
+                </div>
+            </form>
+
+            <div class="result" id="result">
+                <h3>✅ Validation enregistrée !</h3>
+                <div class="success-message">
+                    Tes réponses ont été enregistrées dans <code>/tmp/claude_validation_AI_SEO_AUDIT.json</code><br>
+                    <strong>Claude va automatiquement détecter cette validation et continuer le processus.</strong>
+                </div>
+                <button onclick="window.close()">Fermer cette fenêtre</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                const groupName = radio.name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                    r.closest('.option').classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('validationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            const q4 = document.querySelector('input[name="q4"]:checked');
+
+            if (!q1 || !q2 || !q3 || !q4) {
+                document.getElementById('requiredWarning').style.display = 'block';
+                document.getElementById('requiredWarning').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            document.getElementById('requiredWarning').style.display = 'none';
+
+            const comments = document.getElementById('comments').value;
+            const validationData = {
+                type: "brief",
+                project: "AI_SEO_AUDIT",
+                responses: {
+                    nom_projet: q1.value,
+                    scope_mvp: q2.value,
+                    stack_technique: q3.value,
+                    validation_globale: q4.value,
+                    precisions: comments
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            // Envoyer au serveur local
+            try {
+                const response = await fetch('http://127.0.0.1:7777/api/validation/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(validationData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    // Serveur répond mais endpoint pas disponible → fallback téléchargement
+                    throw new Error('Endpoint non disponible');
+                }
+            } catch (error) {
+                // Fallback : télécharger le JSON pour placement manuel
+                const jsonBlob = new Blob([JSON.stringify(validationData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(jsonBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'claude_validation_AI_SEO_AUDIT.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                alert('✅ Validation enregistrée !\n\nLe fichier JSON a été téléchargé.\nPlace-le dans /tmp/claude_validation_AI_SEO_AUDIT.json\n\nClaude détectera automatiquement la validation et continuera le processus.');
+            }
+        });
+    </script>
+</body>
+</html>

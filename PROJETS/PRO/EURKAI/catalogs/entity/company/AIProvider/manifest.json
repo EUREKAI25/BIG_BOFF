@@ -1,0 +1,73 @@
+{
+  "ident": "entity.company.AIProvider",
+  "type": "Object:Entity:Company:AIProvider",
+  "extends": "Object:Entity:Company",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "description": "Provider de modèles IA (OpenAI, Anthropic, Replicate, etc.)",
+
+  "attributes": {
+    "ident": {
+      "type": "string",
+      "required": true,
+      "description": "Identifiant provider (ex: openai, anthropic)"
+    },
+    "created_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "version": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Nom commercial (ex: OpenAI, Anthropic)"
+    },
+    "api_key_env": {
+      "type": "string",
+      "required": true,
+      "description": "Nom de la variable d'environnement contenant l'API key"
+    },
+    "base_url": {
+      "type": "string",
+      "required": true,
+      "description": "URL de base de l'API"
+    },
+    "models": {
+      "type": "array<Object:Core:Model>",
+      "required": true,
+      "description": "Liste des modèles disponibles chez ce provider"
+    },
+    "rate_limits": {
+      "type": "object",
+      "required": false,
+      "schema": {
+        "requests_per_minute": "integer",
+        "tokens_per_minute": "integer"
+      }
+    }
+  },
+
+  "methods": {
+    "validate_api_key": {
+      "description": "Vérifie la validité de l'API key",
+      "returns": "boolean"
+    },
+    "get_model": {
+      "description": "Récupère un modèle par identifiant",
+      "parameters": {
+        "model_ident": "string"
+      },
+      "returns": "Object:Core:Model"
+    },
+    "list_models": {
+      "description": "Liste tous les modèles disponibles",
+      "parameters": {
+        "model_type": "string (optional)"
+      },
+      "returns": "array<Object:Core:Model>"
+    }
+  }
+}

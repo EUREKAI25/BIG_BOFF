@@ -1,0 +1,52 @@
+{
+  "ident": "core.model.ImageToVideoModel",
+  "type": "Object:Core:Model:ImageToVideoModel",
+  "extends": "Object:Core:Model",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "description": "Modèle de génération vidéo depuis image",
+
+  "attributes_override": {
+    "model_type": {
+      "type": "string",
+      "required": true,
+      "fixed": "img2video",
+      "description": "Type fixé à img2video"
+    },
+    "output": {
+      "type": "Object:Core:Output",
+      "description": "Output avec result.video_url",
+      "schema": {
+        "result": {
+          "video_url": "string",
+          "duration_seconds": "integer",
+          "width": "integer",
+          "height": "integer",
+          "fps": "integer"
+        },
+        "token_amount": null
+      }
+    },
+    "default_duration": {
+      "type": "integer",
+      "required": false,
+      "default": 6,
+      "description": "Durée par défaut en secondes"
+    }
+  },
+
+  "methods_override": {
+    "execute": {
+      "description": "Génère une vidéo depuis une image + prompt",
+      "parameters": {
+        "prompt": "string",
+        "data": {
+          "image_url": "string (required)",
+          "duration": "integer (optional)",
+          "fps": "integer (optional)"
+        }
+      },
+      "returns": "Object:Core:Output (avec video_url)"
+    }
+  }
+}

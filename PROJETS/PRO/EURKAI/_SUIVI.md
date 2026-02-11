@@ -4,17 +4,31 @@
 
 **Statut** : 🟢 actif — construction progressive, approche pragmatique
 **Créé** : 2026-02-10 (refonte complète, ancien historique dans ARCHIVES/)
-**Dernière MAJ** : 2026-02-10
+**Dernière MAJ** : 2026-02-10 19:00
 
 ---
 
 ## Vision
 
-EURKAI est un écosystème entièrement autonome, capable de s'auto-évaluer et de s'auto-optimiser. Il repose sur une architecture **fractale** : la même structure orchestrateur/agents/validator se répète à toutes les échelles (projet, étape, tâche, action).
+EURKAI est un écosystème entièrement autonome, capable de s'auto-évaluer et de s'auto-optimiser.
 
-À terme, le système sera full dynamique avec un langage propriétaire simplifiant le développement pour les IA comme pour les humains.
+### Architecture fondamentale
 
-**Philosophie** : construction par le bas, modularité maximale, amélioration continue.
+**TOUT est objet** : `env`, `function`, `method`, `class`, `module`, `scenario`, `user`, `facture`...
+
+**Principes EURKAI** :
+1. **Atome = function** (fait UNE chose, réutilisable)
+2. **Method = import function** (flexibilité totale)
+3. **Scenario = orchestration** (articule methods, ne fait rien lui-même)
+4. **Toute method est scenario** (même si n'appelle qu'une function)
+5. **Héritage universel** : tout hérite d'`Object` (ident, created_at, version, validate(), test())
+6. **Injection dynamique** : methods transversales injectées selon contexte
+
+**Architecture fractale** : la même structure orchestrateur/agents/validator se répète à toutes les échelles (projet, étape, tâche, action).
+
+À terme, le système sera **full dynamique** avec un **langage propriétaire** simplifiant le développement pour les IA comme pour les humains.
+
+**Philosophie** : construction par le bas, modularité maximale, amélioration continue, apprentissage pas à pas.
 
 ---
 
@@ -225,16 +239,25 @@ Voir [`CLAUDE/PROCESS.md`](../../../CLAUDE/PROCESS.md) pour le détail complet.
 
 ## Décisions
 
-- **2026-02-10** : Refonte complète EURKAI, approche pragmatique pas à pas
+- **2026-02-10 19:00** : Architecture orientée objet universelle documentée (TOUT est objet)
+- **2026-02-10 19:00** : Validation objets/héritage via formulaire GitHub Pages (étape SPECS)
+- **2026-02-10 19:00** : Règles EURKAI formalisées (atome=function, method=import, scenario=orchestration)
+- **2026-02-10 18:45** : TIP_CALCULATOR déployé — premier projet complet A→Z ✅
+- **2026-02-10 18:30** : PROCESS.md + STANDARDS.md créés (règles standardisées)
+- **2026-02-10 17:00** : Refonte complète EURKAI, approche pragmatique pas à pas
 - **2026-02-10** : Workflow manuel optimisé d'abord, automatisation ensuite
 - **2026-02-10** : Sonnet par défaut pour minimiser coût quota
 - **2026-02-10** : Structure fractale dès le début, même si simple
 - **2026-02-10** : Modules standalone prioritaires (construction par le bas)
+- **2026-02-10** : Apprentissage pas à pas (règles révélées au fil des projets, pas tout d'un coup)
 
 ---
 
 ## Historique
 
-- **2026-02-10** : Création nouveau EURKAI propre, ancien archivé dans `ARCHIVES/EURKAI_HISTORIQUE/`
-- **2026-02-10** : Documentation vision complète, architecture fractale, approche progressive
-- **2026-02-10** : Premier projet test TIP_CALCULATOR lancé avec workflow optimisé
+- **2026-02-10 19:00** : Architecture orientée objet EURKAI formalisée (atome/method/scenario/injection)
+- **2026-02-10 18:45** : TIP_CALCULATOR déployé en production — https://eurekai25.github.io/tip-calculator/
+- **2026-02-10 18:30** : PROCESS.md + STANDARDS.md créés, catalogue modules initialisé
+- **2026-02-10 17:00** : Création nouveau EURKAI propre, ancien archivé dans `ARCHIVES/EURKAI_HISTORIQUE/`
+- **2026-02-10 17:00** : Documentation vision complète, architecture fractale, approche progressive
+- **2026-02-10 17:00** : Premier projet test TIP_CALCULATOR lancé avec workflow optimisé

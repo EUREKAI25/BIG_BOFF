@@ -179,12 +179,15 @@ Voir [_SUIVI.md](_SUIVI.md)
 
 1. Export conversation ChatGPT → `CLAUDE/TODO/<nom>.json`
 2. Claude lit l'idée et produit `BRIEF_<NOM>.md` dans TODO/
-3. **Validation Nathalie via formulaire** :
-   - Claude utilise `AskUserQuestion` pour soumettre le BRIEF
+3. **Validation Nathalie via formulaire HTML** :
+   - Claude crée `VALIDATION_BRIEF_<NOM>.html` dans TODO/
+   - Claude ouvre automatiquement le formulaire dans le navigateur : `open "<chemin>.html"`
    - Questions/options UNIQUEMENT pour les choix importants nécessaires pour continuer
    - Validation globale en une fois (pas de micro-validations)
    - Toujours inclure un champ texte ouvert pour précisions/questions
-   - Exemple : "Valider ce BRIEF ?" → Options : Valider / Modifier + champ texte
+   - Nathalie remplit le formulaire → copie le texte généré → colle dans le terminal Claude
+   - Claude parse la réponse et continue automatiquement (création projet, CDC, etc.)
+   - Exemple questions : "Valider ce BRIEF ?", "Nom projet OK ?", "Stack technique ?", "Scope MVP ?"
 
 ### Étape 2 : BRIEF → Projet structuré
 
@@ -197,10 +200,13 @@ Voir [_SUIVI.md](_SUIVI.md)
 ### Étape 3 : CDC
 
 1. Claude produit `PIPELINE/02_CDC.md` (Cahier des Charges)
-2. **Validation Nathalie via formulaire** :
+2. **Validation Nathalie via formulaire HTML** :
+   - Claude crée `VALIDATION_CDC_<NOM>.html` dans le dossier projet
+   - Claude ouvre automatiquement le formulaire : `open "<chemin>.html"`
    - Questions importantes uniquement (ex: choix techno si plusieurs options valables)
    - Validation globale du CDC
    - Champ texte pour ajustements/précisions
+   - Nathalie remplit → copie texte → colle dans terminal Claude
 
 ### Étape 4 : SPECS
 
@@ -212,7 +218,9 @@ Voir [_SUIVI.md](_SUIVI.md)
    - Respecter principes : atome=function, method=import, scenario=orchestration
    - Vérifier héritage universel depuis Object
    - Identifier injection dynamique si applicable
-3. **Validation Nathalie via formulaire** :
+3. **Validation Nathalie via formulaire HTML** :
+   - Claude crée `VALIDATION_SPECS_<NOM>.html` dans le dossier projet
+   - Claude ouvre automatiquement le formulaire : `open "<chemin>.html"`
    - **Objets à créer** pour le projet
    - **Parent proposé** pour chaque objet (avec justification)
    - **Attributs/méthodes** nécessaires
@@ -220,6 +228,7 @@ Voir [_SUIVI.md](_SUIVI.md)
    - **Recommandations Claude** (pourquoi tel parent, alternatives)
    - **Conformité EURKAI** explicitement mentionnée
    - Champ texte pour ajustements/questions
+   - Nathalie remplit → copie texte → colle dans terminal Claude
 4. Claude applique les choix validés
 
 ### Étape 5 : BUILD
@@ -228,10 +237,13 @@ Voir [_SUIVI.md](_SUIVI.md)
 2. Vérification des modules réutilisables dans `EURKAI/MODULES/`
 3. Si code réutilisable → créer module standalone dans `EURKAI/MODULES/<nom>/`
 4. Tests et validation
-5. **Validation Nathalie via formulaire** (si nécessaire) :
+5. **Validation Nathalie via formulaire HTML** (si nécessaire) :
    - Uniquement si choix techniques importants pendant le build
+   - Claude crée `VALIDATION_BUILD_<NOM>.html` si besoin
+   - Claude ouvre automatiquement le formulaire : `open "<chemin>.html"`
    - Code généré présenté pour validation globale
    - Champ texte pour ajustements
+   - Nathalie remplit → copie texte → colle dans terminal Claude
 
 ### Étape 6 : DEPLOY
 
@@ -389,13 +401,13 @@ if (facture.pays === 'FR') {
 
 ### Validation objets (étape SPECS)
 
-Claude soumet via **formulaire GitHub Pages** :
+Claude soumet via **formulaire HTML** (`VALIDATION_SPECS_<NOM>.html`) :
 - Objets à créer
 - Parents proposés (avec justification)
 - Attributs/méthodes
 - Recommandations
 
-Nathalie valide → Claude crée.
+Nathalie ouvre le formulaire dans le navigateur → remplit → copie texte généré → colle dans terminal Claude → Claude applique.
 
 ---
 

@@ -1,0 +1,86 @@
+{
+  "ident": "core.model.Model",
+  "type": "Object:Core:Model",
+  "extends": "Object",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "description": "Modèle IA générique - abstraction de tous les types de modèles",
+
+  "attributes": {
+    "ident": {
+      "type": "string",
+      "required": true,
+      "description": "Identifiant unique du modèle (ex: gpt-4o, claude-opus-4-6)"
+    },
+    "created_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "version": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Nom du modèle"
+    },
+    "ai_provider": {
+      "type": "Object:Entity:Company:AIProvider",
+      "required": true,
+      "description": "Provider IA (OpenAI, Anthropic, etc.)"
+    },
+    "model_type": {
+      "type": "string",
+      "required": true,
+      "enum": ["text2text", "text2img", "img2text", "img2video", "text2audio", "text2video", "audio2text", "img2img"],
+      "description": "Type de transformation effectuée par le modèle"
+    },
+    "output": {
+      "type": "Object:Core:Output",
+      "required": false,
+      "description": "Output spécialisé pour modèles (override Output avec token_amount)"
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "description": "Tarification du modèle",
+      "schema": {
+        "input": "float ($/1K tokens ou $/image)",
+        "output": "float ($/1K tokens)"
+      }
+    },
+    "context_window": {
+      "type": "integer",
+      "required": false,
+      "description": "Taille de la fenêtre de contexte (tokens)"
+    },
+    "max_output_tokens": {
+      "type": "integer",
+      "required": false,
+      "description": "Nombre max de tokens en sortie"
+    }
+  },
+
+  "methods": {
+    "execute": {
+      "description": "Exécute le modèle avec prompt et données",
+      "parameters": {
+        "prompt": "string",
+        "data": "object"
+      },
+      "returns": "Object:Core:Output"
+    },
+    "validate": {
+      "description": "Valide la configuration du modèle",
+      "returns": "boolean"
+    },
+    "estimate_cost": {
+      "description": "Estime le coût d'une requête",
+      "parameters": {
+        "input_size": "integer"
+      },
+      "returns": "float"
+    }
+  }
+}

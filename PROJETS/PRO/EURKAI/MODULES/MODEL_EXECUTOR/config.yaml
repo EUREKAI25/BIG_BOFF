@@ -1,0 +1,139 @@
+# ============================================================================
+# MODEL_EXECUTOR — Configuration
+# ============================================================================
+# Définit quel provider utiliser pour chaque type de modèle.
+# Les clés API sont chargées depuis ~/.bigboff/secrets.env
+# ============================================================================
+
+# === MAPPING TYPE → PROVIDER ===
+model_types:
+  text2text:
+    active: openai
+    fallback: anthropic
+    description: "Génération de texte (LLM)"
+
+  text2img:
+    active: replicate
+    fallback: openai
+    description: "Génération d'images depuis texte"
+
+  img2text:
+    active: openai
+    fallback: gemini
+    description: "Description/analyse d'image (vision)"
+
+  img2video:
+    active: minimax
+    fallback: runway
+    description: "Génération vidéo depuis image"
+
+  text2audio:
+    active: elevenlabs
+    fallback: openai
+    description: "Génération audio/voix (TTS)"
+
+  text2video:
+    active: runway
+    fallback: null
+    description: "Génération vidéo depuis texte"
+
+  audio2text:
+    active: openai
+    fallback: null
+    description: "Transcription audio (STT)"
+
+  img2img:
+    active: replicate
+    fallback: null
+    description: "Transformation d'image"
+
+# === PROVIDERS CONFIGURATION ===
+providers:
+  openai:
+    api_key_env: OPENAI_API_KEY
+    models:
+      text2text: gpt-4o
+      text2img: dall-e-3
+      img2text: gpt-4o
+      text2audio: tts-1
+      audio2text: whisper-1
+    pricing:
+      text2text:
+        input: 0.005  # $/1K tokens
+        output: 0.015
+      text2img: 0.040  # $/image (1024x1024)
+      img2text: 0.005
+      text2audio: 0.015  # $/1K chars
+      audio2text: 0.006  # $/minute
+
+  anthropic:
+    api_key_env: ANTHROPIC_API_KEY
+    models:
+      text2text: claude-opus-4-6
+      img2text: claude-opus-4-6
+    pricing:
+      text2text:
+        input: 0.015
+        output: 0.075
+      img2text:
+        input: 0.015
+        output: 0.075
+
+  replicate:
+    api_key_env: REPLICATE_API_TOKEN
+    models:
+      text2img: black-forest-labs/flux-1.1-pro
+      img2img: stability-ai/sdxl
+    pricing:
+      text2img: 0.05  # Estimation
+      img2img: 0.02
+
+  minimax:
+    api_key_env: MINIMAX_API_KEY
+    models:
+      img2video: video-01
+    pricing:
+      img2video: 0.30  # Estimation
+
+  elevenlabs:
+    api_key_env: ELEVEN_LABS
+    models:
+      text2audio: eleven_multilingual_v2
+    pricing:
+      text2audio: 0.30  # $/1K chars
+
+  gemini:
+    api_key_env: GEMINI_API_KEY
+    models:
+      text2text: gemini-pro
+      img2text: gemini-pro-vision
+    pricing:
+      text2text:
+        input: 0.00025
+        output: 0.0005
+      img2text:
+        input: 0.00025
+        output: 0.0005
+
+  runway:
+    api_key_env: RUNWAY_API_KEY
+    models:
+      img2video: gen3a_turbo
+      text2video: gen3a_turbo
+    pricing:
+      img2video: 0.50  # Estimation
+      text2video: 0.50
+
+  fal:
+    api_key_env: FAL_KEY
+    models:
+      text2img: fal-ai/flux-pro
+    pricing:
+      text2img: 0.03
+
+# === GLOBAL SETTINGS ===
+settings:
+  max_retries: 3
+  timeout_seconds: 120
+  log_calls: true
+  track_costs: true

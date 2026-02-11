@@ -87,26 +87,41 @@ def _row_to_dict(row):
 
 
 def _contact_tags(contact_dict):
-    """Génère les tags automatiques pour un contact."""
-    tags = {"contact"}
+    """Génère les tags automatiques pour un contact.
+
+    Retourne une liste de tuples (tag_display, tag_normalized).
+    """
+    from config import normalize_tag
+
+    seen = {}  # normalized -> display (pour éviter les doublons)
     c = contact_dict
 
+    # Tag principal
+    seen["contact"] = "contact"
+
     # Type
-    tags.add(c["type"])  # personne ou entreprise
+    typ = c["type"]
+    seen[typ] = typ  # personne ou entreprise
 
     # Mots du nom et prénom
     if c.get("nom"):
-        tags.update(extract_keywords(c["nom"], min_len=2))
+        for tag_display, tag_normalized in extract_keywords(c["nom"], min_len=2):
+            if tag_normalized not in seen:
+                seen[tag_normalized] = tag_display
     if c.get("prenom"):
-        tags.update(extract_keywords(c["prenom"], min_len=2))
+        for tag_display, tag_normalized in extract_keywords(c["prenom"], min_len=2):
+            if tag_normalized not in seen:
+                seen[tag_normalized] = tag_display
 
     # Entreprise liée (nom)
     if c.get("entreprise_id"):
-        tags.add("entreprise")
+        seen["entreprise"] = "entreprise"
 
     # Adresse
     if c.get("adresse"):
-        tags.update(extract_keywords(c["adresse"], min_len=3))
+        for tag_display, tag_normalized in extract_keywords(c["adresse"], min_len=3):
+            if tag_normalized not in seen:
+                seen[tag_normalized] = tag_display
 
     # Site web
     if c.get("site_web"):
@@ -114,25 +129,34 @@ def _contact_tags(contact_dict):
         for p in parts:
             p = p.strip().lower()
             if len(p) >= 3 and p not in STOP_WORDS:
-                tags.add(p)
+                normalized = normalize_tag(p)
+                if normalized not in seen:
+                    seen[normalized] = p
 
     # Tags manuels
     if c.get("tags_raw"):
         for t in c["tags_raw"].split(","):
             t = t.strip().lower()
             if t and t not in STOP_WORDS:
-                tags.add(t)
+                normalized = normalize_tag(t)
+                if normalized not in seen:
+                    seen[normalized] = t
 
-    return tags
+    return [(display, normalized) for normalized, display in seen.items()]
 
 
 def _save_tags(conn, contact_id, tags):
-    """Insère les tags d'un contact dans la table tags."""
+    """Insère les tags d'un contact dans la table tags.
+
+    Args:
+        tags: liste de tuples (tag_display, tag_normalized)
+    """
     c = conn.cursor()
     item_id = -(contact_id + ID_OFFSET_CONTACT)
-    for tag in tags:
+    for tag_display, tag_normalized in tags:
         try:
-            c.execute("INSERT INTO tags (item_id, tag) VALUES (?, ?)", (item_id, tag))
+            c.execute("INSERT INTO tags (item_id, tag, tag_display) VALUES (?, ?, ?)",
+                      (item_id, tag_normalized, tag_display))
         except Exception:
             pass
 

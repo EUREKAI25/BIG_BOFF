@@ -1,0 +1,61 @@
+{
+  "ident": "core.model.TextToTextModel",
+  "type": "Object:Core:Model:TextToTextModel",
+  "extends": "Object:Core:Model",
+  "created_at": "2026-02-10",
+  "version": "1.0.0",
+  "description": "Modèle de génération de texte (LLM)",
+
+  "attributes_override": {
+    "model_type": {
+      "type": "string",
+      "required": true,
+      "fixed": "text2text",
+      "description": "Type fixé à text2text"
+    },
+    "output": {
+      "type": "Object:Core:Output",
+      "description": "Output avec result.text + token_amount",
+      "schema": {
+        "result": {
+          "text": "string",
+          "finish_reason": "string"
+        },
+        "token_amount": {
+          "input": "integer",
+          "output": "integer",
+          "total": "integer"
+        }
+      }
+    },
+    "temperature": {
+      "type": "float",
+      "required": false,
+      "default": 0.7,
+      "min": 0.0,
+      "max": 2.0,
+      "description": "Température de génération"
+    },
+    "top_p": {
+      "type": "float",
+      "required": false,
+      "default": 1.0,
+      "description": "Nucleus sampling"
+    }
+  },
+
+  "methods_override": {
+    "execute": {
+      "description": "Génère du texte depuis un prompt",
+      "parameters": {
+        "prompt": "string | array<message>",
+        "data": {
+          "temperature": "float (optional)",
+          "max_tokens": "integer (optional)",
+          "system": "string (optional)"
+        }
+      },
+      "returns": "Object:Core:Output (avec text + tokens)"
+    }
+  }
+}

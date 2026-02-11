@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head name="TestHead">
+    <meta name="description">
+    <meta name="viewport">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body id="app" class="page">
+    <header class="site-header" role="banner">
+      <div class="logo">EURKAI</div>
+      <nav class="main-nav" role="navigation">
+        <a href="#/">Accueil</a>
+        <a href="#/features">Fonctionnalités</a>
+        <a href="#/docs">Documentation</a>
+        <a href="#/contact">Contact</a>
+      </nav>
+    </header>
+    <main id="main-content" class="main-content" role="main">
+    </main>
+    <footer class="site-footer" role="contentinfo">
+      <p class="copyright">© 2025 EURKAI. Tous droits réservés.</p>
+    </footer>
+  </body>
+  <!-- EURKAI Page Templates -->
+  <!-- Found 4 pages -->
+  <template data-erk-page="/"><main id="home-content" class="main-content"><section id="hero" class="hero-section"><h1 class="hero-title">Bienvenue sur EURKAI</h1><p class="hero-subtitle">La plateforme de génération de templates intelligente</p><button class="btn btn-primary">Découvrir</button></section></main></template>
+  <template data-erk-page="/contact"><main id="contact-content" class="main-content"><h1 class="page-title">Contact</h1><p class="intro-text">Une question ? Contactez-nous !</p><form class="contact-form" action="/api/contact" method="post"><input name="name" type="text" placeholder="Votre nom" required="true"><input name="email" type="email" placeholder="Votre email" required="true"><textarea name="message" placeholder="Votre message" required="true" rows="5"></textarea><button class="btn btn-primary" type="submit">Envoyer</button></form></main></template>
+  <template data-erk-page="/features"><main id="features-content" class="main-content"><h1 class="page-title">Fonctionnalités</h1><section class="features-grid"><div class="feature-card">Templates récursifs</div><div class="feature-card">Génération automatique</div><div class="feature-card">100% ERK</div></section></main></template>
+  <template data-erk-page="/docs"><main id="docs-content" class="main-content"><h1 class="page-title">Documentation</h1><p class="intro-text">Retrouvez toute la documentation technique d'EURKAI.</p></main></template>
+  <script>
+    // EURKAI SPA Router
+    (function() {
+    const pages = {};
+    let currentRoute = null;
+    const mainContainer = document.querySelector('main') || document.querySelector('[role="main"]');
+    // Collecter les pages depuis les templates cachés
+    document.querySelectorAll('template[data-erk-page]').forEach(el => {
+    const route = el.dataset.erkPage;
+    pages[route] = el.innerHTML;
+    });
+    // Intercepter les clics sur les liens
+    document.addEventListener('click', function(e) {
+    const link = e.target.closest('a[href^="#"]');
+    if (link) {
+    e.preventDefault();
+    const href = link.getAttribute('href');
+    const route = href.startsWith('#') ? href.slice(1) : href;
+    navigate(route || '/');
+    }
+    });
+    function navigate(route) {
+    if (!route || route === '' || route === '#') route = '/';
+    if (!route.startsWith('/')) route = '/' + route;
+    window.location.hash = route === '/' ? '' : route;
+    loadRoute(route);
+    }
+    function loadRoute(route) {
+    currentRoute = route;
+    if (!mainContainer) return;
+    if (pages[route]) {
+    mainContainer.innerHTML = pages[route];
+    } else {
+    mainContainer.innerHTML = '<div data-erk-placeholder="' + route + '">{{page:' + route + '}}</div>';
+    }
+    updateActiveLinks(route);
+    }
+    function updateActiveLinks(route) {
+    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+    const href = link.getAttribute('href');
+    const linkRoute = href.startsWith('#') ? href.slice(1) : href;
+    const normalizedLink = linkRoute === '' ? '/' : (linkRoute.startsWith('/') ? linkRoute : '/' + linkRoute);
+    link.classList.toggle('active', normalizedLink === route);
+    });
+    }
+    window.addEventListener('hashchange', function() {
+    loadRoute(window.location.hash.slice(1) || '/');
+    });
+    // IMPORTANT: Charger la page d'accueil au démarrage
+    const initialRoute = window.location.hash.slice(1) || '/';
+    loadRoute(initialRoute);
+    window.erkRouter = { navigate, loadRoute, pages };
+    })();
+  </script>
+</html>

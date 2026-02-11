@@ -139,6 +139,65 @@
       border-bottom: 1px solid #eee;
     }
 
+    /* Filtre source (Phase 5 P2P) */
+    .source-filter {
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
+      background: #f8f9fa;
+    }
+
+    .source-filter label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .source-filter select {
+      padding: 4px 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 12px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .source-filter select:hover {
+      border-color: #888;
+    }
+
+    .source-filter select:focus {
+      border-color: #4a90d9;
+    }
+
+    /* Badge source user (Phase 5 P2P) */
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      background: #E3F2FD;
+      color: #1976D2;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 500;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Badge partage permanent (Phase 6 P2P) */
+    .source-badge.shared-badge {
+      background: #C8E6C9;
+      color: #2E7D32;
+    }
+
     .type-btn {
       padding: 3px 8px;
       border-radius: 4px;
@@ -1276,6 +1335,9 @@
   <header>
     <h1>BIG_BOFF Search</h1>
     <span class="stats" id="stats"></span>
+    <a href="#" id="groups-btn" title="Groupes" style="color:#fff;font-size:14px;text-decoration:none;opacity:0.6;margin-left:8px"><i class="fa-solid fa-users"></i></a>
+    <a href="#" id="share-btn" title="Partager" style="color:#fff;font-size:14px;text-decoration:none;opacity:0.6;margin-left:8px"><i class="fa-solid fa-share-nodes"></i></a>
+    <a href="#" id="qr-scan-btn" title="Scanner QR partage" style="color:#fff;font-size:14px;text-decoration:none;opacity:0.6;margin-left:8px"><i class="fa-solid fa-qrcode"></i></a>
     <a href="#" id="fullpage-btn" title="Ouvrir en pleine page" style="color:#fff;font-size:14px;text-decoration:none;opacity:0.6"><i class="fa-solid fa-expand"></i></a>
   </header>
 
@@ -1289,6 +1351,15 @@
   </div>
 
   <div class="type-filters" id="type-filters" style="display:none"></div>
+
+  <div class="source-filter" id="source-filter" style="display:none">
+    <label>Source :</label>
+    <select id="source-select">
+      <option value="local" selected>Local uniquement</option>
+      <option value="consulted">Consultés uniquement</option>
+      <option value="all">Tous (local + consultés)</option>
+    </select>
+  </div>
 
   <div class="selected-tags" id="selected-tags"></div>
 
@@ -1328,6 +1399,12 @@
     </div>
   </div>
 
+  <!-- Phase 4 P2P - QR Codes (versions locales) -->
+  <script src="html5-qrcode.min.js"></script>
+  <script src="qrcode.min.js"></script>
+  <script src="qr_scanner.js"></script>
+
+  <script src="onboarding.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation CDC — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+        .content { padding: 40px; }
+        .cdc-info { background: #f7fafc; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 30px; border-radius: 6px; }
+        .cdc-info h2 { color: #2d3748; font-size: 18px; margin-bottom: 12px; }
+        .cdc-info ul { list-style: none; padding-left: 0; }
+        .cdc-info li { padding: 6px 0; color: #4a5568; font-size: 14px; }
+        .question-block { margin-bottom: 30px; padding: 25px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .question-block h3 { color: #2d3748; font-size: 20px; margin-bottom: 20px; }
+        .option { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
+        .option input[type="radio"] { margin-right: 12px; cursor: pointer; }
+        .option label { cursor: pointer; display: block; padding-left: 28px; position: relative; }
+        .option label strong { color: #2d3748; display: block; margin-bottom: 5px; font-size: 16px; }
+        .option label .description { color: #718096; font-size: 14px; line-height: 1.5; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+        textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 120px; margin-top: 10px; }
+        textarea:focus { outline: none; border-color: #667eea; }
+        .helper-text { color: #718096; font-size: 13px; margin-top: 8px; }
+        .actions { display: flex; gap: 15px; margin-top: 30px; }
+        .btn { flex: 1; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .result { display: none; padding: 30px; background: #f0fff4; border: 2px solid #9ae6b4; border-radius: 8px; margin-top: 30px; text-align: center; }
+        .result h3 { color: #2f855a; margin-bottom: 15px; font-size: 22px; }
+        .result .success-message { font-size: 15px; color: #2f855a; margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; }
+        .result button { background: #2f855a; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .result button:hover { background: #276749; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Validation CDC</h1>
+            <p>AI_SEO_AUDIT — Cahier des Charges</p>
+        </div>
+
+        <div class="content">
+            <div class="cdc-info">
+                <h2>📄 CDC généré (15 pages)</h2>
+                <ul>
+                    <li>✓ 6 fonctionnalités détaillées (F01-F06)</li>
+                    <li>✓ Stack : FastAPI + PostgreSQL + Redis + OpenAI</li>
+                    <li>✓ Architecture EURKAI (objets, modules, fractale)</li>
+                    <li>✓ Planning : 13h (~2 jours)</li>
+                    <li>✓ Critères validation MVP + évolutions futures</li>
+                </ul>
+            </div>
+
+            <form id="validationForm">
+                <div class="question-block">
+                    <h3>Valides-tu ce CDC pour passer aux SPECS ?</h3>
+
+                    <div class="option">
+                        <input type="radio" name="validation" id="val1" value="valider">
+                        <label for="val1">
+                            <strong>✅ Valider — CDC OK, on passe aux SPECS</strong>
+                            <span class="description">Le CDC est complet et clair. Claude génère les spécifications techniques détaillées.</span>
+                        </label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="validation" id="val2" value="ajuster">
+                        <label for="val2">
+                            <strong>🔄 Ajuster — Quelques modifications nécessaires</strong>
+                            <span class="description">Globalement OK mais certains points à préciser (utilise le champ ci-dessous).</span>
+                        </label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="validation" id="val3" value="revoir">
+                        <label for="val3">
+                            <strong>❌ Revoir — CDC à refaire</strong>
+                            <span class="description">Le CDC ne convient pas, il faut le reprendre.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-block">
+                    <h3>Précisions ou ajustements ? (optionnel)</h3>
+                    <textarea id="comments" name="comments" placeholder="Si tu as des ajustements, des questions ou des précisions, note-les ici...
+
+Exemples :
+- Modifier le planning (prévoir 3 jours au lieu de 2)
+- Changer une techno (utiliser X au lieu de Y)
+- Ajouter/retirer une fonctionnalité
+- Autre chose"></textarea>
+                    <div class="helper-text">💡 Laisse vide si tout est OK</div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">✅ Valider et continuer</button>
+                </div>
+            </form>
+
+            <div class="result" id="result">
+                <h3>✅ Validation enregistrée !</h3>
+                <div class="success-message">
+                    Le fichier a été téléchargé dans ton dossier Téléchargements.<br>
+                    <strong>Claude continue automatiquement vers les SPECS.</strong>
+                </div>
+                <button onclick="window.close()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('validationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const validation = document.querySelector('input[name="validation"]:checked');
+
+            if (!validation) {
+                alert('⚠️ Merci de choisir une option (Valider / Ajuster / Revoir)');
+                return;
+            }
+
+            const comments = document.getElementById('comments').value;
+            const validationData = {
+                type: "cdc",
+                project: "AI_SEO_AUDIT",
+                validation: validation.value,
+                precisions: comments || null,
+                timestamp: new Date().toISOString()
+            };
+
+            // Télécharger automatiquement le JSON
+            const jsonBlob = new Blob([JSON.stringify(validationData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(jsonBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'claude_validation_CDC_AI_SEO_AUDIT.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# ============================================================================
+# EURKAI Seed - Scenario
+# ============================================================================
+
+Object:Scenario:
+.name = "Scenario"
+
+Object:Scenario:Bootstrap:
+.name = "Bootstrap"
+.steps = ["RenderCockpit()"]
+
+Object:Scenario:RenderCockpit:
+.name = "RenderCockpit"
+.steps = ["GetTemplate(CockpitTemplate)", "ForEach(ElementList, RenderElement)", "InjectScripts(ScriptList)", "Return(html)"]
+
+Object:Scenario:RenderElement:
+.name = "RenderElement"
+.steps = ["BuildTag(.tag, .class)", "RenderContent(.content)", "ForEach(ElementList, RenderElement)", "ForEach(ModuleList, RenderModule)", "CloseTag()"]
+
+Object:Scenario:RenderModule:
+.name = "RenderModule"
+.steps = ["GetData(.dataSource)", "ForEach(TemplateList, ApplyTemplate)", "Return(html)"]
+
+Object:Scenario:CreateObject:
+.name = "CreateObject"
+.steps = ["Create(lineage, attributes)", "Return(created)"]
+
+Object:Scenario:UpdateObject:
+.name = "UpdateObject"
+.steps = ["Update(uuid, attributes)", "Return(updated)"]
+
+Object:Scenario:MoveObject:
+.name = "MoveObject"
+.steps = ["MoveObject(uuid, newParent)", "Return(moved)"]
+
+Object:Scenario:DeleteObject:
+.name = "DeleteObject"
+.steps = ["Delete(uuid)", "Return(deleted)"]

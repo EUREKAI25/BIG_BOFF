@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation SPECS — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+        .content { padding: 40px; }
+        .specs-info { background: #f7fafc; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 30px; border-radius: 6px; }
+        .specs-info h2 { color: #2d3748; font-size: 20px; margin-bottom: 15px; }
+        .specs-info ul { list-style: none; padding-left: 0; }
+        .specs-info li { padding: 8px 0; color: #4a5568; }
+        .specs-info li strong { color: #2d3748; display: inline-block; min-width: 200px; }
+        .question-block { margin-bottom: 35px; padding: 25px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .question-block h3 { color: #2d3748; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; }
+        .question-block h3 .tag { background: #667eea; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 10px; text-transform: uppercase; }
+        .option { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
+        .option input[type="radio"] { margin-right: 12px; cursor: pointer; }
+        .option label { cursor: pointer; display: block; padding-left: 28px; position: relative; }
+        .option label strong { color: #2d3748; display: block; margin-bottom: 5px; }
+        .option label .description { color: #718096; font-size: 14px; line-height: 1.5; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+        textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 100px; margin-top: 10px; }
+        textarea:focus { outline: none; border-color: #667eea; }
+        .actions { display: flex; gap: 15px; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e2e8f0; }
+        .btn { flex: 1; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-secondary { background: white; color: #667eea; border: 2px solid #667eea; }
+        .btn-secondary:hover { background: #f0f4ff; }
+        .result { display: none; padding: 30px; background: #f0fff4; border: 2px solid #9ae6b4; border-radius: 8px; margin-top: 30px; }
+        .result h3 { color: #2f855a; margin-bottom: 15px; }
+        .result .success-message { font-size: 16px; color: #2f855a; margin-bottom: 20px; padding: 15px; background: white; border-radius: 6px; }
+        .result button { background: #2f855a; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .result button:hover { background: #276749; }
+        .required-warning { display: none; padding: 15px; background: #fff5f5; border: 2px solid #fc8181; border-radius: 6px; color: #c53030; margin-bottom: 20px; }
+        .file-link { background: #f0f4ff; padding: 15px; border-radius: 6px; margin: 15px 0; }
+        .file-link a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .file-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Validation SPECS</h1>
+            <p>AI_SEO_AUDIT — Spécifications techniques complètes</p>
+        </div>
+
+        <div class="content">
+            <div class="specs-info">
+                <h2>📄 Résumé des SPECS</h2>
+                <ul>
+                    <li><strong>Projet :</strong> AI_SEO_AUDIT</li>
+                    <li><strong>Document :</strong> PIPELINE/03_SPECS.html (700+ lignes)</li>
+                    <li><strong>Stack :</strong> Python 3.11+ / FastAPI / PostgreSQL / Redis / Stripe / OpenAI</li>
+                    <li><strong>Objets EURKAI :</strong> 8 objets détaillés (AuditSession, AIProvider, etc.)</li>
+                    <li><strong>Base de données :</strong> 5 tables PostgreSQL avec schéma complet</li>
+                    <li><strong>API :</strong> 10+ endpoints documentés</li>
+                    <li><strong>Architecture :</strong> Fractale (Orchestrator + 3 Agents + Validator)</li>
+                    <li><strong>Modules EURKAI :</strong> 4 modules réutilisables identifiés</li>
+                    <li><strong>Plan MVP :</strong> 36 heures (4-5 jours) découpé en 6 phases</li>
+                    <li><strong>Post-MVP :</strong> 2 semaines (multi-IA, multilingue, templates sectoriels)</li>
+                </ul>
+
+                <div class="file-link">
+                    📂 <a href="file:///Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/AI_SEO_AUDIT/PIPELINE/03_SPECS.html" target="_blank">Ouvrir les SPECS complètes</a>
+                </div>
+            </div>
+
+            <form id="validationForm">
+                <div class="required-warning" id="requiredWarning">
+                    ⚠️ Merci de répondre à toutes les questions avant de valider.
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Stack</span> La stack technique proposée te convient-elle ?</h3>
+                    <p style="color: #718096; margin-bottom: 15px; font-size: 14px;">
+                        Python 3.11+ / FastAPI / PostgreSQL / Redis / Stripe / OpenAI API / WeasyPrint (PDF) / Docker
+                    </p>
+                    <div class="option"><input type="radio" name="q1" id="q1a" value="ok"><label for="q1a"><strong>✅ OK, cette stack est parfaite</strong><span class="description">Conforme aux projets EURKAI existants (BIG_BOFF Search, Pipeline), scalable et moderne.</span></label></div>
+                    <div class="option"><input type="radio" name="q1" id="q1b" value="ajuster"><label for="q1b"><strong>🔄 Ajuster certains choix techniques</strong><span class="description">La stack est globalement OK mais tu veux modifier certaines technologies (précise dans le champ commentaires).</span></label></div>
+                    <div class="option"><input type="radio" name="q1" id="q1c" value="revoir"><label for="q1c"><strong>❌ Revoir la stack complètement</strong><span class="description">Tu préfères une stack différente (Node.js, autre DB, etc.).</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Architecture</span> L'architecture fractale EURKAI te semble-t-elle bien définie ?</h3>
+                    <p style="color: #718096; margin-bottom: 15px; font-size: 14px;">
+                        Orchestrator → 3 Agents (Audit, Analyze, Generate) → Validator | 4 modules réutilisables | 8 objets EURKAI conformes
+                    </p>
+                    <div class="option"><input type="radio" name="q2" id="q2a" value="ok"><label for="q2a"><strong>✅ OK, l'architecture est claire et conforme</strong><span class="description">Tous les objets héritent d'Object, architecture fractale bien définie, modules identifiés.</span></label></div>
+                    <div class="option"><input type="radio" name="q2" id="q2b" value="clarifier"><label for="q2b"><strong>🤔 Clarifier certains points</strong><span class="description">L'architecture est globalement OK mais tu veux des précisions sur certains objets ou flux (précise lesquels).</span></label></div>
+                    <div class="option"><input type="radio" name="q2" id="q2c" value="revoir"><label for="q2c"><strong>❌ Revoir l'architecture</strong><span class="description">L'approche ne te convient pas, il faut repenser l'organisation.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Plan MVP</span> Le plan 36h (4-5 jours) te paraît-il réaliste et clair ?</h3>
+                    <p style="color: #718096; margin-bottom: 15px; font-size: 14px;">
+                        Setup 4h → Objets EURKAI 6h → Agents 8h → API 6h → Frontend 8h → Tests/Deploy 4h
+                    </p>
+                    <div class="option"><input type="radio" name="q3" id="q3a" value="ok"><label for="q3a"><strong>✅ OK, le plan est clair et réaliste</strong><span class="description">Les phases sont bien découpées, les durées estimées semblent cohérentes.</span></label></div>
+                    <div class="option"><input type="radio" name="q3" id="q3b" value="ajuster"><label for="q3b"><strong>🔄 Ajuster les priorités ou durées</strong><span class="description">Le plan est globalement OK mais certaines phases devraient être repensées (précise lesquelles).</span></label></div>
+                    <div class="option"><input type="radio" name="q3" id="q3c" value="trop_ambitieux"><label for="q3c"><strong>⚠️ Trop ambitieux pour 36h</strong><span class="description">Le scope semble trop large pour 4-5 jours, il faut réduire ou découper autrement.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">API & DB</span> Le schéma de base de données et les endpoints API te semblent-ils complets ?</h3>
+                    <p style="color: #718096; margin-bottom: 15px; font-size: 14px;">
+                        5 tables (users, audits, queries, recommendations, payments) | 10+ endpoints (audit, payment, export)
+                    </p>
+                    <div class="option"><input type="radio" name="q4" id="q4a" value="ok"><label for="q4a"><strong>✅ OK, complet et cohérent</strong><span class="description">Le schéma DB couvre tous les besoins, les endpoints sont bien définis.</span></label></div>
+                    <div class="option"><input type="radio" name="q4" id="q4b" value="ajuster"><label for="q4b"><strong>🔄 Ajuster certaines tables ou endpoints</strong><span class="description">Globalement OK mais il manque des champs ou endpoints (précise lesquels).</span></label></div>
+                    <div class="option"><input type="radio" name="q4" id="q4c" value="revoir"><label for="q4c"><strong>❌ Revoir le schéma ou l'API</strong><span class="description">L'organisation ne te convient pas, il faut repenser la structure.</span></label></div>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Commentaires</span> Ajustements, questions ou précisions ?</h3>
+                    <textarea id="comments" name="comments" placeholder="Précise ici tout ce que tu veux ajuster, clarifier ou modifier dans les SPECS..."></textarea>
+                </div>
+
+                <div class="question-block">
+                    <h3><span class="tag">Validation</span> Avec ces SPECS, on passe au BUILD du MVP ?</h3>
+                    <div class="option"><input type="radio" name="q5" id="q5a" value="valider"><label for="q5a"><strong>✅ Valider — Tout est clair, on lance le BUILD</strong><span class="description">Les SPECS sont complètes et cohérentes. Claude commence le développement du MVP selon le plan 36h.</span></label></div>
+                    <div class="option"><input type="radio" name="q5" id="q5b" value="ajuster"><label for="q5b"><strong>🔄 Ajuster — SPECS OK mais quelques modifications</strong><span class="description">Les SPECS sont bonnes dans l'ensemble mais tu veux préciser ou modifier certains points (voir commentaires).</span></label></div>
+                    <div class="option"><input type="radio" name="q5" id="q5c" value="revoir"><label for="q5c"><strong>❌ Revoir — SPECS à refaire</strong><span class="description">Les SPECS ne correspondent pas à ta vision ou manquent d'éléments importants. Claude doit les refaire.</span></label></div>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">🔄 Réinitialiser</button>
+                    <button type="submit" class="btn btn-primary">✅ Valider et enregistrer</button>
+                </div>
+            </form>
+
+            <div class="result" id="result">
+                <h3>✅ Validation enregistrée !</h3>
+                <div class="success-message">
+                    Tes réponses ont été enregistrées.<br>
+                    <strong>Claude va automatiquement détecter cette validation et continuer le processus.</strong>
+                </div>
+                <button onclick="window.close()">Fermer cette fenêtre</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                const groupName = radio.name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                    r.closest('.option').classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('validationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            const q4 = document.querySelector('input[name="q4"]:checked');
+            const q5 = document.querySelector('input[name="q5"]:checked');
+
+            if (!q1 || !q2 || !q3 || !q4 || !q5) {
+                document.getElementById('requiredWarning').style.display = 'block';
+                document.getElementById('requiredWarning').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            document.getElementById('requiredWarning').style.display = 'none';
+
+            const comments = document.getElementById('comments').value;
+            const validationData = {
+                type: "SPECS",
+                project: "AI_SEO_AUDIT",
+                responses: {
+                    stack: q1.value,
+                    architecture: q2.value,
+                    plan_mvp: q3.value,
+                    api_db: q4.value,
+                    validation_globale: q5.value,
+                    commentaires: comments
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            // Envoyer au serveur local
+            try {
+                const response = await fetch('http://127.0.0.1:7777/api/validation/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(validationData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error('Endpoint non disponible');
+                }
+            } catch (error) {
+                // Fallback : télécharger le JSON
+                const jsonBlob = new Blob([JSON.stringify(validationData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(jsonBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'claude_validation_AI_SEO_AUDIT_SPECS.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                alert('✅ Validation enregistrée !\n\nLe fichier JSON a été téléchargé.\nClaude détectera automatiquement la validation et continuera le processus.');
+            }
+        });
+    </script>
+</body>
+</html>

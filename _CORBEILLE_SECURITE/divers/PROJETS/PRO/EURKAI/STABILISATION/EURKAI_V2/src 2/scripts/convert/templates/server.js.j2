@@ -1,0 +1,193 @@
+/**
+ * EURKAI Code Service - Node.js Server
+ * Auto-generated from: {{ filename }}
+ * Generated: {{ timestamp }}
+ */
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+
+// ============================================================================
+// DEPENDENCIES MOCK/INJECT
+// ============================================================================
+{% for dep in dependencies %}
+// TODO: Implement or inject {{ dep }}
+const {{ dep }} = {
+{% if dep == 'Store' %}
+    _data: new Map(),
+    get(key) { return this._data.get(key); },
+    set(key, value) { this._data.set(key, value); },
+    getAllLineages() { return Array.from(this._data.keys()); },
+    clear() { this._data.clear(); }
+{% else %}
+    // Placeholder - implement methods as needed
+{% endif %}
+};
+{% endfor %}
+
+// ============================================================================
+// ORIGINAL SOURCE CODE
+// ============================================================================
+{{ source }}
+
+// ============================================================================
+// CALLBACK VARIANTS (for functions with callbacks)
+// ============================================================================
+{% for func in callback_functions %}
+/**
+ * Variant: Collect all results from {{ func.name }}
+ * @returns {Array} All collected results
+ */
+function {{ func.name }}_collect({{ func.params_without_callback }}) {
+    const results = [];
+    {{ func.name }}({{ func.call_args_collect }});
+    return results;
+}
+
+/**
+ * Variant: Find first match in {{ func.name }}
+ * @param {string} field - Field to match
+ * @param {*} value - Value to match
+ * @returns {*} First matching result or undefined
+ */
+function {{ func.name }}_find({{ func.params_without_callback }}, field, value) {
+    return {{ func.name }}({{ func.call_args_find }});
+}
+
+/**
+ * Variant: Check if any match exists in {{ func.name }}
+ * @param {string} field - Field to check
+ * @param {*} value - Value to check
+ * @returns {boolean} True if match found
+ */
+function {{ func.name }}_exists({{ func.params_without_callback }}, field, value) {
+    return {{ func.name }}_find({{ func.params_without_callback }}, field, value) !== undefined;
+}
+
+{% endfor %}
+
+// ============================================================================
+// API DISPATCHER
+// ============================================================================
+const exposed = {
+{% for func in functions %}
+    {{ func.name }},
+{% endfor %}
+{% for func in callback_functions %}
+    {{ func.name }}_collect,
+    {{ func.name }}_find,
+    {{ func.name }}_exists,
+{% endfor %}
+};
+
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', functions: Object.keys(exposed) });
+});
+
+// List available functions
+app.get('/functions', (req, res) => {
+    const info = {};
+    for (const [name, fn] of Object.entries(exposed)) {
+        info[name] = {
+            params: fn.length,
+            isVariant: name.includes('_collect') || name.includes('_find') || name.includes('_exists')
+        };
+    }
+    res.json(info);
+});
+
+// Call a function
+app.post('/call', async (req, res) => {
+    const { fn, args = [] } = req.body;
+    
+    if (!fn) {
+        return res.status(400).json({ ok: false, error: 'Missing function name' });
+    }
+    
+    if (!exposed[fn]) {
+        return res.status(404).json({ 
+            ok: false, 
+            error: `Function '${fn}' not found`,
+            available: Object.keys(exposed)
+        });
+    }
+    
+    try {
+        const result = await exposed[fn](...args);
+        res.json({ ok: true, result });
+    } catch (error) {
+        res.status(500).json({ 
+            ok: false, 
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
+// Batch call multiple functions
+app.post('/batch', async (req, res) => {
+    const { calls = [] } = req.body;
+    const results = [];
+    
+    for (const { fn, args = [] } of calls) {
+        try {
+            if (!exposed[fn]) {
+                results.push({ ok: false, error: `Function '${fn}' not found` });
+            } else {
+                const result = await exposed[fn](...args);
+                results.push({ ok: true, result });
+            }
+        } catch (error) {
+            results.push({ ok: false, error: error.message });
+        }
+    }
+    
+    res.json({ ok: true, results });
+});
+
+// Store management endpoints (if Store dependency exists)
+{% if 'Store' in dependencies %}
+app.post('/store/set', (req, res) => {
+    const { key, value } = req.body;
+    Store.set(key, value);
+    res.json({ ok: true });
+});
+
+app.get('/store/get/:key', (req, res) => {
+    const value = Store.get(req.params.key);
+    res.json({ ok: true, value });
+});
+
+app.get('/store/keys', (req, res) => {
+    res.json({ ok: true, keys: Store.getAllLineages() });
+});
+
+app.post('/store/clear', (req, res) => {
+    Store.clear();
+    res.json({ ok: true });
+});
+
+app.post('/store/bulk', (req, res) => {
+    const { items = [] } = req.body;
+    for (const { key, value } of items) {
+        Store.set(key, value);
+    }
+    res.json({ ok: true, count: items.length });
+});
+{% endif %}
+
+// ============================================================================
+// SERVER START
+// ============================================================================
+const PORT = process.env.PORT || {{ port }};
+
+app.listen(PORT, () => {
+    console.log(`🚀 EURKAI Server running on http://localhost:${PORT}`);
+    console.log(`📚 Available functions: ${Object.keys(exposed).join(', ')}`);
+});
+
+module.exports = { app, exposed, {% for dep in dependencies %}{{ dep }}, {% endfor %}};

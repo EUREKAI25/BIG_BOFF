@@ -25,3 +25,5 @@ Un projet est défini par la séquence d'artefacts et tests de validation
 CRONS 
 maintenance du système 
 catalogue de templates, seeds, schemas, modules, endpoints,  
+ le ou les tags de recherche
+

@@ -73,35 +73,54 @@ def maps_url(adresse):
 
 
 def _lieu_tags(lieu_dict):
-    """Génère les tags automatiques pour un lieu."""
-    tags = {"lieu"}
+    """Génère les tags automatiques pour un lieu.
+
+    Retourne une liste de tuples (tag_display, tag_normalized).
+    """
+    from config import normalize_tag
+
+    seen = {}  # normalized -> display (pour éviter les doublons)
     l = lieu_dict
+
+    # Tag principal
+    seen["lieu"] = "lieu"
 
     # Mots du nom
     if l.get("nom"):
-        tags.update(extract_keywords(l["nom"], min_len=2))
+        for tag_display, tag_normalized in extract_keywords(l["nom"], min_len=2):
+            if tag_normalized not in seen:
+                seen[tag_normalized] = tag_display
 
     # Mots de l'adresse
     if l.get("adresse"):
-        tags.update(extract_keywords(l["adresse"], min_len=3))
+        for tag_display, tag_normalized in extract_keywords(l["adresse"], min_len=3):
+            if tag_normalized not in seen:
+                seen[tag_normalized] = tag_display
 
     # Tags manuels
     if l.get("tags_raw"):
         for t in l["tags_raw"].split(","):
             t = t.strip().lower()
             if t and t not in STOP_WORDS:
-                tags.add(t)
+                normalized = normalize_tag(t)
+                if normalized not in seen:
+                    seen[normalized] = t
 
-    return tags
+    return [(display, normalized) for normalized, display in seen.items()]
 
 
 def _save_tags(conn, lieu_id, tags):
-    """Insère les tags d'un lieu dans la table tags."""
+    """Insère les tags d'un lieu dans la table tags.
+
+    Args:
+        tags: liste de tuples (tag_display, tag_normalized)
+    """
     c = conn.cursor()
     item_id = -(lieu_id + ID_OFFSET_LIEU)
-    for tag in tags:
+    for tag_display, tag_normalized in tags:
         try:
-            c.execute("INSERT INTO tags (item_id, tag) VALUES (?, ?)", (item_id, tag))
+            c.execute("INSERT INTO tags (item_id, tag, tag_display) VALUES (?, ?, ?)",
+                      (item_id, tag_normalized, tag_display))
         except Exception:
             pass
 

@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPECS Techniques — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f5f7fa; line-height: 1.6; color: #2d3748; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 40px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3); }
+        .header h1 { font-size: 42px; margin-bottom: 15px; font-weight: 700; }
+        .header .subtitle { font-size: 20px; opacity: 0.95; margin-bottom: 20px; }
+        .header .meta { font-size: 14px; opacity: 0.85; }
+
+        .section { background: white; padding: 40px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .section h2 { font-size: 32px; color: #1a202c; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #667eea; }
+        .section h3 { font-size: 24px; color: #2d3748; margin: 30px 0 15px 0; }
+        .section h4 { font-size: 18px; color: #4a5568; margin: 20px 0 10px 0; font-weight: 600; }
+
+        .toc { background: #f7fafc; padding: 30px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #667eea; }
+        .toc h3 { margin-top: 0; color: #667eea; }
+        .toc ul { list-style: none; padding-left: 0; }
+        .toc li { padding: 8px 0; }
+        .toc a { color: #4a5568; text-decoration: none; transition: color 0.2s; }
+        .toc a:hover { color: #667eea; }
+
+        .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stack-item { background: #f7fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; }
+        .stack-item h4 { margin-top: 0; color: #667eea; }
+        .stack-item ul { margin-left: 20px; color: #4a5568; }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th { background: #667eea; color: white; padding: 12px; text-align: left; font-weight: 600; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: top; }
+        tr:hover { background: #f7fafc; }
+
+        .object-card { background: #f0f4ff; padding: 25px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+        .object-card h4 { color: #667eea; margin-bottom: 15px; font-size: 20px; }
+        .object-card .extends { background: #fff5f5; color: #c53030; padding: 4px 10px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 15px; font-weight: 600; }
+        .object-card .attributes, .object-card .methods { margin: 15px 0; }
+        .object-card .attributes h5, .object-card .methods h5 { color: #4a5568; font-size: 14px; margin-bottom: 10px; }
+        .object-card ul { margin-left: 20px; color: #4a5568; }
+        .object-card li { margin-bottom: 6px; }
+        .object-card code { background: white; padding: 2px 6px; border-radius: 3px; font-size: 13px; color: #667eea; }
+
+        .api-endpoint { background: #f7fafc; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #48bb78; }
+        .api-endpoint .method { display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 12px; margin-right: 10px; }
+        .api-endpoint .method.get { background: #c6f6d5; color: #22543d; }
+        .api-endpoint .method.post { background: #bee3f8; color: #2c5282; }
+        .api-endpoint .method.put { background: #feebc8; color: #7c2d12; }
+        .api-endpoint .method.delete { background: #fed7d7; color: #742a2a; }
+        .api-endpoint .route { font-family: 'Monaco', 'Courier New', monospace; font-size: 16px; font-weight: 600; color: #2d3748; }
+        .api-endpoint .description { margin: 10px 0; color: #4a5568; }
+        .api-endpoint .params { margin-top: 10px; }
+        .api-endpoint .params h5 { font-size: 13px; color: #4a5568; margin-bottom: 5px; }
+        .api-endpoint .params ul { margin-left: 20px; font-size: 13px; color: #718096; }
+
+        .db-table { background: white; border: 2px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin: 20px 0; }
+        .db-table .table-name { background: #667eea; color: white; padding: 15px; font-weight: 600; font-size: 16px; }
+        .db-table table { margin: 0; }
+        .db-table th { background: #edf2f7; color: #2d3748; font-size: 13px; }
+
+        .folder-tree { background: #1a202c; color: #e2e8f0; padding: 25px; border-radius: 8px; font-family: 'Monaco', 'Courier New', monospace; font-size: 13px; overflow-x: auto; margin: 20px 0; }
+        .folder-tree .comment { color: #68d391; }
+
+        .architecture-diagram { background: #f7fafc; padding: 30px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .architecture-diagram pre { font-family: 'Monaco', 'Courier New', monospace; font-size: 13px; display: inline-block; text-align: left; }
+
+        .milestone { background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #667eea; }
+        .milestone h4 { color: #667eea; margin-bottom: 10px; }
+        .milestone .duration { color: #718096; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+        .milestone ul { margin-left: 20px; color: #4a5568; }
+
+        .warning { background: #fffaf0; border: 2px solid #f6ad55; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .warning h4 { color: #c05621; margin-bottom: 10px; }
+        .warning ul { margin-left: 20px; color: #744210; }
+
+        .highlight { background: #f0fff4; border-left: 4px solid #48bb78; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .highlight h4 { color: #22543d; margin-bottom: 10px; }
+
+        code { background: #edf2f7; padding: 2px 6px; border-radius: 3px; font-size: 14px; font-family: 'Monaco', 'Courier New', monospace; }
+        pre code { background: transparent; padding: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ SPECS Techniques — AI_SEO_AUDIT</h1>
+            <div class="subtitle">Spécifications complètes MVP Light</div>
+            <div class="meta">
+                Version 1.0 | 2026-02-11 | Architecture EURKAI conforme
+            </div>
+        </div>
+
+        <div class="toc section">
+            <h3>📋 Table des matières</h3>
+            <ul>
+                <li><a href="#stack">1. Stack technique</a></li>
+                <li><a href="#architecture">2. Architecture générale</a></li>
+                <li><a href="#objets">3. Objets EURKAI</a></li>
+                <li><a href="#database">4. Base de données</a></li>
+                <li><a href="#api">5. API Endpoints</a></li>
+                <li><a href="#fractale">6. Architecture fractale</a></li>
+                <li><a href="#modules">7. Modules réutilisables</a></li>
+                <li><a href="#frontend">8. Frontend</a></li>
+                <li><a href="#plan">9. Plan de développement MVP</a></li>
+                <li><a href="#post-mvp">10. Post-MVP immédiat</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="stack">
+            <h2>1. Stack technique</h2>
+
+            <div class="stack-grid">
+                <div class="stack-item">
+                    <h4>🐍 Backend</h4>
+                    <ul>
+                        <li><strong>Python 3.11+</strong></li>
+                        <li><strong>FastAPI</strong> (API REST)</li>
+                        <li><strong>Pydantic</strong> (validation)</li>
+                        <li><strong>SQLAlchemy</strong> (ORM)</li>
+                        <li><strong>Alembic</strong> (migrations)</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>💾 Base de données</h4>
+                    <ul>
+                        <li><strong>PostgreSQL 15+</strong></li>
+                        <li><strong>Redis</strong> (cache + queue)</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>🤖 API IA</h4>
+                    <ul>
+                        <li><strong>OpenAI API</strong> (GPT-4o-mini)</li>
+                        <li>Post-MVP : Claude, Gemini, Perplexity</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>💳 Paiement</h4>
+                    <ul>
+                        <li><strong>Stripe</strong> (checkout + webhooks)</li>
+                        <li>Plans : Freemium, Starter, Pro</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>🎨 Frontend</h4>
+                    <ul>
+                        <li><strong>HTML5 / CSS3 / JavaScript</strong></li>
+                        <li>Pas de framework (MVP light)</li>
+                        <li>Fetch API pour appels backend</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>📄 Génération docs</h4>
+                    <ul>
+                        <li><strong>Jinja2</strong> (templates HTML)</li>
+                        <li><strong>WeasyPrint</strong> (PDF)</li>
+                        <li><strong>JSON-LD</strong> (structured data)</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>⚙️ DevOps</h4>
+                    <ul>
+                        <li><strong>Docker</strong> + docker-compose</li>
+                        <li><strong>GitHub Actions</strong> (CI/CD)</li>
+                        <li><strong>Railway / Render</strong> (hébergement)</li>
+                    </ul>
+                </div>
+
+                <div class="stack-item">
+                    <h4>🌍 I18n</h4>
+                    <ul>
+                        <li><strong>gettext / babel</strong></li>
+                        <li>Langues : FR (MVP), EN/ES/DE/IT (post-MVP)</li>
+                        <li>Détection auto + redirection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="architecture">
+            <h2>2. Architecture générale</h2>
+
+            <h3>2.1 Structure des dossiers</h3>
+
+            <div class="folder-tree">
+AI_SEO_AUDIT/
+├── src/                        <span class="comment"># Code source</span>
+│   ├── core/                   <span class="comment"># Objets EURKAI core</span>
+│   │   ├── object.py           <span class="comment"># Object base EURKAI</span>
+│   │   ├── domain/             <span class="comment"># Objets métier</span>
+│   │   │   ├── audit_session.py
+│   │   │   ├── competitor_analysis.py
+│   │   │   └── optimization_recommendation.py
+│   │   ├── interface/          <span class="comment"># Adapters</span>
+│   │   │   └── ai_provider.py
+│   │   └── config/             <span class="comment"># Templates & config</span>
+│   │       └── sector_template.py
+│   │
+│   ├── orchestrator/           <span class="comment"># Architecture fractale</span>
+│   │   ├── audit_orchestrator.py
+│   │   ├── agents/
+│   │   │   ├── audit_agent.py
+│   │   │   ├── analyze_agent.py
+│   │   │   └── generate_agent.py
+│   │   └── validator.py
+│   │
+│   ├── api/                    <span class="comment"># FastAPI endpoints</span>
+│   │   ├── main.py
+│   │   ├── routes/
+│   │   │   ├── audit.py
+│   │   │   ├── payment.py
+│   │   │   └── export.py
+│   │   └── schemas.py          <span class="comment"># Pydantic models</span>
+│   │
+│   ├── database/               <span class="comment"># Base de données</span>
+│   │   ├── models.py           <span class="comment"># SQLAlchemy models</span>
+│   │   ├── migrations/         <span class="comment"># Alembic</span>
+│   │   └── session.py
+│   │
+│   ├── services/               <span class="comment"># Services métier</span>
+│   │   ├── ai_service.py       <span class="comment"># Appels API IA</span>
+│   │   ├── audit_service.py
+│   │   ├── payment_service.py
+│   │   └── export_service.py
+│   │
+│   ├── templates/              <span class="comment"># Jinja2 templates</span>
+│   │   ├── landing.html
+│   │   ├── audit_results.html
+│   │   ├── export_guide.html
+│   │   └── email/
+│   │
+│   ├── static/                 <span class="comment"># Assets statiques</span>
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── images/
+│   │
+│   └── utils/                  <span class="comment"># Utilitaires</span>
+│       ├── cache.py
+│       ├── rate_limiter.py
+│       └── i18n.py
+│
+├── tests/                      <span class="comment"># Tests unitaires & intégration</span>
+│   ├── test_audit.py
+│   ├── test_agents.py
+│   └── test_api.py
+│
+├── docs/                       <span class="comment"># Documentation</span>
+│   ├── API.md
+│   └── DEPLOYMENT.md
+│
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+├── alembic.ini
+├── .env.example
+├── README.md
+└── _SUIVI.md
+            </div>
+
+            <h3>2.2 Flux de données</h3>
+
+            <div class="architecture-diagram">
+                <pre>
+┌─────────────┐
+│   Client    │
+│  (Browser)  │
+└──────┬──────┘
+       │
+       │ HTTPS
+       ▼
+┌─────────────────────────────────────────┐
+│           FastAPI Backend               │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │   Audit Orchestrator            │   │
+│  │   ┌──────────┐  ┌──────────┐   │   │
+│  │   │  Agent   │  │  Agent   │   │   │
+│  │   │  Audit   │  │ Analyze  │   │   │
+│  │   └────┬─────┘  └────┬─────┘   │   │
+│  │        │             │          │   │
+│  │   ┌────▼─────────────▼─────┐   │   │
+│  │   │   Agent Generate        │   │   │
+│  │   └────┬────────────────────┘   │   │
+│  │        │                         │   │
+│  │   ┌────▼─────┐                  │   │
+│  │   │Validator │                  │   │
+│  │   └──────────┘                  │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌──────────┐      ┌───────────┐      │
+│  │PostgreSQL│      │   Redis   │      │
+│  │   DB     │      │  Cache    │      │
+│  └──────────┘      └───────────┘      │
+└─────────┬───────────────────────────────┘
+          │
+          │ API Calls
+          ▼
+    ┌──────────┐
+    │ OpenAI   │
+    │   API    │
+    └──────────┘
+                </pre>
+            </div>
+        </div>
+
+        <div class="section" id="objets">
+            <h2>3. Objets EURKAI</h2>
+
+            <h3>3.1 Object base (EURKAI Core)</h3>
+
+            <div class="object-card">
+                <h4>Object</h4>
+                <div class="extends">Base EURKAI</div>
+
+                <div class="attributes">
+                    <h5>Attributs</h5>
+                    <ul>
+                        <li><code>ident: str</code> — Identifiant unique (UUID)</li>
+                        <li><code>created_at: datetime</code> — Date création</li>
+                        <li><code>updated_at: datetime</code> — Date dernière MAJ</li>
+                        <li><code>version: str</code> — Version de l'objet</li>
+                        <li><code>parent: Optional[str]</code> — Référence parent (hiérarchie)</li>
+                        <li><code>metadata: Dict[str, Any]</code> — Métadonnées flexibles</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>validate() → bool</code> — Valide la cohérence de l'objet</li>
+                        <li><code>test() → TestResult</code> — Teste le fonctionnement</li>
+                        <li><code>to_dict() → dict</code> — Sérialise en dict</li>
+                        <li><code>from_dict(data: dict) → Object</code> — Désérialise</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>3.2 Objets métier (domain)</h3>
+
+            <div class="object-card">
+                <h4>AuditSession</h4>
+                <div class="extends">extends Object → domain.service.Audit</div>
+
+                <div class="attributes">
+                    <h5>Attributs spécifiques</h5>
+                    <ul>
+                        <li><code>company_name: str</code> — Nom entreprise</li>
+                        <li><code>sector: str</code> — Secteur d'activité</li>
+                        <li><code>location: str</code> — Zone géographique</li>
+                        <li><code>language: str</code> — Langue (fr/en/es/de/it)</li>
+                        <li><code>plan: str</code> — freemium/starter/pro</li>
+                        <li><code>queries: List[str]</code> — Requêtes testées</li>
+                        <li><code>results: List[AuditResult]</code> — Résultats par requête</li>
+                        <li><code>visibility_score: float</code> — Score 0-100</li>
+                        <li><code>status: str</code> — pending/running/completed/failed</li>
+                        <li><code>user_email: Optional[str]</code> — Email utilisateur</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>execute() → AuditSession</code> — Lance l'audit complet</li>
+                        <li><code>analyze() → CompetitorAnalysis</code> — Analyse résultats</li>
+                        <li><code>generate_score() → float</code> — Calcule score visibilité</li>
+                        <li><code>export(format: str) → bytes</code> — Export PDF/JSON/HTML</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="object-card">
+                <h4>AIProvider</h4>
+                <div class="extends">extends Object → interface.adapter.APIAdapter</div>
+
+                <div class="attributes">
+                    <h5>Attributs spécifiques</h5>
+                    <ul>
+                        <li><code>name: str</code> — chatgpt/claude/gemini/perplexity</li>
+                        <li><code>api_endpoint: str</code> — URL API</li>
+                        <li><code>model: str</code> — Modèle utilisé</li>
+                        <li><code>api_key: str</code> — Clé API (chiffrée)</li>
+                        <li><code>rate_limit: int</code> — Requêtes/minute max</li>
+                        <li><code>timeout: int</code> — Timeout secondes</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>query(prompt: str, context: dict) → AIResponse</code> — Interroge l'IA</li>
+                        <li><code>parse_response(raw: str) → dict</code> — Parse réponse brute</li>
+                        <li><code>extract_mentions(text: str) → List[str]</code> — Extrait mentions entreprises</li>
+                        <li><code>check_rate_limit() → bool</code> — Vérifie quota</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="object-card">
+                <h4>CompetitorAnalysis</h4>
+                <div class="extends">extends Object → domain.service.Analysis</div>
+
+                <div class="attributes">
+                    <h5>Attributs spécifiques</h5>
+                    <ul>
+                        <li><code>target_company: str</code> — Entreprise auditée</li>
+                        <li><code>competitors: List[Competitor]</code> — Concurrents identifiés</li>
+                        <li><code>visibility_gaps: List[Gap]</code> — Écarts détectés</li>
+                        <li><code>recommendations_priority: List[str]</code> — Priorités</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>identify_gaps() → List[Gap]</code> — Identifie écarts vs concurrents</li>
+                        <li><code>rank_competitors() → List[Competitor]</code> — Classe concurrents par visibilité</li>
+                        <li><code>suggest_queries() → List[str]</code> — Suggère requêtes pertinentes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="object-card">
+                <h4>OptimizationRecommendation</h4>
+                <div class="extends">extends Object → domain.product.Deliverable</div>
+
+                <div class="attributes">
+                    <h5>Attributs spécifiques</h5>
+                    <ul>
+                        <li><code>type: str</code> — content/structured_data/editorial</li>
+                        <li><code>priority: int</code> — 1-5 (1 = urgent)</li>
+                        <li><code>title: str</code> — Titre recommandation</li>
+                        <li><code>description: str</code> — Explication détaillée</li>
+                        <li><code>content: dict</code> — Contenu généré (texte/JSON-LD/HTML)</li>
+                        <li><code>integration_guide: str</code> — Instructions intégration</li>
+                        <li><code>estimated_impact: str</code> — Impact attendu (low/medium/high)</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>generate(context: dict) → OptimizationRecommendation</code> — Génère solution</li>
+                        <li><code>validate() → bool</code> — Valide cohérence</li>
+                        <li><code>export(format: str) → str</code> — Export HTML/JSON/Markdown</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>3.3 Objets système (config)</h3>
+
+            <div class="object-card">
+                <h4>SectorTemplate</h4>
+                <div class="extends">extends Object → config.template.Template</div>
+
+                <div class="attributes">
+                    <h5>Attributs spécifiques</h5>
+                    <ul>
+                        <li><code>sector_id: str</code> — restaurant/coaching/agence/ecommerce</li>
+                        <li><code>sector_name: dict</code> — Noms traduits {fr: ..., en: ...}</li>
+                        <li><code>queries_patterns: List[str]</code> — Templates de requêtes</li>
+                        <li><code>signals_priority: List[str]</code> — Signaux importants secteur</li>
+                        <li><code>keywords: List[str]</code> — Mots-clefs typiques</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>customize(company: str, location: str) → List[str]</code> — Génère requêtes</li>
+                        <li><code>generate_queries(count: int) → List[str]</code> — Génère N requêtes</li>
+                        <li><code>adapt_language(lang: str) → SectorTemplate</code> — Adapte langue</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="database">
+            <h2>4. Base de données</h2>
+
+            <h3>4.1 Schéma PostgreSQL</h3>
+
+            <div class="db-table">
+                <div class="table-name">users</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Colonne</th>
+                            <th>Type</th>
+                            <th>Contraintes</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>UUID</td>
+                            <td>PRIMARY KEY</td>
+                            <td>Identifiant unique</td>
+                        </tr>
+                        <tr>
+                            <td>email</td>
+                            <td>VARCHAR(255)</td>
+                            <td>UNIQUE, NOT NULL</td>
+                            <td>Email utilisateur</td>
+                        </tr>
+                        <tr>
+                            <td>company_name</td>
+                            <td>VARCHAR(255)</td>
+                            <td></td>
+                            <td>Nom entreprise</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>TIMESTAMP</td>
+                            <td>DEFAULT NOW()</td>
+                            <td>Date création</td>
+                        </tr>
+                        <tr>
+                            <td>last_audit_at</td>
+                            <td>TIMESTAMP</td>
+                            <td></td>
+                            <td>Dernier audit</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="db-table">
+                <div class="table-name">audits</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Colonne</th>
+                            <th>Type</th>
+                            <th>Contraintes</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>UUID</td>
+                            <td>PRIMARY KEY</td>
+                            <td>Identifiant unique</td>
+                        </tr>
+                        <tr>
+                            <td>user_id</td>
+                            <td>UUID</td>
+                            <td>FOREIGN KEY (users.id)</td>
+                            <td>Référence utilisateur</td>
+                        </tr>
+                        <tr>
+                            <td>company_name</td>
+                            <td>VARCHAR(255)</td>
+                            <td>NOT NULL</td>
+                            <td>Entreprise auditée</td>
+                        </tr>
+                        <tr>
+                            <td>sector</td>
+                            <td>VARCHAR(100)</td>
+                            <td>NOT NULL</td>
+                            <td>Secteur activité</td>
+                        </tr>
+                        <tr>
+                            <td>location</td>
+                            <td>VARCHAR(255)</td>
+                            <td></td>
+                            <td>Zone géographique</td>
+                        </tr>
+                        <tr>
+                            <td>language</td>
+                            <td>VARCHAR(5)</td>
+                            <td>DEFAULT 'fr'</td>
+                            <td>Langue audit</td>
+                        </tr>
+                        <tr>
+                            <td>plan</td>
+                            <td>VARCHAR(20)</td>
+                            <td>NOT NULL</td>
+                            <td>freemium/starter/pro</td>
+                        </tr>
+                        <tr>
+                            <td>visibility_score</td>
+                            <td>FLOAT</td>
+                            <td></td>
+                            <td>Score 0-100</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>VARCHAR(20)</td>
+                            <td>DEFAULT 'pending'</td>
+                            <td>pending/running/completed/failed</td>
+                        </tr>
+                        <tr>
+                            <td>results</td>
+                            <td>JSONB</td>
+                            <td></td>
+                            <td>Résultats détaillés</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>TIMESTAMP</td>
+                            <td>DEFAULT NOW()</td>
+                            <td>Date création</td>
+                        </tr>
+                        <tr>
+                            <td>completed_at</td>
+                            <td>TIMESTAMP</td>
+                            <td></td>
+                            <td>Date fin audit</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="db-table">
+                <div class="table-name">queries</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Colonne</th>
+                            <th>Type</th>
+                            <th>Contraintes</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>UUID</td>
+                            <td>PRIMARY KEY</td>
+                            <td>Identifiant unique</td>
+                        </tr>
+                        <tr>
+                            <td>audit_id</td>
+                            <td>UUID</td>
+                            <td>FOREIGN KEY (audits.id)</td>
+                            <td>Référence audit</td>
+                        </tr>
+                        <tr>
+                            <td>query_text</td>
+                            <td>TEXT</td>
+                            <td>NOT NULL</td>
+                            <td>Requête posée à l'IA</td>
+                        </tr>
+                        <tr>
+                            <td>ai_provider</td>
+                            <td>VARCHAR(50)</td>
+                            <td>NOT NULL</td>
+                            <td>chatgpt/claude/gemini/perplexity</td>
+                        </tr>
+                        <tr>
+                            <td>ai_response</td>
+                            <td>TEXT</td>
+                            <td></td>
+                            <td>Réponse brute de l'IA</td>
+                        </tr>
+                        <tr>
+                            <td>company_mentioned</td>
+                            <td>BOOLEAN</td>
+                            <td></td>
+                            <td>Entreprise citée ?</td>
+                        </tr>
+                        <tr>
+                            <td>position</td>
+                            <td>INTEGER</td>
+                            <td></td>
+                            <td>Position si citée (1-N)</td>
+                        </tr>
+                        <tr>
+                            <td>competitors_found</td>
+                            <td>JSONB</td>
+                            <td></td>
+                            <td>Liste concurrents cités</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>TIMESTAMP</td>
+                            <td>DEFAULT NOW()</td>
+                            <td>Date requête</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="db-table">
+                <div class="table-name">recommendations</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Colonne</th>
+                            <th>Type</th>
+                            <th>Contraintes</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>UUID</td>
+                            <td>PRIMARY KEY</td>
+                            <td>Identifiant unique</td>
+                        </tr>
+                        <tr>
+                            <td>audit_id</td>
+                            <td>UUID</td>
+                            <td>FOREIGN KEY (audits.id)</td>
+                            <td>Référence audit</td>
+                        </tr>
+                        <tr>
+                            <td>type</td>
+                            <td>VARCHAR(50)</td>
+                            <td>NOT NULL</td>
+                            <td>content/structured_data/editorial</td>
+                        </tr>
+                        <tr>
+                            <td>priority</td>
+                            <td>INTEGER</td>
+                            <td></td>
+                            <td>1-5 (1 = urgent)</td>
+                        </tr>
+                        <tr>
+                            <td>title</td>
+                            <td>VARCHAR(255)</td>
+                            <td>NOT NULL</td>
+                            <td>Titre recommandation</td>
+                        </tr>
+                        <tr>
+                            <td>description</td>
+                            <td>TEXT</td>
+                            <td></td>
+                            <td>Explication</td>
+                        </tr>
+                        <tr>
+                            <td>content</td>
+                            <td>JSONB</td>
+                            <td></td>
+                            <td>Contenu généré</td>
+                        </tr>
+                        <tr>
+                            <td>integration_guide</td>
+                            <td>TEXT</td>
+                            <td></td>
+                            <td>Instructions</td>
+                        </tr>
+                        <tr>
+                            <td>estimated_impact</td>
+                            <td>VARCHAR(20)</td>
+                            <td></td>
+                            <td>low/medium/high</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>TIMESTAMP</td>
+                            <td>DEFAULT NOW()</td>
+                            <td>Date création</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="db-table">
+                <div class="table-name">payments</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Colonne</th>
+                            <th>Type</th>
+                            <th>Contraintes</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>UUID</td>
+                            <td>PRIMARY KEY</td>
+                            <td>Identifiant unique</td>
+                        </tr>
+                        <tr>
+                            <td>user_id</td>
+                            <td>UUID</td>
+                            <td>FOREIGN KEY (users.id)</td>
+                            <td>Référence utilisateur</td>
+                        </tr>
+                        <tr>
+                            <td>audit_id</td>
+                            <td>UUID</td>
+                            <td>FOREIGN KEY (audits.id)</td>
+                            <td>Référence audit</td>
+                        </tr>
+                        <tr>
+                            <td>stripe_checkout_id</td>
+                            <td>VARCHAR(255)</td>
+                            <td>UNIQUE</td>
+                            <td>ID session Stripe</td>
+                        </tr>
+                        <tr>
+                            <td>plan</td>
+                            <td>VARCHAR(20)</td>
+                            <td>NOT NULL</td>
+                            <td>starter/pro</td>
+                        </tr>
+                        <tr>
+                            <td>amount</td>
+                            <td>INTEGER</td>
+                            <td>NOT NULL</td>
+                            <td>Montant en centimes</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>VARCHAR(20)</td>
+                            <td>DEFAULT 'pending'</td>
+                            <td>pending/completed/failed/refunded</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>TIMESTAMP</td>
+                            <td>DEFAULT NOW()</td>
+                            <td>Date création</td>
+                        </tr>
+                        <tr>
+                            <td>paid_at</td>
+                            <td>TIMESTAMP</td>
+                            <td></td>
+                            <td>Date paiement confirmé</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>4.2 Indexes</h3>
+            <ul>
+                <li><code>CREATE INDEX idx_audits_user_id ON audits(user_id)</code></li>
+                <li><code>CREATE INDEX idx_audits_status ON audits(status)</code></li>
+                <li><code>CREATE INDEX idx_audits_created_at ON audits(created_at DESC)</code></li>
+                <li><code>CREATE INDEX idx_queries_audit_id ON queries(audit_id)</code></li>
+                <li><code>CREATE INDEX idx_recommendations_audit_id ON recommendations(audit_id)</code></li>
+                <li><code>CREATE INDEX idx_payments_stripe_checkout_id ON payments(stripe_checkout_id)</code></li>
+            </ul>
+        </div>
+
+        <div class="section" id="api">
+            <h2>5. API Endpoints</h2>
+
+            <h3>5.1 Public (landing + audit)</h3>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/</span>
+                <div class="description">Landing page (Jinja2 template)</div>
+            </div>
+
+            <div class="api-endpoint">
+                <span class="method post">POST</span>
+                <span class="route">/api/audit/create</span>
+                <div class="description">Créer un nouvel audit</div>
+                <div class="params">
+                    <h5>Body (JSON):</h5>
+                    <ul>
+                        <li><code>company_name</code> (string, required)</li>
+                        <li><code>sector</code> (string, required) — restaurant/coaching/agence/ecommerce</li>
+                        <li><code>location</code> (string, optional)</li>
+                        <li><code>email</code> (string, optional)</li>
+                        <li><code>plan</code> (string, required) — freemium/starter/pro</li>
+                    </ul>
+                    <h5>Response:</h5>
+                    <ul>
+                        <li><code>audit_id</code> (uuid)</li>
+                        <li><code>status</code> (string) — pending/running</li>
+                        <li><code>estimated_duration</code> (int) — secondes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/api/audit/{audit_id}/status</span>
+                <div class="description">Statut d'un audit (polling)</div>
+                <div class="params">
+                    <h5>Response:</h5>
+                    <ul>
+                        <li><code>status</code> (string) — pending/running/completed/failed</li>
+                        <li><code>progress</code> (int) — 0-100%</li>
+                        <li><code>current_step</code> (string)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/api/audit/{audit_id}/results</span>
+                <div class="description">Résultats d'un audit complété</div>
+                <div class="params">
+                    <h5>Response:</h5>
+                    <ul>
+                        <li><code>audit</code> (object) — Données audit</li>
+                        <li><code>visibility_score</code> (float) — 0-100</li>
+                        <li><code>queries_results</code> (array) — Détail par requête</li>
+                        <li><code>competitors</code> (array) — Concurrents identifiés</li>
+                        <li><code>recommendations</code> (array) — Solutions proposées</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>5.2 Payment (Stripe)</h3>
+
+            <div class="api-endpoint">
+                <span class="method post">POST</span>
+                <span class="route">/api/payment/create-checkout</span>
+                <div class="description">Créer session Stripe Checkout</div>
+                <div class="params">
+                    <h5>Body (JSON):</h5>
+                    <ul>
+                        <li><code>audit_id</code> (uuid, required)</li>
+                        <li><code>plan</code> (string, required) — starter/pro</li>
+                        <li><code>success_url</code> (string, required)</li>
+                        <li><code>cancel_url</code> (string, required)</li>
+                    </ul>
+                    <h5>Response:</h5>
+                    <ul>
+                        <li><code>checkout_url</code> (string) — URL Stripe Checkout</li>
+                        <li><code>session_id</code> (string)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="api-endpoint">
+                <span class="method post">POST</span>
+                <span class="route">/api/payment/webhook</span>
+                <div class="description">Webhook Stripe (signature validation)</div>
+                <div class="params">
+                    <h5>Events gérés:</h5>
+                    <ul>
+                        <li><code>checkout.session.completed</code> — Paiement confirmé</li>
+                        <li><code>charge.refunded</code> — Remboursement</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>5.3 Export</h3>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/api/export/{audit_id}/guide.pdf</span>
+                <div class="description">Télécharger guide PDF (8-12 pages)</div>
+                <div class="params">
+                    <h5>Headers:</h5>
+                    <ul>
+                        <li><code>Authorization: Bearer {token}</code> (si plan payant)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/api/export/{audit_id}/recommendations.json</span>
+                <div class="description">Télécharger recommandations JSON (JSON-LD + contenus)</div>
+            </div>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/api/export/{audit_id}/mockups.zip</span>
+                <div class="description">Télécharger maquettes HTML (plan Pro uniquement)</div>
+            </div>
+
+            <h3>5.4 Admin (optionnel MVP)</h3>
+
+            <div class="api-endpoint">
+                <span class="method get">GET</span>
+                <span class="route">/admin/stats</span>
+                <div class="description">Statistiques globales (audits, conversions, CA)</div>
+            </div>
+        </div>
+
+        <div class="section" id="fractale">
+            <h2>6. Architecture fractale</h2>
+
+            <h3>6.1 Orchestrateur principal</h3>
+
+            <div class="object-card">
+                <h4>AuditOrchestrator</h4>
+                <div class="extends">extends Object → flow.orchestrator.Orchestrator</div>
+
+                <div class="attributes">
+                    <h5>Rôle</h5>
+                    <ul>
+                        <li>Coordonne les 3 agents (Audit, Analyze, Generate)</li>
+                        <li>Gère le flux de données entre agents</li>
+                        <li>Valide chaque étape via le Validator</li>
+                        <li>Ne fait AUCUN traitement métier lui-même</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>execute(audit_session: AuditSession) → AuditSession</code></li>
+                        <li><code>run_agent(agent: Agent, input: dict) → dict</code></li>
+                        <li><code>validate_step(step: str, data: dict) → bool</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>6.2 Agents</h3>
+
+            <div class="object-card">
+                <h4>AuditAgent</h4>
+                <div class="extends">extends Object → flow.agent.Agent</div>
+
+                <div class="attributes">
+                    <h5>Responsabilité</h5>
+                    <ul>
+                        <li>Interroger l'IA (ChatGPT MVP)</li>
+                        <li>Parser les réponses</li>
+                        <li>Extraire mentions entreprises</li>
+                        <li>Détecter position de l'entreprise cible</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>execute(queries: List[str], provider: AIProvider) → List[QueryResult]</code></li>
+                        <li><code>query_ai(query: str) → AIResponse</code></li>
+                        <li><code>extract_companies(response: str) → List[str]</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="object-card">
+                <h4>AnalyzeAgent</h4>
+                <div class="extends">extends Object → flow.agent.Agent</div>
+
+                <div class="attributes">
+                    <h5>Responsabilité</h5>
+                    <ul>
+                        <li>Calculer score de visibilité (0-100)</li>
+                        <li>Identifier concurrents visibles</li>
+                        <li>Détecter écarts (gaps)</li>
+                        <li>Prioriser recommandations</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>execute(results: List[QueryResult]) → CompetitorAnalysis</code></li>
+                        <li><code>calculate_visibility_score(results: List[QueryResult]) → float</code></li>
+                        <li><code>identify_gaps(target: str, competitors: List[str]) → List[Gap]</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="object-card">
+                <h4>GenerateAgent</h4>
+                <div class="extends">extends Object → flow.agent.Agent</div>
+
+                <div class="attributes">
+                    <h5>Responsabilité</h5>
+                    <ul>
+                        <li>Générer contenus optimisés IA</li>
+                        <li>Créer données structurées (JSON-LD)</li>
+                        <li>Produire guide d'intégration</li>
+                        <li>Générer maquettes HTML (plan Pro)</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>execute(analysis: CompetitorAnalysis) → List[OptimizationRecommendation]</code></li>
+                        <li><code>generate_content(gap: Gap) → str</code></li>
+                        <li><code>generate_structured_data(company: str) → dict</code></li>
+                        <li><code>generate_guide(recommendations: List) → str</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>6.3 Validator</h3>
+
+            <div class="object-card">
+                <h4>Validator</h4>
+                <div class="extends">extends Object → flow.validator.Validator</div>
+
+                <div class="attributes">
+                    <h5>Responsabilité</h5>
+                    <ul>
+                        <li>Valider conformité MANIFEST EURKAI</li>
+                        <li>Vérifier cohérence données entre étapes</li>
+                        <li>Signaler erreurs / incohérences</li>
+                    </ul>
+                </div>
+
+                <div class="methods">
+                    <h5>Méthodes</h5>
+                    <ul>
+                        <li><code>validate_audit_results(results: List[QueryResult]) → ValidationResult</code></li>
+                        <li><code>validate_analysis(analysis: CompetitorAnalysis) → ValidationResult</code></li>
+                        <li><code>validate_recommendations(recs: List[OptimizationRecommendation]) → ValidationResult</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>6.4 Flux orchestré</h3>
+
+            <div class="architecture-diagram">
+                <pre>
+AuditOrchestrator.execute(audit_session)
+  │
+  ├─► AuditAgent.execute(queries, provider)
+  │     └─► [QueryResult, QueryResult, ...]
+  │
+  ├─► Validator.validate_audit_results(results)
+  │     └─► ValidationResult(ok=True)
+  │
+  ├─► AnalyzeAgent.execute(results)
+  │     └─► CompetitorAnalysis
+  │
+  ├─► Validator.validate_analysis(analysis)
+  │     └─► ValidationResult(ok=True)
+  │
+  ├─► GenerateAgent.execute(analysis)
+  │     └─► [Recommendation, Recommendation, ...]
+  │
+  ├─► Validator.validate_recommendations(recommendations)
+  │     └─► ValidationResult(ok=True)
+  │
+  └─► Return AuditSession (completed)
+                </pre>
+            </div>
+        </div>
+
+        <div class="section" id="modules">
+            <h2>7. Modules réutilisables (EURKAI/MODULES/)</h2>
+
+            <h3>7.1 Modules à extraire</h3>
+
+            <div class="highlight">
+                <h4>Module API_AGGREGATOR</h4>
+                <p>Orchestration multi-API IA (ChatGPT, Claude, Gemini, Perplexity)</p>
+                <ul>
+                    <li>Gestion rate limiting par provider</li>
+                    <li>Retry automatique sur erreur</li>
+                    <li>Cache réponses (Redis)</li>
+                    <li>Parse unifié des réponses</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h4>Module SEMANTIC_ANALYZER</h4>
+                <p>Analyse cohérence sémantique et extraction entités</p>
+                <ul>
+                    <li>Extraction mentions entreprises (NLP léger)</li>
+                    <li>Détection sentiment (positif/neutre/négatif)</li>
+                    <li>Calcul similarité sémantique</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h4>Module COMPETITOR_TRACKER</h4>
+                <p>Suivi automatisé de la concurrence</p>
+                <ul>
+                    <li>Identification concurrents par secteur</li>
+                    <li>Ranking par visibilité</li>
+                    <li>Alertes sur changements (version Enterprise)</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h4>Module CONTENT_GENERATOR</h4>
+                <p>Génération contenus optimisés IA</p>
+                <ul>
+                    <li>Templates sectoriels (restaurant, coaching, etc.)</li>
+                    <li>JSON-LD Schema.org</li>
+                    <li>Maquettes HTML responsives</li>
+                    <li>Guides d'intégration multiplateforme (WordPress, Wix, Shopify, HTML)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="frontend">
+            <h2>8. Frontend</h2>
+
+            <h3>8.1 Pages</h3>
+
+            <h4>1. Landing page (<code>/</code>)</h4>
+            <ul>
+                <li>Hero section : titre accrocheur + CTA "Audit gratuit"</li>
+                <li>Bénéfices : 3 blocs (rapide/gratuit/actionnable)</li>
+                <li>Formulaire audit inline (company, sector, location, email)</li>
+                <li>Social proof : logos entreprises / témoignages (fake si MVP)</li>
+                <li>Pricing tableau : Freemium / Starter / Pro</li>
+                <li>FAQ : 5-8 questions courantes</li>
+                <li>Footer : liens légaux (CGV, Mentions légales, Privacy)</li>
+            </ul>
+
+            <h4>2. Page résultats audit (<code>/audit/{audit_id}</code>)</h4>
+            <ul>
+                <li>Score de visibilité (gauge 0-100)</li>
+                <li>Graphique comparaison concurrents (bar chart)</li>
+                <li>Tableau requêtes testées (présence, position)</li>
+                <li>Liste recommandations priorisées (accordéon)</li>
+                <li>CTA upgrade (si freemium) : "Débloquer solutions complètes"</li>
+                <li>Bouton télécharger guide PDF (si payant)</li>
+            </ul>
+
+            <h4>3. Page paiement Stripe</h4>
+            <ul>
+                <li>Redirection vers Stripe Checkout</li>
+                <li>Success : retour sur /audit/{audit_id} avec accès complet</li>
+                <li>Cancel : retour sur /audit/{audit_id} avec message</li>
+            </ul>
+
+            <h3>8.2 Design système</h3>
+            <ul>
+                <li><strong>Palette</strong> : Dégradé violet (#667eea → #764ba2), gris (#f7fafc, #edf2f7), vert (#48bb78)</li>
+                <li><strong>Typo</strong> : System fonts (-apple-system, BlinkMacSystemFont, Segoe UI, Roboto)</li>
+                <li><strong>Components</strong> : Boutons primaires (gradient), cartes (box-shadow), accordéons, formulaires</li>
+                <li><strong>Responsive</strong> : Mobile-first, breakpoints 640px, 768px, 1024px</li>
+            </ul>
+        </div>
+
+        <div class="section" id="plan">
+            <h2>9. Plan de développement MVP</h2>
+
+            <h3>9.1 Phase 1 : Setup (4h)</h3>
+
+            <div class="milestone">
+                <h4>Jour 1 matin</h4>
+                <div class="duration">Durée : 4h</div>
+                <ul>
+                    <li>✓ Créer structure dossiers selon specs</li>
+                    <li>✓ Initialiser projet Python (venv, requirements.txt)</li>
+                    <li>✓ Configurer FastAPI (main.py, routes basiques)</li>
+                    <li>✓ Setup PostgreSQL (docker-compose, connexion)</li>
+                    <li>✓ Setup Redis (docker-compose, connexion)</li>
+                    <li>✓ Créer models SQLAlchemy (5 tables)</li>
+                    <li>✓ Initialiser Alembic + première migration</li>
+                    <li>✓ Test connexion DB + insertion test</li>
+                </ul>
+            </div>
+
+            <h3>9.2 Phase 2 : Objets EURKAI Core (6h)</h3>
+
+            <div class="milestone">
+                <h4>Jour 1 après-midi</h4>
+                <div class="duration">Durée : 6h</div>
+                <ul>
+                    <li>✓ Créer Object base (core/object.py)</li>
+                    <li>✓ Créer AuditSession (domain/audit_session.py)</li>
+                    <li>✓ Créer AIProvider (interface/ai_provider.py)</li>
+                    <li>✓ Créer CompetitorAnalysis (domain/competitor_analysis.py)</li>
+                    <li>✓ Créer OptimizationRecommendation (domain/optimization_recommendation.py)</li>
+                    <li>✓ Créer SectorTemplate (config/sector_template.py)</li>
+                    <li>✓ Tests unitaires objets (validate(), to_dict())</li>
+                </ul>
+            </div>
+
+            <h3>9.3 Phase 3 : Agents & Orchestrateur (8h)</h3>
+
+            <div class="milestone">
+                <h4>Jour 2 matin + après-midi</h4>
+                <div class="duration">Durée : 8h</div>
+                <ul>
+                    <li>✓ Créer AuditAgent (orchestrator/agents/audit_agent.py)</li>
+                    <li>✓ Intégration OpenAI API (GPT-4o-mini)</li>
+                    <li>✓ Parse réponses + extraction mentions</li>
+                    <li>✓ Créer AnalyzeAgent (analyze_agent.py)</li>
+                    <li>✓ Calcul score visibilité (algorithme simple)</li>
+                    <li>✓ Identification concurrents + gaps</li>
+                    <li>✓ Créer GenerateAgent (generate_agent.py)</li>
+                    <li>✓ Génération contenus optimisés (templates Jinja2)</li>
+                    <li>✓ Génération JSON-LD Schema.org</li>
+                    <li>✓ Créer Validator (validator.py)</li>
+                    <li>✓ Créer AuditOrchestrator (audit_orchestrator.py)</li>
+                    <li>✓ Tests intégration orchestrateur → agents</li>
+                </ul>
+            </div>
+
+            <h3>9.4 Phase 4 : API Endpoints (6h)</h3>
+
+            <div class="milestone">
+                <h4>Jour 3 matin</h4>
+                <div class="duration">Durée : 6h</div>
+                <ul>
+                    <li>✓ POST /api/audit/create</li>
+                    <li>✓ GET /api/audit/{id}/status (polling)</li>
+                    <li>✓ GET /api/audit/{id}/results</li>
+                    <li>✓ POST /api/payment/create-checkout (Stripe)</li>
+                    <li>✓ POST /api/payment/webhook (Stripe)</li>
+                    <li>✓ GET /api/export/{id}/guide.pdf (WeasyPrint)</li>
+                    <li>✓ Tests API (pytest + httpx)</li>
+                </ul>
+            </div>
+
+            <h3>9.5 Phase 5 : Frontend (8h)</h3>
+
+            <div class="milestone">
+                <h4>Jour 3 après-midi + Jour 4 matin</h4>
+                <div class="duration">Durée : 8h</div>
+                <ul>
+                    <li>✓ Landing page (HTML/CSS, formulaire audit)</li>
+                    <li>✓ Pricing tableau (3 plans)</li>
+                    <li>✓ Page résultats audit (score, graph, recommandations)</li>
+                    <li>✓ Intégration Stripe Checkout (JS)</li>
+                    <li>✓ Page succès paiement</li>
+                    <li>✓ Export PDF (bouton télécharger)</li>
+                    <li>✓ Responsive mobile/tablet/desktop</li>
+                </ul>
+            </div>
+
+            <h3>9.6 Phase 6 : Tests & Deploy (4h)</h3>
+
+            <div class="milestone">
+                <h4>Jour 4 après-midi</h4>
+                <div class="duration">Durée : 4h</div>
+                <ul>
+                    <li>✓ Tests end-to-end (audit complet freemium)</li>
+                    <li>✓ Tests end-to-end (audit payant + Stripe test)</li>
+                    <li>✓ Dockerfile + docker-compose final</li>
+                    <li>✓ Deploy sur Railway / Render</li>
+                    <li>✓ Config domaine + HTTPS</li>
+                    <li>✓ Monitoring basique (logs)</li>
+                </ul>
+            </div>
+
+            <h3>9.7 Récapitulatif temps</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Durée</th>
+                        <th>Cumulé</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Setup</td>
+                        <td>4h</td>
+                        <td>4h</td>
+                    </tr>
+                    <tr>
+                        <td>Objets EURKAI</td>
+                        <td>6h</td>
+                        <td>10h</td>
+                    </tr>
+                    <tr>
+                        <td>Agents & Orchestrateur</td>
+                        <td>8h</td>
+                        <td>18h</td>
+                    </tr>
+                    <tr>
+                        <td>API Endpoints</td>
+                        <td>6h</td>
+                        <td>24h</td>
+                    </tr>
+                    <tr>
+                        <td>Frontend</td>
+                        <td>8h</td>
+                        <td>32h</td>
+                    </tr>
+                    <tr>
+                        <td>Tests & Deploy</td>
+                        <td>4h</td>
+                        <td>36h</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Total MVP Light : 36 heures (4-5 jours si 8h/jour)</strong></p>
+        </div>
+
+        <div class="section" id="post-mvp">
+            <h2>10. Post-MVP immédiat</h2>
+
+            <h3>10.1 Évolutions prioritaires (2 semaines)</h3>
+
+            <div class="milestone">
+                <h4>Semaine 1 post-MVP</h4>
+                <ul>
+                    <li>✓ Intégration Claude API (Anthropic)</li>
+                    <li>✓ Intégration Gemini API (Google)</li>
+                    <li>✓ Intégration Perplexity API</li>
+                    <li>✓ Comparaison inter-IA (dashboard multi-providers)</li>
+                    <li>✓ Score agrégé (moyenne pondérée 4 IA)</li>
+                    <li>✓ Cache Redis résultats IA (24h)</li>
+                    <li>✓ Rate limiting intelligent par provider</li>
+                </ul>
+            </div>
+
+            <div class="milestone">
+                <h4>Semaine 2 post-MVP</h4>
+                <ul>
+                    <li>✓ Templates sectoriels (5 secteurs : restaurant, coaching, agence, ecommerce, immobilier)</li>
+                    <li>✓ Multilingue (FR, EN, ES, DE, IT)</li>
+                    <li>✓ Détection auto langue navigateur</li>
+                    <li>✓ Redirection .com?l=XX</li>
+                    <li>✓ Landing page optimisée (A/B test CTA)</li>
+                    <li>✓ Maquettes HTML complètes (plan Pro)</li>
+                    <li>✓ Guides détaillés 8-12 pages (avec screenshots Nathalie)</li>
+                </ul>
+            </div>
+
+            <h3>10.2 Features Enterprise (différé)</h3>
+
+            <div class="warning">
+                <h4>⏸️ Pas prioritaire pour MVP</h4>
+                <ul>
+                    <li>Suivi mensuel automatisé (évolution score)</li>
+                    <li>Alertes changements visibilité</li>
+                    <li>Intégration Google My Business</li>
+                    <li>Intégration Ahrefs / SEMrush</li>
+                    <li>Dashboard analytics avancé</li>
+                    <li>API publique pour partenaires</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 Notes finales</h2>
+
+            <h3>Conformité EURKAI</h3>
+            <ul>
+                <li>✅ Tous les objets héritent d'<code>Object</code></li>
+                <li>✅ Architecture fractale (Orchestrator → Agents → Validator)</li>
+                <li>✅ Atome = function (une fonction fait UNE chose)</li>
+                <li>✅ Method = import function (flexibilité)</li>
+                <li>✅ Scenario = orchestration (ne fait rien lui-même)</li>
+                <li>✅ Modules réutilisables identifiés (API_AGGREGATOR, SEMANTIC_ANALYZER, etc.)</li>
+            </ul>
+
+            <h3>Prochaines étapes</h3>
+            <ol>
+                <li><strong>Validation SPECS</strong> par Nathalie (formulaire HTML)</li>
+                <li><strong>BUILD MVP</strong> selon plan 36h ci-dessus</li>
+                <li><strong>Tests utilisateurs</strong> (5-10 entreprises pilotes)</li>
+                <li><strong>Itération</strong> selon feedback</li>
+                <li><strong>Post-MVP</strong> immédiat (multi-IA, multilingue)</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

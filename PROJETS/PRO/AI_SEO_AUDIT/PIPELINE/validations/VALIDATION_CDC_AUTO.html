@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation CDC — AI_SEO_AUDIT (Auto)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+        .content { padding: 40px; }
+        .cdc-info { background: #f7fafc; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 30px; border-radius: 6px; }
+        .cdc-info h2 { color: #2d3748; font-size: 18px; margin-bottom: 12px; }
+        .cdc-info ul { list-style: none; padding-left: 0; }
+        .cdc-info li { padding: 6px 0; color: #4a5568; font-size: 14px; }
+        .cdc-link { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 600; }
+        .cdc-link:hover { background: #764ba2; }
+        .question-block { margin-bottom: 30px; padding: 25px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .question-block h3 { color: #2d3748; font-size: 20px; margin-bottom: 20px; }
+        .option { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
+        .option input[type="radio"] { margin-right: 12px; cursor: pointer; }
+        .option label { cursor: pointer; display: block; padding-left: 28px; position: relative; }
+        .option label strong { color: #2d3748; display: block; margin-bottom: 5px; font-size: 16px; }
+        .option label .description { color: #718096; font-size: 14px; line-height: 1.5; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+        textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 120px; margin-top: 10px; }
+        textarea:focus { outline: none; border-color: #667eea; }
+        .helper-text { color: #718096; font-size: 13px; margin-top: 8px; }
+        .actions { display: flex; gap: 15px; margin-top: 30px; }
+        .btn { flex: 1; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .result { display: none; padding: 30px; background: #f0fff4; border: 2px solid #9ae6b4; border-radius: 8px; margin-top: 30px; text-align: center; }
+        .result.error { background: #fff5f5; border-color: #fc8181; }
+        .result h3 { color: #2f855a; margin-bottom: 15px; font-size: 22px; }
+        .result.error h3 { color: #c53030; }
+        .result p { font-size: 15px; color: #2f855a; margin-bottom: 20px; }
+        .result.error p { color: #c53030; }
+        .loading { display: none; text-align: center; padding: 20px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Validation CDC (Auto)</h1>
+            <p>AI_SEO_AUDIT — Cahier des Charges</p>
+        </div>
+
+        <div class="content">
+            <div class="cdc-info">
+                <h2>📄 CDC généré (15 pages)</h2>
+                <ul>
+                    <li>✓ 6 fonctionnalités détaillées (F01-F06)</li>
+                    <li>✓ Stack : FastAPI + PostgreSQL + Redis + OpenAI</li>
+                    <li>✓ Architecture EURKAI (objets, modules, fractale)</li>
+                    <li>✓ Planning : 13h (~2 jours)</li>
+                    <li>✓ Critères validation MVP + évolutions futures</li>
+                </ul>
+                <a href="CDC_CONSULTATION.html" target="_blank" class="cdc-link">📖 Consulter le CDC complet</a>
+            </div>
+
+            <form id="validationForm">
+                <div class="question-block">
+                    <h3>Valides-tu ce CDC pour passer aux SPECS ?</h3>
+
+                    <div class="option" onclick="selectOption(this, 'valider')">
+                        <input type="radio" name="validation" id="val1" value="valider">
+                        <label for="val1">
+                            <strong>✅ Valider — CDC OK, on passe aux SPECS</strong>
+                            <span class="description">Le CDC est complet et clair. Claude génère les spécifications techniques détaillées.</span>
+                        </label>
+                    </div>
+
+                    <div class="option" onclick="selectOption(this, 'ajuster')">
+                        <input type="radio" name="validation" id="val2" value="ajuster">
+                        <label for="val2">
+                            <strong>🔄 Ajuster — Quelques modifications nécessaires</strong>
+                            <span class="description">Globalement OK mais certains points à préciser (utilise le champ ci-dessous).</span>
+                        </label>
+                    </div>
+
+                    <div class="option" onclick="selectOption(this, 'revoir')">
+                        <input type="radio" name="validation" id="val3" value="revoir">
+                        <label for="val3">
+                            <strong>❌ Revoir — CDC à refaire</strong>
+                            <span class="description">Le CDC ne convient pas, il faut le reprendre.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-block">
+                    <h3>Précisions ou ajustements ? (optionnel)</h3>
+                    <textarea id="comments" name="comments" placeholder="Si tu as des ajustements, des questions ou des précisions, note-les ici...
+
+Exemples :
+- Modifier le planning (prévoir 3 jours au lieu de 2)
+- Changer une techno (utiliser X au lieu de Y)
+- Ajouter/retirer une fonctionnalité
+- Autre chose"></textarea>
+                    <div class="helper-text">💡 Laisse vide si tout est OK</div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        ✅ Valider et envoyer à Claude
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Envoi de la validation à Claude...</p>
+            </div>
+
+            <div class="result" id="result">
+                <h3>✅ Validation envoyée !</h3>
+                <p>Claude a reçu ta validation et va continuer automatiquement vers les SPECS.</p>
+                <p style="font-size: 13px; color: #718096; margin-top: 20px;">Tu peux fermer cette fenêtre et retourner au terminal.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectOption(element, value) {
+            // Désélectionner toutes les options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Sélectionner l'option cliquée
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        document.getElementById('validationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const decision = document.querySelector('input[name="validation"]:checked');
+
+            if (!decision) {
+                alert('⚠️ Merci de choisir une option de validation');
+                return;
+            }
+
+            const comments = document.getElementById('comments').value.trim();
+
+            const validationData = {
+                type: 'CDC',
+                project: 'AI_SEO_AUDIT',
+                decision: decision.value,
+                comments: comments || null
+            };
+
+            // Afficher le loading
+            document.getElementById('validationForm').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('http://localhost:9999/api/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(validationData)
+                });
+
+                const result = await response.json();
+
+                // Cacher le loading
+                document.getElementById('loading').style.display = 'none';
+
+                if (response.ok) {
+                    // Succès
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    // Erreur
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.classList.add('error');
+                    resultDiv.querySelector('h3').textContent = '❌ Erreur';
+                    resultDiv.querySelector('p').textContent = 'Erreur lors de l\'envoi : ' + (result.message || 'Erreur inconnue');
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                // Cacher le loading
+                document.getElementById('loading').style.display = 'none';
+
+                // Afficher l'erreur
+                const resultDiv = document.getElementById('result');
+                resultDiv.classList.add('error');
+                resultDiv.querySelector('h3').textContent = '❌ Erreur de connexion';
+                resultDiv.querySelector('p').textContent = 'Impossible de contacter le serveur. Assure-toi que le serveur de validation est démarré.';
+                resultDiv.style.display = 'block';
+
+                console.error('Erreur:', error);
+            }
+        });
+    </script>
+</body>
+</html>

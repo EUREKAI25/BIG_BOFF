@@ -1,0 +1,220 @@
+"""
+EUREKAI Code Service - Python Client
+Auto-generated from: {{ filename }}
+Generated: {{ timestamp }}
+
+Usage:
+    from {{ module_name }}_client import *
+    
+    # Configure server URL (optional, defaults to localhost:{{ port }})
+    configure("http://your-server:{{ port }}")
+    
+    # Call functions
+    result = {{ functions[0].name if functions else 'function_name' }}(...)
+"""
+import requests
+from typing import Any, Optional, Union
+from dataclasses import dataclass
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+_config = {
+    'base_url': 'http://localhost:{{ port }}',
+    'timeout': 30,
+    'raise_on_error': True
+}
+
+def configure(base_url: str = None, timeout: int = None, raise_on_error: bool = None):
+    """Configure the client connection settings"""
+    if base_url is not None:
+        _config['base_url'] = base_url.rstrip('/')
+    if timeout is not None:
+        _config['timeout'] = timeout
+    if raise_on_error is not None:
+        _config['raise_on_error'] = raise_on_error
+
+@dataclass
+class CallResult:
+    """Result wrapper for API calls"""
+    ok: bool
+    result: Any = None
+    error: str = None
+    
+    def unwrap(self) -> Any:
+        """Return result or raise error"""
+        if not self.ok:
+            raise RuntimeError(self.error)
+        return self.result
+
+# ============================================================================
+# LOW-LEVEL API
+# ============================================================================
+def _call(fn: str, args: list = None) -> CallResult:
+    """Low-level function call"""
+    args = args or []
+    try:
+        resp = requests.post(
+            f"{_config['base_url']}/call",
+            json={'fn': fn, 'args': args},
+            timeout=_config['timeout']
+        )
+        data = resp.json()
+        result = CallResult(ok=data.get('ok', False), result=data.get('result'), error=data.get('error'))
+        if _config['raise_on_error'] and not result.ok:
+            raise RuntimeError(f"API Error: {result.error}")
+        return result
+    except requests.RequestException as e:
+        result = CallResult(ok=False, error=str(e))
+        if _config['raise_on_error']:
+            raise RuntimeError(f"Connection Error: {e}")
+        return result
+
+def batch_call(calls: list[tuple[str, list]]) -> list[CallResult]:
+    """Execute multiple function calls in a single request"""
+    try:
+        resp = requests.post(
+            f"{_config['base_url']}/batch",
+            json={'calls': [{'fn': fn, 'args': args} for fn, args in calls]},
+            timeout=_config['timeout']
+        )
+        data = resp.json()
+        return [
+            CallResult(ok=r.get('ok', False), result=r.get('result'), error=r.get('error'))
+            for r in data.get('results', [])
+        ]
+    except requests.RequestException as e:
+        return [CallResult(ok=False, error=str(e)) for _ in calls]
+
+def health_check() -> bool:
+    """Check if server is running"""
+    try:
+        resp = requests.get(f"{_config['base_url']}/health", timeout=5)
+        return resp.json().get('status') == 'ok'
+    except:
+        return False
+
+def list_functions() -> dict:
+    """List available functions on server"""
+    resp = requests.get(f"{_config['base_url']}/functions", timeout=5)
+    return resp.json()
+
+# ============================================================================
+# GENERATED FUNCTION WRAPPERS
+# ============================================================================
+{% for func in functions %}
+def {{ func.py_name }}({{ func.py_signature }}) -> {{ func.py_return_type }}:
+    """
+    {{ func.description }}
+    {% if func.params %}
+    
+    Args:
+    {% for p in func.params %}
+        {{ p.name }} ({{ p.py_type }}): {{ p.description }}{% if p.default %} (default: {{ p.default }}){% endif %}
+    
+    {% endfor %}
+    {% endif %}
+    Returns:
+        {{ func.py_return_type }}: {{ func.return_description }}
+    """
+    return _call('{{ func.name }}', [{{ func.py_call_args }}]).unwrap()
+
+{% endfor %}
+
+# ============================================================================
+# CALLBACK VARIANT WRAPPERS
+# ============================================================================
+{% for func in callback_functions %}
+def {{ func.py_name }}_collect({{ func.py_signature_no_callback }}) -> list:
+    """
+    Collect all results from {{ func.name }} traversal
+    
+    Returns:
+        list: All collected items with their context
+    """
+    return _call('{{ func.name }}_collect', [{{ func.py_call_args_no_callback }}]).unwrap()
+
+
+def {{ func.py_name }}_find(lineage: str, field: str, value: Any, options: dict = None) -> Optional[dict]:
+    """
+    Find first item where field matches value
+    
+    Args:
+        field: Field name to match
+        value: Value to match against
+        options: Traverse options (optional)
+        
+    Returns:
+        First matching item or None
+    """
+    return _call('{{ func.name }}_find', [lineage, options or {}, field, value]).unwrap()
+
+
+def {{ func.py_name }}_exists(lineage: str, field: str, value: Any, options: dict = None) -> bool:
+    """
+    Check if any item matches field=value
+    
+    Returns:
+        True if match exists
+    """
+    return _call('{{ func.name }}_exists', [lineage, options or {}, field, value]).unwrap()
+
+{% endfor %}
+
+{% if has_store %}
+# ============================================================================
+# STORE MANAGEMENT
+# ============================================================================
+class Store:
+    """Remote Store management"""
+    
+    @staticmethod
+    def get(key: str) -> Any:
+        """Get value from store"""
+        resp = requests.get(f"{_config['base_url']}/store/get/{key}", timeout=_config['timeout'])
+        return resp.json().get('value')
+    
+    @staticmethod
+    def set(key: str, value: Any) -> None:
+        """Set value in store"""
+        requests.post(f"{_config['base_url']}/store/set", json={'key': key, 'value': value}, timeout=_config['timeout'])
+    
+    @staticmethod
+    def keys() -> list[str]:
+        """Get all keys"""
+        resp = requests.get(f"{_config['base_url']}/store/keys", timeout=_config['timeout'])
+        return resp.json().get('keys', [])
+    
+    @staticmethod
+    def clear() -> None:
+        """Clear all data"""
+        requests.post(f"{_config['base_url']}/store/clear", timeout=_config['timeout'])
+    
+    @staticmethod
+    def bulk_set(items: list[tuple[str, Any]]) -> None:
+        """Set multiple values at once"""
+        requests.post(
+            f"{_config['base_url']}/store/bulk",
+            json={'items': [{'key': k, 'value': v} for k, v in items]},
+            timeout=_config['timeout']
+        )
+
+{% endif %}
+
+# ============================================================================
+# EXPORTS
+# ============================================================================
+__all__ = [
+    'configure', 'health_check', 'list_functions', 'batch_call', 'CallResult',
+{% for func in functions %}
+    '{{ func.py_name }}',
+{% endfor %}
+{% for func in callback_functions %}
+    '{{ func.py_name }}_collect',
+    '{{ func.py_name }}_find', 
+    '{{ func.py_name }}_exists',
+{% endfor %}
+{% if has_store %}
+    'Store',
+{% endif %}
+]

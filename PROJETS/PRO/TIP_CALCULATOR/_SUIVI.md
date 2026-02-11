@@ -2,9 +2,10 @@
 
 > Calculatrice de pourboire web (mobile-first) avec répartition par personne
 
-**Statut** : 🟢 actif — code généré, tests en cours
+**Statut** : ✅ déployé — production
 **Créé** : 2026-02-10
-**Dernière MAJ** : 2026-02-10 18:00
+**Dernière MAJ** : 2026-02-10 18:45
+**URL** : https://eurekai25.github.io/tip-calculator/
 
 ---
 
@@ -18,8 +19,8 @@ Créer une application web statique permettant de calculer instantanément le po
 - [x] CDC (Cahier des Charges)
 - [x] SPECS (Spécifications techniques)
 - [x] Développement (index.html, style.css, script.js)
-- [~] Tests manuels
-- [ ] Déploiement GitHub Pages
+- [x] Tests manuels (fonctionne parfaitement)
+- [x] Déploiement GitHub Pages
 
 ## Décisions
 
@@ -30,7 +31,9 @@ Créer une application web statique permettant de calculer instantanément le po
 
 ## Historique
 
-- 2026-02-10 18:00 : Code généré (HTML/CSS/JS vanilla), tests en cours
+- 2026-02-10 18:45 : **DÉPLOYÉ** — https://eurekai25.github.io/tip-calculator/
+- 2026-02-10 18:30 : Repo GitHub créé, push réussi
+- 2026-02-10 18:00 : Code généré (HTML/CSS/JS vanilla), tests validés
 - 2026-02-10 17:30 : SPECS techniques complètes
 - 2026-02-10 17:15 : CDC validé
 - 2026-02-10 17:00 : Création du projet, brief généré depuis export ChatGPT

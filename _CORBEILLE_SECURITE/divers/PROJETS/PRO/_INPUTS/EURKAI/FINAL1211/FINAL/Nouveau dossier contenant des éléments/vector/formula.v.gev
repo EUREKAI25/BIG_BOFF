@@ -1,0 +1,245 @@
+# ============================================================================
+# EURKAI Vector - Formulas v0.10.5
+# vector/formula.v.gev
+# ============================================================================
+
+#region === FORMULA BASE ===
+
+Object:Structure:Fractal:Vector:V_FormulaName:
+  .default = {"FR": "Formule", "EN": "Formula"}
+
+Object:Structure:Fractal:Vector:V_FormulaDescription:
+  .default = {"FR": "Type racine des formules ERK", "EN": "Root type for ERK formulas"}
+
+#endregion
+
+#region === CATEGORIES ===
+
+Object:Structure:Fractal:Vector:V_LogicName:
+  .default = {"FR": "Logique", "EN": "Logic"}
+
+Object:Structure:Fractal:Vector:V_ComparisonName:
+  .default = {"FR": "Comparaison", "EN": "Comparison"}
+
+Object:Structure:Fractal:Vector:V_ExistenceName:
+  .default = {"FR": "Existence", "EN": "Existence"}
+
+Object:Structure:Fractal:Vector:V_StringName:
+  .default = {"FR": "Chaîne", "EN": "String"}
+
+Object:Structure:Fractal:Vector:V_CollectionName:
+  .default = {"FR": "Collection", "EN": "Collection"}
+
+Object:Structure:Fractal:Vector:V_MathName:
+  .default = {"FR": "Mathématique", "EN": "Math"}
+
+Object:Structure:Fractal:Vector:V_NavigationName:
+  .default = {"FR": "Navigation", "EN": "Navigation"}
+
+Object:Structure:Fractal:Vector:V_StructureFormulaName:
+  .default = {"FR": "Structure", "EN": "Structure"}
+
+#endregion
+
+#region === LOGIC ===
+
+Object:Structure:Fractal:Vector:V_ANDDescription:
+  .default = {"FR": "Conjonction logique — true si tous les opérandes sont true", "EN": "Logical conjunction — true if all operands are true"}
+
+Object:Structure:Fractal:Vector:V_ORDescription:
+  .default = {"FR": "Disjonction logique — true si au moins un opérande est true", "EN": "Logical disjunction — true if at least one operand is true"}
+
+Object:Structure:Fractal:Vector:V_NOTDescription:
+  .default = {"FR": "Négation logique — inverse la valeur booléenne", "EN": "Logical negation — inverts boolean value"}
+
+Object:Structure:Fractal:Vector:V_XORDescription:
+  .default = {"FR": "Ou exclusif — true si exactement un opérande est true", "EN": "Exclusive or — true if exactly one operand is true"}
+
+Object:Structure:Fractal:Vector:V_IFDescription:
+  .default = {"FR": "Condition ternaire — retourne valeur selon condition", "EN": "Ternary condition — returns value based on condition"}
+
+#endregion
+
+#region === COMPARISON ===
+
+Object:Structure:Fractal:Vector:V_EQDescription:
+  .default = {"FR": "Égalité stricte", "EN": "Strict equality"}
+
+Object:Structure:Fractal:Vector:V_NEQDescription:
+  .default = {"FR": "Inégalité", "EN": "Inequality"}
+
+Object:Structure:Fractal:Vector:V_GTDescription:
+  .default = {"FR": "Supérieur strict", "EN": "Greater than"}
+
+Object:Structure:Fractal:Vector:V_GTEDescription:
+  .default = {"FR": "Supérieur ou égal", "EN": "Greater than or equal"}
+
+Object:Structure:Fractal:Vector:V_LTDescription:
+  .default = {"FR": "Inférieur strict", "EN": "Less than"}
+
+Object:Structure:Fractal:Vector:V_LTEDescription:
+  .default = {"FR": "Inférieur ou égal", "EN": "Less than or equal"}
+
+Object:Structure:Fractal:Vector:V_INDescription:
+  .default = {"FR": "Appartenance à une liste", "EN": "Membership in a list"}
+
+Object:Structure:Fractal:Vector:V_NOT_INDescription:
+  .default = {"FR": "Non-appartenance à une liste", "EN": "Non-membership in a list"}
+
+Object:Structure:Fractal:Vector:V_MATCHESDescription:
+  .default = {"FR": "Correspondance regex", "EN": "Regex match"}
+
+Object:Structure:Fractal:Vector:V_CONTAINSDescription:
+  .default = {"FR": "Contient un élément", "EN": "Contains an element"}
+
+#endregion
+
+#region === EXISTENCE ===
+
+Object:Structure:Fractal:Vector:V_ISNULLDescription:
+  .default = {"FR": "Test si null", "EN": "Test if null"}
+
+Object:Structure:Fractal:Vector:V_EXISTSDescription:
+  .default = {"FR": "Test si existe (non null)", "EN": "Test if exists (not null)"}
+
+Object:Structure:Fractal:Vector:V_ISEMPTYDescription:
+  .default = {"FR": "Test si vide (null, '', [], {})", "EN": "Test if empty (null, '', [], {})"}
+
+Object:Structure:Fractal:Vector:V_COALESCEDescription:
+  .default = {"FR": "Retourne la première valeur non-null", "EN": "Returns first non-null value"}
+
+Object:Structure:Fractal:Vector:V_HASDescription:
+  .default = {"FR": "Test si l'objet a l'attribut", "EN": "Test if object has attribute"}
+
+#endregion
+
+#region === STRING ===
+
+Object:Structure:Fractal:Vector:V_CONCATDescription:
+  .default = {"FR": "Concaténation de chaînes", "EN": "String concatenation"}
+
+Object:Structure:Fractal:Vector:V_SPLITDescription:
+  .default = {"FR": "Découpe une chaîne en tableau", "EN": "Splits string into array"}
+
+Object:Structure:Fractal:Vector:V_JOINDescription:
+  .default = {"FR": "Joint un tableau en chaîne", "EN": "Joins array into string"}
+
+Object:Structure:Fractal:Vector:V_UPPERDescription:
+  .default = {"FR": "Convertit en majuscules", "EN": "Converts to uppercase"}
+
+Object:Structure:Fractal:Vector:V_LOWERDescription:
+  .default = {"FR": "Convertit en minuscules", "EN": "Converts to lowercase"}
+
+Object:Structure:Fractal:Vector:V_TRIMDescription:
+  .default = {"FR": "Supprime les espaces début/fin", "EN": "Removes leading/trailing spaces"}
+
+Object:Structure:Fractal:Vector:V_REPLACEDescription:
+  .default = {"FR": "Remplace des occurrences", "EN": "Replaces occurrences"}
+
+Object:Structure:Fractal:Vector:V_SUBSTRINGDescription:
+  .default = {"FR": "Extrait une sous-chaîne", "EN": "Extracts substring"}
+
+Object:Structure:Fractal:Vector:V_LENGTHDescription:
+  .default = {"FR": "Longueur de la chaîne ou du tableau", "EN": "Length of string or array"}
+
+#endregion
+
+#region === COLLECTION ===
+
+Object:Structure:Fractal:Vector:V_FIRSTDescription:
+  .default = {"FR": "Premier élément", "EN": "First element"}
+
+Object:Structure:Fractal:Vector:V_LASTDescription:
+  .default = {"FR": "Dernier élément", "EN": "Last element"}
+
+Object:Structure:Fractal:Vector:V_GETDescription:
+  .default = {"FR": "Élément à l'index", "EN": "Element at index"}
+
+Object:Structure:Fractal:Vector:V_MAPDescription:
+  .default = {"FR": "Applique une transformation", "EN": "Applies transformation"}
+
+Object:Structure:Fractal:Vector:V_FILTERDescription:
+  .default = {"FR": "Filtre selon prédicat", "EN": "Filters by predicate"}
+
+Object:Structure:Fractal:Vector:V_REDUCEDescription:
+  .default = {"FR": "Agrège les éléments", "EN": "Aggregates elements"}
+
+Object:Structure:Fractal:Vector:V_SORTDescription:
+  .default = {"FR": "Trie les éléments", "EN": "Sorts elements"}
+
+Object:Structure:Fractal:Vector:V_UNIQUEDescription:
+  .default = {"FR": "Éléments uniques", "EN": "Unique elements"}
+
+Object:Structure:Fractal:Vector:V_FLATTENDescription:
+  .default = {"FR": "Aplatit les tableaux imbriqués", "EN": "Flattens nested arrays"}
+
+Object:Structure:Fractal:Vector:V_COUNTDescription:
+  .default = {"FR": "Compte les éléments", "EN": "Counts elements"}
+
+Object:Structure:Fractal:Vector:V_COUNTIFDescription:
+  .default = {"FR": "Compte les éléments selon prédicat", "EN": "Counts elements by predicate"}
+
+#endregion
+
+#region === MATH ===
+
+Object:Structure:Fractal:Vector:V_SUMDescription:
+  .default = {"FR": "Somme des éléments", "EN": "Sum of elements"}
+
+Object:Structure:Fractal:Vector:V_AVGDescription:
+  .default = {"FR": "Moyenne des éléments", "EN": "Average of elements"}
+
+Object:Structure:Fractal:Vector:V_MINDescription:
+  .default = {"FR": "Minimum", "EN": "Minimum"}
+
+Object:Structure:Fractal:Vector:V_MAXDescription:
+  .default = {"FR": "Maximum", "EN": "Maximum"}
+
+Object:Structure:Fractal:Vector:V_ABSDescription:
+  .default = {"FR": "Valeur absolue", "EN": "Absolute value"}
+
+Object:Structure:Fractal:Vector:V_ROUNDDescription:
+  .default = {"FR": "Arrondi", "EN": "Round"}
+
+Object:Structure:Fractal:Vector:V_FLOORDescription:
+  .default = {"FR": "Arrondi inférieur", "EN": "Floor"}
+
+Object:Structure:Fractal:Vector:V_CEILDescription:
+  .default = {"FR": "Arrondi supérieur", "EN": "Ceiling"}
+
+#endregion
+
+#region === NAVIGATION ===
+
+Object:Structure:Fractal:Vector:V_PATH_GETDescription:
+  .default = {"FR": "Récupère valeur par chemin", "EN": "Gets value by path"}
+
+Object:Structure:Fractal:Vector:V_PATH_SETDescription:
+  .default = {"FR": "Définit valeur par chemin", "EN": "Sets value by path"}
+
+Object:Structure:Fractal:Vector:V_PATH_EXISTSDescription:
+  .default = {"FR": "Test si chemin existe", "EN": "Tests if path exists"}
+
+#endregion
+
+#region === STRUCTURE ===
+
+Object:Structure:Fractal:Vector:V_GET_FIELDDescription:
+  .default = {"FR": "Récupère un champ", "EN": "Gets a field"}
+
+Object:Structure:Fractal:Vector:V_SET_FIELDDescription:
+  .default = {"FR": "Définit un champ", "EN": "Sets a field"}
+
+Object:Structure:Fractal:Vector:V_HAS_FIELDDescription:
+  .default = {"FR": "Test si champ existe", "EN": "Tests if field exists"}
+
+Object:Structure:Fractal:Vector:V_KEYSDescription:
+  .default = {"FR": "Liste des clés", "EN": "List of keys"}
+
+Object:Structure:Fractal:Vector:V_VALUESDescription:
+  .default = {"FR": "Liste des valeurs", "EN": "List of values"}
+
+Object:Structure:Fractal:Vector:V_MERGEDescription:
+  .default = {"FR": "Fusionne deux objets", "EN": "Merges two objects"}
+
+#endregion

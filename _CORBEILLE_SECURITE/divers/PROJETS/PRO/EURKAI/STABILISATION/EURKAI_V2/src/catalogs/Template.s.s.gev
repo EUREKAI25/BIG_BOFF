@@ -1,0 +1,36 @@
+# ============================================================================
+# EURKAI Seed - Template
+# ============================================================================
+
+Object:Template:
+.name = "Template"
+
+Object:Template:CockpitTemplate:
+.name = "CockpitTemplate"
+
+CockpitTemplate IN SourceManifest.TemplateList
+
+Object:Template:TreeNodeTemplate:
+.name = "TreeNodeTemplate"
+.html = "<li><div class='tree-node' data-uuid='{{uuid}}' data-lineage='{{lineage}}' draggable='true'><span class='tree-toggle'>{{toggle}}</span><span class='tree-icon' style='background:{{sourceColor}}'></span><span class='tree-name'>{{name}}</span>{{#if hasChildren}}<span class='tree-count'>({{childCount}})</span>{{/if}}</div>{{#if hasChildren}}<ul style='display:none'>{{#each children}}{{> TreeNodeTemplate}}{{/each}}</ul>{{/if}}</li>"
+
+Object:Template:FileItemTemplate:
+.name = "FileItemTemplate"
+.html = "<div class='file-item' data-path='{{path}}'>📄 {{relativePath}}</div>"
+.action = "OpenFile"
+
+Object:Template:DetailHeaderTemplate:
+.name = "DetailHeaderTemplate"
+.html = "<div class='detail-header'><h2>{{name}}</h2><div class='detail-lineage'>{{lineage}}</div><div class='detail-meta'><span class='detail-uuid'>UUID: {{uuid}}</span><span class='detail-source' data-source='{{source}}' data-line='{{line}}' style='background:{{sourceColor}};color:#1e1e1e'>{{sourceLabel}}</span></div></div>"
+
+Object:Template:AttributeRowTemplate:
+.name = "AttributeRowTemplate"
+.html = "<tr><th>{{key}}</th><td class='{{editableClass}}' data-uuid='{{uuid}}' data-key='{{key}}'>{{value}}<span class='attr-source' data-source='{{attrSource}}' data-line='{{attrLine}}' style='background:{{attrSourceColor}};color:#1e1e1e' title='{{inheritedFrom}}'>{{attrSourceLabel}}</span></td></tr>"
+
+Object:Template:RelationRowTemplate:
+.name = "RelationRowTemplate"
+.html = "<tr><th>{{type}}</th><td><span class='link' data-target='{{targetName}}'>{{targetName}}</span><span class='attr-source' data-source='{{source}}' data-line='{{line}}' style='background:{{sourceColor}};color:#1e1e1e'>{{sourceLabel}}</span></td></tr>"
+
+Object:Template:ChildItemTemplate:
+.name = "ChildItemTemplate"
+.html = "<div class='child-item'><span class='link' data-uuid='{{uuid}}'><span class='child-dot' style='background:{{sourceColor}}'></span>{{name}}</span><button class='delete-btn' data-uuid='{{uuid}}'>×</button></div>"

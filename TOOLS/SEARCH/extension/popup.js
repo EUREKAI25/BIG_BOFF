@@ -15,6 +15,7 @@ const state = {
   pageSize: 50,
   totalResults: 0,
   activeTypes: [],
+  sourceFilter: "local",  // Phase 5: local, consulted, all
 };
 
 // Éléments DOM
@@ -31,6 +32,8 @@ const emptyState = document.getElementById("empty-state");
 const errorBanner = document.getElementById("error-banner");
 const statsEl = document.getElementById("stats");
 const typeFiltersEl = document.getElementById("type-filters");
+const sourceFilterEl = document.getElementById("source-filter");  // Phase 5
+const sourceSelectEl = document.getElementById("source-select");  // Phase 5
 
 // ── Filtres par type ────────────────────────────────
 
@@ -334,12 +337,14 @@ async function fetchResults() {
     resultsList.innerHTML = "";
     resultsHeader.style.display = "none";
     typeFiltersEl.style.display = "none";
+    if (sourceFilterEl) sourceFilterEl.style.display = "none";  // Phase 5
     coocSection.style.display = "none";
     emptyState.style.display = "block";
     return;
   }
   emptyState.style.display = "none";
   typeFiltersEl.style.display = "";
+  // if (sourceFilterEl) sourceFilterEl.style.display = "";  // Phase 5 - Masqué pour l'instant
 
   try {
     const searchParams = {
@@ -347,6 +352,7 @@ async function fetchResults() {
       exclude: state.excludeTags,
       limit: state.pageSize,
       offset: state.currentOffset,
+      source: state.sourceFilter,  // Phase 5
     };
     if (state.activeTypes.length > 0) {
       searchParams.types = state.activeTypes.join(",");
@@ -393,6 +399,20 @@ function renderResults(results) {
 
   const favHeart = (id) => `<span class="fav-btn" data-fav-id="${id}" title="Favori"><i class="fa-regular fa-heart"></i></span>`;
 
+  // Phase 5-6 : Badge source user (consultation vs partage)
+  const sourceBadge = (source_user_id, is_shared_copy) => {
+    if (!source_user_id) return "";
+    const shortId = source_user_id.substring(0, 18);
+
+    // Phase 6 : Badge vert pour partage permanent
+    if (is_shared_copy) {
+      return `<span class="source-badge shared-badge" title="Partagé par ${esc(source_user_id)}"><i class="fa-solid fa-copy"></i> ${esc(shortId)}...</span>`;
+    }
+
+    // Phase 5 : Badge bleu pour consultation
+    return `<span class="source-badge" title="Consulté depuis ${esc(source_user_id)}"><i class="fa-solid fa-tower-broadcast"></i> ${esc(shortId)}...</span>`;
+  };
+
   resultsList.innerHTML = results.map(r => {
     if (r.type === "email") {
       const snippetHtml = r.snippet ? `<div class="result-snippet">${esc(r.snippet)}</div>` : "";
@@ -401,6 +421,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-email"><i class="fa-solid fa-envelope"></i></span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="email" title="Supprimer cet email"><i class="fa-solid fa-trash"></i></button>
@@ -416,6 +437,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-note"><i class="fa-solid fa-note-sticky"></i></span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="note" title="Supprimer cette note"><i class="fa-solid fa-trash"></i></button>
@@ -432,6 +454,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-video">${pIcon}</span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="video" title="Supprimer cette vidéo"><i class="fa-solid fa-trash"></i></button>
@@ -448,6 +471,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-event"><i class="fa-solid fa-calendar-days"></i></span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="event" title="Supprimer cet événement"><i class="fa-solid fa-trash"></i></button>
@@ -463,6 +487,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-contact">${ctIcon}</span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="contact" title="Supprimer ce contact"><i class="fa-solid fa-trash"></i></button>
@@ -476,6 +501,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-lieu"><i class="fa-solid fa-location-dot"></i></span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="lieu" title="Supprimer ce lieu"><i class="fa-solid fa-trash"></i></button>
@@ -489,6 +515,7 @@ function renderResults(results) {
           <div class="result-name">
             <span class="icon icon-vault"><i class="fa-solid fa-lock"></i></span>
             ${esc(r.nom)}
+            ${sourceBadge(r.source_user_id, r.is_shared_copy)}
             <span style="flex:1"></span>
             ${favHeart(r.id)}
             <button class="delete-btn" data-item-id="${r.id}" data-item-type="vault" title="Supprimer cette entrée"><i class="fa-solid fa-trash"></i></button>
@@ -505,6 +532,7 @@ function renderResults(results) {
         <div class="result-name">
           ${iconHtml}
           ${esc(r.nom)}
+          ${sourceBadge(r.source_user_id)}
           ${favHeart(r.id)}
           <span class="result-actions">
             <span class="action-btn open-btn" data-id="${r.id}" title="Ouvrir"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
@@ -658,6 +686,15 @@ input.addEventListener("keydown", (e) => {
     refresh();
   }
 });
+
+// ── Source filter (Phase 5) ─────────────────────────
+
+if (sourceSelectEl) {
+  sourceSelectEl.addEventListener("change", (e) => {
+    state.sourceFilter = e.target.value;
+    refresh();
+  });
+}
 
 // ── Helpers ─────────────────────────────────────────
 
@@ -2073,10 +2110,511 @@ async function renderItemTags(itemId, container) {
 // Bouton +
 document.getElementById("add-btn").addEventListener("click", showAddForm);
 
+// Bouton Groupes (Phase 7 P2P)
+document.getElementById("groups-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  showGroupsModal();
+});
+
+// Bouton Partager (Phase 6 P2P)
+document.getElementById("share-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  showShareModal();
+});
+
+// Bouton QR Scanner (Phase 4 P2P)
+document.getElementById("qr-scan-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  chrome.tabs.create({ url: chrome.runtime.getURL('qr_scan_test.html') });
+});
+
+// ──────────────────────────────────────────────────────
+//  MODAL PARTAGE (Phase 6 P2P)
+// ──────────────────────────────────────────────────────
+
+function showShareModal() {
+  const overlay = document.createElement('div');
+  overlay.id = 'share-modal-overlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+
+  overlay.innerHTML = `
+    <div id="share-modal" style="
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 520px;
+      max-width: 90vw;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    ">
+      <h2 style="margin-top: 0; color: #333; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-share-nodes" style="color: #4CAF50;"></i>
+        Partager
+      </h2>
+
+      <div style="margin: 20px 0;">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">
+          Nom du partage
+        </label>
+
+        <input type="text" id="share-scope-value" placeholder="Ex: Ma playlist rock" style="
+          width: 100%;
+          padding: 8px 12px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 14px;
+        ">
+      </div>
+
+      <div style="margin: 20px 0;">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">
+          Mode de partage
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+          " class="mode-option" data-mode="consultation">
+            <input type="radio" name="share-mode" value="consultation" checked style="display: none;">
+            <div>
+              <div style="font-weight: 600; color: #333;">
+                <i class="fa-solid fa-eye"></i> Consultation
+              </div>
+            </div>
+          </label>
+
+          <label style="
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+          " class="mode-option" data-mode="partage">
+            <input type="radio" name="share-mode" value="partage" style="display: none;">
+            <div>
+              <div style="font-weight: 600; color: #333;">
+                <i class="fa-solid fa-copy"></i> Partage
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div id="share-preview" style="
+        background: #f0f0f0;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 20px;
+        display: none;
+      ">
+        <span id="share-count"></span> éléments seront partagés
+      </div>
+
+      <div id="share-qr-container" style="
+        text-align: center;
+        margin: 20px 0;
+        display: none;
+      ">
+        <div id="share-qr-code"></div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button id="share-cancel-btn" style="
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #ccc;
+          background: white;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+        ">
+          Annuler
+        </button>
+        <button id="share-generate-btn" style="
+          flex: 1;
+          padding: 10px;
+          border: none;
+          background: #4CAF50;
+          color: white;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+        ">
+          Générer QR
+        </button>
+      </div>
+
+      <div id="share-error" style="
+        background: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-top: 10px;
+        display: none;
+      "></div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Event listeners
+  const cancelBtn = document.getElementById('share-cancel-btn');
+  const generateBtn = document.getElementById('share-generate-btn');
+  const scopeValue = document.getElementById('share-scope-value');
+  const errorEl = document.getElementById('share-error');
+
+  // Pré-remplir avec les tags de recherche actuels
+  if (state.includeTags.length > 0) {
+    scopeValue.value = state.includeTags.join(' ');  // Avec espace, pas underscore
+  }
+
+  // Sélectionner tout le texte au focus pour faciliter le renommage
+  scopeValue.addEventListener('focus', function() {
+    this.select();
+  });
+
+  // Style radio buttons
+  document.querySelectorAll('.mode-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.mode-option').forEach(o => {
+        o.style.borderColor = '#ddd';
+        o.style.background = 'white';
+      });
+      opt.style.borderColor = '#4CAF50';
+      opt.style.background = '#f0fdf4';
+      opt.querySelector('input').checked = true;
+    });
+  });
+
+  // Trigger initial style
+  document.querySelector('.mode-option[data-mode="consultation"]').style.borderColor = '#4CAF50';
+  document.querySelector('.mode-option[data-mode="consultation"]').style.background = '#f0fdf4';
+
+  cancelBtn.addEventListener('click', () => {
+    overlay.remove();
+  });
+
+  generateBtn.addEventListener('click', async () => {
+    const mode = document.querySelector('input[name="share-mode"]:checked').value;
+    const shareName = scopeValue.value.trim();
+
+    if (!shareName) {
+      errorEl.textContent = 'Veuillez donner un nom au partage';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    errorEl.style.display = 'none';
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Génération...';
+
+    // Reset preview et QR
+    document.getElementById('share-preview').style.display = 'none';
+    document.getElementById('share-qr-container').style.display = 'none';
+
+    try {
+      const response = await fetch(`${API}/qr/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scope_type: 'search',
+          share_name: shareName,
+          include_tags: state.includeTags,
+          exclude_tags: state.excludeTags,
+          types: state.activeTypes,
+          mode
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Afficher preview
+        document.getElementById('share-count').textContent = result.count;
+        document.getElementById('share-preview').style.display = 'block';
+
+        // Générer QR code
+        const qrContainer = document.getElementById('share-qr-code');
+        qrContainer.innerHTML = '';  // Clear
+
+        new QRCode(qrContainer, {
+          text: result.qr_base64,
+          width: 256,
+          height: 256,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        document.getElementById('share-qr-container').style.display = 'block';
+        generateBtn.style.display = 'none';
+        scopeValue.disabled = true;
+        document.querySelectorAll('input[name="share-mode"]').forEach(r => r.disabled = true);
+      } else {
+        errorEl.textContent = 'Erreur : ' + result.error;
+        errorEl.style.display = 'block';
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Générer QR';
+      }
+    } catch (error) {
+      errorEl.textContent = 'Erreur de connexion au serveur';
+      errorEl.style.display = 'block';
+      generateBtn.disabled = false;
+      generateBtn.textContent = 'Générer QR';
+    }
+  });
+
+  // Close on overlay click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.remove();
+    }
+  });
+}
+
+// ──────────────────────────────────────────────────────
+//  MODAL GROUPES (Phase 7 P2P)
+// ──────────────────────────────────────────────────────
+
+async function showGroupsModal() {
+  const overlay = document.createElement('div');
+  overlay.id = 'groups-modal-overlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+
+  overlay.innerHTML = `
+    <div id="groups-modal" style="
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 420px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    ">
+      <h2 style="margin-top: 0; color: #333; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-users" style="color: #4CAF50;"></i>
+        Mes groupes
+      </h2>
+
+      <div style="margin: 20px 0;">
+        <button id="create-group-btn" style="
+          width: 100%;
+          padding: 10px;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+        ">
+          <i class="fa-solid fa-plus"></i> Créer un groupe
+        </button>
+      </div>
+
+      <div id="groups-list" style="margin: 20px 0;">
+        <p style="text-align: center; color: #888;">Chargement...</p>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="groups-close-btn" style="
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #ccc;
+          background: white;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+        ">
+          Fermer
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Charger liste groupes
+  loadGroupsList();
+
+  // Event listeners
+  document.getElementById('groups-close-btn').addEventListener('click', () => {
+    overlay.remove();
+  });
+
+  document.getElementById('create-group-btn').addEventListener('click', () => {
+    showCreateGroupForm();
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.remove();
+    }
+  });
+}
+
+async function loadGroupsList() {
+  const listEl = document.getElementById('groups-list');
+
+  try {
+    // TODO: Appeler API /api/groups/list via relayserver
+    // Pour MVP Phase 7, afficher message
+    listEl.innerHTML = `
+      <p style="text-align: center; color: #888; font-size: 13px;">
+        Aucun groupe pour l'instant.
+      </p>
+      <p style="text-align: center; color: #888; font-size: 12px; margin-top: 10px;">
+        Créez un groupe pour partager avec plusieurs personnes.
+      </p>
+    `;
+  } catch (error) {
+    listEl.innerHTML = `<p style="color: #c00;">Erreur chargement groupes</p>`;
+  }
+}
+
+function showCreateGroupForm() {
+  const modal = document.getElementById('groups-modal');
+  modal.innerHTML = `
+    <h2 style="margin-top: 0; color: #333; display: flex; align-items: center; gap: 10px;">
+      <i class="fa-solid fa-users" style="color: #4CAF50;"></i>
+      Créer un groupe
+    </h2>
+
+    <div style="margin: 20px 0;">
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">
+        Nom du groupe
+      </label>
+      <input type="text" id="group-name-input" placeholder="Famille, Équipe, Amis..." style="
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+      ">
+    </div>
+
+    <div id="create-error" style="
+      background: #ffebee;
+      color: #c62828;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      display: none;
+    "></div>
+
+    <div id="create-success" style="
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      display: none;
+    "></div>
+
+    <div style="display: flex; gap: 10px;">
+      <button id="create-cancel-btn" style="
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      ">
+        Annuler
+      </button>
+      <button id="create-confirm-btn" style="
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: #4CAF50;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+      ">
+        Créer
+      </button>
+    </div>
+  `;
+
+  // Event listeners
+  document.getElementById('create-cancel-btn').addEventListener('click', () => {
+    document.getElementById('groups-modal-overlay').remove();
+  });
+
+  document.getElementById('create-confirm-btn').addEventListener('click', async () => {
+    const name = document.getElementById('group-name-input').value.trim();
+    const errorEl = document.getElementById('create-error');
+    const successEl = document.getElementById('create-success');
+    const confirmBtn = document.getElementById('create-confirm-btn');
+
+    if (!name) {
+      errorEl.textContent = 'Veuillez saisir un nom';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    errorEl.style.display = 'none';
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Création...';
+
+    try {
+      // TODO: Appeler API locale qui appelle relay /api/groups/create
+      // Pour MVP Phase 7, simuler succès
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      successEl.innerHTML = `
+        <strong>✅ Groupe créé !</strong><br>
+        <small>Utilisez le bouton "Partager" pour inviter des membres.</small>
+      `;
+      successEl.style.display = 'block';
+
+      setTimeout(() => {
+        document.getElementById('groups-modal-overlay').remove();
+      }, 2000);
+    } catch (error) {
+      errorEl.textContent = 'Erreur lors de la création';
+      errorEl.style.display = 'block';
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Créer';
+    }
+  });
+}
+
 // ── Init ────────────────────────────────────────────
 
 checkServer();
 checkVaultStatus();
+checkIdentityStatus(); // Phase 1 P2P - Vérifier identité au démarrage
 input.focus();
 
 // Pleine page

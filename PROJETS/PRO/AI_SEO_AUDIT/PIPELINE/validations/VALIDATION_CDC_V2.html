@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation CDC V2 — AI_SEO_AUDIT</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 16px; }
+        .content { padding: 40px; }
+
+        .changes-summary { background: #f0f4ff; border-left: 4px solid #667eea; padding: 25px; margin-bottom: 30px; border-radius: 6px; }
+        .changes-summary h2 { color: #2d3748; font-size: 20px; margin-bottom: 15px; }
+        .changes-summary ul { list-style: none; padding-left: 0; }
+        .changes-summary li { padding: 8px 0; color: #4a5568; font-size: 15px; }
+        .changes-summary li::before { content: "✅ "; color: #48bb78; font-weight: bold; }
+
+        .new-features { background: #f7fafc; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+        .new-features h3 { color: #2d3748; font-size: 18px; margin-bottom: 15px; }
+        .feature-item { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+        .feature-item h4 { color: #667eea; font-size: 16px; margin-bottom: 8px; }
+        .feature-item p { color: #718096; font-size: 14px; line-height: 1.6; }
+
+        .cdc-link { display: inline-block; margin: 20px 0; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 600; }
+        .cdc-link:hover { background: #764ba2; }
+
+        .question-block { margin-bottom: 30px; padding: 25px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .question-block h3 { color: #2d3748; font-size: 20px; margin-bottom: 20px; }
+
+        .option { background: white; border: 2px solid #e2e8f0; border-radius: 6px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
+        .option input[type="radio"] { margin-right: 12px; cursor: pointer; }
+        .option label { cursor: pointer; display: block; padding-left: 28px; position: relative; }
+        .option label strong { color: #2d3748; display: block; margin-bottom: 5px; font-size: 16px; }
+        .option label .description { color: #718096; font-size: 14px; line-height: 1.5; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+
+        textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 120px; margin-top: 10px; }
+        textarea:focus { outline: none; border-color: #667eea; }
+        .helper-text { color: #718096; font-size: 13px; margin-top: 8px; }
+
+        .actions { display: flex; gap: 15px; margin-top: 30px; }
+        .btn { flex: 1; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .result { display: none; padding: 30px; background: #f0fff4; border: 2px solid #9ae6b4; border-radius: 8px; margin-top: 30px; text-align: center; }
+        .result.error { background: #fff5f5; border-color: #fc8181; }
+        .result h3 { color: #2f855a; margin-bottom: 15px; font-size: 22px; }
+        .result.error h3 { color: #c53030; }
+        .result p { font-size: 15px; color: #2f855a; margin-bottom: 20px; }
+        .result.error p { color: #c53030; }
+
+        .loading { display: none; text-align: center; padding: 20px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 CDC V2 Ajusté</h1>
+            <p>AI_SEO_AUDIT — Outil de prospection commercial</p>
+        </div>
+
+        <div class="content">
+            <div class="changes-summary">
+                <h2>📝 Changements V1 → V2</h2>
+                <ul>
+                    <li>Positionnement : outil de prospection commercial (pas simple audit)</li>
+                    <li>F07 : Génération solutions concrètes avec exemples et maquettes</li>
+                    <li>F08 : Guide PDF mise en œuvre détaillé (8-12 pages)</li>
+                    <li>F09 : Landing page + pricing multilingue</li>
+                    <li>Modèle économique : 3 plans (freemium 0€, starter 49€, pro 149€)</li>
+                    <li>Stratégie : MVP light test marché → enchainement immédiat version solide</li>
+                    <li>Principes : automatisation totale, scalabilité, pas d'offre individuelle</li>
+                </ul>
+                <a href="file:///Users/nathalie/Dropbox/____BIG_BOFF___/PROJETS/PRO/AI_SEO_AUDIT/PIPELINE/02_CDC_V2.md" target="_blank" class="cdc-link">📖 Consulter le CDC V2 complet</a>
+            </div>
+
+            <div class="new-features">
+                <h3>🆕 Nouvelles fonctionnalités détaillées</h3>
+
+                <div class="feature-item">
+                    <h4>F07 : Génération de solutions</h4>
+                    <p><strong>Contenu généré :</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                        <li>Contenus optimisés IA-first (avant/après avec exemples concrets)</li>
+                        <li>Données structurées JSON-LD (code prêt à copier-coller)</li>
+                        <li>Recommandations éditoriales (checklist actionnable)</li>
+                        <li>Maquettes "Avant/Après" (captures d'écran simulées)</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h4>F08 : Guide de mise en œuvre</h4>
+                    <p><strong>PDF téléchargeable (8-12 pages) :</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                        <li>Tutoriels étape par étape (WordPress, Wix, Shopify, HTML)</li>
+                        <li>Screenshots annotés pour 5 plateformes</li>
+                        <li>Templates emails pour demander des avis</li>
+                        <li>Checklist de contrôle (15 points) + timeline (J+1, J+7, J+30)</li>
+                        <li>FAQ + support</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h4>F09 : Landing page + Pricing</h4>
+                    <p><strong>Page convertissante :</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                        <li>Hero section accrocheur ("Votre entreprise est-elle invisible pour ChatGPT ?")</li>
+                        <li>Le problème / La solution / Comment ça marche</li>
+                        <li>Tableau pricing comparatif (3 offres)</li>
+                        <li>Témoignages + FAQ</li>
+                        <li>Multilingue (détection auto, redirection .com?l=XX)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="validationForm">
+                <div class="question-block">
+                    <h3>Valides-tu ce CDC V2 pour passer aux SPECS ?</h3>
+
+                    <div class="option" onclick="selectOption(this, 'valider')">
+                        <input type="radio" name="validation" id="val1" value="valider">
+                        <label for="val1">
+                            <strong>✅ Valider — CDC V2 OK, on passe aux SPECS</strong>
+                            <span class="description">Les ajustements correspondent à mes attentes. Claude génère les SPECS.</span>
+                        </label>
+                    </div>
+
+                    <div class="option" onclick="selectOption(this, 'ajuster')">
+                        <input type="radio" name="validation" id="val2" value="ajuster">
+                        <label for="val2">
+                            <strong>🔄 Ajuster encore — Quelques modifications</strong>
+                            <span class="description">Globalement OK mais certains points à préciser (utilise le champ ci-dessous).</span>
+                        </label>
+                    </div>
+
+                    <div class="option" onclick="selectOption(this, 'revoir')">
+                        <input type="radio" name="validation" id="val3" value="revoir">
+                        <label for="val3">
+                            <strong>❌ Revoir — CDC à refaire</strong>
+                            <span class="description">Le CDC ne convient pas, il faut le reprendre différemment.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-block">
+                    <h3>Précisions ou ajustements ? (optionnel)</h3>
+                    <textarea id="comments" name="comments" placeholder="Si tu as des ajustements, des questions ou des précisions...
+
+Exemples :
+- Ajuster le pricing (49€ trop cher/pas assez ?)
+- Modifier une fonctionnalité
+- Ajouter/retirer quelque chose
+- Autre chose"></textarea>
+                    <div class="helper-text">💡 Laisse vide si tout est OK</div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        ✅ Valider et envoyer à Claude
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Envoi de la validation à Claude...</p>
+            </div>
+
+            <div class="result" id="result">
+                <h3>✅ Validation envoyée !</h3>
+                <p>Claude a reçu ta validation et va continuer automatiquement vers les SPECS.</p>
+                <p style="font-size: 13px; color: #718096; margin-top: 20px;">Tu peux fermer cette fenêtre et retourner au terminal.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectOption(element, value) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        document.getElementById('validationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const decision = document.querySelector('input[name="validation"]:checked');
+
+            if (!decision) {
+                alert('⚠️ Merci de choisir une option de validation');
+                return;
+            }
+
+            const comments = document.getElementById('comments').value.trim();
+
+            const validationData = {
+                type: 'CDC_V2',
+                project: 'AI_SEO_AUDIT',
+                decision: decision.value,
+                comments: comments || null
+            };
+
+            document.getElementById('validationForm').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('http://localhost:9999/api/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(validationData)
+                });
+
+                const result = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (response.ok) {
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.classList.add('error');
+                    resultDiv.querySelector('h3').textContent = '❌ Erreur';
+                    resultDiv.querySelector('p').textContent = 'Erreur lors de l\'envoi : ' + (result.message || 'Erreur inconnue');
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+
+                const resultDiv = document.getElementById('result');
+                resultDiv.classList.add('error');
+                resultDiv.querySelector('h3').textContent = '❌ Erreur de connexion';
+                resultDiv.querySelector('p').textContent = 'Impossible de contacter le serveur. Assure-toi que le serveur de validation est démarré.';
+                resultDiv.style.display = 'block';
+
+                console.error('Erreur:', error);
+            }
+        });
+    </script>
+</body>
+</html>

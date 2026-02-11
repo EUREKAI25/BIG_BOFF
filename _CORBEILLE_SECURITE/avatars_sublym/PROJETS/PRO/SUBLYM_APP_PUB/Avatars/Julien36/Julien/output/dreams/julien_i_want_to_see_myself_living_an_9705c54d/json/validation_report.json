@@ -1,0 +1,120 @@
+{
+  "total_validations": 0,
+  "total_passed": 0,
+  "total_failures": 0,
+  "pass_rate": 0,
+  "all_validations": [],
+  "failures": [],
+  "face_validation": {
+    "total_validations": 0,
+    "passed": 0,
+    "rejected": 0,
+    "pass_rate": 0,
+    "rejected_details": [],
+    "config": {
+      "threshold": 0.8,
+      "tolerance": 0.3
+    }
+  },
+  "costs": {
+    "tokens_input": 0,
+    "tokens_output": 0,
+    "calls": 0
+  },
+  "config": {
+    "global_min_score": 0.75,
+    "validation_criteria": {
+      "face_shape": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Forme du visage IDENTIQUE"
+      },
+      "face_features": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Traits du visage = MÊME PERSONNE"
+      },
+      "skin_tone": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Teinte de peau exacte"
+      },
+      "age": {
+        "min": 0.7,
+        "ref": "character_analysis",
+        "label": "Âge apparent"
+      },
+      "body_type": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Corpulence IDENTIQUE"
+      },
+      "hair_color": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Couleur cheveux exacte"
+      },
+      "hair_length": {
+        "min": 0.8,
+        "ref": "user_photo",
+        "label": "Longueur IDENTIQUE"
+      },
+      "glasses_present": {
+        "min": 0.95,
+        "ref": "user_photo",
+        "label": "Lunettes présentes si ref en a"
+      },
+      "clothing_style": {
+        "min": 0.8,
+        "ref": "previous",
+        "label": "MÊME vêtement"
+      },
+      "location_match_pitch": {
+        "min": 0.7,
+        "ref": "pitch",
+        "label": "Lieu correspond à description"
+      },
+      "emotion_match": {
+        "min": 0.8,
+        "ref": "pitch",
+        "label": "Émotion correspond"
+      },
+      "positive_expression": {
+        "min": 0.8,
+        "ref": "none",
+        "label": "Expression POSITIVE"
+      },
+      "natural_pose": {
+        "min": 0.8,
+        "ref": "none",
+        "label": "Pose naturelle"
+      },
+      "gaze_correct": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Regard PAS vers caméra"
+      },
+      "no_camera_look": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Ne regarde JAMAIS l'objectif"
+      },
+      "no_mirror": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Aucun miroir"
+      },
+      "no_text": {
+        "min": 0.95,
+        "ref": "none",
+        "label": "Aucun texte visible"
+      },
+      "no_deformation": {
+        "min": 0.9,
+        "ref": "none",
+        "label": "Aucune déformation"
+      }
+    },
+    "model": "gemini-2.5-flash"
+  }
+}

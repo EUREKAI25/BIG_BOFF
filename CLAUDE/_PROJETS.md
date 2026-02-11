@@ -3,7 +3,7 @@
 > Source de vérité pour tous les projets. Path absolu, description, statut.
 > Mis à jour à chaque création/suppression/changement de statut de projet.
 
-**Dernière MAJ** : 2026-02-10 (ajout TIP_CALCULATOR, refonte EURKAI)
+**Dernière MAJ** : 2026-02-11 (ajout AI_SEO_AUDIT)
 
 ---
 
@@ -12,7 +12,9 @@
 | Projet | Path | Description | Statut |
 |---|---|---|---|
 | **EURKAI** | `PROJETS/PRO/EURKAI/` | Ecosystème autonome orchestration projets — architecture fractale | 🟢 actif |
+| **AI_SEO_AUDIT** | `PROJETS/PRO/AI_SEO_AUDIT/` | Service audit visibilité entreprises dans réponses IA (ChatGPT, Claude, etc.) | 🟢 actif |
 | **TIP_CALCULATOR** | `PROJETS/PRO/TIP_CALCULATOR/` | Calculatrice pourboire web (projet test workflow) | 🟢 actif |
+| **SUBLYM** | `PROJETS/PRO/SUBLYM/` | Pipeline génération vidéo rêves (v7 baseline + v8 batch optimisé) | 🟢 actif |
 | **SUBLYM Backend** | `PROJETS/PRO/CLAUDE/backend/` | API Python partagée (génération, scénarios) | 🟢 actif |
 | **SUBLYM Frontend** | `PROJETS/PRO/CLAUDE/frontend/` | sublym.org — vitrine + création | 🟢 actif |
 | **SUBLYM Dream App** | `PROJETS/PRO/CLAUDE/sublym-dream-app/` | Expérience immersive (DreamViewer, PIN) | 🟢 actif |

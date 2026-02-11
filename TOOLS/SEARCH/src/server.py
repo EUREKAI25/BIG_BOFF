@@ -26,6 +26,16 @@ from config import (
     ID_OFFSET_VIDEO, ID_OFFSET_EVENT, ID_OFFSET_CONTACT, ID_OFFSET_LIEU
 )
 
+try:
+    from identity import (
+        init_identity, get_identity, sign_data,
+        verify_signature, load_private_keys, protect_identity
+    )
+    IDENTITY_AVAILABLE = True
+except ImportError:
+    IDENTITY_AVAILABLE = False
+    print("⚠️  Module identity.py non disponible (Phase 1 P2P)")
+
 DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
 DROPBOX_ROOT = "/Users/nathalie/Dropbox"
 PORT = 7777
@@ -42,6 +52,14 @@ VIDEO_EXTENSIONS = {".mp4", ".mov", ".avi", ".mkv", ".webm", ".m4v", ".flv"}
 
 # ── Coffre-fort ──────────────────────────────────────
 _vault_master = None  # Mot de passe maître en mémoire (session uniquement)
+
+# ── Identité P2P ─────────────────────────────────────
+_identity_session = {
+    "unlocked": False,
+    "private_keys": None,
+    "unlocked_at": None,
+    "expires_at": None
+}
 
 
 def _vault_encrypt(plaintext, master_pwd):
@@ -1285,6 +1303,270 @@ if (state.includeTags.length > 0 || state.excludeTags.length > 0 || state.active
 </html>"""
 
 
+# ────────────────────────────────────────────────────────────
+# Identity P2P — Helpers session
+# ────────────────────────────────────────────────────────────
+
+def _unlock_identity(password: str = None) -> bool:
+    """Charge private keys en mémoire et démarre la session.
+
+    Args:
+        password: Mot de passe si l'identité est protégée
+
+    Returns:
+        True si déverrouillage réussi, False sinon
+    """
+    if not IDENTITY_AVAILABLE:
+        return False
+    try:
+        rsa_key, ed25519_key = load_private_keys(password)
+        _identity_session["unlocked"] = True
+        _identity_session["private_keys"] = (rsa_key, ed25519_key)
+        _identity_session["unlocked_at"] = datetime.now()
+        _identity_session["expires_at"] = datetime.now() + timedelta(hours=1)
+        return True
+    except Exception as e:
+        print(f"❌ Erreur déverrouillage identité : {e}")
+        return False
+
+
+def _lock_identity():
+    """Efface private keys de la mémoire et verrouille la session."""
+    _identity_session["unlocked"] = False
+    _identity_session["private_keys"] = None
+    _identity_session["unlocked_at"] = None
+    _identity_session["expires_at"] = None
+
+
+def _is_session_valid() -> bool:
+    """Vérifie que la session identity est active et non expirée.
+
+    Returns:
+        True si session valide, False sinon
+    """
+    if not _identity_session["unlocked"]:
+        return False
+    if _identity_session["expires_at"] is None:
+        return False
+    if datetime.now() > _identity_session["expires_at"]:
+        _lock_identity()
+        return False
+    return True
+
+
+# ────────────────────────────────────────────────────────────
+# Identity P2P — Route handlers
+# ────────────────────────────────────────────────────────────
+
+def handle_identity_status(handler):
+    """GET /api/identity/status — Retourne le statut de l'identité.
+
+    Returns:
+        {
+            "initialized": bool,
+            "user_id": str (si initialisé),
+            "alias": str (si initialisé),
+            "protected": bool (si initialisé),
+            "created_at": str (si initialisé)
+        }
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    identity = get_identity()
+    if identity:
+        return {
+            "initialized": True,
+            "user_id": identity["user_id"],
+            "alias": identity["alias"],
+            "protected": identity["protection"]["enabled"],
+            "created_at": identity["created_at"]
+        }
+    return {"initialized": False}
+
+
+def handle_identity_init(handler, data):
+    """POST /api/identity/init — Initialise nouvelle identité.
+
+    Args:
+        data: {"alias": str (optionnel), "password": str (optionnel)}
+
+    Returns:
+        {
+            "success": bool,
+            "user_id": str,
+            "public_key_rsa": str,
+            "public_key_ed25519": str
+        }
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    # Vérifier qu'aucune identité n'existe déjà
+    if get_identity():
+        return {"error": "identity_already_exists"}
+
+    alias = data.get("alias", "User")
+    password = data.get("password")
+
+    try:
+        identity = init_identity(alias, password)
+
+        # Déverrouiller session automatiquement
+        _unlock_identity(password)
+
+        return {
+            "success": True,
+            "user_id": identity["user_id"],
+            "public_key_rsa": identity["keys"]["rsa"]["public_key"],
+            "public_key_ed25519": identity["keys"]["ed25519"]["public_key"]
+        }
+    except Exception as e:
+        print(f"❌ Erreur init identity : {e}")
+        return {"error": str(e)}
+
+
+def handle_identity_public_key(handler):
+    """GET /api/identity/public_key — Retourne les clés publiques.
+
+    Returns:
+        {
+            "user_id": str,
+            "public_key_rsa": str,
+            "public_key_ed25519": str
+        }
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    identity = get_identity()
+    if not identity:
+        return {"error": "identity_not_initialized"}
+
+    return {
+        "user_id": identity["user_id"],
+        "public_key_rsa": identity["keys"]["rsa"]["public_key"],
+        "public_key_ed25519": identity["keys"]["ed25519"]["public_key"]
+    }
+
+
+def handle_identity_sign(handler, data):
+    """POST /api/identity/sign — Signe des données (auth challenge).
+
+    Args:
+        data: {"data": str, "key_type": str (optionnel, défaut "ed25519")}
+
+    Returns:
+        {
+            "signature": str,
+            "algorithm": str
+        }
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    if not _is_session_valid():
+        return {"error": "session_locked"}
+
+    data_to_sign = data.get("data")
+    if not data_to_sign:
+        return {"error": "missing_data"}
+
+    key_type = data.get("key_type", "ed25519")
+
+    try:
+        signature = sign_data(data_to_sign, key_type)
+
+        return {
+            "signature": signature,
+            "algorithm": key_type
+        }
+    except Exception as e:
+        print(f"❌ Erreur signature : {e}")
+        return {"error": str(e)}
+
+
+def handle_identity_verify(handler, data):
+    """POST /api/identity/verify — Vérifie une signature.
+
+    Args:
+        data: {
+            "data": str,
+            "signature": str,
+            "public_key": str,
+            "key_type": str (optionnel, défaut "ed25519")
+        }
+
+    Returns:
+        {"valid": bool}
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    data_str = data.get("data")
+    signature = data.get("signature")
+    public_key = data.get("public_key")
+
+    if not all([data_str, signature, public_key]):
+        return {"error": "missing_parameters"}
+
+    key_type = data.get("key_type", "ed25519")
+
+    try:
+        valid = verify_signature(data_str, signature, public_key, key_type)
+        return {"valid": valid}
+    except Exception as e:
+        print(f"❌ Erreur vérification signature : {e}")
+        return {"error": str(e), "valid": False}
+
+
+def handle_identity_protect(handler, data):
+    """POST /api/identity/protect — Protège l'identité avec un mot de passe.
+
+    Args:
+        data: {"password": str}
+
+    Returns:
+        {"success": bool, "message": str}
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    password = data.get("password")
+    if not password:
+        return {"error": "missing_password"}
+
+    try:
+        success = protect_identity(password)
+
+        if success:
+            _lock_identity()
+            return {"success": True, "message": "Identité protégée"}
+        return {"error": "protection_failed"}
+    except Exception as e:
+        print(f"❌ Erreur protection identity : {e}")
+        return {"error": str(e)}
+
+
+def handle_identity_unlock(handler, data):
+    """POST /api/identity/unlock — Déverrouille la session.
+
+    Args:
+        data: {"password": str (optionnel si non protégée)}
+
+    Returns:
+        {"success": bool}
+    """
+    if not IDENTITY_AVAILABLE:
+        return {"error": "identity_module_unavailable"}
+
+    password = data.get("password")
+
+    if _unlock_identity(password):
+        return {"success": True}
+    return {"error": "incorrect_password"}
+
+
 class SearchHandler(http.server.BaseHTTPRequestHandler):
     """Gère les requêtes de l'extension Chrome."""
 
@@ -1323,6 +1605,9 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             "/api/relations": self.handle_relations_get,
             "/api/system-contacts/list": self.handle_system_contacts_list,
             "/api/tags/get": self.handle_tags_get,
+            "/api/identity/status": self.handle_identity_status_get,
+            "/api/identity/public_key": self.handle_identity_public_key_get,
+            "/api/consult/list": self.handle_consult_list,  # Phase 5
         }
 
         if path == "/" or path == "":
@@ -1396,13 +1681,15 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         Les tags sont normalisés (stemming français) pour trouver toutes les variantes :
         'rechercher', 'recherche', 'recherché' → même racine → mêmes résultats.
         """
-        include = [normalize_tag(t.strip()) for t in params.get("include", []) if t.strip()]
-        exclude = [normalize_tag(t.strip()) for t in params.get("exclude", []) if t.strip()]
+        include = [t.strip() for t in params.get("include", []) if t.strip()]
+        exclude = [t.strip() for t in params.get("exclude", []) if t.strip()]
         limit = int(params.get("limit", ["50"])[0])
         offset = int(params.get("offset", ["0"])[0])
         # Filtre par type : file, email, note, vault, video (comma-separated)
         types_raw = params.get("types", [""])[0].strip()
         active_types = set(t.strip() for t in types_raw.split(",") if t.strip()) if types_raw else set()
+        # Filtre par source : local (défaut), consulted, all (Phase 5)
+        source_filter = params.get("source", ["local"])[0].strip()
 
         if not include and not active_types:
             return {"results": [], "total": 0}
@@ -1477,9 +1764,17 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         results = []
         if file_ids:
             ph = ",".join("?" * len(file_ids))
+            # Filtre source_user_id (Phase 5)
+            source_condition = ""
+            if source_filter == "local":
+                source_condition = " AND source_user_id IS NULL"
+            elif source_filter == "consulted":
+                source_condition = " AND source_user_id IS NOT NULL"
+            # source_filter == "all" : pas de condition
+
             c.execute(f"""
-                SELECT id, nom, extension, chemin_relatif, taille, est_dossier, date_modif
-                FROM items WHERE id IN ({ph})
+                SELECT id, nom, extension, chemin_relatif, taille, est_dossier, date_modif, source_user_id, is_shared_copy
+                FROM items WHERE id IN ({ph}){source_condition}
                 ORDER BY date_modif DESC
             """, file_ids)
             for row in c.fetchall():
@@ -1493,6 +1788,8 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
                     "taille": row[4] or 0,
                     "est_dossier": bool(row[5]),
                     "date_modif": row[6] or "",
+                    "source_user_id": row[7] or None,  # Phase 5
+                    "is_shared_copy": bool(row[8]) if row[8] is not None else False,  # Phase 6
                     "is_media": ext_lower in IMAGE_EXTENSIONS or ext_lower in VIDEO_EXTENSIONS,
                 })
 
@@ -2415,6 +2712,37 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         ok = delete_relation(rel_id)
         return {"ok": ok}
 
+    # ── Validation endpoints ───────────────────────────
+
+    def handle_validation_submit(self, data):
+        """POST /api/validation/submit — Reçoit validation formulaire HTML.
+
+        Body: {"type": "brief|cdc|specs|build", "project": "NOM", "responses": {...}}
+        Écrit dans /tmp/claude_validation_<project>.json pour que Claude puisse lire.
+        """
+        validation_type = data.get("type", "unknown")
+        project = data.get("project", "unknown")
+        responses = data.get("responses", {})
+
+        validation_file = f"/tmp/claude_validation_{project}.json"
+        validation_data = {
+            "type": validation_type,
+            "project": project,
+            "responses": responses,
+            "timestamp": subprocess.run(
+                ["date", "+%Y-%m-%d %H:%M:%S"],
+                capture_output=True,
+                text=True
+            ).stdout.strip()
+        }
+
+        try:
+            with open(validation_file, "w", encoding="utf-8") as f:
+                json.dump(validation_data, f, indent=2, ensure_ascii=False)
+            return {"success": True, "message": "Validation enregistrée ✓"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
     # ── Vault endpoints ────────────────────────────────
 
     def do_POST(self):
@@ -2441,6 +2769,14 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             "/api/lieu": self.handle_lieu_post,
             "/api/relation": self.handle_relation_post,
             "/api/tags/add": self.handle_tags_add,
+            "/api/identity/init": self.handle_identity_init_post,
+            "/api/identity/sign": self.handle_identity_sign_post,
+            "/api/identity/verify": self.handle_identity_verify_post,
+            "/api/identity/protect": self.handle_identity_protect_post,
+            "/api/identity/unlock": self.handle_identity_unlock_post,
+            "/api/share/accept": self.handle_share_accept,  # Phase 4 P2P
+            "/api/qr/generate": self.handle_qr_generate,  # Phase 6 P2P
+            "/api/validation/submit": self.handle_validation_submit,  # Validations formulaires
         }
 
         handler = post_routes.get(path)
@@ -2986,6 +3322,332 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    # ── Identity P2P — Méthodes wrapper ─────────────────
+
+    def handle_identity_status_get(self, params):
+        """GET /api/identity/status"""
+        return handle_identity_status(self)
+
+    def handle_identity_public_key_get(self, params):
+        """GET /api/identity/public_key"""
+        return handle_identity_public_key(self)
+
+    def handle_identity_init_post(self, data):
+        """POST /api/identity/init"""
+        return handle_identity_init(self, data)
+
+    def handle_identity_sign_post(self, data):
+        """POST /api/identity/sign"""
+        return handle_identity_sign(self, data)
+
+    def handle_identity_verify_post(self, data):
+        """POST /api/identity/verify"""
+        return handle_identity_verify(self, data)
+
+    def handle_identity_protect_post(self, data):
+        """POST /api/identity/protect"""
+        return handle_identity_protect(self, data)
+
+    def handle_identity_unlock_post(self, data):
+        """POST /api/identity/unlock"""
+        return handle_identity_unlock(self, data)
+
+    def handle_share_accept(self, data):
+        """POST /api/share/accept - Accepte un partage QR (Phase 4 P2P)"""
+        from_user_id = data.get("from_user_id")
+        permission = data.get("permission", {})
+        signature = data.get("signature")
+
+        if not from_user_id or not permission:
+            return {"success": False, "error": "Données manquantes"}
+
+        # TODO Phase 4 : Vérifier signature QR
+
+        # Appeler permissions.py pour créer la permission via relay
+        try:
+            from permissions import grant_permission
+
+            result = grant_permission(
+                from_user_id,  # target = celui qui partage (inversé ici)
+                permission.get("scope_type"),
+                permission.get("scope_value"),
+                permission.get("mode", "consultation"),
+                permission.get("permissions", ["read"])
+            )
+
+            return result
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def handle_qr_generate(self, data):
+        """POST /api/qr/generate - Génère données QR pour partage (Phase 6 P2P)
+
+        Request:
+        {
+            "scope_type": "tag",
+            "scope_value": "recettes",
+            "mode": "consultation" ou "partage",
+            "permissions": ["read"]  (optionnel)
+        }
+
+        Response:
+        {
+            "success": true,
+            "qr_data": {
+                "version": "1.0",
+                "type": "share_permission",
+                "from_user_id": "bigboff_...",
+                "from_alias": "Alice",
+                "permission": {
+                    "scope_type": "tag",
+                    "scope_value": "recettes",
+                    "mode": "consultation",
+                    "permissions": ["read"]
+                },
+                "signature": "...",
+                "expires_at": "2026-02-11T10:00:00Z"
+            },
+            "qr_base64": "eyJ2ZXJ...",  # JSON base64-encodé pour QR
+            "count": 42  # Nombre d'éléments qui seront partagés
+        }
+        """
+        scope_type = data.get("scope_type")
+        mode = data.get("mode", "consultation")
+        permissions = data.get("permissions", ["read"])
+
+        if not scope_type:
+            return {"success": False, "error": "scope_type requis"}
+
+        if mode not in ["consultation", "partage"]:
+            return {"success": False, "error": "mode doit être 'consultation' ou 'partage'"}
+
+        try:
+            # 1. Récupérer identité locale
+            from identity import get_identity
+            identity = get_identity()
+
+            if not identity:
+                return {"success": False, "error": "Identité non initialisée"}
+
+            user_id = identity.get("user_id")
+            alias = identity.get("alias", "")
+
+            # 2. Compter éléments qui seront partagés
+            conn = get_db()
+            c = conn.cursor()
+
+            count = 0
+            search_criteria = None
+
+            if scope_type == "search":
+                # Nouveau : Partager les résultats d'une recherche
+                include_tags = data.get("include_tags", [])
+                exclude_tags = data.get("exclude_tags", [])
+                types = data.get("types", [])
+                share_name = data.get("share_name", " ".join(include_tags))
+
+                # Requête identique à /api/search
+                query = "SELECT DISTINCT i.id FROM items i"
+                conditions = []
+                params = []
+
+                if include_tags:
+                    placeholders = ','.join('?' * len(include_tags))
+                    query += f"""
+                        JOIN (
+                            SELECT item_id, COUNT(DISTINCT tag) as tag_count
+                            FROM tags
+                            WHERE tag IN ({placeholders})
+                            GROUP BY item_id
+                            HAVING tag_count = ?
+                        ) t ON i.id = t.item_id
+                    """
+                    params.extend(include_tags)
+                    params.append(len(include_tags))
+
+                if exclude_tags:
+                    placeholders_ex = ','.join('?' * len(exclude_tags))
+                    conditions.append(f"""i.id NOT IN (
+                        SELECT item_id FROM tags WHERE tag IN ({placeholders_ex})
+                    )""")
+                    params.extend(exclude_tags)
+
+                if types:
+                    type_conditions = []
+                    for t in types:
+                        if t == "file":
+                            type_conditions.append("i.type = 'file'")
+                        elif t in ["email", "note", "event", "contact", "lieu", "vault", "video"]:
+                            type_conditions.append(f"i.type = '{t}'")
+                        elif t == "favori":
+                            conditions.append("i.id IN (SELECT item_id FROM favorites)")
+                    if type_conditions:
+                        conditions.append("(" + " OR ".join(type_conditions) + ")")
+
+                if conditions:
+                    query += " WHERE " + " AND ".join(conditions)
+
+                c.execute(query, params)
+                count = len(c.fetchall())
+
+                search_criteria = {
+                    "include_tags": include_tags,
+                    "exclude_tags": exclude_tags,
+                    "types": types,
+                    "share_name": share_name
+                }
+
+            elif scope_type == "tag":
+                scope_value = data.get("scope_value")
+                c.execute("""
+                    SELECT COUNT(DISTINCT item_id)
+                    FROM tags
+                    WHERE tag = ?
+                """, (scope_value,))
+                count = c.fetchone()[0]
+                search_criteria = scope_value
+
+            elif scope_type == "all":
+                c.execute("SELECT COUNT(*) FROM items")
+                count = c.fetchone()[0]
+                search_criteria = "all"
+
+            # 3. Créer payload QR
+            import datetime
+            expires_at = (datetime.datetime.utcnow() + datetime.timedelta(hours=24)).isoformat() + "Z"
+
+            qr_data = {
+                "version": "1.0",
+                "type": "share_permission",
+                "from_user_id": user_id,
+                "from_alias": alias,
+                "permission": {
+                    "scope_type": scope_type,
+                    "scope_criteria": search_criteria,
+                    "mode": mode,
+                    "permissions": permissions
+                },
+                "expires_at": expires_at,
+                "signature": ""  # TODO Phase 4+ : Signer avec Ed25519
+            }
+
+            # 4. Encoder en base64 pour QR
+            import json
+            import base64
+            qr_json = json.dumps(qr_data)
+            qr_base64 = base64.b64encode(qr_json.encode()).decode()
+
+            return {
+                "success": True,
+                "qr_data": qr_data,
+                "qr_base64": qr_base64,
+                "count": count
+            }
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return {"success": False, "error": str(e)}
+
+    def handle_consult_list(self, params):
+        """GET /api/consult/list
+
+        Lister tous les éléments consultés (source_user_id NOT NULL).
+
+        Response:
+        {
+          "success": true,
+          "consulted": [
+            {
+              "source_user_id": "bigboff_abc123",
+              "source_alias": "Alice",
+              "count_items": 42,
+              "count_contacts": 5,
+              "count_lieux": 2,
+              "count_events": 8
+            }
+          ]
+        }
+        """
+        conn = get_db()
+        c = conn.cursor()
+
+        # Grouper par source_user_id pour chaque type
+        stats = {}
+
+        # Items (fichiers)
+        c.execute("""
+            SELECT source_user_id, COUNT(*) as count
+            FROM items
+            WHERE source_user_id IS NOT NULL
+            GROUP BY source_user_id
+        """)
+        for row in c.fetchall():
+            user_id = row[0]
+            if user_id not in stats:
+                stats[user_id] = {"source_user_id": user_id}
+            stats[user_id]["count_items"] = row[1]
+
+        # Contacts
+        c.execute("""
+            SELECT source_user_id, COUNT(*) as count
+            FROM contacts
+            WHERE source_user_id IS NOT NULL
+            GROUP BY source_user_id
+        """)
+        for row in c.fetchall():
+            user_id = row[0]
+            if user_id not in stats:
+                stats[user_id] = {"source_user_id": user_id}
+            stats[user_id]["count_contacts"] = row[1]
+
+        # Lieux
+        c.execute("""
+            SELECT source_user_id, COUNT(*) as count
+            FROM lieux
+            WHERE source_user_id IS NOT NULL
+            GROUP BY source_user_id
+        """)
+        for row in c.fetchall():
+            user_id = row[0]
+            if user_id not in stats:
+                stats[user_id] = {"source_user_id": user_id}
+            stats[user_id]["count_lieux"] = row[1]
+
+        # Events
+        c.execute("""
+            SELECT source_user_id, COUNT(*) as count
+            FROM events
+            WHERE source_user_id IS NOT NULL
+            GROUP BY source_user_id
+        """)
+        for row in c.fetchall():
+            user_id = row[0]
+            if user_id not in stats:
+                stats[user_id] = {"source_user_id": user_id}
+            stats[user_id]["count_events"] = row[1]
+
+        conn.close()
+
+        # Construire résultat
+        consulted = []
+        for user_id, data in stats.items():
+            consulted.append({
+                "source_user_id": user_id,
+                "source_alias": user_id[:20] + "...",  # Tronquer pour affichage
+                "count_items": data.get("count_items", 0),
+                "count_contacts": data.get("count_contacts", 0),
+                "count_lieux": data.get("count_lieux", 0),
+                "count_events": data.get("count_events", 0)
+            })
+
+        return {
+            "success": True,
+            "consulted": consulted,
+            "count": len(consulted)
+        }
 
     def log_message(self, format, *args):
         """Log simplifié."""

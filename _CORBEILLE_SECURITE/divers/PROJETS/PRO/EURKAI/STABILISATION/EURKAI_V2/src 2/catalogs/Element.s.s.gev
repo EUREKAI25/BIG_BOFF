@@ -1,0 +1,86 @@
+# ============================================================================
+# EURKAI Seed - Element
+# ============================================================================
+
+Object:Element:
+.name = "Element"
+.tag = "div"
+
+Object:Element:CockpitLayout:
+.name = "CockpitLayout"
+.tag = "div"
+.class = "cockpit-layout"
+
+CockpitLayout IN CockpitTemplate.ElementList
+
+Object:Element:Sidebar:
+.name = "Sidebar"
+.tag = "div"
+.class = "sidebar"
+
+Sidebar IN CockpitLayout.ElementList
+
+Object:Element:SidebarHeader:
+.name = "SidebarHeader"
+.tag = "div"
+.class = "sidebar-header"
+.content = "<span class='sidebar-title'>EURKAI</span><span class='object-count'>{{objectCount}}</span>"
+
+SidebarHeader IN Sidebar.ElementList
+
+Object:Element:SidebarSearch:
+.name = "SidebarSearch"
+.tag = "div"
+.class = "sidebar-search"
+.content = "<input type='text' placeholder='Rechercher...'>"
+
+SidebarSearch IN Sidebar.ElementList
+
+Object:Element:SidebarTabs:
+.name = "SidebarTabs"
+.tag = "div"
+.class = "sidebar-tabs"
+.content = "<div class='tab active' data-tab='objects'>Objets</div><div class='tab' data-tab='files'>Fichiers ({{fileCount}})</div>"
+
+SidebarTabs IN Sidebar.ElementList
+
+Object:Element:SidebarContent:
+.name = "SidebarContent"
+.tag = "div"
+.class = "sidebar-content"
+
+SidebarContent IN Sidebar.ElementList
+
+TreeModule IN SidebarContent.ModuleList
+FileListModule IN SidebarContent.ModuleList
+
+Object:Element:Main:
+.name = "Main"
+.tag = "div"
+.class = "main"
+
+Main IN CockpitLayout.ElementList
+
+Object:Element:MainHeader:
+.name = "MainHeader"
+.tag = "div"
+.class = "main-header"
+.content = "<span>{{projectName}}</span><div class='header-actions'><button data-action='Refresh'>↻ Refresh</button><button data-action='SelectProject'>📁 Projet</button></div>"
+
+MainHeader IN Main.ElementList
+
+Object:Element:MainContent:
+.name = "MainContent"
+.tag = "div"
+.class = "main-content"
+
+MainContent IN Main.ElementList
+
+DetailModule IN MainContent.ModuleList
+
+Object:Element:Test:
+.name = "Test"
+.tag = "div"
+.class = "test"
+
+Test IN CockpitLayout.ElementList

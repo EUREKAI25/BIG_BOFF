@@ -49,6 +49,17 @@ else:
 
 SRC_DIR = Path(__file__).parent
 
+
+def get_identity_path():
+    """Retourne Path vers ~/.bigboff/identity.json"""
+    try:
+        from config_loader import CONFIG_DIR
+        return CONFIG_DIR / "identity.json"
+    except ImportError:
+        # Fallback si config_loader pas disponible
+        return Path.home() / ".bigboff" / "identity.json"
+
+
 # ── Conventions ID (ranges négatifs) ─────────────────
 
 ID_OFFSET_EMAIL = 100000    # item_id = -(email_id + 100000)
@@ -58,6 +69,7 @@ ID_OFFSET_VIDEO = 400000    # item_id = -(video_id + 400000)
 ID_OFFSET_EVENT   = 500000    # item_id = -(event_id   + 500000)
 ID_OFFSET_CONTACT = 600000    # item_id = -(contact_id + 600000)
 ID_OFFSET_LIEU    = 700000    # item_id = -(lieu_id    + 700000)
+ID_OFFSET_USER    = 800000    # item_id = -(user_id    + 800000) [Phase P2P]
 
 # ── Stop words unifiés ───────────────────────────────
 # Fusion des 5 listes existantes (emails, notes, content, tags, vault)
