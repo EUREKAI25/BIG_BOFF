@@ -108,7 +108,8 @@ class AuditService:
         orchestrator = AuditOrchestrator(
             provider=provider,
             sector_template=template,
-            strict_validation=False
+            strict_validation=False,
+            language=audit_model.language
         )
 
         # Execute orchestrator
@@ -117,10 +118,17 @@ class AuditService:
         # Update database with results
         audit_model.status = completed_session.status
         audit_model.visibility_score = completed_session.visibility_score
+
+        # Extract analysis data
+        analysis = completed_session.metadata.get("analysis", {})
+
+        # Structure results for template
         audit_model.results = {
-            "queries": completed_session.queries,
-            "results": [r.to_dict() for r in completed_session.results],
-            "analysis": completed_session.metadata.get("analysis", {}),
+            "score": completed_session.visibility_score,
+            "total_mentions": analysis.get("total_mentions", 0),
+            "avg_position": analysis.get("avg_position"),
+            "competitors": analysis.get("competitors", []),
+            "gaps": analysis.get("gaps", []),
             "recommendations": completed_session.metadata.get("recommendations", []),
         }
 

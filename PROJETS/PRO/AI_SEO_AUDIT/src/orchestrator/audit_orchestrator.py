@@ -45,17 +45,19 @@ class AuditOrchestrator(Object):
         provider: AIProvider,
         sector_template: SectorTemplate,
         strict_validation: bool = False,
+        language: str = "fr",
         **kwargs
     ):
         super().__init__(**kwargs)
         self.provider = provider
         self.sector_template = sector_template
         self.validator = Validator(strict=strict_validation)
+        self.language = language
 
-        # Initialize agents
-        self.audit_agent = AuditAgent(provider=provider)
-        self.analyze_agent = AnalyzeAgent()
-        self.generate_agent = GenerateAgent()
+        # Initialize agents with language parameter
+        self.audit_agent = AuditAgent(provider=provider, language=language)
+        self.analyze_agent = AnalyzeAgent(language=language)
+        self.generate_agent = GenerateAgent(language=language)
 
     def validate(self) -> bool:
         """Validate orchestrator configuration."""

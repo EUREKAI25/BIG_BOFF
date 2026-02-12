@@ -1,6 +1,8 @@
 """AIProvider - Adapter for AI API providers."""
 from typing import Dict, Any, List, Optional
 import re
+import os
+from openai import OpenAI
 from ..object import Object, TestResult
 
 
@@ -71,21 +73,75 @@ class AIProvider(Object):
 
         return TestResult(True, f"Provider {self.name} configured correctly")
 
-    def query(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> AIResponse:
+    def query(
+        self,
+        prompt: str,
+        context: Optional[Dict[str, Any]] = None,
+        language: str = "fr"
+    ) -> AIResponse:
         """
         Query the AI provider.
 
-        Will be implemented in Phase 3 with actual API calls.
-        For now, returns a mock response.
+        Makes real API call to OpenAI.
+
+        Args:
+            prompt: User prompt (can be pre-formatted or raw query)
+            context: Optional context data
+            language: Language code (fr, en, es, de, it) for system prompt
+
+        Returns:
+            AIResponse with the model's response
         """
-        # Placeholder implementation
         self._request_count += 1
-        response = AIResponse(
-            raw_text=f"Mock response from {self.name} for: {prompt[:50]}...",
-            provider=self.name,
-            model=self.model
-        )
-        return response
+
+        try:
+            # Import prompts module
+            from ..config.prompts import get_system_prompt
+
+            # Initialize OpenAI client (prioritize project-specific key)
+            api_key = self.api_key or os.getenv("OPENAI_API_KEY_AI_SEO") or os.getenv("OPENAI_API_KEY")
+            client = OpenAI(api_key=api_key)
+
+            # Get system prompt in requested language
+            system_prompt = get_system_prompt(language)
+
+            # Make API call
+            completion = client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": system_prompt
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                temperature=0.7,
+                max_tokens=500,
+            )
+
+            # Extract response text
+            raw_text = completion.choices[0].message.content
+
+            response = AIResponse(
+                raw_text=raw_text,
+                provider=self.name,
+                model=self.model
+            )
+
+            return response
+
+        except Exception as e:
+            # Fallback to mock on error
+            print(f"⚠️  OpenAI API error: {e}")
+            response = AIResponse(
+                raw_text=f"Error calling {self.name}: {str(e)}",
+                provider=self.name,
+                model=self.model
+            )
+            return response
 
     def parse_response(self, raw: str) -> Dict[str, Any]:
         """

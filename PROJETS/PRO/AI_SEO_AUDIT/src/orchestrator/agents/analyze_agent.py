@@ -19,8 +19,9 @@ class AnalyzeAgent(Object):
     - Prioritize recommendations
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, language: str = "fr", **kwargs):
         super().__init__(**kwargs)
+        self.language = language
 
     def validate(self) -> bool:
         """Validate agent configuration."""
@@ -113,6 +114,8 @@ class AnalyzeAgent(Object):
 
         Analyzes why competitors are more visible.
         """
+        from ...core.config.translations import get_gap_description
+
         gaps = []
 
         # Count mentions
@@ -122,9 +125,16 @@ class AnalyzeAgent(Object):
 
         # Gap: Low mention rate
         if mention_rate < 0.3:
+            description = get_gap_description(
+                "low_mention_rate",
+                self.language,
+                mentioned=mentioned_count,
+                total=total_queries,
+                rate=int(mention_rate * 100)
+            )
             gaps.append(Gap(
                 type="authority",
-                description=f"Company mentioned in only {mentioned_count}/{total_queries} queries ({mention_rate*100:.0f}%)",
+                description=description,
                 severity="high",
                 affected_queries=[r.query for r in results if not r.company_mentioned]
             ))
@@ -133,33 +143,45 @@ class AnalyzeAgent(Object):
         if len(competitors) > 0:
             top_competitors = sorted(competitors, key=lambda c: c.mention_count, reverse=True)[:3]
             competitor_names = [c.name for c in top_competitors]
+            description = get_gap_description(
+                "competitors_more_visible",
+                self.language,
+                competitors=", ".join(competitor_names)
+            )
             gaps.append(Gap(
                 type="authority",
-                description=f"Top competitors more visible: {', '.join(competitor_names)}",
+                description=description,
                 severity="high" if len(competitors) > 5 else "medium"
             ))
 
         # Gap: Poor positioning when mentioned
         poor_positions = [r for r in results if r.company_mentioned and r.position and r.position > 5]
         if len(poor_positions) > total_queries * 0.3:
+            description = get_gap_description(
+                "poor_positioning",
+                self.language,
+                count=len(poor_positions)
+            )
             gaps.append(Gap(
                 type="content",
-                description=f"Poor positioning: mentioned but ranked low in {len(poor_positions)} queries",
+                description=description,
                 severity="medium",
                 affected_queries=[r.query for r in poor_positions]
             ))
 
         # Gap: Structured data (always applicable)
+        description = get_gap_description("missing_structured_data", self.language)
         gaps.append(Gap(
             type="structured_data",
-            description="Missing or incomplete structured data (Schema.org)",
+            description=description,
             severity="medium"
         ))
 
         # Gap: Content optimization
+        description = get_gap_description("content_not_optimized", self.language)
         gaps.append(Gap(
             type="content",
-            description="Content not optimized for AI understanding",
+            description=description,
             severity="medium"
         ))
 

@@ -18,8 +18,9 @@ class GenerateAgent(Object):
     - Generate mockups (plan Pro)
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, language: str = "fr", **kwargs):
         super().__init__(**kwargs)
+        self.language = language
 
     def validate(self) -> bool:
         """Validate agent configuration."""
@@ -144,9 +145,13 @@ Testez avec l'outil de test de données structurées de Google :
 https://search.google.com/test/rich-results
 """
 
+        from ...core.config.translations import get_recommendation_title
+
+        title = get_recommendation_title("structured_data", self.language)
+
         return OptimizationRecommendation(
             type="structured_data",
-            title="Ajouter des données structurées Schema.org",
+            title=title,
             description=gap.description,
             priority=min(priority, 5),
             content=content,
@@ -235,9 +240,13 @@ Intégrez naturellement ces termes dans votre contenu :
 {', '.join(content['sections'][0]['keywords'])}
 """
 
+        from ...core.config.translations import get_recommendation_title
+
+        title = get_recommendation_title("content", self.language)
+
         return OptimizationRecommendation(
             type="content",
-            title="Optimiser le contenu pour les IA",
+            title=title,
             description=gap.description,
             priority=min(priority, 5),
             content=content,
@@ -303,9 +312,13 @@ Liste des services avec description courte
 Informations complètes de contact
 """
 
+        from ...core.config.translations import get_recommendation_title
+
+        title = get_recommendation_title("editorial", self.language)
+
         return OptimizationRecommendation(
             type="editorial",
-            title="Appliquer les bonnes pratiques éditoriales",
+            title=title,
             description=gap.description,
             priority=min(priority, 5),
             content=content,
@@ -359,9 +372,13 @@ Informations complètes de contact
    - Partager études de cas (avec permission)
 """
 
+        from ...core.config.translations import get_recommendation_title
+
+        title = get_recommendation_title("authority", self.language)
+
         return OptimizationRecommendation(
             type="editorial",
-            title="Renforcer votre autorité et visibilité",
+            title=title,
             description=gap.description,
             priority=min(priority, 5),
             content=content,

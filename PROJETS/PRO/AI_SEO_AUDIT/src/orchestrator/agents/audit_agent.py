@@ -18,9 +18,10 @@ class AuditAgent(Object):
     - Identify competitors mentioned
     """
 
-    def __init__(self, provider: AIProvider, **kwargs):
+    def __init__(self, provider: AIProvider, language: str = "fr", **kwargs):
         super().__init__(**kwargs)
         self.provider = provider
+        self.language = language
 
     def validate(self) -> bool:
         """Validate agent configuration."""
@@ -93,15 +94,14 @@ class AuditAgent(Object):
 
         Constructs appropriate prompt and calls provider.
         """
-        # Construct prompt that encourages structured responses
-        prompt = f"""User is looking for recommendations. Please provide a helpful, structured response.
+        # Import prompts module
+        from ...core.config.prompts import format_user_prompt
 
-Query: {query}
+        # Format prompt in the requested language
+        prompt = format_user_prompt(query, self.language)
 
-Please list your top recommendations in order of preference."""
-
-        # Call provider (in Phase 4 this will make real API calls)
-        response = self.provider.query(prompt)
+        # Call provider with language parameter
+        response = self.provider.query(prompt, language=self.language)
         return response
 
     def extract_companies(self, response: str) -> List[str]:

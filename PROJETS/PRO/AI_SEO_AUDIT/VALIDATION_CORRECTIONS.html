@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Corrections - AI_SEO_AUDIT</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        .content {
+            padding: 40px;
+        }
+        .status {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        .status h2 {
+            color: #dc3545;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .status ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        .status li {
+            margin: 8px 0;
+            color: #495057;
+        }
+        .problem {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .problem h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .problem p {
+            color: #856404;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .problem code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #c7254e;
+        }
+        .solution {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .solution h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .solution p {
+            color: #0c5460;
+            line-height: 1.6;
+        }
+        .solution ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        .solution li {
+            margin: 5px 0;
+            color: #0c5460;
+        }
+        .question {
+            background: #e7f3ff;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        .question h2 {
+            color: #1976D2;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option:hover {
+            border-color: #2196F3;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+        }
+        .option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+        }
+        .option label {
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .option p {
+            margin-left: 35px;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .textarea-group {
+            margin-top: 20px;
+        }
+        .textarea-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+        .textarea-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        .estimate {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .estimate strong {
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Corrections AI_SEO_AUDIT</h1>
+            <p>Diagnostic des problèmes détectés pendant les tests</p>
+        </div>
+
+        <div class="content">
+            <div class="status">
+                <h2>⚠️ État actuel du MVP</h2>
+                <p><strong>Statut global :</strong> ✅ Fonctionnel à 95%</p>
+                <ul>
+                    <li>✅ Architecture fractale complète</li>
+                    <li>✅ Base de données et API fonctionnelles</li>
+                    <li>✅ Templates et interface utilisateur</li>
+                    <li>❌ Résultats de l'IA retournés en anglais</li>
+                    <li>❌ Descriptions des gaps et recommendations peu claires</li>
+                </ul>
+            </div>
+
+            <h2 style="margin-bottom: 20px; color: #333;">Problèmes identifiés</h2>
+
+            <div class="problem">
+                <h3>❌ Problème 1 : Résultats en anglais</h3>
+                <p><strong>Cause :</strong> Le système prompt envoyé à OpenAI est hardcodé en anglais dans <code>ai_provider.py</code> (lignes 94-96)</p>
+                <p><strong>Impact :</strong> ChatGPT répond en anglais même quand l'utilisateur a demandé du français</p>
+                <p><strong>Fichiers concernés :</strong></p>
+                <ul>
+                    <li><code>src/core/interface/ai_provider.py</code></li>
+                    <li><code>src/orchestrator/agents/audit_agent.py</code></li>
+                </ul>
+            </div>
+
+            <div class="problem">
+                <h3>❌ Problème 2 : Descriptions incompréhensibles</h3>
+                <p><strong>Cause :</strong> Les textes générés utilisent des placeholders non remplis comme <code>[expertise principale]</code>, <code>[X années]</code></p>
+                <p><strong>Impact :</strong> Les recommendations affichent du texte générique avec des crochets, peu exploitable</p>
+                <p><strong>Fichiers concernés :</strong></p>
+                <ul>
+                    <li><code>src/orchestrator/agents/analyze_agent.py</code></li>
+                    <li><code>src/orchestrator/agents/generate_agent.py</code></li>
+                </ul>
+            </div>
+
+            <h2 style="margin: 40px 0 20px 0; color: #333;">Solutions proposées</h2>
+
+            <div class="solution">
+                <h3>✅ Solution 1 : Gestion multilingue des prompts (30 min)</h3>
+                <ul>
+                    <li>Créer module <code>src/core/config/prompts.py</code> avec prompts FR/EN/ES/DE</li>
+                    <li>Modifier <code>ai_provider.py</code> pour accepter paramètre <code>language</code></li>
+                    <li>Passer la langue depuis <code>audit_service.py</code> → orchestrator → agents → provider</li>
+                    <li>L'IA répondra dans la langue demandée</li>
+                </ul>
+            </div>
+
+            <div class="solution">
+                <h3>✅ Solution 2 : Descriptions claires et exploitables (20 min)</h3>
+                <ul>
+                    <li>Réécrire les descriptions des gaps en français clair</li>
+                    <li>Ajouter contexte : "Pourquoi c'est important", "Ce que ça implique concrètement"</li>
+                    <li>Exemple : "Votre entreprise n'apparaît que dans 2 requêtes sur 3. Vos concurrents sont plus visibles."</li>
+                </ul>
+            </div>
+
+            <div class="solution">
+                <h3>✅ Solution 3 : Génération intelligente de contenu (30 min)</h3>
+                <ul>
+                    <li>Remplacer les placeholders <code>[expertise principale]</code> par du contenu réel</li>
+                    <li>Utiliser les données de l'analyse (secteur, concurrents) pour personnaliser</li>
+                    <li>Générer des exemples concrets au lieu de textes génériques</li>
+                </ul>
+            </div>
+
+            <div class="estimate">
+                <strong>⏱️ Temps total estimé :</strong> 1h20 pour les 3 corrections
+            </div>
+
+            <form id="validationForm">
+                <div class="question">
+                    <h2>Que veux-tu que je fasse ?</h2>
+
+                    <div class="options">
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="action" value="corriger_tout" required>
+                                Corriger les 3 problèmes maintenant (1h20)
+                            </label>
+                            <p>Je vais implémenter les 3 solutions immédiatement. Le MVP sera 100% fonctionnel après.</p>
+                        </div>
+
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="action" value="corriger_urgent">
+                                Corriger uniquement la langue (30 min)
+                            </label>
+                            <p>Je corrige seulement le problème de langue (prompts multilingues). Les descriptions restent en l'état pour l'instant.</p>
+                        </div>
+
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="action" value="plus_tard">
+                                Reporter les corrections
+                            </label>
+                            <p>On garde le MVP en l'état, on corrigera plus tard (par exemple après la demo ou les premiers tests utilisateurs).</p>
+                        </div>
+
+                        <div class="option">
+                            <label>
+                                <input type="radio" name="action" value="autre">
+                                Autre approche
+                            </label>
+                            <p>Tu as une autre idée, précise dans les commentaires ci-dessous.</p>
+                        </div>
+                    </div>
+
+                    <div class="textarea-group">
+                        <label>Commentaires / Précisions (optionnel)</label>
+                        <textarea
+                            name="comments"
+                            placeholder="Ajoute des précisions, questions, ou instructions spécifiques..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Valider ma décision</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('validationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {
+                action: formData.get('action'),
+                comments: formData.get('comments'),
+                timestamp: new Date().toISOString(),
+                project: 'AI_SEO_AUDIT',
+                phase: 'POST_MVP_CORRECTIONS'
+            };
+
+            try {
+                const response = await fetch('http://localhost:9999/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('✅ Validation enregistrée ! Claude va procéder selon ta décision.');
+                    window.close();
+                } else {
+                    throw new Error('Erreur serveur');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('⚠️ Impossible de contacter le serveur de validation. Vérifie que le serveur tourne sur le port 9999.\n\nTu peux quand même continuer - dis-moi juste ta décision dans le chat.');
+            }
+        });
+    </script>
+</body>
+</html>

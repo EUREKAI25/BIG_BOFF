@@ -1,11 +1,12 @@
 """Audit API routes."""
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from datetime import datetime
 
 from ...database.session import get_db
 from ...services.audit_service import AuditService
+from ...core.utils.language_detector import get_browser_language_from_header, normalize_language_code
 from ..schemas import (
     AuditCreateRequest,
     AuditStatusResponse,
@@ -21,7 +22,8 @@ router = APIRouter()
 
 @router.post("/create", response_model=AuditStatusResponse)
 async def create_audit(
-    request: AuditCreateRequest,
+    audit_request: AuditCreateRequest,
+    http_request: Request,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
@@ -30,17 +32,34 @@ async def create_audit(
 
     Returns audit ID and initial status.
     Audit processing happens in background.
+
+    Language detection:
+    - Uses explicit language from request if provided
+    - Falls back to browser Accept-Language header
+    - Defaults to French if no preference detected
     """
     try:
+        # Detect language from browser if not explicitly provided or default
+        language = audit_request.language
+        if language == "fr":  # Default value, try to detect better
+            accept_language = http_request.headers.get("accept-language")
+            if accept_language:
+                detected_lang = get_browser_language_from_header(accept_language)
+                if detected_lang != "fr":
+                    language = detected_lang
+
+        # Normalize language code just in case
+        language = normalize_language_code(language)
+
         # Create audit in DB
         audit = await AuditService.create_audit(
             db=db,
-            company_name=request.company_name,
-            sector=request.sector,
-            location=request.location or "",
-            email=request.email,
-            plan=request.plan,
-            language=request.language,
+            company_name=audit_request.company_name,
+            sector=audit_request.sector,
+            location=audit_request.location or "",
+            email=audit_request.email,
+            plan=audit_request.plan,
+            language=language,
         )
 
         # Start audit processing in background
