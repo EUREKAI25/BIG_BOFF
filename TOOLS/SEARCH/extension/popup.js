@@ -133,7 +133,7 @@ async function apiFetch(endpoint, params = {}) {
 async function checkServer() {
   try {
     const data = await apiFetch("stats");
-    statsEl.textContent = `${data.total_items.toLocaleString()} fichiers · ${data.unique_tags.toLocaleString()} tags [v1.4]`;
+    statsEl.textContent = `${data.total_items.toLocaleString()} fichiers · ${data.unique_tags.toLocaleString()} tags [v1.6]`;
     errorBanner.style.display = "none";
     return true;
   } catch {
@@ -2314,9 +2314,16 @@ function showShareModal() {
   const scopeValue = document.getElementById('share-scope-value');
   const errorEl = document.getElementById('share-error');
 
-  // Pré-remplir avec les tags de recherche actuels
+  // Pré-remplir avec les tags de recherche actuels (inclus + exclus)
+  const nameParts = [];
   if (state.includeTags.length > 0) {
-    scopeValue.value = state.includeTags.join(' ');  // Avec espace, pas underscore
+    nameParts.push(...state.includeTags);
+  }
+  if (state.excludeTags.length > 0) {
+    nameParts.push(...state.excludeTags.map(t => '-' + t));
+  }
+  if (nameParts.length > 0) {
+    scopeValue.value = nameParts.join(' ');
   }
 
   // Sélectionner tout le texte au focus pour faciliter le renommage
@@ -2389,11 +2396,17 @@ function showShareModal() {
         qrContainer.innerHTML = '';  // Clear
 
         new QRCode(qrContainer, {
-          text: result.qr_base64,
+          text: result.qr_url,  // URL complète au lieu du token brut
           width: 256,
           height: 256,
           correctLevel: QRCode.CorrectLevel.M
         });
+
+        // Afficher l'URL pour debug
+        const payloadDiv = document.createElement('div');
+        payloadDiv.style.cssText = 'margin-top:10px; font-size:11px; color:#555; word-break:break-all; padding:8px; background:#f0f9ff; border:1px solid #3b82f6; border-radius:4px;';
+        payloadDiv.innerHTML = `<strong>URL:</strong> ${result.qr_url}`;
+        qrContainer.appendChild(payloadDiv);
 
         document.getElementById('share-qr-container').style.display = 'block';
         generateBtn.style.display = 'none';

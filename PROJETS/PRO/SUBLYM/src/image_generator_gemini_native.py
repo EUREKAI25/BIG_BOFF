@@ -1,25 +1,28 @@
 """
 IMAGE GENERATOR GEMINI NATIVE — Génération images depuis scénario v8
-Utilise SDK Gemini natif (pas Fal.ai) pour cohérence maximale
+Utilise SDK Gemini natif Gemini 3 Pro pour cohérence maximale
 """
 
 import json
 import os
 import sys
 import time
+import shutil
 from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
-from prompt_generator import generate_prompt, validate_prompt_rules
 
-# Charger .env
+# Charger .env AVANT les imports qui utilisent les variables d'environnement
 load_dotenv()
+
+from prompt_generator import generate_prompt, validate_prompt_rules
+from AI_get_image_gemini import generate_image_gemini3_pro
 
 # =============================================================================
 # CONFIG
 # =============================================================================
 
-PRICING_GEMINI_PRO = 0.18  # USD per image (SDK natif)
+PRICING_GEMINI_PRO = 0.18  # USD per image (SDK natif Gemini 3 Pro)
 
 # =============================================================================
 # IMAGE GENERATOR GEMINI NATIVE
@@ -162,7 +165,7 @@ class ImageGeneratorGeminiNative:
         return prompt
 
     def generate_image(self, scene_id: int, keyframe_type: str) -> dict:
-        """Génère une image via Gemini SDK natif."""
+        """Génère une image via Gemini 3 Pro SDK natif."""
 
         print(f"\n🎨 Génération image scène {scene_id} ({keyframe_type})...")
 
@@ -170,75 +173,22 @@ class ImageGeneratorGeminiNative:
 
         print(f"   Prompt: {positive_prompt[:100]}...")
 
-        try:
-            from google.genai import types
-        except ImportError:
-            raise ImportError("Installez le SDK: pip install google-genai")
-
-        client = self._get_client()
-
-        # Construire le contenu
-        contents = []
-
-        # Ajouter les images de référence avec instruction explicite
-        if self.reference_images:
-            contents.append("PRIMARY FACE REFERENCE - This person's face MUST match these photos exactly. Use ONLY these images for facial features, skin tone, and appearance:")
-            for img_path in self.reference_images:
-                img_data, mime_type = self._load_image_as_bytes(img_path)
-                contents.append(types.Part.from_bytes(data=img_data, mime_type=mime_type))
-                print(f"   📸 Ref: {Path(img_path).name}")
-
-        # Ajouter le prompt
-        contents.append(f"Generate this image: {positive_prompt}")
-
-        print(f"   🚀 Appel Gemini SDK natif...")
-        print(f"   - Modèle: gemini-3-pro-image-preview")
-        print(f"   - Références: {len(self.reference_images) if self.reference_images else 0}")
-
-        # Configuration
-        config = types.GenerateContentConfig(
-            response_modalities=['IMAGE', 'TEXT'],
-            image_config=types.ImageConfig(
-                aspect_ratio="4:3"
-            )
+        # Utiliser la fonction validée generate_image_gemini3_pro
+        result = generate_image_gemini3_pro(
+            prompt=positive_prompt,
+            character_reference_images=self.reference_images,
+            style_reference_images=None,  # Pas d'images de style pour l'instant
+            aspect_ratio="4:3",
+            resolution="2K"
         )
 
-        # Générer
-        response = client.models.generate_content(
-            model="gemini-3-pro-image-preview",
-            contents=contents,
-            config=config
-        )
-
-        # Vérifier la réponse
-        if not response.candidates:
-            raise ValueError("Gemini n'a pas retourné de candidats (possible safety filter)")
-
-        candidate = response.candidates[0]
-
-        if not candidate.content or not candidate.content.parts:
-            finish_reason = getattr(candidate, 'finish_reason', None)
-            raise ValueError(f"Gemini n'a pas retourné de contenu. Finish reason: {finish_reason}")
-
-        # Extraire l'image
-        image_data = None
-        text_response = ""
-
-        for part in candidate.content.parts:
-            if hasattr(part, 'inline_data') and part.inline_data:
-                image_data = part.inline_data.data
-            elif hasattr(part, 'text') and part.text:
-                text_response = part.text
-
-        if not image_data:
-            raise ValueError(f"Pas d'image dans la réponse. Texte: {text_response}")
-
-        # Sauvegarder
+        # Déplacer l'image temporaire vers le dossier de sortie
+        temp_path = result['output']
         filename = f"scene_{scene_id:02d}_{keyframe_type}.png"
         filepath = self.output_dir / filename
 
-        with open(filepath, "wb") as f:
-            f.write(image_data)
+        import shutil
+        shutil.move(temp_path, filepath)
 
         self.images_generated += 1
         self.total_cost += PRICING_GEMINI_PRO
@@ -250,7 +200,7 @@ class ImageGeneratorGeminiNative:
             "keyframe_type": keyframe_type,
             "filepath": str(filepath),
             "cost_usd": PRICING_GEMINI_PRO,
-            "text_response": text_response
+            "text_response": result['meta'].get('text_response', '')
         }
 
     def generate_with_validation(self, scene_id: int, keyframe_type: str, max_attempts: int = 3) -> dict:

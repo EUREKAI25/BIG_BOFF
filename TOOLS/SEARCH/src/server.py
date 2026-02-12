@@ -15,6 +15,7 @@ import imaplib
 import json
 import os
 import re
+import socket
 import sqlite3
 import subprocess
 import urllib.parse
@@ -39,8 +40,57 @@ except ImportError:
 DB_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/MAINTENANCE/catalogue.db"
 DROPBOX_ROOT = "/Users/nathalie/Dropbox"
 PORT = 7777
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"  # Écoute sur toutes les interfaces pour accès réseau local
 ACCOUNTS_PATH = "/Users/nathalie/Dropbox/____BIG_BOFF___/TOOLS/SEARCH/src/email_accounts.json"
+
+# ── IP locale pour QR codes ─────────────────────────
+def get_local_ip():
+    """Obtient l'IP locale pour générer des URLs accessibles sur le réseau local."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
+
+try:
+    LOCAL_IP = get_local_ip()
+    BASE_URL = f"http://{LOCAL_IP}:{PORT}"
+    print(f"[DEBUG] IP réseau détectée: {LOCAL_IP}")
+except Exception as e:
+    print(f"[DEBUG] Erreur détection IP: {e}")
+    LOCAL_IP = "127.0.0.1"
+    BASE_URL = f"http://{LOCAL_IP}:{PORT}"
+
+# ── Internationalisation (i18n) ─────────────────────
+I18N_PATH = Path(__file__).parent / "i18n.json"
+I18N_DATA = {}
+try:
+    with open(I18N_PATH, "r", encoding="utf-8") as f:
+        I18N_DATA = json.load(f)
+except Exception as e:
+    print(f"[WARN] Impossible de charger i18n.json: {e}")
+
+def t(key, lang="fr", **kwargs):
+    """Traduit une clé avec interpolation des variables.
+
+    Exemple: t("share.accept_page.title", from_alias="Alice")
+    """
+    keys = key.split(".")
+    value = I18N_DATA.get(lang, {})
+    for k in keys:
+        if isinstance(value, dict):
+            value = value.get(k, key)
+        else:
+            return key
+
+    # Interpolation des variables
+    if isinstance(value, str):
+        for var, val in kwargs.items():
+            value = value.replace(f"{{{var}}}", str(val))
+
+    return value
 
 # ── Miniatures ───────────────────────────────────────
 THUMBNAIL_DIR = Path(__file__).parent.parent / ".thumbnails"
@@ -1614,6 +1664,10 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             self._serve_fullpage()
             return
 
+        if path == "/accept":
+            self._serve_accept_page(params)
+            return
+
         handler = routes.get(path)
         if handler:
             try:
@@ -1698,14 +1752,14 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         c = conn.cursor()
 
         if include:
-            # Items qui ont TOUS les tags inclus
+            # Items qui ont TOUS les tags inclus (chercher dans tag_display)
             placeholders_inc = ",".join("?" * len(include))
             query = f"""
                 SELECT t.item_id
                 FROM tags t
-                WHERE t.tag IN ({placeholders_inc})
+                WHERE t.tag_display IN ({placeholders_inc})
                 GROUP BY t.item_id
-                HAVING COUNT(DISTINCT t.tag) = ?
+                HAVING COUNT(DISTINCT t.tag_display) = ?
             """
             query_params = list(include) + [len(include)]
 
@@ -1715,7 +1769,7 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
                 query = f"""
                     SELECT item_id FROM ({query})
                     WHERE item_id NOT IN (
-                        SELECT item_id FROM tags WHERE tag IN ({placeholders_exc})
+                        SELECT item_id FROM tags WHERE tag_display IN ({placeholders_exc})
                     )
                 """
                 query_params += list(exclude)
@@ -1964,8 +2018,8 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
 
     def handle_cooccurrence(self, params):
         """Tags co-occurrents : les tags les plus fréquents parmi les items qui matchent."""
-        include = [t.lower().strip() for t in params.get("include", []) if t.strip()]
-        exclude = [t.lower().strip() for t in params.get("exclude", []) if t.strip()]
+        include = [t.strip() for t in params.get("include", []) if t.strip()]
+        exclude = [t.strip() for t in params.get("exclude", []) if t.strip()]
         types_raw = params.get("types", [""])[0].strip()
         active_types = set(t.strip() for t in types_raw.split(",") if t.strip()) if types_raw else set()
 
@@ -1976,14 +2030,14 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         c = conn.cursor()
 
         if include:
-            # Items qui ont tous les tags inclus
+            # Items qui ont tous les tags inclus (chercher dans tag_display)
             placeholders_inc = ",".join("?" * len(include))
             items_query = f"""
                 SELECT t.item_id
                 FROM tags t
-                WHERE t.tag IN ({placeholders_inc})
+                WHERE t.tag_display IN ({placeholders_inc})
                 GROUP BY t.item_id
-                HAVING COUNT(DISTINCT t.tag) = ?
+                HAVING COUNT(DISTINCT t.tag_display) = ?
             """
             items_params = list(include) + [len(include)]
 
@@ -1993,7 +2047,7 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
                 items_query = f"""
                     SELECT item_id FROM ({items_query})
                     WHERE item_id NOT IN (
-                        SELECT item_id FROM tags WHERE tag IN ({placeholders_exc})
+                        SELECT item_id FROM tags WHERE tag_display IN ({placeholders_exc})
                     )
                 """
                 items_params += list(exclude)
@@ -2028,51 +2082,24 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         all_selected = set(include) | set(exclude)
         if all_selected:
             all_placeholders = ",".join("?" * len(all_selected))
+            # Grouper par tag_display
             cooc_query = f"""
-                WITH tag_counts AS (
-                    SELECT t2.tag, t2.tag_display, COUNT(*) as cnt
-                    FROM tags t2
-                    WHERE t2.item_id IN ({items_query})
-                      AND t2.tag NOT IN ({all_placeholders})
-                    GROUP BY t2.tag, t2.tag_display
-                ),
-                best_display AS (
-                    SELECT tag,
-                           (SELECT tag_display FROM tag_counts tc2
-                            WHERE tc2.tag = tc1.tag
-                            ORDER BY cnt DESC, LENGTH(tag_display) DESC
-                            LIMIT 1) as display,
-                           SUM(cnt) as total_cnt
-                    FROM tag_counts tc1
-                    GROUP BY tag
-                )
-                SELECT display, total_cnt
-                FROM best_display
-                ORDER BY total_cnt DESC
+                SELECT tag_display, COUNT(*) as cnt
+                FROM tags
+                WHERE item_id IN ({items_query})
+                  AND tag_display NOT IN ({all_placeholders})
+                GROUP BY tag_display
+                ORDER BY cnt DESC
                 LIMIT 15
             """
             c.execute(cooc_query, items_params + list(all_selected))
         else:
             cooc_query = f"""
-                WITH tag_counts AS (
-                    SELECT t2.tag, t2.tag_display, COUNT(*) as cnt
-                    FROM tags t2
-                    WHERE t2.item_id IN ({items_query})
-                    GROUP BY t2.tag, t2.tag_display
-                ),
-                best_display AS (
-                    SELECT tag,
-                           (SELECT tag_display FROM tag_counts tc2
-                            WHERE tc2.tag = tc1.tag
-                            ORDER BY cnt DESC, LENGTH(tag_display) DESC
-                            LIMIT 1) as display,
-                           SUM(cnt) as total_cnt
-                    FROM tag_counts tc1
-                    GROUP BY tag
-                )
-                SELECT display, total_cnt
-                FROM best_display
-                ORDER BY total_cnt DESC
+                SELECT tag_display, COUNT(*) as cnt
+                FROM tags
+                WHERE item_id IN ({items_query})
+                GROUP BY tag_display
+                ORDER BY cnt DESC
                 LIMIT 15
             """
             c.execute(cooc_query, items_params)
@@ -3340,6 +3367,102 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(html.encode("utf-8"))
 
+    def _serve_accept_page(self, params):
+        """Sert la page de prévisualisation d'un partage P2P (avec i18n)."""
+        import base64
+        import datetime
+
+        lang = params.get("lang", ["fr"])[0]  # TODO: détecter depuis Accept-Language
+        token = params.get("token", [""])[0]
+
+        if not token:
+            error_msg = t("share.accept_page.error_missing_token", lang=lang)
+            self.send_response(400)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(f"<h1>{error_msg}</h1>".encode("utf-8"))
+            return
+
+        try:
+            # Décoder le token base64
+            qr_json = base64.b64decode(token).decode("utf-8")
+            qr_data = json.loads(qr_json)
+
+            from_alias = qr_data.get("from_alias", "Inconnu")
+            share_name = qr_data.get("share_name", "Sans nom")
+            mode = qr_data.get("mode", "consultation")
+            count = qr_data.get("count", 0)
+            expires_at = qr_data.get("expires_at", "")
+
+            # Formatter la date d'expiration
+            if expires_at:
+                try:
+                    exp_dt = datetime.datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+                    expires_display = exp_dt.strftime("%d/%m/%Y %H:%M")
+                except:
+                    expires_display = expires_at
+            else:
+                expires_display = t("share.accept_page.info_expires", lang=lang, date="?")
+
+            # Textes i18n
+            title = t("share.accept_page.title", lang=lang, from_alias=from_alias)
+            subtitle = t("share.accept_page.subtitle", lang=lang)
+            count_text = t("share.accept_page.info_items", lang=lang, count=count)
+            list_text = t("share.accept_page.info_list", lang=lang, share_name=share_name)
+            mode_text = t(f"share.accept_page.info_mode_{mode}", lang=lang)
+            mode_icon = "👁️" if mode == "consultation" else "🔄"
+            expires_text = t("share.accept_page.info_expires", lang=lang, date=expires_display)
+            btn_accept = t("share.accept_page.btn_accept", lang=lang)
+            btn_refuse = t("share.accept_page.btn_refuse", lang=lang)
+            loading_text = t("share.accept_page.loading", lang=lang)
+
+            # Charger template HTML
+            from string import Template
+            template_path = Path(__file__).parent / "accept_page_template.html"
+            with open(template_path, "r", encoding="utf-8") as f:
+                html_template = Template(f.read())
+
+            # Préparer les strings JSON pour le JavaScript
+            strings_for_js = {
+                "success_title": t("share.accept_page.success_title", lang=lang),
+                "success_has_account": t("share.accept_page.success_has_account", lang=lang),
+                "success_no_account": t("share.accept_page.success_no_account", lang=lang),
+                "btn_install": t("share.accept_page.btn_install", lang=lang),
+                "btn_open_bigboff": t("share.accept_page.btn_open_bigboff", lang=lang),
+                "error_invalid_token": t("share.accept_page.error_invalid_token", lang=lang),
+                "error_network": t("share.accept_page.error_network", lang=lang)
+            }
+
+            # Remplacer les placeholders
+            html = html_template.substitute(
+                lang=lang,
+                page_title=title,
+                title=title,
+                subtitle=subtitle,
+                count_text=count_text,
+                list_text=list_text,
+                mode_icon=mode_icon,
+                mode_text=mode_text,
+                expires_text=expires_text,
+                btn_accept=btn_accept,
+                btn_refuse=btn_refuse,
+                loading_text=loading_text,
+                token=token,
+                strings_json=json.dumps(strings_for_js, ensure_ascii=False)
+            )
+
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(html.encode("utf-8"))
+
+        except Exception as e:
+            self.send_response(400)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            error_html = f"<h1>Erreur</h1><p>Impossible de décoder le token : {str(e)}</p>"
+            self.wfile.write(error_html.encode("utf-8"))
+
     def _json_response(self, code, data):
         self.send_response(code)
         self._cors_headers()
@@ -3383,7 +3506,50 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
         return handle_identity_unlock(self, data)
 
     def handle_share_accept(self, data):
-        """POST /api/share/accept - Accepte un partage QR (Phase 4 P2P)"""
+        """POST /api/share/accept - Accepte un partage QR (Phase 4 P2P)
+
+        Accepte soit :
+        - {token: "base64..."} depuis la page /accept mobile
+        - {from_user_id, permission, ...} format direct (legacy)
+        """
+        import base64
+
+        # Nouveau format : token base64
+        token = data.get("token")
+        if token:
+            try:
+                # Décoder le token
+                qr_json = base64.b64decode(token).decode("utf-8")
+                qr_data = json.loads(qr_json)
+
+                from_user_id = qr_data.get("from_user_id")
+                from_alias = qr_data.get("from_alias", "Inconnu")
+                permission = qr_data.get("permission", {})
+                share_name = qr_data.get("share_name", "Partage sans nom")
+                count = qr_data.get("count", 0)
+
+                # TODO Phase 4+ : Vérifier signature et expiration
+                # TODO Phase 5+ : Créer la permission via relay/permissions.py
+                # Pour l'instant, on retourne juste un succès
+
+                # Log l'acceptation (temporaire pour debug)
+                print(f"[ACCEPT] {from_alias} ({from_user_id}) partage '{share_name}' ({count} éléments)")
+                print(f"[ACCEPT] Mode: {permission.get('mode')}, Scope: {permission.get('scope_type')}")
+
+                return {
+                    "success": True,
+                    "message": f"Partage '{share_name}' accepté !",
+                    "from_alias": from_alias,
+                    "count": count,
+                    "mode": permission.get("mode")
+                }
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                return {"success": False, "error": f"Erreur décodage token: {str(e)}"}
+
+        # Ancien format (legacy)
         from_user_id = data.get("from_user_id")
         permission = data.get("permission", {})
         signature = data.get("signature")
@@ -3488,7 +3654,7 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
                         JOIN (
                             SELECT item_id, COUNT(DISTINCT tag) as tag_count
                             FROM tags
-                            WHERE tag IN ({placeholders})
+                            WHERE tag_display IN ({placeholders})
                             GROUP BY item_id
                             HAVING tag_count = ?
                         ) t ON i.id = t.item_id
@@ -3499,7 +3665,7 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
                 if exclude_tags:
                     placeholders_ex = ','.join('?' * len(exclude_tags))
                     conditions.append(f"""i.id NOT IN (
-                        SELECT item_id FROM tags WHERE tag IN ({placeholders_ex})
+                        SELECT item_id FROM tags WHERE tag_display IN ({placeholders_ex})
                     )""")
                     params.extend(exclude_tags)
 
@@ -3547,6 +3713,12 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             import datetime
             expires_at = (datetime.datetime.utcnow() + datetime.timedelta(hours=24)).isoformat() + "Z"
 
+            # Extraire share_name depuis search_criteria si disponible
+            if isinstance(search_criteria, dict):
+                share_name = search_criteria.get("share_name", "Partage sans nom")
+            else:
+                share_name = str(search_criteria) if search_criteria else "Partage sans nom"
+
             qr_data = {
                 "version": "1.0",
                 "type": "share_permission",
@@ -3558,6 +3730,8 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
                     "mode": mode,
                     "permissions": permissions
                 },
+                "share_name": share_name,  # Pour l'affichage dans la page /accept
+                "count": count,  # Pour l'affichage dans la page /accept
                 "expires_at": expires_at,
                 "signature": ""  # TODO Phase 4+ : Signer avec Ed25519
             }
@@ -3568,10 +3742,14 @@ class SearchHandler(http.server.BaseHTTPRequestHandler):
             qr_json = json.dumps(qr_data)
             qr_base64 = base64.b64encode(qr_json.encode()).decode()
 
+            # Générer URL complète pour scan mobile
+            qr_url = f"{BASE_URL}/accept?token={qr_base64}"
+
             return {
                 "success": True,
                 "qr_data": qr_data,
-                "qr_base64": qr_base64,
+                "qr_base64": qr_base64,  # Garder pour compatibilité extension
+                "qr_url": qr_url,  # URL complète pour mobile
                 "count": count
             }
 
@@ -3687,7 +3865,9 @@ def main():
     print(f"=== BIG_BOFF Search — Serveur ===")
     print(f"Base : {DB_PATH}")
     print(f"Port : {PORT}")
-    print(f"URL  : http://{HOST}:{PORT}")
+    print(f"URL locale    : http://{HOST}:{PORT}")
+    print(f"URL réseau    : {BASE_URL}")
+    print(f"IP détectée   : {LOCAL_IP}")
     print()
     print("Endpoints :")
     print("  GET /api/autocomplete?q=py")

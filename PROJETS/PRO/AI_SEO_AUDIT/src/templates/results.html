@@ -15,7 +15,7 @@
         </div>
     </header>
 
-    {% if audit.status == 'processing' %}
+    {% if audit.status in ['pending', 'processing'] %}
     <!-- Loading State -->
     <section class="loading">
         <div class="container">
@@ -188,8 +188,10 @@
 
     <script>
         // Render score gauge
+        {% if audit.results.get('score') %}
         const scoreData = {{ audit.results.score|tojson }};
         document.getElementById('scoreGauge').innerHTML = renderScoreGauge(scoreData);
+        {% endif %}
 
         // Upgrade function
         async function upgradeAudit(auditId, plan) {

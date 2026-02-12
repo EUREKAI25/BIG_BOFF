@@ -27,3 +27,6 @@ maintenance du système
 catalogue de templates, seeds, schemas, modules, endpoints,  
  le ou les tags de recherche
 
+    - 
+    maintenant je veux tester la recherche de prospects par domaine / ville
+crée une liste de domaines d'activité avec un panier moyen > 2000 et classe par panier moyen decroissant

@@ -216,6 +216,7 @@ class ImageGeneratorFluxKontext:
     def generate_with_validation(self, scene_id: int, keyframe_type: str, max_attempts: int = 3) -> dict:
         """Génère une image avec validation automatique améliorée."""
         import sys
+        import shutil
         sys.path.insert(0, str(Path(__file__).parent))
         from validation_images_v2 import ImageValidatorV2
 
@@ -223,11 +224,21 @@ class ImageGeneratorFluxKontext:
             reference_image=self.reference_image if self.reference_image else None
         )
 
+        best_result = None
+        best_score = -1.0
+        all_attempts = []
+
         for attempt in range(1, max_attempts + 1):
             print(f"\n🎨 Génération image scène {scene_id} ({keyframe_type}) - Tentative {attempt}/{max_attempts}")
 
             # Générer image
             result = self.generate_image(scene_id, keyframe_type)
+
+            # Renommer avec suffixe de tentative
+            original_path = Path(result['filepath'])
+            attempt_path = original_path.parent / f"{original_path.stem}_attempt{attempt}{original_path.suffix}"
+            shutil.copy(original_path, attempt_path)
+            print(f"   💾 Copie sauvegardée: {attempt_path.name}")
 
             # Valider
             validation = validator.validate_image_v2(
@@ -247,19 +258,51 @@ class ImageGeneratorFluxKontext:
             print(f"   📊 Copie ref: {'❌ OUI' if is_ref_copy else '✅ NON'}")
             print(f"   📊 Nb personnes: {people_check['detected']}/{people_check['expected']} {'✅' if people_check['valid'] else '❌'}")
 
+            # Calculer score combiné (ressemblance prioritaire)
+            combined_score = resemblance_score * 0.7 + quality_score * 0.3
+
+            # Garder la meilleure
+            if combined_score > best_score:
+                best_score = combined_score
+                best_result = {
+                    'attempt': attempt,
+                    'result': result,
+                    'validation': validation,
+                    'attempt_path': str(attempt_path),
+                    'combined_score': combined_score
+                }
+                print(f"   ⭐ Nouvelle meilleure image (score combiné: {combined_score:.2f})")
+
+            all_attempts.append({
+                'attempt': attempt,
+                'resemblance': resemblance_score,
+                'quality': quality_score,
+                'combined': combined_score
+            })
+
             # Si validée, retourner
             if validation['overall_passed']:
                 print(f"   ✅ Image validée !")
                 result['validation'] = validation
+                result['all_attempts'] = all_attempts
                 return result
 
             # Si échec et pas dernière tentative
             if attempt < max_attempts:
                 print(f"   🔄 Validation échouée, nouvelle tentative...")
-            else:
-                print(f"   ⚠️  ÉCHEC après {max_attempts} tentatives → IMAGE CONSERVÉE POUR ANALYSE")
-                result['validation'] = validation
-                return result
+
+        # Fin des tentatives - garder la meilleure
+        print(f"\n   ⚠️  ÉCHEC après {max_attempts} tentatives")
+        print(f"   ⭐ MEILLEURE image: tentative {best_result['attempt']} (score: {best_result['combined_score']:.2f})")
+
+        # Copier la meilleure vers le fichier final
+        shutil.copy(best_result['attempt_path'], original_path)
+        print(f"   💾 Meilleure image conservée: {original_path.name}")
+
+        best_result['result']['validation'] = best_result['validation']
+        best_result['result']['all_attempts'] = all_attempts
+        best_result['result']['best_attempt'] = best_result['attempt']
+        return best_result['result']
 
     def generate_scenes(self, scene_ids: list, keyframes: str = "start", validate: bool = True, max_attempts: int = 3) -> list:
         """Génère des scènes spécifiques."""

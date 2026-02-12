@@ -15,6 +15,7 @@ load_dotenv()
 RESEMBLANCE_MIN_SCORE = 0.8
 QUALITY_MIN_SCORE = 0.7
 REF_COPY_THRESHOLD = 0.95  # Si similarité > 95%, c'est une copie
+TEETH_VISIBLE_FORBIDDEN = True  # Dents visibles = échec automatique
 
 class ImageValidatorV2:
     def __init__(self, reference_image: str = None):
@@ -124,6 +125,78 @@ Retourne un JSON :
             "faces_visible": result.get("faces_visible", 0),
             "valid": is_correct,
             "issues": result.get("issues", [])
+        }
+
+    def check_teeth_visible(self, image_path: str) -> Dict:
+        """Vérifie si des dents sont visibles (RÉDHIBITOIRE)."""
+
+        prompt = """
+Analyse cette image et vérifie si des DENTS sont VISIBLES.
+
+RÈGLE STRICTE : Les dents visibles sont INTERDITES.
+
+Vérifie :
+- Bouche fermée = OK
+- Sourire léger lèvres closes = OK
+- Sourire montrant les dents même partiellement = ÉCHEC
+- Sourire avec dents visibles = ÉCHEC
+
+Retourne un JSON :
+{
+    "teeth_visible": true/false,
+    "confidence": 0.95,
+    "mouth_description": "description de l'état de la bouche",
+    "verdict": "PASS/FAIL"
+}
+"""
+
+        result = self._call_gpt4o_vision([image_path], prompt)
+
+        teeth_visible = result.get("teeth_visible", False)
+        verdict = result.get("verdict", "FAIL" if teeth_visible else "PASS")
+
+        return {
+            "teeth_visible": teeth_visible,
+            "confidence": result.get("confidence", 0.0),
+            "mouth_description": result.get("mouth_description", ""),
+            "passed": not teeth_visible,
+            "verdict": verdict
+        }
+
+    def check_eye_contact(self, image_path: str) -> Dict:
+        """Vérifie si la personne regarde la caméra (RÉDHIBITOIRE)."""
+
+        prompt = """
+Analyse cette image et vérifie si la personne REGARDE LA CAMÉRA.
+
+RÈGLE STRICTE : Regarder la caméra est INTERDIT.
+
+Vérifie la direction du regard :
+- Regard vers le côté, l'horizon, vers le bas = OK
+- Regard détourné, pensif, contemplatif = OK
+- Regard direct vers la caméra/spectateur = ÉCHEC
+- Contact visuel avec le spectateur = ÉCHEC
+
+Retourne un JSON :
+{
+    "looking_at_camera": true/false,
+    "confidence": 0.95,
+    "gaze_direction": "description de la direction du regard",
+    "verdict": "PASS/FAIL"
+}
+"""
+
+        result = self._call_gpt4o_vision([image_path], prompt)
+
+        looking_at_camera = result.get("looking_at_camera", False)
+        verdict = result.get("verdict", "FAIL" if looking_at_camera else "PASS")
+
+        return {
+            "looking_at_camera": looking_at_camera,
+            "confidence": result.get("confidence", 0.0),
+            "gaze_direction": result.get("gaze_direction", ""),
+            "passed": not looking_at_camera,
+            "verdict": verdict
         }
 
     def validate_quality(self, image_path: str) -> Dict:
@@ -256,12 +329,22 @@ Retourne un JSON :
         people_check = self.check_people_count(image_path, expected_people)
         print(f"   Nb personnes: {people_check['detected']}/{people_check['expected']} {'✅' if people_check['valid'] else '❌'}")
 
+        # 5. Vérifier dents visibles (RÉDHIBITOIRE)
+        teeth_check = self.check_teeth_visible(image_path)
+        print(f"   Dents visibles: {'❌ OUI - ÉCHEC' if teeth_check['teeth_visible'] else '✅ NON'} ({teeth_check['mouth_description']})")
+
+        # 6. Vérifier regard caméra (RÉDHIBITOIRE)
+        eye_contact_check = self.check_eye_contact(image_path)
+        print(f"   Regard caméra: {'❌ OUI - ÉCHEC' if eye_contact_check['looking_at_camera'] else '✅ NON'} ({eye_contact_check['gaze_direction']})")
+
         # Validation globale
         overall_passed = (
             quality["passed"] and
             resemblance["passed"] and
             not is_ref_copy and
-            people_check["valid"]
+            people_check["valid"] and
+            teeth_check["passed"] and  # RÉDHIBITOIRE
+            eye_contact_check["passed"]  # RÉDHIBITOIRE
         )
 
         return {
@@ -271,5 +354,7 @@ Retourne un JSON :
             "is_reference_copy": is_ref_copy,
             "ref_copy_details": ref_copy_check,
             "people_count_check": people_check,
+            "teeth_check": teeth_check,
+            "eye_contact_check": eye_contact_check,
             "overall_passed": overall_passed
         }

@@ -9,7 +9,7 @@
 
 **Statut** : 🟢 actif
 **Cree** : 2026-02-08
-**Derniere MAJ** : 2026-02-10 21:00
+**Derniere MAJ** : 2026-02-12 02:55
 
 ---
 
@@ -285,6 +285,69 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 - [ ] Phase 11 : Mobile UI responsive
 - [ ] Phase 12 : Vues premium (Kanban, Timeline, Map, Graph)
 
+### Tests UI P2P (2026-02-11)
+
+**Extension v1.7** — Bugs corrigés :
+
+| Bug | Symptôme | Cause | Fix | Statut |
+|-----|----------|-------|-----|--------|
+| **Autocomplétion** | Bloquée après 2ème caractère | Race condition : `query.toLowerCase()` sur null | Garde `!query` + stockage query dans state | ✅ v1.3 |
+| **Dates** | " · ?" au lieu de dates | Base vide (419 fichiers) + format US | Format FR (DD/MM/YYYY) + masquage si vide | ✅ v1.4 |
+| **Tags réduits** | "jacqu" au lieu de "jacques" | Co-occurrence utilisait `tag` normalisé | Requête modifiée pour `tag_display` | ✅ v1.5 |
+| **QR 0 élément** | Génération QR affiche 0 | Requête cherchait dans `tag` au lieu de `tag_display` | WHERE tag_display IN (...) | ✅ v1.6 |
+| **Nom partage** | Champ ne prend qu'include tags | Logique ne prenait pas exclude_tags | Ajout map `-tag` pour exclusions | ✅ v1.6 |
+| **QR mobile inutilisable** | Token base64 brut au lieu d'URL | QR contenait token, pas URL cliquable | QR = URL `http://192.168.x.x:7777/accept?token=...` | ✅ v1.7 |
+| **Socket non importé** | `get_local_ip()` échouait | Module `socket` manquant dans imports | Ajout `import socket` ligne 18 | ✅ v1.7 |
+
+**Nouveautés v1.7 :**
+- Page `/accept` pour prévisualisation mobile des partages
+- Détection automatique IP locale (192.168.x.x) pour QR codes
+- Design mobile-friendly avec gradient et animations
+- Affichage nom partage, count, mode, expiration
+- Boutons Accepter/Refuser fonctionnels
+
+**Tests à effectuer (Ph4-8) :**
+
+- [ ] **Ph4 : QR Codes**
+  - [ ] Génération QR mode consultation (données temps réel)
+  - [ ] Génération QR mode partage (clone + sync)
+  - [ ] Scan QR avec caméra
+  - [ ] Vérification token expiration (24h)
+  - [ ] Révocation partage actif
+
+- [ ] **Ph5 : Consultation**
+  - [ ] Voir données d'un autre user en temps réel
+  - [ ] Badge 📡 bleu sur items consultés
+  - [ ] Dropdown source (local/consulté/tout)
+  - [ ] Cache TTL 1h
+  - [ ] Comportement si source révoque
+
+- [ ] **Ph6 : Partage**
+  - [ ] Clone initial vers base locale
+  - [ ] Sync continue (push/pull)
+  - [ ] Badge 📡 vert sur items partagés
+  - [ ] Snapshot figé si révocation
+  - [ ] Modification locale d'item partagé
+
+- [ ] **Ph7 : Groupes**
+  - [ ] Créer groupe
+  - [ ] Ajouter membres au groupe
+  - [ ] Partager avec groupe entier
+  - [ ] Révocation membre individuel
+  - [ ] Suppression groupe
+
+- [ ] **Ph8 : Multi-device**
+  - [ ] Génération QR activation device
+  - [ ] Scan depuis 2ème appareil
+  - [ ] Sync entre appareils
+  - [ ] Révocation device
+
+**Tests d'intégration :**
+- [ ] Scénario complet A→B consultation
+- [ ] Scénario complet A→B partage + sync
+- [ ] Scénario groupe 3+ membres
+- [ ] Scénario multi-device (ordinateur + mobile simulé)
+
 ---
 
 ## A faire
@@ -431,3 +494,8 @@ API locale `http://127.0.0.1:7777` — aucune dependance externe (Python stdlib)
 | 2026-02-10 | **Pivot P2P** — MOBILE_ROADMAP.md (PWA, 4 phases, VPS, 4-5j MVP) |
 | 2026-02-10 | Architecture partage — ARCHITECTURE_PARTAGE.md (identité décentralisée, relay, E2E) |
 | 2026-02-10 | Décisions produit — DECISIONS_PRODUIT.md (données, chiffrement, découverte, freemium) |
+| 2026-02-11 | **Tests UI P2P** — Extension v1.4, 4 bugs critiques corrigés (autocomplétion, dates, tags, QR) |
+| 2026-02-11 | Fix autocomplétion — Race condition highlight() sur query null, garde + state.autocompleteQuery |
+| 2026-02-11 | Fix dates — Format FR (DD/MM/YYYY), masquage " · ?" si vide, formatDate() helper |
+| 2026-02-11 | Fix tags réduits — Co-occurrence utilise tag_display au lieu de tag normalisé |
+| 2026-02-11 | Fix QR "0 élément" — handle_qr_generate cherche tag_display IN (...) au lieu de tag |

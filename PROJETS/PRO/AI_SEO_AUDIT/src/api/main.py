@@ -43,36 +43,48 @@ async def landing_page(request: Request):
 
 
 @app.get("/results/{audit_id}")
-async def results_page(request: Request, audit_id: str, db: AsyncSession = Depends(get_db)):
+async def results_page(request: Request, audit_id: str):
     """Results page showing audit results."""
-    try:
-        audit = await AuditService.get_audit(db, audit_id)
-        if not audit:
-            raise HTTPException(status_code=404, detail="Audit not found")
+    from ..database.session import AsyncSessionLocal
+    from uuid import UUID
 
-        # Convert to dict for template
-        audit_data = {
-            "audit_id": str(audit.id),
-            "company_name": audit.company_name,
-            "sector": audit.sector,
-            "plan": audit.plan,
-            "status": audit.status,
-            "current_step": audit.current_step,
-            "progress": audit.progress,
-            "error_message": audit.error_message,
-            "queries_count": len(audit.queries) if audit.queries else 0,
-            "results": audit.results or {},
-        }
+    async with AsyncSessionLocal() as db:
+        try:
+            audit = await AuditService.get_audit(db, UUID(audit_id))
+            if not audit:
+                raise HTTPException(status_code=404, detail="Audit not found")
 
-        return templates.TemplateResponse("results.html", {
-            "request": request,
-            "audit": audit_data
-        })
+            # Convert to dict for template
+            # Count queries directly from DB
+            from sqlalchemy import select, func
+            from ..database.models import Query as QueryModel
+            query_count_result = await db.execute(
+                select(func.count()).select_from(QueryModel).where(QueryModel.audit_id == audit.id)
+            )
+            queries_count = query_count_result.scalar() or 0
 
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+            audit_data = {
+                "audit_id": str(audit.id),
+                "company_name": audit.company_name,
+                "sector": audit.sector,
+                "plan": audit.plan,
+                "status": audit.status,
+                "current_step": getattr(audit, 'current_step', 'Initialisation'),
+                "progress": getattr(audit, 'progress', 0),
+                "error_message": getattr(audit, 'error_message', None),
+                "queries_count": queries_count,
+                "results": audit.results or {},
+            }
+
+            return templates.TemplateResponse("results.html", {
+                "request": request,
+                "audit": audit_data
+            })
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/success")

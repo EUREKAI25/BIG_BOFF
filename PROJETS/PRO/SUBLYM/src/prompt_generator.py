@@ -204,7 +204,11 @@ def generate_technical_instructions() -> str:
     """Génère les instructions techniques pour Gemini."""
     return """Photo-realistic, cinematic quality, professional photography.
 FACE CLEARLY VISIBLE (not from behind, not obscured).
-Happy expression but NEVER smiling with full teeth showing. Subtle, gentle smile only.
+CRITICAL RULES (MANDATORY):
+- MOUTH COMPLETELY CLOSED. NO TEETH VISIBLE AT ALL. Teeth showing is ABSOLUTELY FORBIDDEN.
+- NEVER looking at camera. Eyes must look away, to the side, at the horizon, or down. NO eye contact with viewer.
+- Serene, peaceful, relaxed expression.
+- Natural candid moment, not posed for camera.
 Cinematic composition, depth of field, paradise atmosphere."""
 
 

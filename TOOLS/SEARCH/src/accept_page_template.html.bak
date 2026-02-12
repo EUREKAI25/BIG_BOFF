@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="$lang">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$page_title</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+      color: #1a202c;
+      line-height: 1.3;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #718096;
+      margin-bottom: 24px;
+    }
+    .info {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .info-row {
+      padding: 8px 0;
+      font-size: 15px;
+      color: #2d3748;
+      line-height: 1.5;
+    }
+    .info-row:not(:last-child) {
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .info-highlight {
+      font-weight: 600;
+      color: #4a5568;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    .accept {
+      background: #48bb78;
+      color: white;
+    }
+    .accept:hover {
+      background: #38a169;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+    }
+    .refuse {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+    .refuse:hover {
+      background: #edf2f7;
+      border-color: #cbd5e0;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #718096;
+    }
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    .success-title {
+      color: #48bb78;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .success-message {
+      color: #4a5568;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+    .install-cta {
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .install-cta:hover {
+      background: #5568d3;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>{title}</h1>
+    <div class="subtitle">{subtitle}</div>
+
+    <div class="info">
+      <div class="info-row">
+        📦 <span class="info-highlight">{count_text}</span>
+      </div>
+      <div class="info-row">
+        📋 {list_text}
+      </div>
+      <div class="info-row">
+        {mode_icon} {mode_text}
+      </div>
+      <div class="info-row">
+        ⏰ {expires_text}
+      </div>
+    </div>
+
+    <div id="buttons">
+      <button class="accept" onclick="acceptShare()">{btn_accept}</button>
+      <button class="refuse" onclick="refuseShare()">{btn_refuse}</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div>{loading_text}</div>
+    </div>
+  </div>
+
+  <script>
+    const token = "{token}";
+    const strings = {strings_json};
+
+    async function acceptShare() {
+      document.getElementById('buttons').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+
+      try {
+        const res = await fetch('/api/share/accept', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({token})
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          // Vérifier si BIG_BOFF est installé (présence de l'extension ou compte)
+          const hasBigBoff = await checkBigBoffInstalled();
+
+          const successHTML = hasBigBoff ? strings.success_has_account : strings.success_no_account;
+          const actionButton = hasBigBoff
+            ? `<button onclick="window.location.href='/'" style="width: 100%; padding: 14px; border: none; border-radius: 10px; background: #667eea; color: white; font-size: 16px; font-weight: 600; cursor: pointer;">${strings.btn_open_bigboff}</button>`
+            : `<a href="https://bigboff.app/install" class="install-cta">${strings.btn_install}</a>`;
+
+          document.getElementById('loading').style.display = 'none';
+          document.querySelector('.card').innerHTML = `
+            <div style="text-align: center; padding: 20px 0;">
+              <div class="success-icon">✓</div>
+              <h1 class="success-title">${strings.success_title}</h1>
+              <div class="success-message">
+                ${successHTML}
+              </div>
+              <div style="color: #718096; font-size: 14px; margin-top: 12px;">
+                <strong>${data.count}</strong> éléments de <strong>${data.from_alias}</strong>
+              </div>
+              ${actionButton}
+            </div>
+          `;
+        } else {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('buttons').style.display = 'block';
+          alert(strings.error_invalid_token + ': ' + (data.error || ''));
+        }
+      } catch (err) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('buttons').style.display = 'block';
+        alert(strings.error_network.replace('{message}', err.message));
+      }
+    }
+
+    async function checkBigBoffInstalled() {
+      try {
+        // Essayer de vérifier si l'API locale répond
+        const res = await fetch('http://127.0.0.1:7777/api/stats', { signal: AbortSignal.timeout(1000) });
+        return res.ok;
+      } catch {
+        return false;
+      }
+    }
+
+    function refuseShare() {
+      window.close();
+    }
+  </script>
+</body>
+</html>
