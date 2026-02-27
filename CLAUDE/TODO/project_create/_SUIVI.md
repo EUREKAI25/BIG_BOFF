@@ -35,6 +35,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ project.json — config globale optionnelle injectée dans SPLIT + BUILD
 - ✅ CLI : --config pour passer un project.json explicite
 - ✅ project.json.example ajouté (stack, conventions, schéma, produits)
+- ✅ brief.py : agent conversationnel (une question à la fois, propose des defaults)
+- ✅ prompts/agent_brief.md : guide la conversation → produit project.json
 
 ---
 
