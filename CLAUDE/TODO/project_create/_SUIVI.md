@@ -16,6 +16,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ 5 agents chaînés avec contexte passé de l'un à l'autre
 - ✅ Enregistrement dans `_PROJETS.md`
 - ✅ Fichiers : runner.py, .env.example, _SUIVI.md, readme.md, 5 prompts
+- ✅ Fix `lib/cache_get.py` : lookup dans `cache["entries"]` (et non racine du dict)
+- ✅ Fix `lib/cache_set.py` : TTL lu depuis `cache["ttl_seconds"]` (et non hardcodé 3600)
 
 ---
 
