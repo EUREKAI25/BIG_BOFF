@@ -41,6 +41,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ prompt brief : détecte profil technique/non-tech, adapte le vocabulaire
 - ✅ fix brief.py : extract_spec accepte `## SPEC COMPLETE`, `**SPEC COMPLETE**` ou autre (regex assouplie)
 - ✅ prompt brief : ⛔ Ne jamais demander "qui développe ?" ni "êtes-vous développeur ?"
+- ✅ refactor brief.py : détection JSON sans marqueur (structure "project" suffit), sauvegarde `project.json` + `.history.json`
+- ✅ prompt brief : suppression marqueur SPEC COMPLETE — agent produit un bloc JSON pur après validation
 
 ---
 

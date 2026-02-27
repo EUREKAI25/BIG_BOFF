@@ -33,16 +33,16 @@ def load_prompt() -> str:
 
 
 def extract_spec(text: str) -> dict | None:
-    """Extrait le JSON si SPEC COMPLETE apparaît dans le message (## ou ** ou rien)."""
-    if "SPEC COMPLETE" not in text.upper():
-        return None
+    """Détecte un JSON de projet valide dans le message de l'agent.
+    Pas de marqueur requis — on reconnaît la spec à sa structure."""
     m = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
     if m:
         try:
-            return json.loads(m.group(1).strip())
+            data = json.loads(m.group(1).strip())
+            if isinstance(data, dict) and "project" in data:
+                return data
         except json.JSONDecodeError as e:
             print(f"\n⚠️  JSON malformé : {e}")
-            return None
     return None
 
 
@@ -92,21 +92,22 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
         agent_msg = response.content[0].text
         history.append({"role": "assistant", "content": agent_msg})
 
-        # Afficher la réponse (sans le bloc JSON technique)
-        display_msg = re.sub(
-            r"##\s*SPEC\s*COMPLETE.*", "", agent_msg,
-            flags=re.DOTALL | re.IGNORECASE
-        ).strip()
         print_separator()
-        print(f"\nAgent : {display_msg}\n")
+        print(f"\nAgent : {agent_msg}\n")
 
-        # Spec complète ?
+        # Spec détectée ? On sauvegarde tout et on sort
         spec = extract_spec(agent_msg)
         if spec:
             dest = output_path or (Path.cwd() / "project.json")
             dest.write_text(json.dumps(spec, indent=2, ensure_ascii=False))
+            hist_dest = dest.with_name(dest.stem + ".history.json")
+            hist_dest.write_text(json.dumps(
+                {"brief": initial_brief, "history": history},
+                indent=2, ensure_ascii=False
+            ))
             print_separator()
             print(f"\n✅ Spec sauvegardée : {dest}")
+            print(f"   Historique : {hist_dest}")
             print(f"\nLancez la génération :")
             print(f'  python3 runner.py "votre brief" --config {dest}\n')
             return spec

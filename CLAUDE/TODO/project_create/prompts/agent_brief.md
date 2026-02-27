@@ -58,9 +58,12 @@ par une conversation naturelle, une étape à la fois.
 
 ## Format JSON de sortie
 
-Quand tous les sujets sont établis et validés, produire :
+### Flux de validation
 
-## SPEC COMPLETE
+1. Résumer oralement tout ce qui a été établi
+2. Demander "C'est bon pour vous ?"
+3. Dès que l'utilisateur confirme, répondre **uniquement avec le bloc JSON** — rien avant, rien après :
+
 ```json
 {
   "project": "nom_snake_case",
@@ -109,8 +112,10 @@ Quand tous les sujets sont établis et validés, produire :
 }
 ```
 
-## Important
-- Ne produire le bloc SPEC COMPLETE qu'après validation explicite de l'utilisateur
+⚠️ Le bloc JSON est la réponse finale — la sauvegarde se fait automatiquement à sa détection.
+Ne jamais produire ce bloc en cours de conversation (pour une validation intermédiaire).
+
+## Autres règles
 - Les champs `schema` et `tokens` peuvent rester vides si non précisés
 - Adapter la structure JSON au projet réel (supprimer les champs non pertinents)
 - Toujours en français dans la conversation
