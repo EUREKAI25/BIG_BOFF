@@ -21,6 +21,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ Feature pipeline : injection automatique de contexte lib/ dans BUILD (`lib_context`)
 - ✅ Fix `lib/identify_expired_entries.py` : itère `cache["entries"].items()`
 - ✅ Ajout `lib/cache_cleanup.py` : wrapper orchestrant identify + remove
+- ✅ Fix parser : plusieurs `## ATOMIC` dans une réponse SPLIT → tous traités (`atomics`)
+- ✅ Test réel : brief queue FIFO → 5 fonctions générées et validées en une passe
 
 ---
 

@@ -178,19 +178,24 @@ def parse_triage(output: str) -> str:
 def parse_split(output: str) -> tuple[str, dict | list[dict]]:
     """
     Retourne:
-      ('atomic', {name, input, output, goal, example_input, example_expected, code})
-      ('steps',  [{name, goal, input, output, stub_code}, ...])
+      ('atomic',  {name, input, output, goal, example_input, example_expected, code})
+      ('atomics', [{...}, ...])   — plusieurs blocs ## ATOMIC
+      ('steps',   [{name, goal, input, output, stub_code}, ...])
     """
     lines = output.splitlines()
     mode = None  # 'atomic' | 'steps'
     current: dict = {}
     steps: list[dict] = []
+    atomics: list[dict] = []
     code_block: list[str] = []
     in_code = False
 
-    def flush_step():
+    def flush_current():
         if current.get("name"):
-            steps.append(dict(current))
+            if mode == "atomic":
+                atomics.append(dict(current))
+            elif mode == "steps":
+                steps.append(dict(current))
 
     for line in lines:
         stripped = line.strip()
@@ -198,6 +203,7 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
 
         # Mode switches
         if upper.startswith("## ATOMIC"):
+            flush_current()
             mode = "atomic"
             current = {}
             continue
@@ -209,7 +215,7 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
             or upper.startswith("### STEP")
         )
         if mode == "steps" and is_step_marker:
-            flush_step()
+            flush_current()
             current = {}
             continue
 
@@ -239,9 +245,9 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
                        "example_input", "example_expected"):
                 current[key] = val
 
-    if mode == "atomic":
-        return "atomic", current
-    flush_step()
+    flush_current()
+    if atomics:
+        return ("atomic", atomics[0]) if len(atomics) == 1 else ("atomics", atomics)
     return "steps", steps
 
 
@@ -408,6 +414,16 @@ def process(client, item: str, model: str, backlog: list, depth: int) -> str | N
     if split_type == "atomic":
         log(f"{pad}⚡ ATOMIC → BUILD + test")
         return build_and_qa(client, split_content, model, depth)
+
+    if split_type == "atomics":
+        log(f"{pad}⚡ {len(split_content)} ATOMIC → BUILD + test chacun")
+        results = []
+        for contract in split_content:
+            log(f"{pad}  ↳ {contract.get('name', '?')}")
+            result = build_and_qa(client, contract, model, depth)
+            if result:
+                results.append(result)
+        return "\n\n---\n\n".join(results) if results else None
 
     # STEPS → récursion avec stubs
     log(f"{pad}🔀 {len(split_content)} sous-étapes")
