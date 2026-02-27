@@ -43,6 +43,9 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ prompt brief : ⛔ Ne jamais demander "qui développe ?" ni "êtes-vous développeur ?"
 - ✅ refactor brief.py : détection JSON sans marqueur (structure "project" suffit), sauvegarde `project.json` + `.history.json`
 - ✅ prompt brief : suppression marqueur SPEC COMPLETE — agent produit un bloc JSON pur après validation
+- ✅ feature brief : checklist `[Points restants]` injectée dans chaque message user — guide l'agent sans répétition
+- ✅ fix brief.py : strip `[Points restants]` et `[OK:]` des réponses agent (affichage propre)
+- ✅ validé : 7 échanges, 0 répétition de question, JSON correct (test site photographe)
 
 ---
 

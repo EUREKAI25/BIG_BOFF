@@ -16,6 +16,9 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 PROMPTS = ROOT / "prompts"
 
+# Points à établir dans l'ordre — injectés dans chaque message user
+CHECKLIST = ["REFORMULATION", "UTILISATEURS", "PRODUIT", "FEATURES_MVP", "STACK", "CONTRAINTES", "VALIDATION"]
+
 
 def load_env():
     from dotenv import load_dotenv
@@ -33,8 +36,7 @@ def load_prompt() -> str:
 
 
 def extract_spec(text: str) -> dict | None:
-    """Détecte un JSON de projet valide dans le message de l'agent.
-    Pas de marqueur requis — on reconnaît la spec à sa structure."""
+    """Détecte un JSON de projet valide dans le message de l'agent."""
     m = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
     if m:
         try:
@@ -44,6 +46,27 @@ def extract_spec(text: str) -> dict | None:
         except json.JSONDecodeError as e:
             print(f"\n⚠️  JSON malformé : {e}")
     return None
+
+
+def extract_ok_tags(text: str) -> list[str]:
+    """Extrait les points marqués [OK: X] par l'agent."""
+    return re.findall(r'\[OK:\s*([A-Z_]+)\]', text)
+
+
+def strip_tags(text: str) -> str:
+    """Supprime les lignes de tracking [OK: ...] et [Points restants: ...] de l'affichage."""
+    lines = text.splitlines()
+    clean = [l for l in lines if not re.match(r'^\s*\[OK:', l)
+             and not re.match(r'^\s*\[Points restants:', l)]
+    return '\n'.join(clean).strip()
+
+
+def state_prefix(established: set) -> str:
+    """Préfixe injecté dans chaque message user (invisible à l'affichage)."""
+    pending = [p for p in CHECKLIST if p not in established]
+    if not pending:
+        return "[Points restants: aucun — passer à la validation finale]\n"
+    return f"[Points restants: {', '.join(pending)}]\n"
 
 
 def print_separator():
@@ -63,6 +86,7 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
     system_prompt = load_prompt()
 
     history: list[dict] = []
+    established: set[str] = set()
 
     print("\n" + "=" * 60)
     print("  PROJECT CREATE — Agent Brief")
@@ -81,7 +105,8 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
             return None
 
     while True:
-        history.append({"role": "user", "content": user_msg})
+        # Injecter l'état courant dans le message user (invisible à l'affichage)
+        history.append({"role": "user", "content": state_prefix(established) + user_msg})
 
         response = client.messages.create(
             model=model,
@@ -92,8 +117,12 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
         agent_msg = response.content[0].text
         history.append({"role": "assistant", "content": agent_msg})
 
+        # Mettre à jour l'état établi
+        established.update(extract_ok_tags(agent_msg))
+
+        # Afficher sans les tags de tracking
         print_separator()
-        print(f"\nAgent : {agent_msg}\n")
+        print(f"\nAgent : {strip_tags(agent_msg)}\n")
 
         # Spec détectée ? On sauvegarde tout et on sort
         spec = extract_spec(agent_msg)
@@ -112,7 +141,7 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
             print(f'  python3 runner.py "votre brief" --config {dest}\n')
             return spec
 
-        # Prochaine réponse utilisateur — boucle jusqu'à une réponse non vide
+        # Prochaine réponse utilisateur
         print()
         user_msg = ""
         while not user_msg:
