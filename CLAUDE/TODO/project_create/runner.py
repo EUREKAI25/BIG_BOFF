@@ -100,24 +100,65 @@ def lib_store(name: str, code: str):
     log(f"  📦 lib/{name}.py enregistré")
 
 
+def lib_context(contract: dict) -> str:
+    """Retourne le code des fonctions lib/ dont le nom apparaît dans le contrat."""
+    text = " ".join(str(v) for v in contract.values()).lower()
+    snippets = []
+    for path in sorted(LIB.glob("*.py")):
+        if path.stem.lower() in text:
+            snippets.append(f"# {path.name}\n{path.read_text().strip()}")
+    return "\n\n".join(snippets)
+
+
 # ─── Test stub ────────────────────────────────────────────────────────────────
+
+def match(actual, expected) -> bool:
+    """
+    Comparaison avec wildcard "*" pour les valeurs non-déterministes.
+    - "*" dans expected → accepte n'importe quelle valeur
+    - dict : compare récursivement les clés présentes dans expected
+    """
+    if expected == "*":
+        return True
+    if isinstance(expected, dict) and isinstance(actual, dict):
+        return all(match(actual.get(k), v) for k, v in expected.items())
+    return actual == expected
+
 
 def test_stub(code: str, fn_name: str, example_input: str, expected: str) -> tuple[bool, str]:
     """
-    Exécute fn(example_input) et compare à expected.
-    Retourne (pass, message).
+    Teste fn(*args) contre expected.
+    - Multi-args : example_input = "arg1, arg2, arg3"
+    - Mutation en place : si return None, compare args[0] à expected
+    - Pas d'exemple : skip (return True)
     """
+    if not example_input or example_input.strip() in ("None", ""):
+        return True, "✅ pas d'exemple — skip"
+
     namespace: dict = {}
     try:
         exec(compile(code, "<generated>", "exec"), namespace)
         fn = namespace.get(fn_name)
         if fn is None:
             return False, f"Fonction '{fn_name}' non trouvée dans le code"
+
         expected_val = ast.literal_eval(expected)
-        result = eval(f"fn({example_input})", {"fn": fn})
-        if result == expected_val:
-            return True, f"✅ fn({example_input}) == {expected}"
-        return False, f"❌ attendu {expected_val!r}, obtenu {result!r}"
+
+        # Évalue les args comme une liste → supporte multi-args et capture l'état
+        args = eval(f"[{example_input}]", {})
+        result = fn(*args)
+
+        # 1. Comparer la valeur de retour
+        if match(result, expected_val):
+            return True, f"✅ return == {expected}"
+
+        # 2. Si return None (mutation en place) → comparer args[0]
+        if result is None and args and match(args[0], expected_val):
+            return True, f"✅ state == {expected}"
+
+        got = result if result is not None else (args[0] if args else None)
+        return False, f"❌ attendu {expected_val!r}, obtenu {got!r}"
+
     except Exception as e:
         return False, f"❌ erreur: {e}"
 
@@ -193,7 +234,7 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
         if ":" in stripped and not in_code:
             key, _, val = stripped.partition(":")
             key = key.strip().lower().replace(" ", "_").replace("*", "").replace("`", "").strip()
-            val = val.strip().strip("`").replace("**", "").strip()
+            val = val.strip().replace("`", "").replace("**", "").strip()
             if key in ("name", "input", "output", "goal",
                        "example_input", "example_expected"):
                 current[key] = val
@@ -283,7 +324,9 @@ def build_and_qa(client, contract: dict, model: str, depth: int) -> str | None:
     # 2. BUILD + retry
     history: list[dict] = []
     contract_str = format_contract(contract)
-    code_raw = call_agent(client, "build", contract_str, model, depth)
+    ctx = lib_context(contract)
+    build_input = contract_str if not ctx else f"{contract_str}\n\n## CONTEXT\n{ctx}"
+    code_raw = call_agent(client, "build", build_input, model, depth)
     code = parse_code_block(code_raw)
 
     for attempt in range(1, MAX_QA_RETRIES + 1):
@@ -307,7 +350,7 @@ def build_and_qa(client, contract: dict, model: str, depth: int) -> str | None:
 
         if attempt < MAX_QA_RETRIES:
             retry_input = (
-                f"{contract_str}\n\n"
+                f"{build_input}\n\n"
                 f"Historique des tentatives:\n{format_history(history)}"
             )
             code_raw = call_agent(client, "build", retry_input, model, depth)

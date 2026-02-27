@@ -18,6 +18,9 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ Fichiers : runner.py, .env.example, _SUIVI.md, readme.md, 5 prompts
 - ✅ Fix `lib/cache_get.py` : lookup dans `cache["entries"]` (et non racine du dict)
 - ✅ Fix `lib/cache_set.py` : TTL lu depuis `cache["ttl_seconds"]` (et non hardcodé 3600)
+- ✅ Feature pipeline : injection automatique de contexte lib/ dans BUILD (`lib_context`)
+- ✅ Fix `lib/identify_expired_entries.py` : itère `cache["entries"].items()`
+- ✅ Ajout `lib/cache_cleanup.py` : wrapper orchestrant identify + remove
 
 ---
 
