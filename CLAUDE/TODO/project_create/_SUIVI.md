@@ -22,7 +22,11 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ Fix `lib/identify_expired_entries.py` : itère `cache["entries"].items()`
 - ✅ Ajout `lib/cache_cleanup.py` : wrapper orchestrant identify + remove
 - ✅ Fix parser : plusieurs `## ATOMIC` dans une réponse SPLIT → tous traités (`atomics`)
-- ✅ Test réel : brief queue FIFO → 5 fonctions générées et validées en une passe
+- ✅ Fix parser : headings `# ATOMIC` (h1) reconnus en plus de `## ATOMIC`
+- ✅ Fix parser : `#` strippé des clés → champs `## name:` correctement parsés
+- ✅ Fix parser : `flush_current()` ajouté sur `## STEPS` → plus de perte de la dernière ATOMIC
+- ✅ Test réel : brief queue FIFO → 5 fonctions en 1 passe
+- ✅ Test réel : brief rate limiter → 4 fonctions, retry QA auto sur consume (dépendance inlinée)
 
 ---
 

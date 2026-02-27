@@ -201,19 +201,18 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
         stripped = line.strip()
         upper = stripped.upper()
 
-        # Mode switches
-        if upper.startswith("## ATOMIC"):
+        # Mode switches (tolère # et ## comme préfixe de heading)
+        clean = upper.lstrip("#").strip()
+        if clean.startswith("ATOMIC"):
             flush_current()
             mode = "atomic"
             current = {}
             continue
-        if upper.startswith("## STEPS"):
+        if clean.startswith("STEPS"):
+            flush_current()
             mode = "steps"
             continue
-        is_step_marker = (
-            (upper.startswith("## STEP") and not upper.startswith("## STEPS"))
-            or upper.startswith("### STEP")
-        )
+        is_step_marker = clean.startswith("STEP") and not clean.startswith("STEPS")
         if mode == "steps" and is_step_marker:
             flush_current()
             current = {}
@@ -236,10 +235,10 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
             code_block.append(line)
             continue
 
-        # Key: value fields (supporte **key:** `value` et key: value)
+        # Key: value fields (supporte **key:** `value`, ## key: value, key: value)
         if ":" in stripped and not in_code:
             key, _, val = stripped.partition(":")
-            key = key.strip().lower().replace(" ", "_").replace("*", "").replace("`", "").strip()
+            key = key.strip().lower().replace(" ", "_").replace("*", "").replace("`", "").replace("#", "").strip()
             val = val.strip().replace("`", "").replace("**", "").strip()
             if key in ("name", "input", "output", "goal",
                        "example_input", "example_expected"):
