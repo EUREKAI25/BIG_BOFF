@@ -30,6 +30,7 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ Feature parser : mode `mixed` (ATOMIC + STEPS dans une même réponse SPLIT)
 - ✅ Test réel : mini DB 6 opérations (create, insert, select, update, delete, count) — démo validée
 - ✅ Fix lib : filter_rows + project_columns gèrent where_fn=None / cols=None
+- ✅ Lib validée : create_table, insert, select, update, delete, count, filter_rows, project_columns
 
 ---
 

@@ -245,6 +245,8 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
                 current[key] = val
 
     flush_current()
+    if atomics and steps:
+        return "mixed", {"atomics": atomics, "steps": steps}
     if atomics:
         return ("atomic", atomics[0]) if len(atomics) == 1 else ("atomics", atomics)
     return "steps", steps
@@ -420,6 +422,23 @@ def process(client, item: str, model: str, backlog: list, depth: int) -> str | N
         for contract in split_content:
             log(f"{pad}  ↳ {contract.get('name', '?')}")
             result = build_and_qa(client, contract, model, depth)
+            if result:
+                results.append(result)
+        return "\n\n---\n\n".join(results) if results else None
+
+    if split_type == "mixed":
+        atomics = split_content["atomics"]
+        steps   = split_content["steps"]
+        log(f"{pad}⚡ {len(atomics)} ATOMIC + 🔀 {len(steps)} STEPS")
+        results = []
+        for contract in atomics:
+            log(f"{pad}  ↳ {contract.get('name', '?')} (atomic)")
+            result = build_and_qa(client, contract, model, depth)
+            if result:
+                results.append(result)
+        for step in steps:
+            log(f"{pad}  ↳ {step.get('name', '?')} (step → recurse)")
+            result = process(client, step_to_item(step), model, backlog, depth + 1)
             if result:
                 results.append(result)
         return "\n\n---\n\n".join(results) if results else None
