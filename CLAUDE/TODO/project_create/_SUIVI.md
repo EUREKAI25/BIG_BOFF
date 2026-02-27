@@ -27,6 +27,9 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ Fix parser : `flush_current()` ajouté sur `## STEPS` → plus de perte de la dernière ATOMIC
 - ✅ Test réel : brief queue FIFO → 5 fonctions en 1 passe
 - ✅ Test réel : brief rate limiter → 4 fonctions, retry QA auto sur consume (dépendance inlinée)
+- ✅ Feature parser : mode `mixed` (ATOMIC + STEPS dans une même réponse SPLIT)
+- ✅ Test réel : mini DB 6 opérations (create, insert, select, update, delete, count) — démo validée
+- ✅ Fix lib : filter_rows + project_columns gèrent where_fn=None / cols=None
 
 ---
 
