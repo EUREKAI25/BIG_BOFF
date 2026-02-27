@@ -37,6 +37,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ project.json.example ajouté (stack, conventions, schéma, produits)
 - ✅ brief.py : agent conversationnel (une question à la fois, propose des defaults)
 - ✅ prompts/agent_brief.md : guide la conversation → produit project.json
+- ✅ fix brief.py : boucle input pour éviter message vide (400 API)
+- ✅ prompt brief : détecte profil technique/non-tech, adapte le vocabulaire
 
 ---
 

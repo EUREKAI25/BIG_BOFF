@@ -112,11 +112,11 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
             print(f'  python3 runner.py "votre brief" --config {dest}\n')
             return spec
 
-        # Prochaine réponse utilisateur
+        # Prochaine réponse utilisateur — boucle jusqu'à une réponse non vide
         print()
-        user_msg = input("Vous : ").strip()
-        if not user_msg:
-            continue
+        user_msg = ""
+        while not user_msg:
+            user_msg = input("Vous : ").strip()
         if user_msg.lower() in ("quit", "exit", "q"):
             print("\n(Conversation abandonnée — spec non sauvegardée)")
             return None
