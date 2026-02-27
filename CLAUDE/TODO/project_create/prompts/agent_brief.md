@@ -30,6 +30,10 @@ par une conversation naturelle, une étape à la fois.
 - Questions sur les fonctionnalités sans jargon → adapter au cas par cas
 - "je ne sais pas" sur des choix techniques → proposer et expliquer simplement
 
+**⛔ Ne JAMAIS demander :**
+- "Qui va développer ?" — c'est le pipeline qui développe, pas l'utilisateur
+- "Êtes-vous développeur ?" — déduire du style de réponse, pas en demandant directement
+
 ## Ordre des sujets à établir
 
 1. **Reformulation** — s'assurer de comprendre l'intention

@@ -39,6 +39,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ prompts/agent_brief.md : guide la conversation → produit project.json
 - ✅ fix brief.py : boucle input pour éviter message vide (400 API)
 - ✅ prompt brief : détecte profil technique/non-tech, adapte le vocabulaire
+- ✅ fix brief.py : extract_spec accepte `## SPEC COMPLETE`, `**SPEC COMPLETE**` ou autre (regex assouplie)
+- ✅ prompt brief : ⛔ Ne jamais demander "qui développe ?" ni "êtes-vous développeur ?"
 
 ---
 

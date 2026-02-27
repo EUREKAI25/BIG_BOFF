@@ -33,16 +33,15 @@ def load_prompt() -> str:
 
 
 def extract_spec(text: str) -> dict | None:
-    """Extrait le JSON après ## SPEC COMPLETE"""
-    m = re.search(
-        r"##\s*SPEC\s*COMPLETE.*?```json\s*(.*?)```",
-        text, re.DOTALL | re.IGNORECASE
-    )
+    """Extrait le JSON si SPEC COMPLETE apparaît dans le message (## ou ** ou rien)."""
+    if "SPEC COMPLETE" not in text.upper():
+        return None
+    m = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
     if m:
         try:
             return json.loads(m.group(1).strip())
         except json.JSONDecodeError as e:
-            print(f"\n⚠️  JSON malformé dans la réponse : {e}")
+            print(f"\n⚠️  JSON malformé : {e}")
             return None
     return None
 
