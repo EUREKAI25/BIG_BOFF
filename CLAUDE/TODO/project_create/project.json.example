@@ -1,0 +1,38 @@
+{
+  "project": "nom_du_projet",
+  "description": "Description courte du projet",
+
+  "stack": {
+    "language": "python",
+    "backend": "fastapi",
+    "frontend": "none",
+    "db": "sqlite",
+    "auth": "jwt"
+  },
+
+  "conventions": {
+    "naming": "snake_case",
+    "error_handling": "exceptions",
+    "return_style": "dict"
+  },
+
+  "schema": {
+    "User": {
+      "id": "int",
+      "email": "str",
+      "created_at": "float"
+    }
+  },
+
+  "tokens": {
+    "comment": "Ne pas mettre de vraies clés ici — utiliser secrets.env"
+  },
+
+  "products": [
+    {
+      "name": "api",
+      "type": "backend",
+      "layers": ["routes", "models", "storage", "auth"]
+    }
+  ]
+}

@@ -31,6 +31,10 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ Test réel : mini DB 6 opérations (create, insert, select, update, delete, count) — démo validée
 - ✅ Fix lib : filter_rows + project_columns gèrent where_fn=None / cols=None
 - ✅ Lib validée : create_table, insert, select, update, delete, count, filter_rows, project_columns
+- ✅ MAX_DEPTH supprimé — arrêt sur atomicité, garde-fou à 10 (anti-boucle)
+- ✅ project.json — config globale optionnelle injectée dans SPLIT + BUILD
+- ✅ CLI : --config pour passer un project.json explicite
+- ✅ project.json.example ajouté (stack, conventions, schéma, produits)
 
 ---
 

@@ -14,7 +14,7 @@ ROOT = Path(__file__).parent
 PROMPTS = ROOT / "prompts"
 LOGS = ROOT / "logs"
 LIB = ROOT / "lib"
-MAX_DEPTH = 3
+MAX_DEPTH_SAFETY = 10   # garde-fou anti-boucle infinie uniquement
 MAX_QA_RETRIES = 2
 
 
@@ -43,6 +43,26 @@ def load_prompt(agent_name: str) -> str:
 # ─── Logging ──────────────────────────────────────────────────────────────────
 
 _log_file: Path | None = None
+_project_config: dict | None = None
+
+
+def load_project_config(path: Path | None = None) -> dict | None:
+    """Charge project.json si présent (chemin explicite, répertoire courant ou ROOT)."""
+    import json
+    for p in [path, Path.cwd() / "project.json", ROOT / "project.json"]:
+        if p and Path(p).exists():
+            config = json.loads(Path(p).read_text())
+            log(f"📋 Config projet chargée : {p}")
+            return config
+    return None
+
+
+def format_project_config() -> str:
+    """Formate _project_config pour injection dans les prompts."""
+    import json
+    if not _project_config:
+        return ""
+    return f"## PROJECT CONFIG\n```json\n{json.dumps(_project_config, indent=2, ensure_ascii=False)}\n```"
 
 
 def log(message: str):
@@ -304,7 +324,8 @@ def format_history(history: list[dict]) -> str:
 
 # ─── Build + test stub ────────────────────────────────────────────────────────
 
-def build_and_qa(client, contract: dict, model: str, depth: int) -> str | None:
+def build_and_qa(client, contract: dict, model: str, depth: int,
+                 extra_context: str = "") -> str | None:
     """
     1. Cherche dans lib par nom
     2. Sinon BUILD depuis le contrat
@@ -312,6 +333,7 @@ def build_and_qa(client, contract: dict, model: str, depth: int) -> str | None:
     4. QA LLM si test échoue
     5. Retry avec historique
     6. Stocke dans lib si PASS
+    extra_context : code des sous-fonctions déjà buildées (pour assemblage parent)
     """
     pad = "  " * depth
     name = contract.get("name", "unknown")
@@ -331,7 +353,8 @@ def build_and_qa(client, contract: dict, model: str, depth: int) -> str | None:
     # 2. BUILD + retry
     history: list[dict] = []
     contract_str = format_contract(contract)
-    ctx = lib_context(contract)
+    ctx_parts = [c for c in [lib_context(contract), extra_context, format_project_config()] if c]
+    ctx = "\n\n".join(ctx_parts)
     build_input = contract_str if not ctx else f"{contract_str}\n\n## CONTEXT\n{ctx}"
     code_raw = call_agent(client, "build", build_input, model, depth)
     code = parse_code_block(code_raw)
@@ -397,19 +420,16 @@ def process(client, item: str, model: str, backlog: list, depth: int) -> str | N
 
     log(f"{pad}✓  MVP → continue")
 
-    if depth >= MAX_DEPTH:
-        log(f"{pad}⚠  profondeur max → BUILD direct")
-        name = next(
-            (l.split(":", 1)[1].strip() for l in item.splitlines() if l.startswith("name:")),
-            "unknown_fn"
-        )
-        return build_and_qa(client, {"name": name, "goal": item,
-                                      "input": "unknown", "output": "unknown",
-                                      "example_input": "None", "example_expected": "None"},
-                             model, depth)
+    if depth >= MAX_DEPTH_SAFETY:
+        log(f"{pad}⚠  garde-fou profondeur {MAX_DEPTH_SAFETY} atteint — branche abandonnée")
+        return None
 
-    # SPLIT
-    split_out = call_agent(client, "split", item, model, depth)
+    # SPLIT — injecter la config projet si disponible
+    split_input = item
+    cfg = format_project_config()
+    if cfg:
+        split_input = f"{item}\n\n{cfg}"
+    split_out = call_agent(client, "split", split_input, model, depth)
     split_type, split_content = parse_split(split_out)
 
     if split_type == "atomic":
@@ -443,22 +463,40 @@ def process(client, item: str, model: str, backlog: list, depth: int) -> str | N
                 results.append(result)
         return "\n\n---\n\n".join(results) if results else None
 
-    # STEPS → récursion avec stubs
+    # STEPS → récursion avec stubs, puis BUILD du parent avec sous-fonctions comme contexte
     log(f"{pad}🔀 {len(split_content)} sous-étapes")
-    results = []
+    step_results: list[tuple[str, str]] = []
     for step in split_content:
-        log(f"{pad}  ↳ {step.get('name', '?')} — stub dispo, on recurse")
+        log(f"{pad}  ↳ {step.get('name', '?')} — recurse")
         result = process(client, step_to_item(step), model, backlog, depth + 1)
         if result:
-            results.append(result)
-    return "\n\n---\n\n".join(results) if results else None
+            step_results.append((step.get("name", ""), result))
+
+    # Remonter : BUILD la fonction parente avec les sous-fonctions comme contexte
+    parent_name = next(
+        (l.split(":", 1)[1].strip() for l in item.splitlines()
+         if l.strip().lower().startswith("name:")), None
+    )
+    if parent_name and step_results:
+        parent_contract: dict = {"name": parent_name, "example_input": "", "example_expected": ""}
+        for line in item.splitlines():
+            if ":" in line:
+                k, _, v = line.partition(":")
+                k = k.strip().lower()
+                if k in ("goal", "input", "output"):
+                    parent_contract[k] = v.strip()
+        sub_ctx = "\n\n".join(f"# {n}.py\n{c}" for n, c in step_results)
+        log(f"{pad}🔧 BUILD '{parent_name}' depuis {len(step_results)} sous-fonctions")
+        return build_and_qa(client, parent_contract, model, depth, extra_context=sub_ctx)
+
+    return "\n\n---\n\n".join(c for _, c in step_results) if step_results else None
 
 
 # ─── Entrée ───────────────────────────────────────────────────────────────────
 
-def run_pipeline(brief: str):
+def run_pipeline(brief: str, config_path: Path | None = None):
     import anthropic
-    global _log_file
+    global _log_file, _project_config
 
     env_source = load_env()
     api_key = os.getenv("ANTHROPIC_API_KEY")
@@ -473,10 +511,11 @@ def run_pipeline(brief: str):
     LIB.mkdir(exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     _log_file = LOGS / f"run_{ts}.log"
+    _project_config = load_project_config(config_path)
 
     log("=" * 60)
     log("PROJECT CREATE — Pipeline récursive")
-    log(f"Modèle   : {model}  |  MaxDepth : {MAX_DEPTH}  |  QA retries : {MAX_QA_RETRIES}")
+    log(f"Modèle   : {model}  |  QA retries : {MAX_QA_RETRIES}  |  Config : {'oui' if _project_config else 'non'}")
     log(f"Env      : {env_source or 'aucune'}  |  Log : {_log_file}")
     log("=" * 60)
     log(f"Brief    : {brief}")
@@ -495,5 +534,10 @@ def run_pipeline(brief: str):
 
 
 if __name__ == "__main__":
-    brief = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "Créer une API REST simple"
-    run_pipeline(brief)
+    import argparse
+    parser = argparse.ArgumentParser(description="Project Create — pipeline récursive")
+    parser.add_argument("brief", nargs="*", help="Brief du projet")
+    parser.add_argument("--config", type=Path, default=None, help="Chemin vers project.json")
+    args = parser.parse_args()
+    brief = " ".join(args.brief) if args.brief else "Créer une API REST simple"
+    run_pipeline(brief, config_path=args.config)
