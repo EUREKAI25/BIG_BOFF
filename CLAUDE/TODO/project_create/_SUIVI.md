@@ -1,0 +1,61 @@
+# _SUIVI — PROJECT_CREATE
+
+## Objectif
+Système multi-agents à rôles étanches pour générer des projets complets à partir d'un brief.
+Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
+
+## Statut : 🟢 actif
+
+---
+
+## Historique
+
+### 2026-02-27
+- ✅ Pipeline de base validée (runner.py sans appels IA réels)
+- ✅ Intégration Anthropic API — chargement `.env` local ou `~/.bigboff/secrets.env`
+- ✅ 5 agents chaînés avec contexte passé de l'un à l'autre
+- ✅ Enregistrement dans `_PROJETS.md`
+- ✅ Fichiers : runner.py, .env.example, _SUIVI.md, readme.md, 5 prompts
+
+---
+
+## Architecture
+
+```
+project_create/
+├── runner.py          — Pipeline principal (CLI)
+├── prompts/           — Prompts système des 5 agents
+│   ├── agent_split.md
+│   ├── agent_triage.md
+│   ├── agent_build.md
+│   ├── agent_qa.md
+│   └── agent_backlog.md
+├── examples/          — Sorties sauvegardées (à venir)
+├── .env.example       — Template variables d'env
+├── _SUIVI.md          — Ce fichier
+└── readme.md          — Description projet
+```
+
+## Usage
+
+```bash
+# Utilise automatiquement ~/.bigboff/secrets.env
+python3 runner.py "Créer une todo app"
+
+# Ou avec .env local
+cp .env.example .env  # Remplir ANTHROPIC_API_KEY
+python3 runner.py "Créer une API REST"
+
+# Changer de modèle
+PROJECT_CREATE_MODEL=claude-sonnet-4-6 python3 runner.py "brief"
+```
+
+---
+
+## Prochaines étapes (NEXT)
+
+- [ ] Sauvegarder les sorties dans `examples/` avec horodatage
+- [ ] Mode `--save` pour conserver les outputs
+- [ ] Loop automatique QA → BUILD en cas de FAIL
+- [ ] Intégration EURKAI comme module réutilisable
+- [ ] CLI avec `--model`, `--save`, `--dry-run`

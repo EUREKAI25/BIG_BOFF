@@ -3,7 +3,7 @@
 > Source de vérité pour tous les projets. Path absolu, description, statut.
 > Mis à jour à chaque création/suppression/changement de statut de projet.
 
-**Dernière MAJ** : 2026-02-11 (ajout AI_SEO_AUDIT)
+**Dernière MAJ** : 2026-02-27 (ajout PROJECT_CREATE)
 
 ---
 
@@ -11,6 +11,7 @@
 
 | Projet | Path | Description | Statut |
 |---|---|---|---|
+| **PROJECT_CREATE** | `CLAUDE/TODO/project_create/` | Pipeline multi-agents Brief → Split → Triage → Build → QA → Backlog (Claude API) | 🟢 actif |
 | **EURKAI** | `PROJETS/PRO/EURKAI/` | Ecosystème autonome orchestration projets — architecture fractale | 🟢 actif |
 | **AI_SEO_AUDIT** | `PROJETS/PRO/AI_SEO_AUDIT/` | Service audit visibilité entreprises dans réponses IA (ChatGPT, Claude, etc.) | 🟢 actif |
 | **TIP_CALCULATOR** | `PROJETS/PRO/TIP_CALCULATOR/` | Calculatrice pourboire web (projet test workflow) | 🟢 actif |
@@ -26,6 +27,8 @@
 | **WEB2APP** | `PROJETS/PRO/WEB2APP/` | Conversion web vers app | 🟡 pause |
 | **BIG_BOFF Search** | `TOOLS/SEARCH/` | Extension Chrome — moteur de recherche taggé | 🟢 actif |
 | **PIPELINE AGENCE** | `CLAUDE/PIPELINE/` | Orchestration autonome idée → production (API Anthropic + Brevo) | 🟢 actif |
+| **REF_IA** | `PROJETS/PRO/REF_IA/` | New chat | 💡 idée |
+| **BREATH_YOU** | `PROJETS/PRO/BREATH_YOU/` | Analyse brief agent | 💡 idée |
 
 ## Projets archivés / supprimés
 
