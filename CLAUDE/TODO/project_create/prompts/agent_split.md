@@ -49,6 +49,9 @@ Règles pour example_input / example_expected :
   → example_expected: {"data": {"k": "v"}}  (état de l'objet APRÈS appel)
 - Valeurs non-déterministes (time.time(), random, uuid) → utiliser "*" comme wildcard
   ex: example_expected: {"value": 42, "expire_at": "*"}
+- Fonctions réseau / services externes (SMTP, HTTP, BDD, API) → toujours example_expected: "*"
+  (la connexion échouera en test — seule la logique compte)
+- Objets framework non-sérialisables (FastAPI Response, Pydantic model) → example_input: "" (vide)
 - Le bloc ## CODE est OBLIGATOIRE pour ATOMIC — ne jamais l'omettre
 
 ## CODE

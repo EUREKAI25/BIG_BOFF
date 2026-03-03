@@ -49,6 +49,11 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ fix runner.py : MAX_DEPTH=2 règle métier — Brief→STEPS(d=1)→ATOMICs(d=2), plus de STEPS dans des STEPS
 - ✅ fix agent_split.md : ATOMIC = "livrer du code maintenant" (pas < 50 lignes), préférence ATOMIC, max 4 steps
 - ✅ validé : pipeline FastAPI 2 endpoints en ~2min, profondeur respectée
+- ✅ fix runner.py : eval_expected avec 3 passes (literal_eval → eval(namespace) → skip)
+- ✅ fix runner.py : args eval avec fallback (FastAPI objects → skip comparaison)
+- ✅ fix runner.py : parse_qa() — verdict QA respecté, PASS QA accepté même si test_stub KO
+- ✅ fix agent_split.md : fonctions réseau → example_expected: "*", objets framework → example_input: ""
+- ✅ fix agent_qa.md : erreurs réseau/SMTP/module externe → ## PASS (logique correcte, env limité)
 - ✅ feature brief.py : `outputs/<projet>/project.json` + `logs/<projet>.history.json` (répertoires auto-créés)
 - ✅ CLI : `--outdir` pour surcharger le répertoire de sortie
 

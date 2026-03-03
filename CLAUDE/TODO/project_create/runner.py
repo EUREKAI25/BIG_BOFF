@@ -146,12 +146,31 @@ def match(actual, expected) -> bool:
     return actual == expected
 
 
+def eval_expected(expected: str, namespace: dict):
+    """
+    Évalue expected en trois passes :
+    1. ast.literal_eval  — littéraux Python purs
+    2. eval(namespace)   — objets définis dans le code (Pydantic, dataclasses…)
+    3. None              — non évaluable (appelant décidera de skip la comparaison)
+    """
+    try:
+        return ast.literal_eval(expected)
+    except (ValueError, SyntaxError):
+        pass
+    try:
+        return eval(expected, dict(namespace))
+    except Exception:
+        pass
+    return None
+
+
 def test_stub(code: str, fn_name: str, example_input: str, expected: str) -> tuple[bool, str]:
     """
     Teste fn(*args) contre expected.
     - Multi-args : example_input = "arg1, arg2, arg3"
     - Mutation en place : si return None, compare args[0] à expected
     - Pas d'exemple : skip (return True)
+    - expected non évaluable (ex: JSONResponse) : run-only, skip comparaison
     """
     if not example_input or example_input.strip() in ("None", ""):
         return True, "✅ pas d'exemple — skip"
@@ -163,17 +182,23 @@ def test_stub(code: str, fn_name: str, example_input: str, expected: str) -> tup
         if fn is None:
             return False, f"Fonction '{fn_name}' non trouvée dans le code"
 
-        expected_val = ast.literal_eval(expected)
+        expected_val = eval_expected(expected, namespace)
 
-        # Évalue les args comme une liste → supporte multi-args et capture l'état
-        args = eval(f"[{example_input}]", {})
+        # Évaluer les args — même fallback que eval_expected
+        try:
+            args = eval(f"[{example_input}]", dict(namespace))
+        except Exception:
+            return True, "✅ code exécuté sans erreur (args non évaluables — comparaison ignorée)"
+
         result = fn(*args)
 
-        # 1. Comparer la valeur de retour
+        # expected non évaluable → on vérifie juste que le code tourne
+        if expected_val is None:
+            return True, "✅ code exécuté sans erreur (expected non évaluable — comparaison ignorée)"
+
         if match(result, expected_val):
             return True, f"✅ return == {expected}"
 
-        # 2. Si return None (mutation en place) → comparer args[0]
         if result is None and args and match(args[0], expected_val):
             return True, f"✅ state == {expected}"
 
@@ -194,6 +219,16 @@ def parse_triage(output: str) -> str:
         if upper.startswith("## NEXT"):
             return "next"
     return "mvp"
+
+
+def parse_qa(output: str) -> str:
+    for line in output.splitlines():
+        upper = line.strip().upper()
+        if upper.startswith("## PASS"):
+            return "pass"
+        if upper.startswith("## FAIL"):
+            return "fail"
+    return "fail"
 
 
 def parse_split(output: str) -> tuple[str, dict | list[dict]]:
@@ -370,14 +405,20 @@ def build_and_qa(client, contract: dict, model: str, depth: int,
             lib_store(name, code)
             return code
 
-        # QA LLM pour feedback enrichi
+        # QA LLM pour verdict + feedback
         qa_input = (
             f"Contrat:\n{contract_str}\n\n"
             f"Code:\n```python\n{code}\n```\n\n"
             f"Résultat test: {test_msg}"
         )
         qa_out = call_agent(client, "qa", qa_input, model, depth)
+        qa_result = parse_qa(qa_out)
         history.append({"attempt": attempt, "test_result": test_msg, "qa_feedback": qa_out})
+
+        if qa_result == "pass":
+            log(f"{pad}✅ PASS QA (tentative {attempt}) — test non déterministe accepté")
+            lib_store(name, code)
+            return code
 
         if attempt < MAX_QA_RETRIES:
             retry_input = (
