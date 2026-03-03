@@ -46,6 +46,9 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ feature brief : checklist `[Points restants]` injectée dans chaque message user — guide l'agent sans répétition
 - ✅ fix brief.py : strip `[Points restants]` et `[OK:]` des réponses agent (affichage propre)
 - ✅ validé : 7 échanges, 0 répétition de question, JSON correct (test site photographe)
+- ✅ fix runner.py : MAX_DEPTH=2 règle métier — Brief→STEPS(d=1)→ATOMICs(d=2), plus de STEPS dans des STEPS
+- ✅ fix agent_split.md : ATOMIC = "livrer du code maintenant" (pas < 50 lignes), préférence ATOMIC, max 4 steps
+- ✅ validé : pipeline FastAPI 2 endpoints en ~2min, profondeur respectée
 - ✅ feature brief.py : `outputs/<projet>/project.json` + `logs/<projet>.history.json` (répertoires auto-créés)
 - ✅ CLI : `--outdir` pour surcharger le répertoire de sortie
 

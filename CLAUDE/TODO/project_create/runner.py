@@ -14,7 +14,8 @@ ROOT = Path(__file__).parent
 PROMPTS = ROOT / "prompts"
 LOGS = ROOT / "logs"
 LIB = ROOT / "lib"
-MAX_DEPTH_SAFETY = 10   # garde-fou anti-boucle infinie uniquement
+MAX_DEPTH = 2           # règle métier : Brief → STEPS (d=1) → ATOMICs (d=2), pas de STEPS dans des STEPS
+MAX_DEPTH_SAFETY = 10  # garde-fou anti-boucle infinie uniquement
 MAX_QA_RETRIES = 2
 
 
@@ -424,11 +425,13 @@ def process(client, item: str, model: str, backlog: list, depth: int) -> str | N
         log(f"{pad}⚠  garde-fou profondeur {MAX_DEPTH_SAFETY} atteint — branche abandonnée")
         return None
 
-    # SPLIT — injecter la config projet si disponible
+    # SPLIT — injecter la config projet + contrainte de profondeur
     split_input = item
     cfg = format_project_config()
     if cfg:
         split_input = f"{item}\n\n{cfg}"
+    if depth >= MAX_DEPTH:
+        split_input = f"[ATOMIC OBLIGATOIRE — profondeur max {MAX_DEPTH} atteinte]\n\n{split_input}"
     split_out = call_agent(client, "split", split_input, model, depth)
     split_type, split_content = parse_split(split_out)
 
