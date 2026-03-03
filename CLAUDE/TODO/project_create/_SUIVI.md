@@ -46,6 +46,8 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ feature brief : checklist `[Points restants]` injectée dans chaque message user — guide l'agent sans répétition
 - ✅ fix brief.py : strip `[Points restants]` et `[OK:]` des réponses agent (affichage propre)
 - ✅ validé : 7 échanges, 0 répétition de question, JSON correct (test site photographe)
+- ✅ feature brief.py : `outputs/<projet>/project.json` + `logs/<projet>.history.json` (répertoires auto-créés)
+- ✅ CLI : `--outdir` pour surcharger le répertoire de sortie
 
 ---
 

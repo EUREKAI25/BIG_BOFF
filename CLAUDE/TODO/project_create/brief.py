@@ -3,8 +3,8 @@
 Brief Agent — conversation guidée pour produire un project.json
 Usage:
   python3 brief.py "marketplace de recettes cosmétiques maison"
-  python3 brief.py                    # démarre sans brief initial
-  python3 brief.py --output my.json   # chemin de sortie custom
+  python3 brief.py                         # démarre sans brief initial
+  python3 brief.py --outdir /chemin/custom # répertoire de sortie custom
 """
 
 import json
@@ -15,6 +15,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 PROMPTS = ROOT / "prompts"
+DEFAULT_OUTDIR = ROOT / "outputs"
+DEFAULT_LOGDIR = ROOT / "logs"
 
 # Points à établir dans l'ordre — injectés dans chaque message user
 CHECKLIST = ["REFORMULATION", "UTILISATEURS", "PRODUIT", "FEATURES_MVP", "STACK", "CONTRAINTES", "VALIDATION"]
@@ -69,11 +71,19 @@ def state_prefix(established: set) -> str:
     return f"[Points restants: {', '.join(pending)}]\n"
 
 
+def resolve_paths(spec: dict, outdir: Path) -> tuple[Path, Path]:
+    """Calcule les chemins de sortie depuis le nom du projet dans la spec."""
+    project_name = spec.get("project", "projet")
+    dest = outdir / project_name / "project.json"
+    log = DEFAULT_LOGDIR / f"{project_name}.history.json"
+    return dest, log
+
+
 def print_separator():
     print("\n" + "─" * 60)
 
 
-def run_brief(initial_brief: str = "", output_path: Path | None = None):
+def run_brief(initial_brief: str = "", outdir: Path | None = None):
     load_env()
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
@@ -85,6 +95,7 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
     client = anthropic.Anthropic(api_key=api_key)
     system_prompt = load_prompt()
 
+    out_base = outdir or DEFAULT_OUTDIR
     history: list[dict] = []
     established: set[str] = set()
 
@@ -124,19 +135,21 @@ def run_brief(initial_brief: str = "", output_path: Path | None = None):
         print_separator()
         print(f"\nAgent : {strip_tags(agent_msg)}\n")
 
-        # Spec détectée ? On sauvegarde tout et on sort
+        # Spec détectée ? On sauvegarde et on sort
         spec = extract_spec(agent_msg)
         if spec:
-            dest = output_path or (Path.cwd() / "project.json")
+            dest, log_dest = resolve_paths(spec, out_base)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            DEFAULT_LOGDIR.mkdir(parents=True, exist_ok=True)
+
             dest.write_text(json.dumps(spec, indent=2, ensure_ascii=False))
-            hist_dest = dest.with_name(dest.stem + ".history.json")
-            hist_dest.write_text(json.dumps(
+            log_dest.write_text(json.dumps(
                 {"brief": initial_brief, "history": history},
                 indent=2, ensure_ascii=False
             ))
             print_separator()
-            print(f"\n✅ Spec sauvegardée : {dest}")
-            print(f"   Historique : {hist_dest}")
+            print(f"\n✅ Spec     : {dest}")
+            print(f"   Log      : {log_dest}")
             print(f"\nLancez la génération :")
             print(f'  python3 runner.py "votre brief" --config {dest}\n')
             return spec
@@ -155,8 +168,9 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Brief Agent — produit un project.json")
     parser.add_argument("brief", nargs="*", help="Brief initial (optionnel)")
-    parser.add_argument("--output", type=Path, default=None, help="Fichier de sortie (défaut : project.json)")
+    parser.add_argument("--outdir", type=Path, default=None,
+                        help=f"Répertoire de sortie (défaut : {DEFAULT_OUTDIR})")
     args = parser.parse_args()
 
     brief = " ".join(args.brief) if args.brief else ""
-    run_brief(initial_brief=brief, output_path=args.output)
+    run_brief(initial_brief=brief, outdir=args.outdir)
