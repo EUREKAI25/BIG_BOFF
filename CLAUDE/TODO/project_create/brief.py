@@ -17,6 +17,7 @@ ROOT = Path(__file__).parent
 PROMPTS = ROOT / "prompts"
 DEFAULT_OUTDIR = ROOT / "outputs"
 DEFAULT_LOGDIR = ROOT / "logs"
+REGISTRY_PATH = ROOT / "product_registry.json"
 
 # Points à établir dans l'ordre — injectés dans chaque message user
 CHECKLIST = ["REFORMULATION", "UTILISATEURS", "PRODUIT", "FEATURES_MVP", "STACK", "CONTRAINTES", "VALIDATION"]
@@ -30,11 +31,65 @@ def load_env():
             return
 
 
-def load_prompt() -> str:
+def load_registry() -> dict:
+    """Charge le registre des types de produits connus."""
+    if REGISTRY_PATH.exists():
+        return json.loads(REGISTRY_PATH.read_text())
+    return {"types": {}}
+
+
+def format_registry_context(registry: dict) -> str:
+    """Formate le registre pour injection dans le prompt agent_brief."""
+    types = registry.get("types", {})
+    if not types:
+        return (
+            "Aucun type enregistré pour l'instant.\n"
+            "Si tu identifies un type de produit, ajoute `\"taxonomy\": \"Categorie:SousType\"` "
+            "dans chaque produit du JSON (ex: \"Website:LandingPage\", \"WebApp\", \"Service:WebmarketingService\")."
+        )
+    lines = ["Types de produits connus (utilise-les en priorité) :"]
+    for key, val in types.items():
+        seen = ", ".join(val.get("seen_in", [])[:2])
+        lines.append(f"- `{key}` : {val.get('pattern', '')} — depth {val.get('depth', 2)} (ex: {seen})")
+    lines.append(
+        "\nSi aucun type ne correspond, crée un nom selon la convention `Categorie:SousType` "
+        "et ajoute-le dans `taxonomy`."
+    )
+    return "\n".join(lines)
+
+
+def update_registry(registry: dict, spec: dict) -> bool:
+    """Enregistre les types inconnus issus de la spec. Retourne True si modifié."""
+    changed = False
+    project = spec.get("project", "unknown")
+    for product in spec.get("products", []):
+        taxonomy = product.get("taxonomy")
+        if not taxonomy:
+            continue
+        if taxonomy not in registry["types"]:
+            registry["types"][taxonomy] = {
+                "depth": 2,
+                "seeds": [],
+                "pattern": product.get("type", "unknown"),
+                "seen_in": [project],
+            }
+            changed = True
+            print(f"  📋 Nouveau type enregistré : {taxonomy}")
+        else:
+            seen = registry["types"][taxonomy].setdefault("seen_in", [])
+            if project not in seen:
+                seen.append(project)
+                changed = True
+    if changed:
+        REGISTRY_PATH.write_text(json.dumps(registry, indent=2, ensure_ascii=False))
+    return changed
+
+
+def load_prompt(registry_context: str) -> str:
     path = PROMPTS / "agent_brief.md"
     if not path.exists():
         raise FileNotFoundError(f"Prompt introuvable : {path}")
-    return path.read_text()
+    return path.read_text().replace("{registry_context}", registry_context)
 
 
 def extract_spec(text: str) -> dict | None:
@@ -93,7 +148,8 @@ def run_brief(initial_brief: str = "", outdir: Path | None = None):
     import anthropic
     model = os.getenv("PROJECT_CREATE_MODEL", "claude-haiku-4-5-20251001")
     client = anthropic.Anthropic(api_key=api_key)
-    system_prompt = load_prompt()
+    registry = load_registry()
+    system_prompt = load_prompt(format_registry_context(registry))
 
     out_base = outdir or DEFAULT_OUTDIR
     history: list[dict] = []
@@ -142,6 +198,7 @@ def run_brief(initial_brief: str = "", outdir: Path | None = None):
             dest.parent.mkdir(parents=True, exist_ok=True)
             DEFAULT_LOGDIR.mkdir(parents=True, exist_ok=True)
 
+            update_registry(registry, spec)
             dest.write_text(json.dumps(spec, indent=2, ensure_ascii=False))
             log_dest.write_text(json.dumps(
                 {"brief": initial_brief, "history": history},

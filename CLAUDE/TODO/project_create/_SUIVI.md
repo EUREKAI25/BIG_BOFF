@@ -56,6 +56,9 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ fix agent_qa.md : erreurs réseau/SMTP/module externe → ## PASS (logique correcte, env limité)
 - ✅ feature brief.py : `outputs/<projet>/project.json` + `logs/<projet>.history.json` (répertoires auto-créés)
 - ✅ CLI : `--outdir` pour surcharger le répertoire de sortie
+- ✅ feature brief : `product_registry.json` — registre vivant des types de produits (auto-enrichi)
+- ✅ brief.py : charge le registry → injecte types connus dans prompt → enregistre nouveaux types après spec
+- ✅ agent_brief.md : `{registry_context}` placeholder + champ `taxonomy` dans JSON de sortie
 
 ---
 

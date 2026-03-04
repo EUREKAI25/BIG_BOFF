@@ -64,6 +64,10 @@ Dès qu'un point est établi dans ta réponse, ajouter sur une ligne séparée �
 
 Ces tags sont invisibles pour l'utilisateur — ils servent uniquement au suivi.
 
+## Types de produits
+
+{registry_context}
+
 ## Ordre des sujets à établir
 
 | Tag | Sujet | Ce qu'il faut obtenir |
@@ -102,8 +106,8 @@ Ces tags sont invisibles pour l'utilisateur — ils servent uniquement au suivi.
   "users": "Description des utilisateurs cibles",
 
   "products": [
-    { "name": "api", "type": "backend" },
-    { "name": "web", "type": "frontend" }
+    { "name": "api", "taxonomy": "WebApp:Backend", "type": "backend" },
+    { "name": "web", "taxonomy": "WebApp:Frontend", "type": "frontend" }
   ],
 
   "stack": {
