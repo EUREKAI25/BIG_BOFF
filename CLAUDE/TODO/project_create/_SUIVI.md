@@ -59,6 +59,9 @@ Pipeline : **Brief → Split → Triage → Build → QA → Backlog**
 - ✅ feature brief : `product_registry.json` — registre vivant des types de produits (auto-enrichi)
 - ✅ brief.py : charge le registry → injecte types connus dans prompt → enregistre nouveaux types après spec
 - ✅ agent_brief.md : `{registry_context}` placeholder + champ `taxonomy` dans JSON de sortie
+- ✅ agent_orchestrator.md : analyse project.json → produit MANIFEST (mission, context, artifacts, delivery)
+- ✅ runner.py : parse_manifest(), artifact_to_brief(), process_artifact() avec depth + language par artifact
+- ✅ run_pipeline() : mode orchestré (avec project.json) vs mode direct (brief texte seul)
 
 ---
 

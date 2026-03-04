@@ -308,6 +308,67 @@ def parse_split(output: str) -> tuple[str, dict | list[dict]]:
     return "steps", steps
 
 
+def parse_manifest(output: str) -> dict:
+    """Extrait le MANIFEST JSON produit par l'orchestrateur."""
+    import json, re
+    m = re.search(r"```json\s*(.*?)```", output, re.DOTALL)
+    if m:
+        try:
+            return json.loads(m.group(1).strip())
+        except json.JSONDecodeError:
+            pass
+    try:
+        return json.loads(output.strip())
+    except json.JSONDecodeError:
+        pass
+    return {"artifacts": [], "context": {}, "mission": "", "success": "", "delivery": {}}
+
+
+def artifact_to_brief(artifact: dict, context: dict) -> str:
+    """Convertit un artifact du MANIFEST en brief pour process()."""
+    parts = [
+        f"Créer le fichier : {artifact['path']}",
+        f"Langage : {artifact['language']}",
+        f"Objectif : {artifact['goal']}",
+    ]
+    if context.get("packages"):
+        parts.append(f"Packages disponibles : {', '.join(context['packages'])}")
+    if context.get("notes"):
+        parts.append(f"Contexte : {context['notes']}")
+    return "\n".join(parts)
+
+
+def process_artifact(client, artifact: dict, manifest: dict, model: str,
+                     backlog: list, outdir: Path) -> str | None:
+    """Traite un artifact : build + QA + sauvegarde dans outputs/<projet>/."""
+    global MAX_DEPTH, _project_config
+
+    brief = artifact_to_brief(artifact, manifest.get("context", {}))
+
+    # Injecter le langage de l'artifact dans la config projet
+    orig_config = dict(_project_config) if _project_config else {}
+    artifact_config = dict(orig_config)
+    artifact_config.setdefault("stack", {})["language"] = artifact["language"]
+    _project_config = artifact_config
+
+    # Depth par artifact (avec fallback sur MAX_DEPTH global)
+    orig_depth = MAX_DEPTH
+    MAX_DEPTH = artifact.get("depth", orig_depth)
+
+    result = process(client, brief, model, backlog, depth=0)
+
+    MAX_DEPTH = orig_depth
+    _project_config = orig_config if orig_config else None
+
+    if result:
+        out_path = outdir / artifact["path"]
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(result)
+        log(f"  💾 {artifact['path']} → {out_path}")
+
+    return result
+
+
 def parse_code_block(output: str) -> str:
     """Extrait le premier bloc ```python ... ``` d'une réponse BUILD."""
     lines = output.splitlines()
@@ -565,7 +626,31 @@ def run_pipeline(brief: str, config_path: Path | None = None):
     log(f"Brief    : {brief}")
 
     backlog: list[str] = []
-    process(client, brief, model, backlog, depth=0)
+
+    if _project_config:
+        # Mode orchestré : project.json → MANIFEST → artifacts
+        import json as _json
+        project_str = _json.dumps(_project_config, indent=2, ensure_ascii=False)
+        orch_out = call_agent(client, "orchestrator", project_str, model, depth=0)
+        manifest = parse_manifest(orch_out)
+
+        manifest_path = LOGS / f"manifest_{ts}.json"
+        manifest_path.write_text(_json.dumps(manifest, indent=2, ensure_ascii=False))
+        log(f"\n📋 Mission  : {manifest.get('mission', '?')}")
+        log(f"   Succès   : {manifest.get('success', '?')}")
+        log(f"   Manifest : {manifest_path}")
+
+        project_name = _project_config.get("project", "projet")
+        outdir = ROOT / "outputs" / project_name
+        outdir.mkdir(parents=True, exist_ok=True)
+
+        for artifact in manifest.get("artifacts", []):
+            log(f"\n{'━' * 50}")
+            log(f"📄 {artifact['path']}  [{artifact['language']}  depth={artifact.get('depth', 2)}]")
+            process_artifact(client, artifact, manifest, model, backlog, outdir)
+    else:
+        # Mode direct : brief texte sans project.json
+        process(client, brief, model, backlog, depth=0)
 
     if backlog:
         log("\n── BACKLOG ──")
