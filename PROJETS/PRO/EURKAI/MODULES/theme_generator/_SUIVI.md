@@ -106,6 +106,7 @@ theme_generator/
 | 2026-03-14 | Création _SUIVI.md + _SPECS.md v1 — état de l'art documenté |
 | 2026-03-14 | _SPECS.md v2 — tags ouverts (List[str]), shape_library, texture_library, variantes, font_roles, theme_resolver |
 | 2026-03-14 | _SPECS.md v3 — pipeline décision explicite 6 étapes, CompatibilityEngine, contraintes hard/strong/soft/bonus, AestheticBudgets, cohérence famille, DecisionTrace, dérive combinatoire formalisée |
+| 2026-03-14 | _SPECS_PLATFORM.md v1 — Design Capability Layer (DCL) au-dessus du VIE : capabilities, endpoints, workflows, recipes SaaS, artefacts, ExecutionTrace |
 
 ---
 
@@ -116,8 +117,12 @@ Voir `_SPECS.md` pour le détail complet.
 **Nouveau pipeline :**
 `ThemeDNA → ThemeInterpreter → CandidateSelector → CompatibilityEngine → ThemeResolver → ThemeCompiler → Renderer`
 
-**Nouveaux modules à créer :**
+**Nouveaux modules VIE à créer :**
 `theme_dna` · `theme_interpreter` · `candidate_selector` · `compatibility_engine` · `theme_resolver` · `theme_compiler` · `variant_engine` · `decision_trace` · `palette_system` · renderers (CSS/SCSS/JSON)
+
+**Couche DCL au-dessus du VIE (voir `_SPECS_PLATFORM.md`) :**
+`capabilities` · `endpoints` · `workflows` · `recipes` · `schemas` · `artifacts` · `execution_trace`
+→ Cible finale : package `eurkai-design-platform` dans `EURKAI/MODULES/design_platform/`
 
 **Nouvelles bibliothèques :**
 `border_library` · `shape_library` · `texture_library` · `ornament_library` · `typography_profiles` · `icon_library` · `layout_patterns` · `motion_profiles`
