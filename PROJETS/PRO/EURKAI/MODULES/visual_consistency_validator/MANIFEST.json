@@ -1,0 +1,42 @@
+{
+  "module_id": "visual_consistency_validator",
+  "version": "0.1.0",
+  "description": "Valide la cohérence de tous les assets visuels générés (logo, palette, typo, icônes, UI, visuals) contre un DesignDNA. Produit un score global et des suggestions de correction. Zero LLM.",
+  "category": "design",
+  "layer": "validation",
+  "status": "draft",
+
+  "input_datas": ["DesignDNA", "ValidationInput"],
+  "output_datas": ["ValidationReport"],
+
+  "endpoints": [
+    {"method": "POST", "path": "/v1/design/validate", "description": "Valide un ensemble d'assets contre un DesignDNA"}
+  ],
+
+  "dependencies": {
+    "internal": ["design_dna_resolver"],
+    "external": ["fastapi", "pydantic"]
+  },
+  "standalone": true,
+  "requires_llm": false,
+
+  "compatible_with": [
+    "design_dna_resolver",
+    "logo_generator",
+    "palette_generator",
+    "font_generator",
+    "icon_font_generator",
+    "webdesign_generator",
+    "media_generator"
+  ],
+
+  "pipeline_position": "validation_endpoint",
+
+  "pipeline": "brief → design_dna_resolver → [logo_generator / palette_generator / font_generator / ...] → visual_consistency_validator",
+
+  "thresholds": {
+    "valid": 0.80,
+    "needs_revision": 0.60,
+    "reject": 0.0
+  }
+}

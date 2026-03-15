@@ -1,0 +1,42 @@
+{
+  "module_id": "design_exploration_engine",
+  "version": "0.1.0",
+  "description": "Génère plusieurs directions de design distinctes à partir d'un DesignDNA. Mime le processus d'agence : 2–5 directions créatives présentables au client. Zero LLM.",
+  "category": "design",
+  "layer": "exploration",
+  "status": "draft",
+
+  "input_datas": ["DesignDNA"],
+  "output_datas": ["ExplorationOutput"],
+
+  "endpoints": [
+    {"method": "POST", "path": "/v1/design/explore", "description": "Génère N directions créatives depuis un DesignDNA"}
+  ],
+
+  "dependencies": {
+    "internal": ["design_dna_resolver"],
+    "external": ["fastapi", "pydantic"]
+  },
+  "standalone": true,
+  "requires_llm": false,
+
+  "compatible_with": [
+    "design_dna_resolver",
+    "palette_generator",
+    "logo_generator",
+    "font_generator",
+    "icon_font_generator",
+    "webdesign_generator",
+    "media_generator"
+  ],
+
+  "pipeline_position": "post_dna",
+
+  "pipeline": "brief → design_dna_resolver → design_exploration_engine → [palette_generator / logo_generator / ...] × N directions",
+
+  "direction_count": {
+    "default": 3,
+    "min": 2,
+    "max": 5
+  }
+}
