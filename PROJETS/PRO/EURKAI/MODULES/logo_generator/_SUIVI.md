@@ -65,6 +65,7 @@ Chaque variante = prompt dédié Recraft (pas de dérivation programmatique) :
 | Date       | Action |
 |------------|--------|
 | 2026-03-15 | Création du module (skeleton complet v0.1.0) |
+| 2026-03-15 | Ajout LogoStructure (9 types) — règles de composition par structure dans prompt_builder |
 
 ## Prochaines étapes
 

@@ -17,7 +17,7 @@ import os
 import re
 from typing import List
 
-from .schemas import LogoConcept, LogoDNA, LogoType, LogoVariant, LogoVariantSet
+from .schemas import LogoConcept, LogoDNA, LogoVariant, LogoVariantSet
 from .prompt_builder import build_variant_prompts
 from .vector_optimizer import optimize_svg
 
@@ -25,7 +25,6 @@ from .vector_optimizer import optimize_svg
 def export_variants(
     selected_concept: LogoConcept,
     dna: LogoDNA,
-    logo_type: LogoType,
     output_dir: str,
     model_executor,        # callable: (prompt: str, model: str, output_format: str) -> str
 ) -> LogoVariantSet:
@@ -40,7 +39,7 @@ def export_variants(
     dest_dir = os.path.join(output_dir, brand_slug)
     os.makedirs(dest_dir, exist_ok=True)
 
-    variant_prompts = build_variant_prompts(dna, selected_concept.prompt_used, logo_type)
+    variant_prompts = build_variant_prompts(dna, selected_concept.prompt_used)
     variants: List[LogoVariant] = []
 
     for variant_name, prompt in variant_prompts.items():

@@ -14,11 +14,28 @@ from typing import List, Optional
 # ─── Types de base ────────────────────────────────────────────────────────────
 
 class LogoType(str, Enum):
-    WORDMARK      = "wordmark"       # texte seul
-    LETTERMARK    = "lettermark"     # initiales
-    SYMBOL        = "symbol"         # icône seule
-    COMBINATION   = "combination"    # icône + texte
-    EMBLEM        = "emblem"         # texte dans forme/badge
+    """Conservé pour rétrocompatibilité. Préférer LogoStructure."""
+    WORDMARK      = "wordmark"
+    LETTERMARK    = "lettermark"
+    SYMBOL        = "symbol"
+    COMBINATION   = "combination"
+    EMBLEM        = "emblem"
+
+
+class LogoStructure(str, Enum):
+    """
+    Structure de composition du logo.
+    Pilote les règles de prompt et la génération de variantes.
+    """
+    WORDMARK         = "wordmark"         # typographie distinctive, texte seul
+    MONOGRAM         = "monogram"         # initiales/combinaison de lettres
+    ICON_WORDMARK    = "icon_wordmark"    # symbole + nom de marque
+    EMBLEM           = "emblem"           # texte intégré dans forme/symbole
+    BADGE            = "badge"            # logo dans forme décorative
+    MASCOT           = "mascot"           # personnage/illustration + marque
+    ABSTRACT_SYMBOL  = "abstract_symbol"  # symbole géométrique abstrait
+    STACKED          = "stacked"          # éléments texte empilés verticalement
+    LETTERMARK       = "lettermark"       # lettre unique stylisée
 
 
 class ArbitrationMode(str, Enum):
@@ -56,11 +73,12 @@ class LogoDNA(BrandDNA):
     DNA spécifique à la génération de logos.
     Étend BrandDNA sans en dupliquer les champs.
     """
-    symbol_preference:  Optional[str]       = None  # ex: "geometric", "organic", "abstract"
-    composition_style:  Optional[str]       = None  # ex: "balanced", "stacked", "inline"
-    wordmark_weight:    Optional[str]       = None  # ex: "light", "bold", "italic"
-    icon_complexity:    Optional[str]       = None  # ex: "minimal", "moderate", "detailed"
-    background_mode:    BackgroundMode      = BackgroundMode.TRANSPARENT
+    logo_structure:     Optional[LogoStructure] = None  # structure de composition principale
+    symbol_preference:  Optional[str]           = None  # ex: "geometric", "organic", "abstract"
+    composition_style:  Optional[str]           = None  # ex: "balanced", "stacked", "inline"
+    wordmark_weight:    Optional[str]           = None  # ex: "light", "bold", "italic"
+    icon_complexity:    Optional[str]           = None  # ex: "minimal", "moderate", "detailed"
+    background_mode:    BackgroundMode          = BackgroundMode.TRANSPARENT
 
 
 # ─── Configuration d'arbitrage ────────────────────────────────────────────────
@@ -78,9 +96,9 @@ class ArbitrationConfig:
 @dataclass
 class LogoConcept:
     """Un concept logo généré (avant sélection)."""
-    concept_id:     str
-    logo_type:      LogoType
-    prompt_used:    str
+    concept_id:         str
+    logo_structure:     LogoStructure
+    prompt_used:        str
     svg_content:    str                     # SVG brut retourné par Recraft
     score:          Optional[float]  = None  # renseigné en mode AI
     flags:          List[str]        = field(default_factory=list)  # warnings vector_optimizer
@@ -108,7 +126,7 @@ class LogoVariantSet:
 class LogoOutput:
     """Résultat complet du module logo_generator."""
     brand_name:         str
-    logo_type:          LogoType
+    logo_structure:     LogoStructure
     arbitration_mode:   ArbitrationMode
     selected_concept:   Optional[LogoConcept]       = None
     all_concepts:       List[LogoConcept]            = field(default_factory=list)

@@ -7,8 +7,8 @@ Corps de la requête :
 {
   "brand_name": "Acme",
   "slogan": "Built for speed",           // optionnel
-  "logo_type": "combination",            // wordmark|lettermark|symbol|combination|emblem
   "logo_dna": {                          // champs LogoDNA (optionnels)
+    "logo_structure": "icon_wordmark",   // wordmark|monogram|icon_wordmark|emblem|badge|mascot|abstract_symbol|stacked|lettermark
     "sector": "fintech",
     "style_tags": ["minimal", "modern"],
     "palette": ["#0A0A0A", "#F5F5F5"],
@@ -28,7 +28,7 @@ Corps de la requête :
 Réponse (mode ai/none) :
 {
   "brand_name": "Acme",
-  "logo_type": "combination",
+  "logo_structure": "icon_wordmark",
   "arbitration_mode": "ai",
   "selected_concept_id": "concept_2_abc123",
   "selected_concept_score": 0.85,
@@ -63,7 +63,7 @@ except ImportError:
     _FASTAPI_AVAILABLE = False
 
 from .schemas import (
-    LogoDNA, LogoType, ArbitrationConfig, ArbitrationMode,
+    LogoDNA, LogoStructure, ArbitrationConfig, ArbitrationMode,
     BackgroundMode, LogoOutput,
 )
 from .generator import generate_concepts
@@ -75,17 +75,18 @@ from .exporter import export_variants
 
 if _FASTAPI_AVAILABLE:
     class LogoDNAInput(BaseModel):
-        sector:             Optional[str]       = None
-        style_tags:         list[str]           = Field(default_factory=list)
-        palette:            list[str]           = Field(default_factory=list)
-        typography:         list[str]           = Field(default_factory=list)
-        tone:               Optional[str]       = None
-        target:             Optional[str]       = None
-        symbol_preference:  Optional[str]       = None
-        composition_style:  Optional[str]       = None
-        wordmark_weight:    Optional[str]       = None
-        icon_complexity:    Optional[str]       = None
-        background_mode:    str                 = "transparent"
+        logo_structure:     Optional[str]   = None   # LogoStructure value
+        sector:             Optional[str]   = None
+        style_tags:         list[str]       = Field(default_factory=list)
+        palette:            list[str]       = Field(default_factory=list)
+        typography:         list[str]       = Field(default_factory=list)
+        tone:               Optional[str]   = None
+        target:             Optional[str]   = None
+        symbol_preference:  Optional[str]   = None
+        composition_style:  Optional[str]   = None
+        wordmark_weight:    Optional[str]   = None
+        icon_complexity:    Optional[str]   = None
+        background_mode:    str             = "transparent"
 
     class ArbitrationInput(BaseModel):
         mode:               str     = "ai"
@@ -95,11 +96,10 @@ if _FASTAPI_AVAILABLE:
 
     class LogoGenerateRequest(BaseModel):
         brand_name:  str
-        slogan:      Optional[str]          = None
-        logo_type:   str                    = "combination"
-        logo_dna:    Optional[LogoDNAInput] = None
+        slogan:      Optional[str]              = None
+        logo_dna:    Optional[LogoDNAInput]     = None
         arbitration: Optional[ArbitrationInput] = None
-        output_dir:  str                    = "/tmp/logo_generator"
+        output_dir:  str                        = "/tmp/logo_generator"
 
     # ─── Router ───────────────────────────────────────────────────────────────
 
@@ -132,7 +132,18 @@ if _FASTAPI_AVAILABLE:
         )
         if request.logo_dna:
             d = request.logo_dna
+            logo_structure = None
+            if d.logo_structure:
+                try:
+                    logo_structure = LogoStructure(d.logo_structure)
+                except ValueError:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"logo_structure invalide: {d.logo_structure}. "
+                               f"Valeurs: {[e.value for e in LogoStructure]}"
+                    )
             dna_kwargs.update(
+                logo_structure=logo_structure,
                 sector=d.sector,
                 style_tags=d.style_tags,
                 palette=d.palette,
@@ -146,16 +157,6 @@ if _FASTAPI_AVAILABLE:
                 background_mode=BackgroundMode(d.background_mode),
             )
         dna = LogoDNA(**dna_kwargs)
-
-        # LogoType
-        try:
-            logo_type = LogoType(request.logo_type)
-        except ValueError:
-            raise HTTPException(
-                status_code=400,
-                detail=f"logo_type invalide: {request.logo_type}. "
-                       f"Valeurs: {[e.value for e in LogoType]}"
-            )
 
         # ArbitrationConfig
         arb_input = request.arbitration or ArbitrationInput()
@@ -174,7 +175,7 @@ if _FASTAPI_AVAILABLE:
         )
 
         # Génération des concepts
-        concepts = generate_concepts(dna, logo_type, config, model_executor)
+        concepts = generate_concepts(dna, config, model_executor)
 
         # Mode HUMAN : retour immédiat sans sélection
         if config.mode == ArbitrationMode.HUMAN:
@@ -201,7 +202,6 @@ if _FASTAPI_AVAILABLE:
         variant_set = export_variants(
             selected_concept=selected,
             dna=dna,
-            logo_type=logo_type,
             output_dir=request.output_dir,
             model_executor=model_executor,
         )
@@ -210,7 +210,7 @@ if _FASTAPI_AVAILABLE:
 
         return {
             "brand_name": dna.brand_name,
-            "logo_type": logo_type.value,
+            "logo_structure": dna.logo_structure.value if dna.logo_structure else "icon_wordmark",
             "arbitration_mode": config.mode.value,
             "selected_concept_id": selected.concept_id,
             "selected_concept_score": selected.score,
