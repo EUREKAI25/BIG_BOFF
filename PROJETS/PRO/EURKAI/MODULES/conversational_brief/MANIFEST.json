@@ -1,0 +1,35 @@
+{
+  "module_id": "conversational_brief",
+  "version": "0.1.0",
+  "description": "Conversation guidée (LLM) pour transformer un brief vague en JSON structuré. Prompt, checklist et schéma de sortie injectés par le projet consommateur.",
+  "category": "input",
+  "layer": "acquisition",
+  "status": "stable",
+
+  "input_datas": ["brief_text", "system_prompt", "checklist"],
+  "output_datas": ["project.json (ou tout JSON dont le schéma est défini par le prompt)"],
+
+  "dependencies": {
+    "internal": [],
+    "external": ["anthropic"]
+  },
+  "standalone": true,
+  "requires_llm": true,
+  "llm_provider": "anthropic",
+
+  "compatible_with": [
+    "project_create",
+    "design_dna_resolver",
+    "brand_generator"
+  ],
+
+  "pipeline_position": "entry_point",
+
+  "consumers": {
+    "project_create": {
+      "prompt": "project_create/prompts/agent_brief.md",
+      "checklist": ["REFORMULATION", "UTILISATEURS", "PRODUIT", "FEATURES_MVP", "STACK", "CONTRAINTES", "VALIDATION"],
+      "output_schema": "project.json"
+    }
+  }
+}
