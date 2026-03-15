@@ -1,0 +1,53 @@
+{
+  "module_id": "brand_generator",
+  "version": "0.1.0",
+  "description": "Génère 3 directions créatives de marque (BrandDirection A/B/C) depuis un brief + BrandDNA. Point d'entrée du pipeline design EURKAI.",
+  "category": "design",
+  "layer": "strategy",
+  "status": "draft",
+
+  "input_datas": [
+    "BrandDNA",
+    "project_brief",
+    "sector",
+    "audience",
+    "positioning"
+  ],
+
+  "output_datas": [
+    "BrandDirection",
+    "BrandGeneratorOutput"
+  ],
+
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/v1/brand/directions",
+      "description": "Génère 3 directions créatives distinctes depuis un brief + BrandDNA"
+    }
+  ],
+
+  "dependencies": {
+    "internal": ["llm_executor"],
+    "external": ["fastapi", "pydantic"]
+  },
+
+  "compatible_with": [
+    "logo_generator",
+    "font_generator",
+    "icon_font_generator",
+    "palette_generator",
+    "webdesign_generator",
+    "image_generator"
+  ],
+  "avoid_with": [],
+  "forbidden_combinations": [],
+
+  "downstream_contract": {
+    "direction_fields_for_logo_generator":    ["logo_structure", "symbol_preference", "wordmark_weight", "icon_complexity", "style_tags", "palette_profile"],
+    "direction_fields_for_font_generator":    ["typography_profile", "style_tags", "mood_keywords"],
+    "direction_fields_for_palette_generator": ["palette_profile", "style_tags", "mood_keywords"],
+    "direction_fields_for_webdesign_generator": ["layout_density", "whitespace_level", "grid_style", "component_roundness", "contrast_level", "composition_style"],
+    "direction_fields_for_image_generator":   ["image_style", "illustration_style", "motion_energy", "mood_keywords"]
+  }
+}
