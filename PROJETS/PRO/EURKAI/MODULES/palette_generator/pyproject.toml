@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "palette_generator"
+version = "0.1.0"
+description = "Module EURKAI standalone — Génération de palettes chromatiques (harmonies, BW, metal, WCAG)"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi>=0.110",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+png = ["Pillow>=10.0"]
+dev = ["pytest", "httpx"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["palette_generator*"]

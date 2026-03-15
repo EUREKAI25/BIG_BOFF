@@ -1,0 +1,76 @@
+{
+  "module_id": "palette_generator",
+  "version": "0.1.0",
+  "description": "Génération standalone de palettes chromatiques depuis base_color, base_colors ou BrandDNA. Harmonies + BW + metal + WCAG. Entièrement algorithmique.",
+  "category": "design",
+  "layer": "foundation",
+  "status": "draft",
+
+  "input_datas": [
+    "base_color",
+    "base_colors",
+    "BrandDNAInput",
+    "PaletteScenario",
+    "style_tags",
+    "palette_style",
+    "MetalFinish",
+    "WCAGLevel"
+  ],
+
+  "output_datas": [
+    "PaletteSet",
+    "PaletteOutput",
+    "palette.json",
+    "design_tokens.json",
+    "palette.svg",
+    "palette.png"
+  ],
+
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/v1/palette/generate",
+      "description": "Génère une PaletteSet complète selon le scénario"
+    }
+  ],
+
+  "dependencies": {
+    "internal": [],
+    "external": ["fastapi", "pydantic"],
+    "optional": ["Pillow (pour export PNG)"]
+  },
+
+  "standalone": true,
+  "requires_llm": false,
+  "requires_image_model": false,
+
+  "compatible_with": [
+    "brand_generator",
+    "logo_generator",
+    "font_generator",
+    "webdesign_generator",
+    "theme_generator",
+    "image_generator"
+  ],
+
+  "palette_types": [
+    "monochromatic", "analogous", "complementary",
+    "split_complementary", "triadic", "tetradic",
+    "black_and_white_variant", "metal_variant", "minimal", "ui_safe"
+  ],
+
+  "scenarios": [
+    "brand_palette", "ui_palette", "illustration_palette",
+    "photo_palette", "minimal_palette", "dark_mode_palette",
+    "data_visualization_palette"
+  ],
+
+  "metal_finishes": [
+    "silver", "chrome", "gold", "rose_gold",
+    "copper", "brass", "gunmetal", "titanium"
+  ],
+
+  "wcag_levels": ["AA", "AAA"],
+
+  "export_formats": ["json", "tokens", "svg", "png"]
+}
