@@ -1,0 +1,35 @@
+{
+  "module_id": "color_psychology_engine",
+  "version": "0.1.0",
+  "description": "Recommandations colorées basées sur secteur, valeurs de marque, ton et audience. Alimente palette_generator. Zero LLM.",
+  "category": "design",
+  "layer": "strategy",
+  "status": "draft",
+
+  "input_datas": ["industry", "brand_values", "tone", "target_audience", "region", "style_tags"],
+  "output_datas": ["ColorRecommendation"],
+
+  "endpoints": [
+    {"method": "POST", "path": "/v1/color/psychology", "description": "Recommandations colorées depuis brief marque"}
+  ],
+
+  "dependencies": {"internal": [], "external": ["fastapi", "pydantic"]},
+  "standalone": true,
+  "requires_llm": false,
+
+  "compatible_with": ["palette_generator", "brand_generator", "theme_generator"],
+
+  "industries_covered": [
+    "finance", "fintech", "healthcare", "technology", "saas", "luxury",
+    "fashion", "food", "food_premium", "wellness", "sport", "education",
+    "real_estate", "eco", "gaming", "nonprofit", "beauty", "kids", "travel"
+  ],
+
+  "weighting": {
+    "industry": 0.40,
+    "brand_values": 0.30,
+    "tone": 0.20,
+    "style_tags": 0.07,
+    "exploration": 0.03
+  }
+}
