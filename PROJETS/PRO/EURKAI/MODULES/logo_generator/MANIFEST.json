@@ -1,0 +1,50 @@
+{
+  "module_id": "logo_generator",
+  "version": "0.1.0",
+  "description": "Génération de logos vectoriels SVG via Recraft v3. Pipeline : concepts → arbitration → variantes.",
+  "category": "design",
+  "layer": "interface",
+  "status": "draft",
+
+  "input_datas": [
+    "LogoDNA",
+    "BrandDNA",
+    "logo_type",
+    "ArbitrationConfig"
+  ],
+
+  "output_datas": [
+    "LogoOutput",
+    "LogoVariantSet",
+    "svg_files"
+  ],
+
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/v1/logo/generate",
+      "description": "Génère N concepts logo, sélectionne le meilleur, exporte 5 variantes SVG"
+    }
+  ],
+
+  "dependencies": {
+    "internal": ["model_executor"],
+    "external": ["fastapi", "pydantic"]
+  },
+
+  "compatible_with": ["theme_generator", "page_builder", "brand_kit_exporter"],
+  "avoid_with": [],
+  "forbidden_combinations": [],
+
+  "arbitration_modes": ["none", "ai", "human"],
+
+  "variants_produced": [
+    "logo.svg",
+    "logo_horizontal.svg",
+    "logo_icon.svg",
+    "logo_monochrome.svg",
+    "favicon.svg"
+  ],
+
+  "vector_optimizer_policy": "flag_only_never_remove"
+}

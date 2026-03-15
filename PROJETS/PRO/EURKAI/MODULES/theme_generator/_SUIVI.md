@@ -107,6 +107,9 @@ theme_generator/
 | 2026-03-14 | _SPECS.md v2 — tags ouverts (List[str]), shape_library, texture_library, variantes, font_roles, theme_resolver |
 | 2026-03-14 | _SPECS.md v3 — pipeline décision explicite 6 étapes, CompatibilityEngine, contraintes hard/strong/soft/bonus, AestheticBudgets, cohérence famille, DecisionTrace, dérive combinatoire formalisée |
 | 2026-03-14 | _SPECS_PLATFORM.md v1 — Design Capability Layer (DCL) au-dessus du VIE : capabilities, endpoints, workflows, recipes SaaS, artefacts, ExecutionTrace |
+| 2026-03-15 | Création module `pipeline_validator` MVP (ContractRegistry, PipelineValidator, router FastAPI — POST /v1/pipeline/prevalidate) |
+| 2026-03-15 | Création catalogue `EURKAI/catalogs/seeds/` (LandingPageSeed, WebsiteSeed, SaaSSeed + index.json) |
+| 2026-03-15 | Création module `logo_generator` v0.1.0 complet (schemas, prompt_builder, generator, arbitration, vector_optimizer, exporter, router) |
 
 ---
 
