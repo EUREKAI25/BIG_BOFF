@@ -1,0 +1,30 @@
+{
+  "catalog": "seeds",
+  "description": "Blueprints de projets — définissent la structure, les modules requis/autorisés, les layers et l'adaptation par type d'objet.",
+  "version": "0.1.0",
+  "last_updated": "2026-03-15",
+
+  "seeds": [
+    {
+      "id": "landing_page_seed",
+      "object_type": "LandingPage",
+      "file": "landing_page_seed.json",
+      "required_modules": ["hero", "features", "cta"],
+      "layers": ["interface", "config"]
+    },
+    {
+      "id": "website_seed",
+      "object_type": "Website",
+      "file": "website_seed.json",
+      "required_modules": ["hero", "content_section", "footer"],
+      "layers": ["interface", "config", "storage"]
+    },
+    {
+      "id": "saas_seed",
+      "object_type": "SaaS",
+      "file": "saas_seed.json",
+      "required_modules": ["auth", "dashboard"],
+      "layers": ["interface", "backend", "storage", "config"]
+    }
+  ]
+}

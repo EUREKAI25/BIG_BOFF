@@ -1,0 +1,35 @@
+{
+  "id": "saas_seed",
+  "object_type": "SaaS",
+  "version": "0.1.0",
+
+  "structure": {
+    "header": true,
+    "footer": true,
+    "navigation": true,
+    "overlays": true,
+    "sectionlist": true
+  },
+
+  "required_modules": ["auth", "dashboard"],
+
+  "allowed_modules": ["auth", "dashboard", "analytics", "settings", "billing", "notifications"],
+
+  "sections": {
+    "auth_section":       { "allowed_modules": ["auth"] },
+    "dashboard_section":  { "allowed_modules": ["dashboard"] },
+    "feature_section":    { "allowed_modules": ["analytics", "notifications"] },
+    "management_section": { "allowed_modules": ["settings", "billing"] }
+  },
+
+  "options": ["overlays", "analytics", "notifications", "billing"],
+
+  "adaptation": {
+    "navigation": {
+      "desktop": "sidebar",
+      "mobile": "hamburger_menu"
+    }
+  },
+
+  "layers": ["interface", "backend", "storage", "config"]
+}

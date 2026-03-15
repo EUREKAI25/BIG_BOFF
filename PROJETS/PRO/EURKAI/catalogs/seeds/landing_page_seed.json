@@ -1,0 +1,36 @@
+{
+  "id": "landing_page_seed",
+  "object_type": "LandingPage",
+  "version": "0.1.0",
+
+  "structure": {
+    "header": true,
+    "footer": true,
+    "navigation": true,
+    "overlays": true,
+    "sectionlist": true
+  },
+
+  "required_modules": ["hero", "features", "cta"],
+
+  "allowed_modules": ["hero", "features", "pricing", "faq", "testimonials", "cta"],
+
+  "sections": {
+    "hero_section":     { "allowed_modules": ["hero"] },
+    "features_section": { "allowed_modules": ["features"] },
+    "section_3":        { "allowed_modules": ["pricing", "testimonials"] },
+    "section_4":        { "allowed_modules": ["faq", "testimonials"] },
+    "final_section":    { "allowed_modules": ["cta"] }
+  },
+
+  "options": ["navigation", "overlays", "faq", "testimonials", "pricing"],
+
+  "adaptation": {
+    "navigation": {
+      "desktop": "nav",
+      "mobile": "hamburger_menu"
+    }
+  },
+
+  "layers": ["interface", "config"]
+}

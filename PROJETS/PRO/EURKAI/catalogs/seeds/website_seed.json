@@ -1,0 +1,35 @@
+{
+  "id": "website_seed",
+  "object_type": "Website",
+  "version": "0.1.0",
+
+  "structure": {
+    "header": true,
+    "footer": true,
+    "navigation": true,
+    "overlays": true,
+    "sectionlist": true
+  },
+
+  "required_modules": ["hero", "content_section", "footer"],
+
+  "allowed_modules": ["hero", "content_section", "gallery", "faq", "testimonials", "contact_form", "cta"],
+
+  "sections": {
+    "hero_section":    { "allowed_modules": ["hero"] },
+    "main_content":    { "allowed_modules": ["content_section", "gallery"] },
+    "trust_section":   { "allowed_modules": ["testimonials", "faq"] },
+    "contact_section": { "allowed_modules": ["contact_form", "cta"] }
+  },
+
+  "options": ["navigation", "overlays", "testimonials", "faq", "gallery", "contact_form"],
+
+  "adaptation": {
+    "navigation": {
+      "desktop": "nav",
+      "mobile": "hamburger_menu"
+    }
+  },
+
+  "layers": ["interface", "config", "storage"]
+}
