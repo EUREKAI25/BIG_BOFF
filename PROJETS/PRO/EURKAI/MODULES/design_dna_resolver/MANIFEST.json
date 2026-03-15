@@ -1,0 +1,40 @@
+{
+  "module_id": "design_dna_resolver",
+  "version": "0.1.0",
+  "description": "Convertit un brief texte ou structuré en DesignDNA. Infère l'archétype stylistique et produit les hints pour tous les modules design aval. Zero LLM.",
+  "category": "design",
+  "layer": "strategy",
+  "status": "draft",
+
+  "input_datas": ["brief_text", "brief_dict", "BriefInput"],
+  "output_datas": ["DesignDNA"],
+
+  "endpoints": [
+    {"method": "POST", "path": "/v1/design/dna", "description": "Résout un brief → DesignDNA"}
+  ],
+
+  "dependencies": {"internal": [], "external": ["fastapi", "pydantic"]},
+  "standalone": true,
+  "requires_llm": false,
+
+  "compatible_with": [
+    "color_psychology_engine",
+    "palette_generator",
+    "brand_generator",
+    "logo_generator",
+    "font_generator",
+    "icon_font_generator",
+    "webdesign_generator",
+    "media_generator"
+  ],
+
+  "archetypes": [
+    "luxury_minimal", "startup_clean", "editorial_magazine", "tech_futurist",
+    "creative_studio", "brutalist", "organic_natural", "playful_brand",
+    "corporate_pro", "premium_craft", "bold_challenger", "warm_human"
+  ],
+
+  "pipeline_position": "entry_point",
+
+  "pipeline": "brief → design_dna_resolver → color_psychology_engine → palette_generator → logo_generator / font_generator / webdesign_generator / media_generator"
+}

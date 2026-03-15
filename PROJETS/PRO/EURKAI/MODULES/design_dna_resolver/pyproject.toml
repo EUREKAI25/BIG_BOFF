@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "design_dna_resolver"
+version = "0.1.0"
+description = "Module EURKAI standalone — brief → DesignDNA (archétype + style hints)"
+requires-python = ">=3.11"
+dependencies = ["fastapi>=0.110", "pydantic>=2.0"]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["design_dna_resolver*"]
