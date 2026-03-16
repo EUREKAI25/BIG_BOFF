@@ -255,6 +255,8 @@ Voir [`CLAUDE/PROCESS.md`](../../../CLAUDE/PROCESS.md) pour le détail complet.
 
 ## Historique
 
+- **2026-03-16 23:30** : `generate_landing_page()` — générateur de landing pages brandées complètes par projet. RenderingContract strict (12 archetypes), direction selection par signaux brief, 3 templates full-page (editorial / playful / SaaS). Output : `landing_page.html` par projet.
+- **2026-03-16 22:50** : `render_preview` → `render_direction_preview()` — 3 previews par direction créative, chacun bindé à un RenderingContract strict. ARCHETYPE_CONTRACTS couvre 12 archetypes. Direction selection via signaux brief.
 - **2026-03-16 21:45** : `generate_brand_charter.py` — orchestrateur test pipeline design complet (5/5 modules OK, 3 briefs, HTML brand charter)
 - **2026-03-16** : `scan_and_do` MVP complet (7/7 tests ✅) — moteur MRG générique
 - **2026-03-16** : `theme_generator` phase 1 visuelle (StyleDNA, font_map, theme_translation, visual_analysis — 14/14 tests ✅)

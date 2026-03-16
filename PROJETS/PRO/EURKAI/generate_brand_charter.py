@@ -173,31 +173,100 @@ ARCHETYPE_TO_COMPLEXITY: dict[str, str] = {
 }
 
 TYPO_TO_DISPLAY_PROFILE: dict[str, str] = {
-    "geometric_sans":    "bold_condensed_geometric",
-    "humanist_sans":     "neutral_sans",
-    "editorial_serif":   "thin_elegant_serif",
-    "editorial_sans":    "neutral_sans",
-    "tech_mono":         "neutral_sans",
-    "brutalist_display": "bold_condensed_geometric",
-    "organic_serif":     "thin_elegant_serif",
-    "playful_display":   "bold_condensed_geometric",
-    "corporate_sans":    "neutral_sans",
-    "craft_serif":       "thin_elegant_serif",
-    "bold_condensed":    "bold_condensed_geometric",
-    "warm_rounded":      "neutral_sans",
+    "geometric_sans":             "bold_condensed_geometric",
+    "humanist_sans":              "neutral_sans",
+    "editorial_serif":            "thin_elegant_serif",
+    "editorial_sans":             "neutral_sans",
+    "tech_mono":                  "neutral_sans",
+    "brutalist_display":          "bold_condensed_geometric",
+    "organic_serif":              "thin_elegant_serif",
+    "playful_display":            "bold_condensed_geometric",
+    "corporate_sans":             "neutral_sans",
+    "craft_serif":                "thin_elegant_serif",
+    "bold_condensed":             "bold_condensed_geometric",
+    "warm_rounded":               "neutral_sans",
+    # Keys from design_dna_resolver.style_mapper
+    "display_serif":              "thin_elegant_serif",
+    "display_serif_editorial":    "thin_elegant_serif",
+    "condensed_tech_sans":        "bold_condensed_geometric",
+    "expressive_display":         "bold_condensed_geometric",
+    "grotesque_bold":             "bold_condensed_geometric",
+    "humanist_sans_organic":      "neutral_sans",
+    "rounded_sans":               "neutral_sans",
+    "transitional_sans":          "neutral_sans",
+    "serif_artisan":              "thin_elegant_serif",
+    "condensed_bold_sans":        "bold_condensed_geometric",
+    "humanist_rounded_sans":      "neutral_sans",
 }
 
 LAYOUT_TO_RADIUS: dict[str, str] = {
-    "geometric_grid":  "small",
-    "editorial_grid":  "none",
-    "fluid_organic":   "large",
-    "brutalist_grid":  "none",
-    "compact_grid":    "small",
-    "asymmetric":      "none",
-    "playful_layout":  "large",
-    "corporate_grid":  "small",
-    "craft_layout":    "medium",
-    "card_based":      "medium",
+    "geometric_grid":      "small",
+    "editorial_grid":      "none",
+    "fluid_organic":       "large",
+    "brutalist_grid":      "none",
+    "compact_grid":        "small",
+    "asymmetric":          "none",
+    "playful_layout":      "large",
+    "corporate_grid":      "small",
+    "craft_layout":        "medium",
+    "card_based":          "medium",
+    # Keys from design_dna_resolver.style_mapper
+    "spacious_minimal":    "none",
+    "clean_grid":          "small",
+    "editorial_asymmetric":"none",
+    "dark_grid":           "small",
+    "fluid_creative":      "large",
+    "raw_asymmetric":      "none",
+    "breathing_organic":   "large",
+    "card_playful":        "large",
+    "structured_grid":     "small",
+    "editorial_rich":      "small",
+    "high_contrast_grid":  "none",
+    "open_breathing":      "medium",
+}
+
+# Density and rhythm per layout_style (used to populate LayoutProfile)
+LAYOUT_TO_DENSITY: dict[str, str] = {
+    "spacious_minimal":    "minimal",
+    "editorial_asymmetric":"minimal",
+    "editorial_rich":      "minimal",
+    "editorial_grid":      "minimal",
+    "clean_grid":          "moderate",
+    "geometric_grid":      "moderate",
+    "dark_grid":           "moderate",
+    "corporate_grid":      "moderate",
+    "structured_grid":     "moderate",
+    "compact_grid":        "dense",
+    "high_contrast_grid":  "dense",
+    "raw_asymmetric":      "dense",
+    "card_playful":        "moderate",
+    "fluid_creative":      "moderate",
+    "breathing_organic":   "minimal",
+    "open_breathing":      "minimal",
+    "craft_layout":        "moderate",
+    "card_based":          "moderate",
+    "playful_layout":      "moderate",
+}
+
+LAYOUT_TO_RHYTHM: dict[str, str] = {
+    "editorial_asymmetric":"editorial",
+    "editorial_rich":      "editorial",
+    "editorial_grid":      "editorial",
+    "spacious_minimal":    "spacious",
+    "breathing_organic":   "spacious",
+    "open_breathing":      "spacious",
+    "clean_grid":          "balanced",
+    "geometric_grid":      "balanced",
+    "corporate_grid":      "balanced",
+    "structured_grid":     "balanced",
+    "card_based":          "balanced",
+    "fluid_creative":      "dynamic",
+    "card_playful":        "dynamic",
+    "playful_layout":      "dynamic",
+    "dark_grid":           "tight",
+    "compact_grid":        "tight",
+    "high_contrast_grid":  "tight",
+    "raw_asymmetric":      "tight",
 }
 
 CONTRAST_MAP: dict[str, str] = {
@@ -364,9 +433,10 @@ def step_build_style_dna(dna, palette_output, rec) -> "StyleDNA":
     display_p  = TYPO_TO_DISPLAY_PROFILE.get(
         getattr(dna, "typography_style", None) or "", "neutral_sans"
     )
-    radius = LAYOUT_TO_RADIUS.get(
-        getattr(dna, "layout_style", None) or "", "medium"
-    )
+    layout_style = getattr(dna, "layout_style", None) or ""
+    radius   = LAYOUT_TO_RADIUS.get(layout_style, "medium")
+    density  = LAYOUT_TO_DENSITY.get(layout_style, "moderate")
+    rhythm   = LAYOUT_TO_RHYTHM.get(layout_style, "balanced")
     temperature = getattr(rec, "color_temperature", "neutral") if rec else "neutral"
     saturation  = getattr(rec, "saturation_level",  "medium")  if rec else "medium"
     contrast    = CONTRAST_MAP.get(
@@ -391,7 +461,7 @@ def step_build_style_dna(dna, palette_output, rec) -> "StyleDNA":
             border_radius=radius,
         ),
         ornament_profile=OrnamentProfile(),
-        layout_profile=LayoutProfile(),
+        layout_profile=LayoutProfile(density=density, rhythm=rhythm),
         emotional_tone=tone,
         complexity_level=complexity,
         aesthetic_tags=[archetype] if archetype else [],
@@ -946,84 +1016,522 @@ def render_tokens(css: str | None, preset: dict | None) -> str:
     return table
 
 
-def render_preview(preset: dict | None, css: str | None) -> str:
-    if preset is None or css is None:
-        return "<p style='color:#999'>Preview unavailable — theme generation failed.</p>"
+# ── Rendering Contracts ───────────────────────────────────────────────────────
+# A RenderingContract is the executable binding between a creative direction
+# and the preview renderer. It is derived from direction.style_archetype.
+# The renderer consumes ONLY the contract — no fallback to generic SaaS layout.
 
-    h_font = preset.get("font_family_headings", "sans-serif")
-    b_font = preset.get("font_family_body", "sans-serif")
-    gf_url = preset.get("font_google_url", "")
+from dataclasses import dataclass as _dc, field as _field
 
-    font_import = f'@import url("{gf_url}");' if gf_url else ""
+@_dc
+class RenderingContract:
+    """Strict rendering spec derived from a DesignDirection."""
+    direction_id:     str
+    direction_name:   str
+    archetype:        str
 
-    preview_html = f"""
-<div id="preview-root" style="font-family:var(--font-family-body,'{b_font}',sans-serif)">
+    # Structural tokens — each maps 1:1 to a renderer function
+    hero_pattern:     str   # editorial | playful | luxury | warm_split | corporate | centered | dark_tech | raw_bold
+    button_family:    str   # text_link | pill | ghost_thin | soft_rounded | corporate | solid | neon_border | raw_border
+    card_family:      str   # rule_only | dashed_rounded | line_separator | soft_card | bordered_table | elevated | dark_card | thick_border
+    heading_alignment:str   # left | center
+    layout_rhythm:    str   # editorial | playful | airy | balanced | dense
+    shadow_style:     str   # none | warm_soft | subtle | strong | glow | hard_offset
+    radius_profile:   str   # zero | small | medium | large | pill
 
-  <!-- Hero -->
-  <div class="preview-frame">
-    <div class="preview-label">Hero section</div>
-    <div class="preview-body" style="background:var(--color-primary,#2563eb);padding:48px 32px;text-align:center">
-      <h1 style="font-family:var(--font-family-headings,'{h_font}',sans-serif);color:#fff;font-size:2.2rem;font-weight:700;margin-bottom:12px">
-        Build something meaningful
-      </h1>
-      <p style="color:rgba(255,255,255,0.8);max-width:500px;margin:0 auto 24px">
-        A platform built for people who care about craft, clarity, and impact.
-      </p>
-      <button class="btn btn-primary" style="margin-right:8px">Get started</button>
-      <button class="btn" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4)">Learn more</button>
-    </div>
+    # Colors (from preset — same across directions, structure differentiates)
+    primary:   str
+    secondary: str
+
+    # Fonts (resolved from preset)
+    heading_font: str
+    body_font:    str
+
+
+# Strict archetype → contract values. Every archetype has a distinct hero/button/card triplet.
+# There is NO shared default — each archetype is explicitly defined.
+_ARCHETYPE_CONTRACTS: dict[str, dict] = {
+    "editorial_magazine": dict(
+        hero_pattern="editorial",   button_family="text_link",   card_family="rule_only",
+        heading_alignment="left",   layout_rhythm="editorial",
+        shadow_style="none",        radius_profile="zero",
+    ),
+    "luxury_minimal": dict(
+        hero_pattern="luxury",      button_family="ghost_thin",  card_family="line_separator",
+        heading_alignment="center", layout_rhythm="airy",
+        shadow_style="none",        radius_profile="zero",
+    ),
+    "playful_brand": dict(
+        hero_pattern="playful",     button_family="pill",        card_family="dashed_rounded",
+        heading_alignment="center", layout_rhythm="playful",
+        shadow_style="warm_soft",   radius_profile="pill",
+    ),
+    "warm_human": dict(
+        hero_pattern="warm_split",  button_family="soft_rounded", card_family="soft_card",
+        heading_alignment="left",   layout_rhythm="airy",
+        shadow_style="warm_soft",   radius_profile="large",
+    ),
+    "startup_clean": dict(
+        hero_pattern="centered",    button_family="solid",        card_family="elevated",
+        heading_alignment="center", layout_rhythm="balanced",
+        shadow_style="subtle",      radius_profile="small",
+    ),
+    "corporate_pro": dict(
+        hero_pattern="corporate",   button_family="corporate",    card_family="bordered_table",
+        heading_alignment="left",   layout_rhythm="balanced",
+        shadow_style="subtle",      radius_profile="small",
+    ),
+    "tech_futurist": dict(
+        hero_pattern="dark_tech",   button_family="neon_border",  card_family="dark_card",
+        heading_alignment="center", layout_rhythm="dense",
+        shadow_style="glow",        radius_profile="small",
+    ),
+    "brutalist": dict(
+        hero_pattern="raw_bold",    button_family="raw_border",   card_family="thick_border",
+        heading_alignment="left",   layout_rhythm="dense",
+        shadow_style="hard_offset", radius_profile="zero",
+    ),
+    "organic_natural": dict(
+        hero_pattern="warm_split",  button_family="soft_rounded", card_family="soft_card",
+        heading_alignment="left",   layout_rhythm="airy",
+        shadow_style="warm_soft",   radius_profile="large",
+    ),
+    "premium_craft": dict(
+        hero_pattern="luxury",      button_family="ghost_thin",   card_family="line_separator",
+        heading_alignment="left",   layout_rhythm="airy",
+        shadow_style="none",        radius_profile="small",
+    ),
+    "bold_challenger": dict(
+        hero_pattern="raw_bold",    button_family="raw_border",   card_family="thick_border",
+        heading_alignment="left",   layout_rhythm="dense",
+        shadow_style="none",        radius_profile="zero",
+    ),
+    "creative_studio": dict(
+        hero_pattern="centered",    button_family="pill",         card_family="dashed_rounded",
+        heading_alignment="center", layout_rhythm="playful",
+        shadow_style="warm_soft",   radius_profile="large",
+    ),
+}
+
+_CONTRACT_FALLBACK = _ARCHETYPE_CONTRACTS["startup_clean"]
+
+
+def derive_rendering_contract(
+    direction,          # DesignDirection object (or dict with same keys)
+    primary: str,
+    secondary: str,
+    heading_font: str,
+    body_font: str,
+) -> RenderingContract:
+    """
+    Derive a strict RenderingContract from a DesignDirection.
+    Uses direction.style_archetype as the key — no fallback to generic layout.
+    """
+    archetype = (
+        getattr(direction, "style_archetype", None)
+        or (direction.get("style_archetype") if isinstance(direction, dict) else None)
+        or "startup_clean"
+    )
+    d_id   = getattr(direction, "id",   None) or direction.get("id",   "dir")   if not isinstance(direction, str) else "dir"
+    d_name = getattr(direction, "name", None) or direction.get("name", archetype) if not isinstance(direction, str) else archetype
+    base = _ARCHETYPE_CONTRACTS.get(archetype, _CONTRACT_FALLBACK)
+    return RenderingContract(
+        direction_id=d_id,
+        direction_name=d_name,
+        archetype=archetype,
+        primary=primary,
+        secondary=secondary,
+        heading_font=heading_font,
+        body_font=body_font,
+        **base,
+    )
+
+
+# ── Per-contract renderers (no internal fallback — each mode is explicit) ─────
+
+def _render_hero_from_contract(c: RenderingContract) -> str:
+    p, hf, bf = c.primary, c.heading_font, c.body_font
+    r = {"zero":"0px","small":"6px","medium":"10px","large":"16px","pill":"24px"}.get(c.radius_profile,"6px")
+
+    if c.hero_pattern == "editorial":
+        return f"""<div style="background:#fff;padding:52px 0 36px;border-bottom:2px solid #111">
+  <div style="max-width:680px">
+    <div style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#aaa;margin-bottom:20px">N°47 · PRINTEMPS 2026</div>
+    <h1 style="font-family:'{hf}',Georgia,'Times New Roman',serif;font-size:4rem;font-weight:300;line-height:.95;letter-spacing:-.02em;color:#111;margin-bottom:20px">La beauté<br>du silence</h1>
+    <div style="width:40px;height:2px;background:#111;margin-bottom:20px"></div>
+    <p style="font-family:'{bf}',sans-serif;font-size:14px;color:#555;line-height:1.75;max-width:540px;margin-bottom:24px">Un essai sur la contemplation, la lenteur et les formes que prend l'attention dans une époque saturée de bruit et d'images.</p>
+    <span style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#111;border-bottom:1px solid #111;padding-bottom:2px;cursor:pointer">LIRE L'ARTICLE →</span>
   </div>
+</div>"""
 
-  <!-- Buttons -->
-  <div class="preview-frame" style="margin-top:16px">
-    <div class="preview-label">Buttons</div>
-    <div class="preview-body" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-      <button class="btn btn-primary">Primary</button>
-      <button class="btn btn-secondary">Secondary</button>
-      <button class="btn" style="background:transparent;color:var(--color-primary,#2563eb);border:1px solid var(--color-primary,#2563eb)">Outline</button>
-      <button class="btn" style="background:transparent;color:#666;border:1px solid #ddd">Ghost</button>
-    </div>
+    if c.hero_pattern == "luxury":
+        return f"""<div style="background:#0a0a0a;padding:72px 40px;text-align:center">
+  <div style="font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:#555;margin-bottom:32px">EST. MMXXVI</div>
+  <h1 style="font-family:'{hf}',Georgia,'Times New Roman',serif;font-size:3.5rem;font-weight:200;color:#f0ebe3;letter-spacing:.06em;line-height:1.25;margin-bottom:20px">A world apart</h1>
+  <div style="width:36px;height:1px;background:#444;margin:0 auto 28px"></div>
+  <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#888;letter-spacing:.08em;max-width:360px;margin:0 auto 36px;line-height:1.9">For those who seek substance over spectacle.</p>
+  <button style="background:transparent;color:#e0dbd4;border:1px solid #555;padding:11px 40px;border-radius:0;font-size:9px;letter-spacing:.28em;text-transform:uppercase;cursor:pointer">DISCOVER</button>
+</div>"""
+
+    if c.hero_pattern == "playful":
+        return f"""<div style="background:{p};padding:56px 32px;border-radius:{r};text-align:center">
+  <div style="font-size:3.2rem;margin-bottom:16px">🕯️ ✨ 🎉</div>
+  <h1 style="font-family:'{hf}',sans-serif;font-size:2.8rem;font-weight:800;color:#fff;line-height:1.1;margin-bottom:14px">Make their day<br>unforgettable!</h1>
+  <p style="font-family:'{bf}',sans-serif;color:rgba(255,255,255,.82);max-width:380px;margin:0 auto 28px;font-size:15px;line-height:1.65">Create a magical birthday page in minutes. Send joy, not just a message.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button style="background:#fff;color:{p};border:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:700;cursor:pointer">🎂 Create a page</button>
+    <button style="background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.5);padding:14px 28px;border-radius:100px;font-size:14px;cursor:pointer">See examples →</button>
   </div>
+</div>"""
 
-  <!-- Cards -->
-  <div class="preview-frame" style="margin-top:16px">
-    <div class="preview-label">Cards</div>
-    <div class="preview-body" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="card">
-        <h3 style="font-family:var(--font-family-headings,'{h_font}',sans-serif);font-size:1.1rem;margin-bottom:8px">Feature title</h3>
-        <p style="font-size:13px;color:#666;line-height:1.6">A short description of what this feature does and why it matters to your workflow.</p>
+    if c.hero_pattern == "warm_split":
+        return f"""<div style="background:#fff5f0;padding:48px 36px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center">
+    <div>
+      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#999;margin-bottom:16px">COMMUNITY PLATFORM</div>
+      <h1 style="font-family:'{hf}',sans-serif;font-size:2.4rem;font-weight:600;color:#1a1a1a;line-height:1.2;margin-bottom:16px">Built for people,<br>not pipelines</h1>
+      <p style="font-family:'{bf}',sans-serif;font-size:14px;color:#666;line-height:1.7;margin-bottom:24px">Real connection. Real care. Technology that feels human.</p>
+      <button style="background:{p};color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">Get started</button>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,.06)">
+      <p style="font-family:'{bf}',sans-serif;font-size:14px;font-style:italic;color:#555;line-height:1.7;margin-bottom:16px">"This changed how we connect as a team — it feels like it was made for us."</p>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#f0e0d8"></div>
+        <div style="font-size:12px;color:#999">Sarah M. · Product Designer</div>
       </div>
-      <div class="card">
-        <h3 style="font-family:var(--font-family-headings,'{h_font}',sans-serif);font-size:1.1rem;margin-bottom:8px">Another feature</h3>
-        <p style="font-size:13px;color:#666;line-height:1.6">Each card shares the same radius, shadow, and spacing tokens from the generated theme.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Text block -->
-  <div class="preview-frame" style="margin-top:16px">
-    <div class="preview-label">Text block</div>
-    <div class="preview-body">
-      <h2 style="font-family:var(--font-family-headings,'{h_font}',sans-serif);font-size:1.6rem;margin-bottom:12px">
-        Typography in context
-      </h2>
-      <p style="color:#444;line-height:1.7;margin-bottom:10px">
-        This paragraph uses the generated body font at regular weight. The spacing, rhythm
-        and font pairing reflect the <em>style preset</em> derived from the brief analysis.
-      </p>
-      <p style="color:#666;font-size:13px;line-height:1.7">
-        Secondary text appears slightly smaller and lighter, maintaining the contrast
-        hierarchy defined by the accessibility tokens.
-      </p>
     </div>
   </div>
 </div>"""
 
-    # Scope the theme CSS inside #preview-root to avoid bleeding into the charter chrome
-    scoped_css = css.replace(":root", "#preview-root")
-    style_block = f"<style>{font_import}\n{scoped_css}</style>"
+    if c.hero_pattern == "corporate":
+        return f"""<div style="background:#f8f9fa;padding:48px 40px;border-left:4px solid {p}">
+  <div style="max-width:560px">
+    <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:{p};margin-bottom:16px">ENTERPRISE PLATFORM</div>
+    <h1 style="font-family:'{hf}',sans-serif;font-size:2.4rem;font-weight:700;color:#111;line-height:1.2;margin-bottom:18px">Build something<br>meaningful</h1>
+    <p style="font-family:'{bf}',sans-serif;font-size:14px;color:#555;line-height:1.7;margin-bottom:24px">Trusted by 2,000+ organizations worldwide. SOC 2 compliant.</p>
+    <div style="display:flex;gap:12px">
+      <button style="background:{p};color:#fff;border:none;padding:12px 24px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Schedule a demo</button>
+      <button style="background:transparent;color:{p};border:1.5px solid {p};padding:12px 24px;border-radius:4px;font-size:13px;cursor:pointer">Learn more</button>
+    </div>
+  </div>
+</div>"""
 
-    return style_block + preview_html
+    if c.hero_pattern == "dark_tech":
+        return f"""<div style="background:#0d1117;padding:56px 32px;text-align:center">
+  <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#3b82f6;margin-bottom:20px">INFRASTRUCTURE PLATFORM v3</div>
+  <h1 style="font-family:'{hf}',sans-serif;font-size:2.8rem;font-weight:700;color:#e2e8f0;line-height:1.1;margin-bottom:16px">Build faster.<br>Scale smarter.</h1>
+  <p style="font-family:'{bf}',sans-serif;color:#6b7280;max-width:440px;margin:0 auto 28px;font-size:14px;line-height:1.7">Zero-downtime deployments. Real-time observability. Full control.</p>
+  <div style="display:flex;gap:12px;justify-content:center">
+    <button style="background:{p};color:#fff;border:none;padding:12px 28px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Start for free →</button>
+    <button style="background:transparent;color:#94a3b8;border:1px solid #374151;padding:12px 28px;border-radius:4px;font-size:13px;cursor:pointer">View docs</button>
+  </div>
+</div>"""
+
+    if c.hero_pattern == "raw_bold":
+        return f"""<div style="background:#fff;padding:40px;border:3px solid #111">
+  <div style="font-size:8px;letter-spacing:.25em;color:#999;margin-bottom:16px">THE CHALLENGER PLATFORM / V.1 / 2026</div>
+  <h1 style="font-family:'{hf}',sans-serif;font-size:4rem;font-weight:900;color:#111;line-height:.88;text-transform:uppercase;margin-bottom:24px">BUILD.<br>BREAK.<br>WIN.</h1>
+  <button style="background:#111;color:#fff;border:none;padding:14px 36px;border-radius:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;cursor:pointer">START NOW →</button>
+</div>"""
+
+    # centered — startup_clean default
+    return f"""<div style="background:{p};padding:52px 32px;text-align:center;border-radius:{r}">
+  <h1 style="font-family:'{hf}',sans-serif;color:#fff;font-size:2.4rem;font-weight:700;margin-bottom:12px;line-height:1.1">Build something meaningful</h1>
+  <p style="font-family:'{bf}',sans-serif;color:rgba(255,255,255,.82);max-width:480px;margin:0 auto 24px;font-size:15px;line-height:1.65">A platform built for people who care about craft, clarity, and impact.</p>
+  <div style="display:flex;gap:12px;justify-content:center">
+    <button style="background:#fff;color:{p};border:none;padding:12px 24px;border-radius:{r};font-size:14px;font-weight:600;cursor:pointer">Get started</button>
+    <button style="background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.45);padding:12px 24px;border-radius:{r};font-size:14px;cursor:pointer">Learn more</button>
+  </div>
+</div>"""
+
+
+def _render_buttons_from_contract(c: RenderingContract) -> str:
+    p, s, hf = c.primary, c.secondary, c.heading_font
+    r = {"zero":"0px","small":"5px","medium":"8px","large":"12px","pill":"100px"}.get(c.radius_profile,"5px")
+
+    if c.button_family == "text_link":
+        return f"""<div style="display:flex;gap:32px;align-items:center;flex-wrap:wrap;padding:4px 0">
+  <span style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#111;border-bottom:1px solid #111;padding-bottom:2px;cursor:pointer">LIRE L'ARTICLE →</span>
+  <span style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#aaa;cursor:pointer">S'ABONNER</span>
+  <span style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#aaa;cursor:pointer">ARCHIVES</span>
+</div>"""
+
+    if c.button_family == "pill":
+        return f"""<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <button style="background:{p};color:#fff;border:none;padding:12px 28px;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer">🎂 Primary</button>
+  <button style="background:{s};color:#fff;border:none;padding:12px 28px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer">Secondary</button>
+  <button style="background:transparent;color:{p};border:2px solid {p};padding:12px 28px;border-radius:100px;font-size:14px;cursor:pointer">Outline</button>
+  <button style="background:transparent;color:#999;border:2px dashed #ddd;padding:12px 28px;border-radius:100px;font-size:14px;cursor:pointer">Ghost ✨</button>
+</div>"""
+
+    if c.button_family == "ghost_thin":
+        return f"""<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+  <button style="background:transparent;color:#111;border:1px solid #888;padding:10px 32px;border-radius:0;font-size:9px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer">DISCOVER</button>
+  <button style="background:transparent;color:#aaa;border:1px solid #ddd;padding:10px 32px;border-radius:0;font-size:9px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer">COLLECTION</button>
+  <span style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#999;cursor:pointer">VIEW MORE →</span>
+</div>"""
+
+    if c.button_family == "soft_rounded":
+        return f"""<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <button style="background:{p};color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">Get started</button>
+  <button style="background:#f5f5f5;color:#333;border:none;padding:12px 28px;border-radius:12px;font-size:14px;cursor:pointer">Learn more</button>
+  <button style="background:transparent;color:{p};border:1.5px solid {p};padding:12px 28px;border-radius:12px;font-size:14px;cursor:pointer">Outline</button>
+</div>"""
+
+    if c.button_family == "corporate":
+        return f"""<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <button style="background:{p};color:#fff;border:none;padding:11px 24px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Schedule a demo</button>
+  <button style="background:transparent;color:{p};border:1.5px solid {p};padding:11px 24px;border-radius:4px;font-size:13px;cursor:pointer">Learn more</button>
+  <button style="background:transparent;color:#666;border:1.5px solid #ddd;padding:11px 24px;border-radius:4px;font-size:13px;cursor:pointer">Download PDF</button>
+</div>"""
+
+    if c.button_family == "neon_border":
+        return f"""<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;background:#0d1117;padding:20px">
+  <button style="background:transparent;color:{p};border:1px solid {p};padding:11px 24px;border-radius:4px;font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer">Deploy →</button>
+  <button style="background:{p};color:#fff;border:none;padding:11px 24px;border-radius:4px;font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer">Start free</button>
+  <button style="background:transparent;color:#6b7280;border:1px solid #374151;padding:11px 24px;border-radius:4px;font-size:12px;cursor:pointer">View docs</button>
+</div>"""
+
+    if c.button_family == "raw_border":
+        return f"""<div style="display:flex;gap:0;flex-wrap:wrap;align-items:center">
+  <button style="background:#111;color:#fff;border:3px solid #111;padding:12px 28px;border-radius:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;cursor:pointer">PRIMARY</button>
+  <button style="background:#fff;color:#111;border:3px solid #111;padding:12px 28px;border-radius:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border-left:none;cursor:pointer">SECONDARY</button>
+  <button style="background:{p};color:#fff;border:3px solid {p};padding:12px 28px;border-radius:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border-left:none;cursor:pointer">ACCENT</button>
+</div>"""
+
+    # solid — startup_clean default
+    return f"""<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <button style="background:{p};color:#fff;border:none;padding:12px 24px;border-radius:{r};font-size:14px;font-weight:600;cursor:pointer">Primary</button>
+  <button style="background:{s};color:#fff;border:none;padding:12px 24px;border-radius:{r};font-size:14px;font-weight:600;cursor:pointer">Secondary</button>
+  <button style="background:transparent;color:{p};border:1.5px solid {p};padding:12px 24px;border-radius:{r};font-size:14px;cursor:pointer">Outline</button>
+  <button style="background:transparent;color:#666;border:1.5px solid #ddd;padding:12px 24px;border-radius:{r};font-size:14px;cursor:pointer">Ghost</button>
+</div>"""
+
+
+def _render_cards_from_contract(c: RenderingContract) -> str:
+    p, hf, bf = c.primary, c.heading_font, c.body_font
+    r = {"zero":"0px","small":"5px","medium":"8px","large":"14px","pill":"20px"}.get(c.radius_profile,"5px")
+    shadow = {
+        "none":"none","warm_soft":"0 4px 20px rgba(0,0,0,.06)",
+        "subtle":"0 1px 4px rgba(0,0,0,.08)","strong":"0 8px 32px rgba(0,0,0,.14)",
+        "glow":f"0 0 20px rgba(37,99,235,.2)","hard_offset":"4px 4px 0 #111",
+    }.get(c.shadow_style,"0 1px 4px rgba(0,0,0,.08)")
+
+    if c.card_family == "rule_only":
+        return f"""<div style="border-top:2px solid #111">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+    <div style="padding:24px 32px 24px 0;border-right:1px solid #e8e8e8">
+      <div style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#bbb;margin-bottom:12px">ESSAI · PHILOSOPHIE</div>
+      <h3 style="font-family:'{hf}',Georgia,serif;font-size:1.15rem;font-weight:400;color:#111;margin-bottom:10px;line-height:1.45">La lenteur comme résistance</h3>
+      <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#777;line-height:1.75">Une réflexion sur le rapport au temps dans les pratiques créatives contemporaines.</p>
+      <div style="margin-top:16px;font-size:9px;color:#bbb;letter-spacing:.06em">par S. Laurent · 12 min</div>
+    </div>
+    <div style="padding:24px 0 24px 32px">
+      <div style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#bbb;margin-bottom:12px">CRITIQUE · ART</div>
+      <h3 style="font-family:'{hf}',Georgia,serif;font-size:1.15rem;font-weight:400;color:#111;margin-bottom:10px;line-height:1.45">Ce que le vide dit de nous</h3>
+      <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#777;line-height:1.75">Analyse des pratiques minimalistes dans l'art contemporain européen.</p>
+      <div style="margin-top:16px;font-size:9px;color:#bbb;letter-spacing:.06em">par M. Dupont · 8 min</div>
+    </div>
+  </div>
+</div>"""
+
+    if c.card_family == "dashed_rounded":
+        return f"""<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div style="background:#fff8f0;border:2px dashed rgba(0,0,0,.14);border-radius:{r};padding:28px;text-align:center">
+    <div style="font-size:2.2rem;margin-bottom:12px">🎂</div>
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:700;color:#111;margin-bottom:8px">Birthday Pages</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#777;line-height:1.65">Photos, music, and heartfelt messages.</p>
+  </div>
+  <div style="background:#f0fff8;border:2px dashed rgba(0,0,0,.14);border-radius:{r};padding:28px;text-align:center">
+    <div style="font-size:2.2rem;margin-bottom:12px">✨</div>
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:700;color:#111;margin-bottom:8px">Sparkle Effects</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#777;line-height:1.65">Confetti, animations, festive energy.</p>
+  </div>
+</div>"""
+
+    if c.card_family == "line_separator":
+        return f"""<div>
+  <div style="padding:20px 0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:baseline">
+    <div>
+      <h3 style="font-family:'{hf}',Georgia,serif;font-size:1rem;font-weight:300;color:#111;letter-spacing:.02em">Craftsmanship</h3>
+      <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#aaa;margin-top:4px">Every detail considered, nothing superfluous.</p>
+    </div>
+    <span style="font-size:9px;letter-spacing:.1em;color:#ccc">01</span>
+  </div>
+  <div style="padding:20px 0;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:baseline">
+    <div>
+      <h3 style="font-family:'{hf}',Georgia,serif;font-size:1rem;font-weight:300;color:#111;letter-spacing:.02em">Discretion</h3>
+      <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#aaa;margin-top:4px">No noise. No excess. Only what matters.</p>
+    </div>
+    <span style="font-size:9px;letter-spacing:.1em;color:#ccc">02</span>
+  </div>
+  <div style="padding:20px 0;display:flex;justify-content:space-between;align-items:baseline">
+    <div>
+      <h3 style="font-family:'{hf}',Georgia,serif;font-size:1rem;font-weight:300;color:#111;letter-spacing:.02em">Longevity</h3>
+      <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#aaa;margin-top:4px">Timeless, not trending.</p>
+    </div>
+    <span style="font-size:9px;letter-spacing:.1em;color:#ccc">03</span>
+  </div>
+</div>"""
+
+    if c.card_family == "soft_card":
+        return f"""<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div style="background:#fff;border-radius:{r};padding:24px;box-shadow:{shadow};border:1px solid rgba(0,0,0,.04)">
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:600;color:#1a1a1a;margin-bottom:8px">For individuals</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#888;line-height:1.7">Personal tools that adapt to how you think and work.</p>
+  </div>
+  <div style="background:#fff;border-radius:{r};padding:24px;box-shadow:{shadow};border:1px solid rgba(0,0,0,.04)">
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:600;color:#1a1a1a;margin-bottom:8px">For teams</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#888;line-height:1.7">Shared spaces that bring people closer, not further apart.</p>
+  </div>
+</div>"""
+
+    if c.card_family == "bordered_table":
+        return f"""<div style="border:1.5px solid #e0e0e0;border-radius:4px;overflow:hidden">
+  <div style="display:grid;grid-template-columns:auto 1fr 1fr;border-bottom:1px solid #e8e8e8;background:#f9f9f9">
+    <div style="padding:10px 16px;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;border-right:1px solid #e8e8e8">Feature</div>
+    <div style="padding:10px 16px;font-size:10px;font-weight:700;color:{p};text-transform:uppercase;letter-spacing:.08em;border-right:1px solid #e8e8e8;text-align:center">Pro</div>
+    <div style="padding:10px 16px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.08em;text-align:center">Enterprise</div>
+  </div>
+  <div style="display:grid;grid-template-columns:auto 1fr 1fr;border-bottom:1px solid #f0f0f0">
+    <div style="padding:12px 16px;font-size:12px;color:#444;border-right:1px solid #f0f0f0">SSO / SAML</div>
+    <div style="padding:12px 16px;font-size:12px;color:{p};text-align:center;border-right:1px solid #f0f0f0">✓</div>
+    <div style="padding:12px 16px;font-size:12px;color:{p};text-align:center">✓</div>
+  </div>
+  <div style="display:grid;grid-template-columns:auto 1fr 1fr">
+    <div style="padding:12px 16px;font-size:12px;color:#444;border-right:1px solid #f0f0f0">Audit logs</div>
+    <div style="padding:12px 16px;font-size:12px;color:#ccc;text-align:center;border-right:1px solid #f0f0f0">—</div>
+    <div style="padding:12px 16px;font-size:12px;color:{p};text-align:center">✓</div>
+  </div>
+</div>"""
+
+    if c.card_family == "dark_card":
+        return f"""<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:{r};padding:24px">
+    <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#3b82f6;margin-bottom:12px">COMPUTE</div>
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:600;color:#e2e8f0;margin-bottom:8px">Auto-scaling</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#6b7280;line-height:1.65">Scales from 0 to 10k instances in seconds.</p>
+  </div>
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:{r};padding:24px">
+    <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#10b981;margin-bottom:12px">OBSERVABILITY</div>
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:600;color:#e2e8f0;margin-bottom:8px">Real-time metrics</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#6b7280;line-height:1.65">Full-stack traces, logs and alerts.</p>
+  </div>
+</div>"""
+
+    if c.card_family == "thick_border":
+        return f"""<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+  <div style="border:3px solid #111;padding:24px">
+    <div style="font-size:8px;letter-spacing:.2em;color:#999;margin-bottom:10px">01 / FUNCTION</div>
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:#111;margin-bottom:8px">Raw power</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#444;line-height:1.65">No compromise. No bloat. Just function.</p>
+  </div>
+  <div style="border:3px solid #111;border-left:none;padding:24px">
+    <div style="font-size:8px;letter-spacing:.2em;color:#999;margin-bottom:10px">02 / CONTROL</div>
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:#111;margin-bottom:8px">Your rules</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#444;line-height:1.65">Total ownership. Zero abstraction.</p>
+  </div>
+</div>"""
+
+    # elevated — startup_clean default
+    return f"""<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div style="background:#fff;border-radius:{r};padding:24px;box-shadow:{shadow};border:1px solid rgba(0,0,0,.05)">
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:600;color:#111;margin-bottom:8px">Feature title</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#666;line-height:1.65">Shape, shadow, and radius are derived from the visual profile.</p>
+  </div>
+  <div style="background:#fff;border-radius:{r};padding:24px;box-shadow:{shadow};border:1px solid rgba(0,0,0,.05)">
+    <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:600;color:#111;margin-bottom:8px">Another feature</h3>
+    <p style="font-family:'{bf}',sans-serif;font-size:12px;color:#666;line-height:1.65">Every contract produces a visually distinct result.</p>
+  </div>
+</div>"""
+
+
+def render_direction_preview(contract: RenderingContract, scoped_css: str, font_import: str) -> str:
+    """
+    Render a single creative direction as a self-contained preview block.
+    Consumes ONLY the RenderingContract — no external fallback.
+    """
+    hero    = _render_hero_from_contract(contract)
+    buttons = _render_buttons_from_contract(contract)
+    cards   = _render_cards_from_contract(contract)
+
+    bg = "#0d1117" if contract.hero_pattern == "dark_tech" else "#fff"
+    txt_color = "#e2e8f0" if contract.hero_pattern == "dark_tech" else "#444"
+
+    return f"""
+<div style="margin-bottom:32px;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden">
+  <!-- Direction header -->
+  <div style="background:#f5f5f5;padding:10px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;gap:12px">
+    <span style="font-size:11px;font-weight:700;color:#111">{contract.direction_name}</span>
+    <span style="font-size:10px;color:#999;font-family:monospace">{contract.archetype}</span>
+    <span style="margin-left:auto;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#bbb">{contract.hero_pattern} / {contract.button_family} / {contract.card_family}</span>
+  </div>
+  <!-- Hero -->
+  <div style="border-bottom:1px solid #eee">
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#bbb;padding:5px 12px;background:#fafafa;border-bottom:1px solid #f0f0f0">HERO</div>
+    {hero}
+  </div>
+  <!-- Buttons -->
+  <div style="border-bottom:1px solid #eee">
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#bbb;padding:5px 12px;background:#fafafa;border-bottom:1px solid #f0f0f0">BUTTONS</div>
+    <div style="padding:20px 24px;background:{bg}">
+      {buttons}
+    </div>
+  </div>
+  <!-- Cards -->
+  <div>
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#bbb;padding:5px 12px;background:#fafafa;border-bottom:1px solid #f0f0f0">CARDS</div>
+    <div style="padding:20px 24px;background:{bg}">
+      {cards}
+    </div>
+  </div>
+</div>"""
+
+
+def render_preview(preset: dict | None, css: str | None, style_dna=None, exploration=None) -> str:
+    if preset is None or css is None:
+        return "<p style=\'color:#999\'>Preview unavailable — theme generation failed.</p>"
+
+    h_font = preset.get("font_family_headings", "sans-serif")
+    b_font = preset.get("font_family_body",     "sans-serif")
+    gf_url = preset.get("font_google_url", "")
+    font_import = f'@import url("{gf_url}");' if gf_url else ""
+
+    cs        = preset.get("color_system", {})
+    primary   = cs.get("primary",   {}).get("base", "#2563eb")
+    secondary = cs.get("secondary", {}).get("base", "#7c3aed")
+
+    # Scope the theme CSS to avoid bleeding into the charter chrome
+    scoped_css = css.replace(":root", "#preview-root")
+
+    # Get directions from exploration output
+    directions = []
+    if exploration is not None:
+        directions = getattr(exploration, "directions", []) or []
+
+    if not directions:
+        # Fallback: single preview from style_dna archetype tag
+        archetype = "startup_clean"
+        if style_dna:
+            tags = getattr(style_dna, "aesthetic_tags", []) or []
+            if tags:
+                archetype = tags[0]
+
+        class _FakeDir:
+            id = "dir_0"; name = archetype; style_archetype = archetype
+        contract = derive_rendering_contract(_FakeDir(), primary, secondary, h_font, b_font)
+        block = render_direction_preview(contract, scoped_css, font_import)
+        style_block = f"<style>{font_import}\n{scoped_css}</style>"
+        return style_block + f'<div id="preview-root">{block}</div>'
+
+    # One RenderingContract per direction → one preview block per direction
+    blocks = []
+    for d in directions:
+        contract = derive_rendering_contract(d, primary, secondary, h_font, b_font)
+        blocks.append(render_direction_preview(contract, scoped_css, font_import))
+
+    style_block = f"<style>{font_import}\n{scoped_css}</style>"
+    return style_block + f'<div id="preview-root">{"".join(blocks)}</div>'
 
 
 def render_raw_json(style_dna, palette_output, preset) -> str:
@@ -1069,7 +1577,7 @@ def generate_html(
         _section("06 · Theme tokens",
                  render_tokens(css, preset)),
         _section("07 · UI Preview",
-                 render_preview(preset, css)),
+                 render_preview(preset, css, style_dna, exploration)),
         _section("08 · Raw JSON",
                  render_raw_json(style_dna, palette_output, preset)),
     ]
@@ -1143,6 +1651,590 @@ TEST_BRIEFS: list[tuple[str, str]] = [
         """),
     ),
 ]
+
+
+# ── Landing Page Generator ────────────────────────────────────────────────────
+# Generates one complete standalone landing page per project.
+# Picks the creative direction that best matches the brief.
+# Output: output/<project>/landing_page.html
+
+def _select_direction(exploration, brief_text: str):
+    """
+    Pick the single creative direction that best matches the brief.
+    Uses keyword signals to override the primary direction when appropriate.
+    """
+    if exploration is None:
+        return None
+    directions = getattr(exploration, "directions", []) or []
+    if not directions:
+        return None
+
+    brief_lower = brief_text.lower()
+
+    # Signal mapping: if brief contains these words → prefer this archetype
+    BRIEF_SIGNALS = [
+        (["editorial", "magazine", "revue", "publication", "art publishing", "museum", "culture", "philosophy"], "editorial_magazine"),
+        (["birthday", "celebration", "confetti", "sparkle", "festive", "playful", "candles", "gifting"], "playful_brand"),
+        (["luxury", "premium", "haute", "exclusive", "couture", "maison"], "luxury_minimal"),
+        (["brutalist", "raw", "brutal", "unconventional"], "brutalist"),
+        (["tech", "infrastructure", "developer", "devops", "platform", "saas", "api", "data"], "startup_clean"),
+    ]
+
+    best_archetype: str | None = None
+    best_score = 0
+    for signals, archetype in BRIEF_SIGNALS:
+        score = sum(1 for s in signals if s in brief_lower)
+        if score > best_score:
+            best_score = score
+            best_archetype = archetype
+
+    if best_archetype:
+        # Find direction matching that archetype
+        for d in directions:
+            if getattr(d, "style_archetype", None) == best_archetype:
+                return d
+
+    # Fallback: direction_1 (highest confidence)
+    return directions[0]
+
+
+def _ctx(project_name: str, brief_text: str, dna, preset: dict | None) -> dict:
+    """Extract a rendering context dict from pipeline outputs."""
+    cs = (preset or {}).get("color_system", {})
+    primary   = cs.get("primary",   {}).get("base", "#2563eb")
+    secondary = cs.get("secondary", {}).get("base", "#7c3aed")
+    h_font    = (preset or {}).get("font_family_headings", "Inter")
+    b_font    = (preset or {}).get("font_family_body",     "Inter")
+    gf_url    = (preset or {}).get("font_google_url", "")
+
+    industry  = (getattr(dna, "industry",        None) or "").strip()  if dna else ""
+    tone      = (getattr(dna, "tone",            None) or "").strip()  if dna else ""
+    audience  = (getattr(dna, "target_audience", None) or "").strip()  if dna else ""
+    values    = getattr(dna, "brand_values", []) or []
+    keywords  = getattr(dna, "keywords",     []) or []
+
+    return dict(
+        name=project_name,
+        slug=project_name.lower().replace(" ", "_"),
+        industry=industry,
+        tone=tone,
+        audience=audience,
+        values=values,
+        keywords=keywords,
+        primary=primary,
+        secondary=secondary,
+        h_font=h_font,
+        b_font=b_font,
+        gf_url=gf_url,
+    )
+
+
+def _lp_nav_editorial(ctx: dict) -> str:
+    p = ctx["primary"]
+    return f"""
+<nav style="position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #e0e0e0;padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:56px">
+  <span style="font-family:'{ctx['h_font']}',Georgia,serif;font-size:1.1rem;font-weight:400;letter-spacing:.04em;color:#111">{ctx['name'].upper()}</span>
+  <div style="display:flex;gap:32px;align-items:center">
+    <a style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#666;text-decoration:none;cursor:pointer">Revue</a>
+    <a style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#666;text-decoration:none;cursor:pointer">Art</a>
+    <a style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#666;text-decoration:none;cursor:pointer">Philosophie</a>
+    <a style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#111;text-decoration:none;border-bottom:1px solid #111;padding-bottom:1px;cursor:pointer">S'abonner</a>
+  </div>
+</nav>"""
+
+
+def _lp_nav_playful(ctx: dict) -> str:
+    p = ctx["primary"]
+    return f"""
+<nav style="background:#fff;border-bottom:2px solid {p}20;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px">
+  <span style="font-family:'{ctx['h_font']}',sans-serif;font-size:1.2rem;font-weight:800;color:{p}">🕯️ {ctx['name']}</span>
+  <div style="display:flex;gap:24px;align-items:center">
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Examples</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">How it works</a>
+    <button style="background:{p};color:#fff;border:none;padding:9px 20px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer">Create for free 🎉</button>
+  </div>
+</nav>"""
+
+
+def _lp_nav_saas(ctx: dict) -> str:
+    p = ctx["primary"]
+    return f"""
+<nav style="background:#fff;border-bottom:1px solid #e8e8e8;padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:60px">
+  <span style="font-family:'{ctx['h_font']}',sans-serif;font-size:1rem;font-weight:700;color:#111;letter-spacing:-.01em">{ctx['name'].upper()}</span>
+  <div style="display:flex;gap:28px;align-items:center">
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Product</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Docs</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Pricing</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Sign in</a>
+    <button style="background:{p};color:#fff;border:none;padding:9px 20px;border-radius:5px;font-size:13px;font-weight:600;cursor:pointer">Get started →</button>
+  </div>
+</nav>"""
+
+
+def _lp_nav_corporate(ctx: dict) -> str:
+    p = ctx["primary"]
+    return f"""
+<nav style="background:#fff;border-bottom:1px solid #e8e8e8;padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:60px">
+  <span style="font-family:'{ctx['h_font']}',sans-serif;font-size:1rem;font-weight:700;color:#111">{ctx['name']}</span>
+  <div style="display:flex;gap:28px;align-items:center">
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Solutions</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Enterprise</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Resources</a>
+    <a style="font-size:13px;color:#555;text-decoration:none;cursor:pointer">Contact</a>
+    <button style="background:{p};color:#fff;border:none;padding:9px 20px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Request a demo</button>
+  </div>
+</nav>"""
+
+
+def _lp_editorial_page(ctx: dict, css: str) -> str:
+    p, s = ctx["primary"], ctx["secondary"]
+    hf, bf = ctx["h_font"], ctx["b_font"]
+    gf = f'<link rel="stylesheet" href="{ctx["gf_url"]}">' if ctx["gf_url"] else ""
+    vals = ctx["values"][:3] or ["editorial", "contemplative", "rigorous"]
+    kw   = ctx["keywords"][:4] or ["culture", "philosophy", "art", "thought"]
+
+    return f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{ctx['name']} — Revue de culture et de philosophie</title>
+  {gf}
+  <style>
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{ font-family: '{bf}', Georgia, serif; background: #fff; color: #111; line-height: 1.6; }}
+    .page {{ max-width: 1100px; margin: 0 auto; padding: 0 48px; }}
+    a {{ text-decoration: none; color: inherit; cursor: pointer; }}
+  </style>
+</head>
+<body>
+
+{_lp_nav_editorial(ctx)}
+
+<!-- HERO — MASTHEAD -->
+<section style="padding: 80px 0 64px; border-bottom: 2px solid #111;">
+  <div class="page">
+    <div style="display:grid;grid-template-columns:1fr 400px;gap:64px;align-items:end">
+      <div>
+        <div style="font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:#aaa;margin-bottom:24px">N°47 · PRINTEMPS 2026 · {ctx['industry'].upper() or 'CULTURE & PHILOSOPHIE'}</div>
+        <h1 style="font-family:'{hf}',Georgia,'Times New Roman',serif;font-size:5rem;font-weight:300;line-height:.92;letter-spacing:-.025em;color:#111;margin-bottom:28px">Sur la beauté<br>de l'inachevé</h1>
+        <p style="font-size:15px;color:#555;line-height:1.8;max-width:520px;margin-bottom:32px">
+          Comment les œuvres laissées ouvertes — fragments, ébauches, tentatives — nous disent-elles davantage que les œuvres closes ? Une méditation sur l'incomplétude comme forme d'honnêteté.
+        </p>
+        <a href="#" style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#111;border-bottom:1px solid #111;padding-bottom:3px">LIRE L'ARTICLE →</a>
+      </div>
+      <div style="border-left:1px solid #e0e0e0;padding-left:40px">
+        <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#bbb;margin-bottom:20px">À LIRE AUSSI</div>
+        <div style="margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid #f0f0f0">
+          <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#ccc;margin-bottom:8px">ESSAI</div>
+          <p style="font-size:14px;font-weight:400;color:#111;line-height:1.4;margin-bottom:6px">La lenteur comme acte politique</p>
+          <span style="font-size:11px;color:#999">par M. Descamps · 14 min</span>
+        </div>
+        <div style="margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid #f0f0f0">
+          <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#ccc;margin-bottom:8px">CRITIQUE</div>
+          <p style="font-size:14px;font-weight:400;color:#111;line-height:1.4;margin-bottom:6px">Ce que le silence révèle dans l'art contemporain</p>
+          <span style="font-size:11px;color:#999">par A. Moreau · 9 min</span>
+        </div>
+        <div>
+          <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#ccc;margin-bottom:8px">ENTRETIEN</div>
+          <p style="font-size:14px;font-weight:400;color:#111;line-height:1.4;margin-bottom:6px">Conversation avec Hito Steyerl sur les images et la vitesse</p>
+          <span style="font-size:11px;color:#999">propos recueillis par S. Laurent · 18 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1 — DANS CE NUMÉRO -->
+<section style="padding:64px 0;border-bottom:1px solid #e0e0e0">
+  <div class="page">
+    <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#aaa;margin-bottom:40px">DANS CE NUMÉRO</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0">
+      <div style="padding-right:40px;border-right:1px solid #e8e8e8">
+        <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:hsl(from {p} h s 60%);margin-bottom:16px">PHILOSOPHIE</div>
+        <h2 style="font-family:'{hf}',Georgia,serif;font-size:1.3rem;font-weight:400;line-height:1.35;color:#111;margin-bottom:12px">Les formes du doute dans la pensée contemporaine</h2>
+        <p style="font-size:12px;color:#777;line-height:1.75;margin-bottom:16px">Un parcours à travers cinq philosophes qui ont fait de l'incertitude une méthode, plutôt qu'un obstacle.</p>
+        <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#aaa">D. Ricard · 22 min</span>
+      </div>
+      <div style="padding:0 40px;border-right:1px solid #e8e8e8">
+        <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:hsl(from {p} h s 60%);margin-bottom:16px">ART</div>
+        <h2 style="font-family:'{hf}',Georgia,serif;font-size:1.3rem;font-weight:400;line-height:1.35;color:#111;margin-bottom:12px">Cartographies du vide — cinq installations européennes</h2>
+        <p style="font-size:12px;color:#777;line-height:1.75;margin-bottom:16px">De Berlin à Lisbonne, des artistes travaillent l'espace comme matériau de pensée. Enquête photographique.</p>
+        <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#aaa">L. Fassi · 16 min</span>
+      </div>
+      <div style="padding-left:40px">
+        <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:hsl(from {p} h s 60%);margin-bottom:16px">LITTÉRATURE</div>
+        <h2 style="font-family:'{hf}',Georgia,serif;font-size:1.3rem;font-weight:400;line-height:1.35;color:#111;margin-bottom:12px">Relire W.G. Sebald en 2026</h2>
+        <p style="font-size:12px;color:#777;line-height:1.75;margin-bottom:16px">Pourquoi l'écrivain allemand n'a jamais été aussi nécessaire qu'aujourd'hui. Une relectue avec les yeux de l'inquiétude.</p>
+        <span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#aaa">T. Nora · 11 min</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — NOTE ÉDITORIALE / PULL QUOTE -->
+<section style="padding:80px 0;background:#f9f8f6;border-bottom:1px solid #e0e0e0">
+  <div class="page">
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:64px">
+      <div>
+        <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#aaa;writing-mode:vertical-rl;transform:rotate(180deg)">NOTE ÉDITORIALE</div>
+      </div>
+      <div style="max-width:680px">
+        <p style="font-family:'{hf}',Georgia,serif;font-size:1.5rem;font-weight:300;line-height:1.6;color:#222;margin-bottom:32px;font-style:italic">
+          "Nous vivons dans une époque qui confond vitesse et intelligence, volume et profondeur. Cette revue est une tentative de résistance — douce, mais déterminée."
+        </p>
+        <div style="width:48px;height:1px;background:#ccc;margin-bottom:24px"></div>
+        <p style="font-size:13px;color:#777;line-height:1.75;margin-bottom:8px">
+          {ctx['name']} paraît quatre fois par an. Chaque numéro explore un thème à travers des essais, des critiques, des entretiens et des formes hybrides.
+          Notre ambition : donner du temps à la pensée.
+        </p>
+        <p style="font-size:11px;letter-spacing:.08em;color:#aaa;text-transform:uppercase">— La rédaction</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — CTA ABONNEMENT -->
+<section style="padding:80px 0;border-bottom:1px solid #e0e0e0">
+  <div class="page" style="display:grid;grid-template-columns:1fr 400px;gap:64px;align-items:center">
+    <div>
+      <div style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#aaa;margin-bottom:20px">S'ABONNER</div>
+      <h2 style="font-family:'{hf}',Georgia,serif;font-size:2.2rem;font-weight:300;line-height:1.2;color:#111;margin-bottom:16px">Quatre numéros par an.<br>Une pensée continue.</h2>
+      <p style="font-size:13px;color:#666;line-height:1.8">Recevez chaque numéro chez vous, en France et à l'international. Accès aux archives numériques inclus.</p>
+    </div>
+    <div style="border:1px solid #e0e0e0;padding:36px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #f0f0f0">
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px">Abonnement annuel</div>
+          <div style="font-size:2rem;font-weight:300;color:#111">48 €<span style="font-size:12px;color:#aaa;font-weight:400"> /an</span></div>
+        </div>
+        <span style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#aaa;border:1px solid #e0e0e0;padding:4px 10px">PAPIER + NUMÉRIQUE</span>
+      </div>
+      <button style="width:100%;background:#111;color:#fff;border:none;padding:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer">S'ABONNER</button>
+      <p style="font-size:10px;color:#bbb;text-align:center;margin-top:12px;letter-spacing:.05em">RÉSILIATION POSSIBLE À TOUT MOMENT</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="padding:40px 0;background:#fff">
+  <div class="page" style="display:flex;justify-content:space-between;align-items:center">
+    <span style="font-family:'{hf}',Georgia,serif;font-size:.9rem;color:#999;letter-spacing:.04em">{ctx['name'].upper()}</span>
+    <div style="display:flex;gap:24px">
+      <a style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#ccc">Mentions légales</a>
+      <a style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#ccc">Contact</a>
+      <a style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#ccc">ISSN 2026-XXXX</a>
+    </div>
+    <span style="font-size:10px;color:#ddd">© 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>"""
+
+
+def _lp_playful_page(ctx: dict, css: str) -> str:
+    p, s = ctx["primary"], ctx["secondary"]
+    hf, bf = ctx["h_font"], ctx["b_font"]
+    gf = f'<link rel="stylesheet" href="{ctx["gf_url"]}">' if ctx["gf_url"] else ""
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{ctx['name']} — Create magical birthday pages</title>
+  {gf}
+  <style>
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{ font-family: '{bf}', sans-serif; background: #fff; color: #111; line-height: 1.6; }}
+    .page {{ max-width: 1060px; margin: 0 auto; padding: 0 32px; }}
+    a {{ text-decoration: none; color: inherit; cursor: pointer; }}
+  </style>
+</head>
+<body>
+
+{_lp_nav_playful(ctx)}
+
+<!-- HERO -->
+<section style="background:{p};padding:80px 32px 72px;text-align:center">
+  <div class="page">
+    <div style="font-size:4rem;margin-bottom:20px">🕯️ ✨ 🎉</div>
+    <h1 style="font-family:'{hf}',sans-serif;font-size:3.5rem;font-weight:800;color:#fff;line-height:1.05;margin-bottom:20px">Create the birthday page<br>they'll never forget</h1>
+    <p style="font-family:'{bf}',sans-serif;font-size:1.1rem;color:rgba(255,255,255,.85);max-width:500px;margin:0 auto 36px;line-height:1.65">Add photos, music, messages, and confetti. Share it in one link. Free to start.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <button style="background:#fff;color:{p};border:none;padding:16px 36px;border-radius:100px;font-size:1rem;font-weight:800;cursor:pointer">🎂 Create a page — it's free</button>
+      <button style="background:rgba(255,255,255,.16);color:#fff;border:2px solid rgba(255,255,255,.45);padding:16px 32px;border-radius:100px;font-size:1rem;cursor:pointer">See examples →</button>
+    </div>
+    <p style="font-size:12px;color:rgba(255,255,255,.55);margin-top:20px">No account needed · Ready in 5 minutes · 100% free</p>
+  </div>
+</section>
+
+<!-- SECTION 1 — HOW IT WORKS -->
+<section style="padding:80px 0;border-bottom:2px dashed {p}22">
+  <div class="page">
+    <div style="text-align:center;margin-bottom:56px">
+      <h2 style="font-family:'{hf}',sans-serif;font-size:2rem;font-weight:800;color:#111;margin-bottom:12px">As easy as 1, 2, 🎁</h2>
+      <p style="font-size:15px;color:#777;max-width:420px;margin:0 auto">Three steps and you're done. No design skills needed.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px">
+      <div style="text-align:center">
+        <div style="width:72px;height:72px;background:{p}18;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px">🎨</div>
+        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:{p};font-weight:700;margin-bottom:10px">STEP 01</div>
+        <h3 style="font-family:'{hf}',sans-serif;font-size:1.1rem;font-weight:700;color:#111;margin-bottom:8px">Pick a vibe</h3>
+        <p style="font-size:13px;color:#777;line-height:1.7">Choose from dozens of themes — sparkly, cozy, tropical, retro. There's one for every personality.</p>
+      </div>
+      <div style="text-align:center">
+        <div style="width:72px;height:72px;background:{s}18;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px">📸</div>
+        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:{s};font-weight:700;margin-bottom:10px">STEP 02</div>
+        <h3 style="font-family:'{hf}',sans-serif;font-size:1.1rem;font-weight:700;color:#111;margin-bottom:8px">Add your magic</h3>
+        <p style="font-size:13px;color:#777;line-height:1.7">Upload photos, write heartfelt messages, add a playlist, or record a quick video. Make it personal.</p>
+      </div>
+      <div style="text-align:center">
+        <div style="width:72px;height:72px;background:#f0fff418;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px">🔗</div>
+        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#16a34a;font-weight:700;margin-bottom:10px">STEP 03</div>
+        <h3 style="font-family:'{hf}',sans-serif;font-size:1.1rem;font-weight:700;color:#111;margin-bottom:8px">Share the joy</h3>
+        <p style="font-size:13px;color:#777;line-height:1.7">Send your link by text, email, or WhatsApp. Watch them cry happy tears when they open it. 🥹</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — FEATURES -->
+<section style="padding:80px 0;background:#fffbf5;border-bottom:2px dashed {p}22">
+  <div class="page">
+    <div style="text-align:center;margin-bottom:48px">
+      <h2 style="font-family:'{hf}',sans-serif;font-size:2rem;font-weight:800;color:#111;margin-bottom:12px">Everything you need to celebrate ✨</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+      {''.join(f"""<div style="background:#fff;border:2px dashed {p}33;border-radius:20px;padding:28px;text-align:center">
+        <div style="font-size:2rem;margin-bottom:12px">{emoji}</div>
+        <h3 style="font-family:'{hf}',sans-serif;font-size:.95rem;font-weight:700;color:#111;margin-bottom:8px">{title}</h3>
+        <p style="font-size:12px;color:#888;line-height:1.65">{desc}</p>
+      </div>""" for emoji, title, desc in [
+        ("🖼️", "Photo gallery", "Add up to 50 photos and let memories do the talking."),
+        ("🎵", "Music playlist", "Pick songs that remind you of them. Auto-plays on open."),
+        ("💌", "Group messages", "Invite friends to contribute their own messages secretly."),
+        ("🎊", "Confetti effect", "Because birthdays need at least a little chaos."),
+        ("⏳", "Countdown timer", "Build suspense from 7 days out. Drama is encouraged."),
+        ("📱", "Mobile-first", "Looks perfect on any device. No app download required."),
+      ])}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — TESTIMONIALS -->
+<section style="padding:80px 0;border-bottom:2px dashed {p}22">
+  <div class="page">
+    <div style="text-align:center;margin-bottom:48px">
+      <h2 style="font-family:'{hf}',sans-serif;font-size:2rem;font-weight:800;color:#111;margin-bottom:12px">People are actually crying 🥹 (happy tears)</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+      {''.join(f"""<div style="background:{bg};border-radius:20px;padding:28px">
+        <div style="font-size:1.5rem;margin-bottom:12px">{stars}</div>
+        <p style="font-size:14px;color:#333;line-height:1.7;font-style:italic;margin-bottom:16px">"{quote}"</p>
+        <div style="font-size:12px;color:#999">{author}</div>
+      </div>""" for bg, stars, quote, author in [
+        ("#fff8f0", "⭐⭐⭐⭐⭐", "I made one for my mom's 60th and she cried for 10 minutes. Best gift I've ever given and it was free.", "— Léa M., Lyon"),
+        ("#f0fff8", "⭐⭐⭐⭐⭐", "My whole friend group contributed messages for my partner's birthday. She was completely speechless. 10/10.", "— Theo K., Berlin"),
+        ("#fff0f8", "⭐⭐⭐⭐⭐", "I'm not a creative person at all but the page looked stunning. Took me 8 minutes. Sent it in 9.", "— Priya S., London"),
+      ])}
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section style="background:{p};padding:80px 32px;text-align:center">
+  <div class="page">
+    <div style="font-size:2.5rem;margin-bottom:20px">🎂</div>
+    <h2 style="font-family:'{hf}',sans-serif;font-size:2.5rem;font-weight:800;color:#fff;margin-bottom:16px">Someone's birthday is coming up.</h2>
+    <p style="font-size:1rem;color:rgba(255,255,255,.85);max-width:400px;margin:0 auto 32px;line-height:1.65">Create something they'll screenshot and save forever. It takes 5 minutes and it's free.</p>
+    <button style="background:#fff;color:{p};border:none;padding:18px 48px;border-radius:100px;font-size:1.1rem;font-weight:800;cursor:pointer">✨ Create your page now</button>
+    <p style="font-size:11px;color:rgba(255,255,255,.5);margin-top:16px">No account needed · No credit card · Always free</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#111;padding:48px 0">
+  <div class="page" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
+    <span style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:800;color:#fff">🕯️ {ctx['name']}</span>
+    <div style="display:flex;gap:24px">
+      <a style="font-size:12px;color:#777">Privacy</a>
+      <a style="font-size:12px;color:#777">Terms</a>
+      <a style="font-size:12px;color:#777">Contact</a>
+    </div>
+    <span style="font-size:12px;color:#555">Made with ❤️ for birthdays everywhere · © 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>"""
+
+
+def _lp_saas_page(ctx: dict, css: str) -> str:
+    p, s = ctx["primary"], ctx["secondary"]
+    hf, bf = ctx["h_font"], ctx["b_font"]
+    gf = f'<link rel="stylesheet" href="{ctx["gf_url"]}">' if ctx["gf_url"] else ""
+    kw = ctx["keywords"][:3] or ["automation", "reliability", "control"]
+    vals = ctx["values"][:3] or ["precision", "control", "reliability"]
+    industry_upper = (ctx["industry"] or "INFRASTRUCTURE PLATFORM").upper()
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{ctx['name']} — Data infrastructure automation for serious teams</title>
+  {gf}
+  <style>
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{ font-family: '{bf}', sans-serif; background: #fff; color: #111; line-height: 1.6; }}
+    .page {{ max-width: 1080px; margin: 0 auto; padding: 0 48px; }}
+    a {{ text-decoration: none; color: inherit; cursor: pointer; }}
+  </style>
+</head>
+<body>
+
+{_lp_nav_saas(ctx)}
+
+<!-- HERO -->
+<section style="background:{p};padding:80px 48px 72px;text-align:center">
+  <div class="page">
+    <div style="display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 16px;border-radius:100px;font-size:11px;color:rgba(255,255,255,.8);letter-spacing:.08em;margin-bottom:28px">NOW IN PUBLIC BETA — Join 2,000+ teams</div>
+    <h1 style="font-family:'{hf}',sans-serif;font-size:3.5rem;font-weight:700;color:#fff;line-height:1.05;margin-bottom:20px;letter-spacing:-.02em">The infrastructure platform<br>built for precision</h1>
+    <p style="font-family:'{bf}',sans-serif;font-size:1.05rem;color:rgba(255,255,255,.82);max-width:540px;margin:0 auto 36px;line-height:1.7">Automate your data infrastructure with confidence. Zero-downtime deploys, real-time observability, and full control for engineering teams who care about reliability.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <button style="background:#fff;color:{p};border:none;padding:14px 32px;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer">Start for free →</button>
+      <button style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3);padding:14px 28px;border-radius:5px;font-size:14px;cursor:pointer">Schedule a demo</button>
+    </div>
+    <div style="display:flex;gap:40px;justify-content:center;margin-top:48px;flex-wrap:wrap">
+      {''.join(f'<div style="text-align:center"><div style="font-size:1.6rem;font-weight:700;color:#fff">{val}</div><div style="font-size:11px;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;margin-top:4px">{label}</div></div>' for val, label in [("99.99%", "Uptime SLA"), ("<200ms", "p99 latency"), ("2,400+", "Teams"), ("10B+", "Events/day")])}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1 — FEATURES -->
+<section style="padding:80px 0;border-bottom:1px solid #e8e8e8">
+  <div class="page">
+    <div style="margin-bottom:56px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:{p};margin-bottom:12px">WHAT WE DO</div>
+      <h2 style="font-family:'{hf}',sans-serif;font-size:2.2rem;font-weight:700;color:#111;margin-bottom:16px;letter-spacing:-.01em">Built for precision at scale</h2>
+      <p style="font-size:15px;color:#666;max-width:540px;line-height:1.7">Every feature is designed for engineering teams that can't afford surprises.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px">
+      {''.join(f"""<div>
+        <div style="width:44px;height:44px;background:{p}12;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:20px">{icon}</div>
+        <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:700;color:#111;margin-bottom:8px">{title}</h3>
+        <p style="font-size:13px;color:#666;line-height:1.7">{desc}</p>
+      </div>""" for icon, title, desc in [
+        ("⚡", "Zero-downtime deploys", "Blue/green and canary deployments out of the box. Roll forward or back in under 30 seconds."),
+        ("📊", "Real-time observability", "Full-stack traces, structured logs, and custom metrics. One pane of glass for your entire infrastructure."),
+        ("🔒", "Security by default", "SOC 2 Type II certified. RBAC, audit logs, and end-to-end encryption. Compliance built in, not bolted on."),
+        ("🔄", "Intelligent auto-scaling", "Scale from 0 to millions of requests without touching a config file. Cost-optimized automatically."),
+        ("🧩", "API-first design", "Everything you can do in the UI, you can do via API. Integrate with your existing workflow in minutes."),
+        ("📍", "Multi-region by default", "Deploy to 20+ regions globally. Latency-optimized routing and automatic failover included."),
+      ])}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — HOW IT WORKS -->
+<section style="padding:80px 0;background:#f8f9fa;border-bottom:1px solid #e8e8e8">
+  <div class="page">
+    <div style="text-align:center;margin-bottom:56px">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:{p};margin-bottom:12px">HOW IT WORKS</div>
+      <h2 style="font-family:'{hf}',sans-serif;font-size:2.2rem;font-weight:700;color:#111;letter-spacing:-.01em">From code to production in minutes</h2>
+    </div>
+    <div style="position:relative">
+      <div style="position:absolute;left:24px;top:0;bottom:0;width:1px;background:#e0e0e0"></div>
+      {''.join(f"""<div style="display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:start;margin-bottom:40px;position:relative">
+        <div style="width:48px;height:48px;background:{p};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;position:relative;z-index:1">{num}</div>
+        <div style="padding-top:10px">
+          <h3 style="font-family:'{hf}',sans-serif;font-size:1rem;font-weight:700;color:#111;margin-bottom:6px">{title}</h3>
+          <p style="font-size:13px;color:#666;line-height:1.7;max-width:600px">{desc}</p>
+        </div>
+      </div>""" for num, title, desc in [
+        ("01", "Connect your repository", "Link your GitHub, GitLab, or Bitbucket in one click. We detect your stack automatically."),
+        ("02", "Define your infrastructure", "Use our declarative config or import your existing Terraform. No proprietary DSL to learn."),
+        ("03", "Deploy with confidence", "Every push triggers a validated pipeline. Automated testing, security scanning, and staged rollout."),
+        ("04", "Monitor and iterate", "Real-time dashboards, alerts, and distributed tracing. Know what's happening before your users do."),
+      ])}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — SOCIAL PROOF -->
+<section style="padding:80px 0;border-bottom:1px solid #e8e8e8">
+  <div class="page" style="text-align:center">
+    <p style="font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:#aaa;margin-bottom:40px">TRUSTED BY ENGINEERING TEAMS AT</p>
+    <div style="display:flex;gap:48px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:56px">
+      {''.join(f'<span style="font-family:\'{hf}\',sans-serif;font-size:1rem;font-weight:700;color:#ccc;letter-spacing:-.01em">{name}</span>' for name in ["Axiom", "Vercel", "PlanetScale", "Resend", "Cal.com", "Liveblocks"])}
+    </div>
+    <div style="background:#f8f9fa;border:1px solid #e8e8e8;border-radius:8px;padding:40px;max-width:680px;margin:0 auto;text-align:left">
+      <p style="font-size:1rem;color:#333;line-height:1.75;font-style:italic;margin-bottom:20px">"We cut our infrastructure incidents by 73% in the first quarter after switching to {ctx['name']}. The observability stack alone was worth it — but the zero-downtime deploys are what convinced our CTO."</p>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="width:40px;height:40px;background:{p}20;border-radius:50%"></div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#111">Marcus Chen</div>
+          <div style="font-size:12px;color:#999">Head of Platform Engineering, Axiom</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section style="background:#0f172a;padding:80px 48px;text-align:center">
+  <div class="page">
+    <h2 style="font-family:'{hf}',sans-serif;font-size:2.5rem;font-weight:700;color:#e2e8f0;margin-bottom:16px;letter-spacing:-.02em">Start building today</h2>
+    <p style="font-size:15px;color:#94a3b8;max-width:440px;margin:0 auto 36px;line-height:1.7">Free tier includes 1M events/month, 3 environments, and full observability. No credit card required.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <button style="background:{p};color:#fff;border:none;padding:16px 36px;border-radius:5px;font-size:15px;font-weight:700;cursor:pointer">Start for free →</button>
+      <button style="background:transparent;color:#94a3b8;border:1px solid #334155;padding:16px 32px;border-radius:5px;font-size:15px;cursor:pointer">Schedule a demo</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#0f172a;border-top:1px solid #1e293b;padding:40px 48px">
+  <div class="page" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+    <span style="font-family:'{hf}',sans-serif;font-size:.9rem;font-weight:700;color:#475569">{ctx['name'].upper()}</span>
+    <div style="display:flex;gap:28px">
+      {''.join(f'<a style="font-size:12px;color:#475569">{link}</a>' for link in ["Product", "Docs", "Changelog", "Status", "Privacy"])}
+    </div>
+    <span style="font-size:12px;color:#334155">© 2026 {ctx['name']}</span>
+  </div>
+</footer>
+
+</body>
+</html>"""
+
+
+def generate_landing_page(
+    project_name: str,
+    brief_text: str,
+    dna,
+    exploration,
+    preset: dict | None,
+    css: str | None,
+) -> str:
+    """
+    Generate a complete branded landing page for the project.
+    Picks the best creative direction and renders a full standalone HTML page.
+    """
+    direction = _select_direction(exploration, brief_text)
+    archetype = getattr(direction, "style_archetype", "startup_clean") if direction else "startup_clean"
+    ctx       = _ctx(project_name, brief_text, dna, preset)
+
+    EDITORIAL_ARCHETYPES = {"editorial_magazine", "luxury_minimal", "premium_craft"}
+    PLAYFUL_ARCHETYPES   = {"playful_brand", "warm_human", "organic_natural", "creative_studio"}
+
+    if archetype in EDITORIAL_ARCHETYPES:
+        return _lp_editorial_page(ctx, css or "")
+    if archetype in PLAYFUL_ARCHETYPES:
+        return _lp_playful_page(ctx, css or "")
+    return _lp_saas_page(ctx, css or "")
+
 
 # ── Pipeline runner ───────────────────────────────────────────────────────────
 
@@ -1227,6 +2319,18 @@ def run_pipeline(project_name: str, brief_text: str) -> None:
     )
     html_path = out_dir / "brand_charter.html"
     html_path.write_text(html_content, encoding="utf-8")
+
+    # ── Landing page ──────────────────────────────────────────────────────────
+    lp_content = generate_landing_page(
+        project_name=project_name,
+        brief_text=brief_text,
+        dna=dna,
+        exploration=exploration,
+        preset=preset,
+        css=css,
+    )
+    lp_path = out_dir / "landing_page.html"
+    lp_path.write_text(lp_content, encoding="utf-8")
 
     ok_count = sum(1 for v in pipeline_ok.values() if v is True)
     tot = len(pipeline_ok)
