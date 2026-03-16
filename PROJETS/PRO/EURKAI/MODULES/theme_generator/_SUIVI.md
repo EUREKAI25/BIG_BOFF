@@ -137,11 +137,11 @@ Voir `_SPECS.md` pour le détail complet.
 ## Prochaine étape
 
 Phase 1 — Extension visuelle (voir `_SPECS_VISUAL.md`) :
-- [ ] `style_dna.py` — dataclasses StyleDNA + sous-profils
-- [ ] `font_map.py` — FONT_MAP + TONE_TO_PRESET
-- [ ] `theme_translation.py` — StyleDNA → ThemePreset
-- [ ] `visual_analysis.py` — adapters mock / json / preset (vision LLM : hors MVP)
-- [ ] Tests : StyleDNA → ThemePreset → CSS
+- [x] `style_dna.py` — dataclasses StyleDNA + sous-profils
+- [x] `font_map.py` — FONT_MAP + TONE_TO_PRESET
+- [x] `theme_translation.py` — StyleDNA → ThemePreset
+- [x] `visual_analysis.py` — adapters mock / json / preset (vision LLM : hors MVP)
+- [x] Tests : StyleDNA → ThemePreset → CSS (14/14 ✅)
 
 Phase 2 (après) — Foundation v3 :
 - [ ] `theme_dna.py`, `palette_system.py`, `theme_tokens.py`, `constraints.py`
