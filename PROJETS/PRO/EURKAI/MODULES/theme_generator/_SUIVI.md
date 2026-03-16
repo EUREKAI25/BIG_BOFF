@@ -110,6 +110,9 @@ theme_generator/
 | 2026-03-15 | Création module `pipeline_validator` MVP (ContractRegistry, PipelineValidator, router FastAPI — POST /v1/pipeline/prevalidate) |
 | 2026-03-15 | Création catalogue `EURKAI/catalogs/seeds/` (LandingPageSeed, WebsiteSeed, SaaSSeed + index.json) |
 | 2026-03-15 | Création module `logo_generator` v0.1.0 complet (schemas, prompt_builder, generator, arbitration, vector_optimizer, exporter, router) |
+| 2026-03-16 | _SPECS_VISUAL.md — architecture extension visuelle (StyleDNA, visual_analysis adaptateur, theme_translation) |
+| 2026-03-16 | Implémentation Phase 1 complète : style_dna.py, font_map.py, theme_translation.py, visual_analysis.py |
+| 2026-03-16 | 3 fixtures JSON (startup, luxury, brutalist) + 14 tests roundtrip (14/14 ✅) |
 
 ---
 
