@@ -136,11 +136,14 @@ Voir `_SPECS.md` pour le détail complet.
 
 ## Prochaine étape
 
-Phase 1 — Foundation :
-- [ ] `theme_dna.py` (ThemeDNA, FontRoles, PaletteProfile — tags List[str])
-- [ ] `palette_system.py` (normalisation hex/rgb/hsl, dérivation auto)
-- [ ] `theme_tokens.py` (ThemeTokens, ThemeVariant)
-- [ ] `constraints.py` (ConstraintSet, AestheticBudgets, BudgetState)
-- [ ] Tests unitaires
+Phase 1 — Extension visuelle (voir `_SPECS_VISUAL.md`) :
+- [ ] `style_dna.py` — dataclasses StyleDNA + sous-profils
+- [ ] `font_map.py` — FONT_MAP + TONE_TO_PRESET
+- [ ] `theme_translation.py` — StyleDNA → ThemePreset
+- [ ] `visual_analysis.py` — adapters mock / json / preset (vision LLM : hors MVP)
+- [ ] Tests : StyleDNA → ThemePreset → CSS
+
+Phase 2 (après) — Foundation v3 :
+- [ ] `theme_dna.py`, `palette_system.py`, `theme_tokens.py`, `constraints.py`
 
 ---
