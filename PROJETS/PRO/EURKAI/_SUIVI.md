@@ -1,10 +1,10 @@
 # EURKAI — Suivi
 
-> Écosystème autonome d'orchestration de projets — Architecture fractale, auto-optimisant, langage propriétaire
+pis> Écosystème autonome d'orchestration de projets — Architecture fractale, auto-optimisant, langage propriétaire
 
 **Statut** : 🟢 actif — construction progressive, approche pragmatique
 **Créé** : 2026-02-10 (refonte complète, ancien historique dans ARCHIVES/)
-**Dernière MAJ** : 2026-02-10 19:00
+**Dernière MAJ** : 2026-03-16 21:45
 
 ---
 
@@ -255,6 +255,12 @@ Voir [`CLAUDE/PROCESS.md`](../../../CLAUDE/PROCESS.md) pour le détail complet.
 
 ## Historique
 
+- **2026-03-16 21:45** : `generate_brand_charter.py` — orchestrateur test pipeline design complet (5/5 modules OK, 3 briefs, HTML brand charter)
+- **2026-03-16** : `scan_and_do` MVP complet (7/7 tests ✅) — moteur MRG générique
+- **2026-03-16** : `theme_generator` phase 1 visuelle (StyleDNA, font_map, theme_translation, visual_analysis — 14/14 tests ✅)
+- **2026-03-15** : `conversational_brief` extrait vers EURKAI/MODULES (injectable, agnostique)
+- **2026-03-15** : `_ARCHITECTURE_MVP.md` + `_OBJECT_CONTRACT.md` — documents de référence EURKAI
+- **2026-03-15** : `visual_consistency_validator` + `design_exploration_engine` complets
 - **2026-02-10 19:00** : Architecture orientée objet EURKAI formalisée (atome/method/scenario/injection)
 - **2026-02-10 18:45** : TIP_CALCULATOR déployé en production — https://eurekai25.github.io/tip-calculator/
 - **2026-02-10 18:30** : PROCESS.md + STANDARDS.md créés, catalogue modules initialisé
