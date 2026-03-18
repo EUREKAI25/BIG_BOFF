@@ -4,7 +4,7 @@ pis> Écosystème autonome d'orchestration de projets — Architecture fractale,
 
 **Statut** : 🟢 actif — construction progressive, approche pragmatique
 **Créé** : 2026-02-10 (refonte complète, ancien historique dans ARCHIVES/)
-**Dernière MAJ** : 2026-03-16 21:45
+**Dernière MAJ** : 2026-03-18 03:00
 
 ---
 
@@ -255,6 +255,7 @@ Voir [`CLAUDE/PROCESS.md`](../../../CLAUDE/PROCESS.md) pour le détail complet.
 
 ## Historique
 
+- **2026-03-18 03:00** : Design Instantiation Engine v3 complet — Generative Section Engine : section = layout × copy × visual (3-4 variants/section), _cp() pools par attitude, _sec_vt() visual treatment, _build_visual_system(), _css_visual_panel() 10+ variants palette-dérivés, archetype override via brief signals. Des milliers de combinaisons réelles.
 - **2026-03-16 23:30** : `generate_landing_page()` — générateur de landing pages brandées complètes par projet. RenderingContract strict (12 archetypes), direction selection par signaux brief, 3 templates full-page (editorial / playful / SaaS). Output : `landing_page.html` par projet.
 - **2026-03-16 22:50** : `render_preview` → `render_direction_preview()` — 3 previews par direction créative, chacun bindé à un RenderingContract strict. ARCHETYPE_CONTRACTS couvre 12 archetypes. Direction selection via signaux brief.
 - **2026-03-16 21:45** : `generate_brand_charter.py` — orchestrateur test pipeline design complet (5/5 modules OK, 3 briefs, HTML brand charter)
