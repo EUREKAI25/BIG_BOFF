@@ -4,7 +4,7 @@ pis> Écosystème autonome d'orchestration de projets — Architecture fractale,
 
 **Statut** : 🟢 actif — construction progressive, approche pragmatique
 **Créé** : 2026-02-10 (refonte complète, ancien historique dans ARCHIVES/)
-**Dernière MAJ** : 2026-03-18 03:00
+**Dernière MAJ** : 2026-03-18 04:00
 
 ---
 
@@ -199,14 +199,34 @@ Voir [`CLAUDE/PROCESS.md`](../../../CLAUDE/PROCESS.md) pour le détail complet.
 
 ## Prochaines étapes
 
-### Immédiat (semaine 1)
+### 🔴 PRIORITÉ IMMÉDIATE — Design Engine landing pages (session suivante)
+
+État actuel : pipeline `brief → Design Instantiation Engine v3 → landing page HTML` **fonctionnel**.
+Serveur de test : `python3 design_tester_server.py` → `localhost:8765` (R = reload, Space = nouveau brief)
+
+**3 problèmes identifiés, plan arrêté :**
+
+#### A) Images — priorité 1 (le plus impactant visuellement)
+- **Objectif** : intégrer de vraies images dans les heroes et sections
+- **Approche** : Picsum (`picsum.photos/seed/{N}/{w}/{h}`) — photos cohérentes, sans API
+- **Palette-match** : `filter:grayscale(1) contrast(1.1)` + overlay div `mix-blend-mode:color` → assortis à la palette
+- **Où** : heroes `split` et `asymmetric` (panel image droit/gauche), section `pull_quote` fond, `manifesto` éventuel
+- **Note** : Nathalie avait dit "il faudrait créer la ou les images (si plusieurs...)" — à reprendre dès la reconnexion
+
+#### B) Palettes — priorité 2
+- **Problème** : surfaces bg/fg figées par mode (toujours `#fff`, `#080808` etc.), secondaire trop proche du primaire
+- **Fix** : bg tintés par hue (ex: `#0a0a12`, `#fffbf5`), secondary shift + agressif (40-90° pour editorial), accent plus vibrant
+
+#### C) Section diversity — priorité 3
+- **Problème** : pools petits (4 sections max), ordre prévisible
+- **Fix** : pools 6-8 sections, mix cross-attitude selon energy, certains flows commencent par stats/pull_quote
+
+### Immédiat (semaine 1) — FAIT ✅
 
 - [x] Structurer EURKAI proprement
 - [x] Archiver ancien EURKAI → ARCHIVES/
 - [x] Documenter vision + approche dans `_SUIVI.md`
-- [ ] Créer `MODULES/` avec premier module (formulaire simple)
-- [ ] Terminer TIP_CALCULATOR (CDC → SPECS → BUILD)
-- [ ] Push GitHub
+- [x] Push GitHub
 
 ### Court terme (mois 1)
 
@@ -255,6 +275,7 @@ Voir [`CLAUDE/PROCESS.md`](../../../CLAUDE/PROCESS.md) pour le détail complet.
 
 ## Historique
 
+- **2026-03-18 04:00** : SESSION INTERROMPUE — état stable, serveur OK, 3 problèmes identifiés pour prochaine session (voir "Prochaines étapes")
 - **2026-03-18 03:00** : Design Instantiation Engine v3 complet — Generative Section Engine : section = layout × copy × visual (3-4 variants/section), _cp() pools par attitude, _sec_vt() visual treatment, _build_visual_system(), _css_visual_panel() 10+ variants palette-dérivés, archetype override via brief signals. Des milliers de combinaisons réelles.
 - **2026-03-16 23:30** : `generate_landing_page()` — générateur de landing pages brandées complètes par projet. RenderingContract strict (12 archetypes), direction selection par signaux brief, 3 templates full-page (editorial / playful / SaaS). Output : `landing_page.html` par projet.
 - **2026-03-16 22:50** : `render_preview` → `render_direction_preview()` — 3 previews par direction créative, chacun bindé à un RenderingContract strict. ARCHETYPE_CONTRACTS couvre 12 archetypes. Direction selection via signaux brief.
