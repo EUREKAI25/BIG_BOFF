@@ -1,0 +1,72 @@
+/*
+ * Thème EURKAI - MyHealthPrac Natural
+ * Source : image_analysis (myhealthprac.com)
+ * Mood : warm
+ *
+ * Palette naturelle extraite de la vidéo de fond
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  /* Couleurs naturelles (extraites de l'image) */
+  --color-primary: rgb(176, 144, 111);           /* Beige doré */
+  --color-primary-light: rgb(204, 188, 172);
+  --color-primary-dark: rgb(124, 72, 34);
+
+  --color-secondary: rgb(152, 108, 67);        /* Bronze */
+  --color-secondary-light: rgb(204, 188, 172);
+  --color-secondary-dark: rgb(80, 36, 16);
+
+  --color-neutral: rgb(241, 241, 241);
+  --color-text: rgb(31, 31, 31);
+
+  /* Typography */
+  --font-family: 'Inter', sans-serif;
+
+  /* Shadows avec couleur primaire */
+  --shadow-sm: 0 1px 2px rgba(124, 72, 34, 0.1);
+  --shadow-md: 0 4px 6px rgba(124, 72, 34, 0.15);
+  --shadow-lg: 0 10px 15px rgba(124, 72, 34, 0.2);
+
+  --radius-md: 8px;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-neutral);
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+  color: white;
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  padding: 12px 32px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}

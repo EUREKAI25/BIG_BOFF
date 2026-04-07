@@ -1,0 +1,93 @@
+EXECUTION CONSTITUTION v0
+
+CentralMethod
+- Create
+- Read
+- Update
+- Store
+- Orchestrate
+- Engage
+
+SuperMethods
+- SuperGet
+- SuperExecute
+- SuperValidate
+- SuperRender
+
+
+Rules
+
+1. how est toujours défini par la méthode de l’objet how.
+2. how peut porter how.param_list.
+3. SuperGet prépare how et met à jour what.how pour qu’il passe à status=ready.
+4. what peut être identique pour tous les objets ou spécifique à chacun.
+5. run suit la logique canonique :
+   if get and execute :
+       if validate :
+           success
+       else :
+           failure
+   after
+6. Les failures précoces sont traités par la méthode concernée, pas par run.
+7. run n’a pas à gérer globalement les corrections locales.
+8. L’exécution se fait toujours par dict.
+9. L’exécution se fait autant que possible en parallèle.
+10. Chaque objet déclare ses préalables d’exécution et de validation.
+11. Chaque objet met à jour son propre status après exécution.
+12. À chaque loop, how s’exécute sur tous les what dont status=ready.
+13. Le nombre de loops dépend des étapes et non du nombre d’objets.
+
+
+Status / Lifecycle
+
+1. status est défini pour chaque type d’objet concerné.
+2. lifecycle est défini pour chaque type d’objet dont on définit le status.
+3. Les dict de statuts sont numérotés.
+4. lifecycle commence à 2.
+5. lifecycle[2] désigne l’ident du scénario de validation permettant d’activer status=ready.
+6. L’upgrade d’un status n’est autorisé qu’après validate.success du scénario correspondant.
+
+
+Method important attributes
+
+- depends_on_central_method
+- input_list
+- payload
+- validate_method_list
+- test_method_list
+- test_dict {
+    validation_test
+    payload
+    attending_result
+  }
+- execution_condition_list
+- default_execution_value
+- result_map
+- plugability_level
+
+
+Transversal object attributes
+
+- status
+- lifecycle
+- optimization_frequency
+- maintenance_frequency
+- watch_frequency
+- optimized_at
+- maintained_at
+- last_optimization_trace
+- last_maintenance_trace
+
+
+Plugability levels
+
+plugability_level_1
+- norme minimale commune
+- tous les objets sont pluggables entre eux
+
+plugability_level_2
+- seuls les objets du bon couple sont pluggables entre eux
+
+plugability_level_3
+- validation profonde renforcée
+- sécurité maximale

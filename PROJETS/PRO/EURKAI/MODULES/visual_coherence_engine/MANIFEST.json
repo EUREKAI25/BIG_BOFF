@@ -1,0 +1,41 @@
+{
+  "name": "visual_coherence_engine",
+  "version": "1.0.0",
+  "description": "Règle bidirectionnelle stricte image ↔ palette. CASE 1: image_drives_palette (référence fournie → palette depuis image). CASE 2: palette_drives_image (palette d'abord → ajustements CSS duotone/overlay).",
+  "entry_point": "src/visual_coherence_engine.py",
+  "public_api": ["run", "analyze_image", "generate_palette_from_image", "compute_image_adjustments", "compute_readability_rules"],
+  "inputs": {
+    "visual_intent": "dict — depuis visual_intent_engine (emotion, mood, archetype)",
+    "context": "dict — seed complet (name, family, seed_id, mode)",
+    "palette": "dict | None — depuis color_palette (requis si reference_image=None)",
+    "reference_image": "str | None — chemin local ou URL"
+  },
+  "output": {
+    "mode": "image_drives_palette | palette_drives_image",
+    "palette": "dict — palette finale",
+    "image_adjustments": {
+      "duotone": "bool",
+      "overlay_color": "#RRGGBB",
+      "overlay_opacity": "float 0.0–1.0",
+      "filter": "CSS filter string",
+      "blend_mode": "CSS mix-blend-mode"
+    },
+    "readability_rules": {
+      "text_on_image": "bool",
+      "min_overlay_for_wcag": "float",
+      "gradient_scrim": "bool",
+      "recommended_text_color": "#RRGGBB"
+    },
+    "conflicts": "list[str] — vide si OK"
+  },
+  "fail_conditions": [
+    "image/palette conflict (hue diff > 60°)",
+    "overlay_opacity < min_overlay_for_wcag",
+    "text-on-image WCAG AA failure"
+  ],
+  "dependencies": {
+    "required": [],
+    "optional": ["Pillow>=9.0"]
+  },
+  "integration": "generate_brand_charter.py — _picsum_panel() overlay params, lines 3379/3634/3964/5322"
+}

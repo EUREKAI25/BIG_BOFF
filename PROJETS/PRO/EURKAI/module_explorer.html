@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EURKAI — Module Explorer</title>
+<style>
+
+/* ── MotionSystem tokens ──────────────────────────────────────── */
+:root {
+  --dur-fast:    110ms;
+  --dur-normal:  220ms;
+  --dur-slow:    380ms;
+  --dur-detail:  300ms;
+  --ease-enter:  cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit:   cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* BorderSystem */
+  --radius: 8px;
+
+  /* Colors */
+  --bg:        #070710;
+  --bg-card:   #0b0b16;
+  --bg-detail: #0e0e1a;
+  --border:    #18182e;
+  --border-hi: #242440;
+  --text:      #e2e2f0;
+  --muted:     #56566e;
+  --accent:    #7c6bf5;
+  --accent2:   #06b6d4;
+  --font-mono: "SF Mono","Fira Code","Cascadia Code",monospace;
+  --font-ui:   -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+/* ── MotionSystem keyframes ───────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes drawIn {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0;   }
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: .5; transform: scale(.9); }
+  50%       { opacity: 1;  transform: scale(1.1); }
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  min-height: 100vh;
+  /* BackgroundSystem — dot grid, 24px (aligned to GlyphSystem icon grid) */
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, #1c1c35 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.site-header {
+  position: sticky; top: 0; z-index: 200;
+  height: 52px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 20px;
+  background: rgba(7,7,16,.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.logo-mark {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff; letter-spacing: .04em;
+  flex-shrink: 0;
+}
+.logo-text { font-size: 14px; font-weight: 700; letter-spacing: .02em; }
+.header-divider { color: var(--muted); font-size: 16px; font-weight: 200; }
+.header-section { font-size: 12px; color: var(--muted); }
+.header-spacer  { flex: 1; }
+.header-meta    { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+.view-toggle { display: flex; gap: 4px; }
+.vbtn {
+  padding: 5px 11px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11.5px; font-family: var(--font-ui);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: all var(--dur-fast) var(--ease-enter);
+}
+.vbtn:hover { color: var(--text); border-color: var(--border-hi); }
+.vbtn.active {
+  background: rgba(124,107,245,.14);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Shell ────────────────────────────────────────────────────── */
+.shell {
+  display: flex;
+  min-height: calc(100vh - 52px);
+}
+.main {
+  flex: 1; min-width: 0;
+  padding: 24px 20px;
+}
+.detail-pane {
+  position: sticky; top: 52px;
+  height: calc(100vh - 52px);
+  width: 0; overflow: hidden;
+  border-left: 1px solid var(--border);
+  background: var(--bg-detail);
+  transition: width var(--dur-detail) var(--ease-enter);
+  flex-shrink: 0;
+}
+.detail-pane.open {
+  width: 468px;
+  overflow-y: auto;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero { margin-bottom: 22px; }
+.hero-title {
+  font-size: 24px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 4px;
+}
+.hero-title span {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.stats-row { display: flex; gap: 24px; }
+.stat { display: flex; flex-direction: column; gap: 1px; }
+.stat-val {
+  font-size: 20px; font-weight: 700;
+  font-family: var(--font-mono); color: var(--accent); line-height: 1;
+}
+.stat-lbl {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+
+/* ── Filter bar ───────────────────────────────────────────────── */
+.filter-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.search-box {
+  flex: 1; min-width: 160px; max-width: 260px;
+  padding: 7px 11px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text); font-size: 13px; font-family: var(--font-ui);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-enter);
+}
+.search-box::placeholder { color: var(--muted); }
+.search-box:focus { border-color: var(--accent); }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  font-size: 11.5px; cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-enter);
+  font-family: var(--font-ui); white-space: nowrap;
+  --pc: var(--accent);
+}
+.pill:hover  { border-color: var(--pc); color: var(--pc); }
+.pill.active { border-color: var(--pc); color: var(--pc); background: rgba(124,107,245,.1); }
+.pill.active { background-color: var(--pc-bg, rgba(124,107,245,.1)); }
+.pill svg    { width: 14px; height: 14px; }
+.pill .cnt   {
+  font-size: 10px; font-family: var(--font-mono);
+  background: rgba(255,255,255,.06); padding: 0 5px; border-radius: 8px;
+}
+
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.tags-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-right: 2px; }
+.tag-chip {
+  padding: 2px 8px;
+  border-radius: 4px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  font-size: 10.5px; font-family: var(--font-mono); cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-enter);
+}
+.tag-chip:hover  { border-color: var(--accent); color: var(--accent); }
+.tag-chip.active { background: rgba(124,107,245,.14); border-color: rgba(124,107,245,.6); color: var(--accent); }
+
+/* Active filters strip */
+.active-strip {
+  display: none; align-items: center; gap: 6px;
+  font-size: 11px;
+}
+.active-strip.visible { display: flex; }
+.active-strip-label { color: var(--muted); }
+.clear-all {
+  margin-left: auto; color: var(--muted);
+  background: none; border: none; cursor: pointer; font-size: 11px;
+  transition: color var(--dur-fast);
+}
+.clear-all:hover { color: var(--text); }
+
+/* ── Results bar ─────────────────────────────────────────────── */
+.results-bar {
+  display: flex; align-items: center;
+  margin-bottom: 12px;
+}
+.results-label { font-size: 11.5px; color: var(--muted); font-family: var(--font-mono); }
+
+/* ── Card grid ────────────────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px,1fr));
+  gap: 10px;
+}
+.no-results {
+  grid-column: 1/-1; padding: 56px;
+  text-align: center; color: var(--muted); display: none;
+}
+
+/* ── Card — BorderSystem ──────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cc, var(--border));  /* left accent — BorderSystem */
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  transition:
+    border-color var(--dur-fast) var(--ease-enter),
+    transform   var(--dur-normal) var(--ease-spring),
+    box-shadow  var(--dur-normal) var(--ease-enter);
+  animation: fadeSlideUp var(--dur-slow) var(--ease-enter) both;
+}
+.card:hover {
+  border-color: var(--cc, var(--accent));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,.45),
+              0 0 0 1px color-mix(in srgb, var(--cc, var(--accent)) 35%, transparent);
+}
+.card.selected {
+  border-color: var(--cc, var(--accent));
+  box-shadow: 0 0 0 1px var(--cc, var(--accent)), 0 8px 24px rgba(0,0,0,.45);
+}
+/* stagger animation */
+.card:nth-child(1)  { animation-delay:  0ms }
+.card:nth-child(2)  { animation-delay: 30ms }
+.card:nth-child(3)  { animation-delay: 60ms }
+.card:nth-child(4)  { animation-delay: 90ms }
+.card:nth-child(5)  { animation-delay:120ms }
+.card:nth-child(6)  { animation-delay:150ms }
+.card:nth-child(7)  { animation-delay:180ms }
+.card:nth-child(8)  { animation-delay:210ms }
+
+.card-top {
+  padding: 9px 12px 8px;
+  display: flex; align-items: center; gap: 7px;
+  border-bottom: 1px solid var(--border);
+}
+.card-icon { display: flex; color: var(--cc, var(--muted)); }
+.card-cat  { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--cc, var(--muted)); flex: 1; }
+.vbadge    { font-size: 10px; color: var(--muted); font-family: var(--font-mono); background: var(--border); padding: 1px 6px; border-radius: 4px; }
+
+.card-body { padding: 10px 12px 6px; flex: 1; }
+.card-name {
+  font-size: 13px; font-weight: 600; font-family: var(--font-mono);
+  color: var(--text); margin-bottom: 4px;
+}
+.card-desc {
+  font-size: 11.5px; color: var(--muted); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ── Card preview area ────────────────────────────────────────── */
+.card-preview {
+  margin: 7px 12px 4px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  min-height: 38px;
+  display: flex; align-items: center;
+}
+
+/* I/O mini */
+.io-mini { display: flex; align-items: center; gap: 6px; overflow: hidden; font-size: 10.5px; font-family: var(--font-mono); }
+.io-col  { display: flex; flex-direction: column; gap: 2px; }
+.io-key  { color: var(--accent2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+.io-key.out { color: var(--accent); }
+.io-arr  { color: var(--muted); flex-shrink: 0; font-size: 13px; }
+.io-dot  { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--cc, var(--border)); flex-shrink: 0; }
+
+/* Palette mini */
+.pal-mini { display: flex; gap: 3px; height: 20px; width: 100%; }
+.swatch   { flex: 1; border-radius: 3px; }
+
+/* Pictograms mini */
+.pict-mini { display: flex; gap: 8px; }
+
+/* Score mini */
+.score-mini { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.score-row  { display: flex; align-items: center; gap: 7px; font-size: 10px; color: var(--muted); font-family: var(--font-mono); }
+.score-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.score-fill  { height: 100%; border-radius: 2px; background: var(--cc, var(--accent)); }
+
+/* ── Card footer ──────────────────────────────────────────────── */
+.card-footer { padding: 7px 12px; display: flex; gap: 4px; flex-wrap: wrap; border-top: 1px solid var(--border); }
+.tag { font-size: 10px; padding: 2px 6px; border-radius: 3px; background: var(--border); color: var(--muted); font-family: var(--font-mono); }
+
+/* ── Pipeline view ────────────────────────────────────────────── */
+.pipeline-view { display: none; padding: 32px 0; }
+.pipeline-view.visible { display: block; }
+.pipeline-scroll { overflow-x: auto; cursor: grab; padding-bottom: 16px; }
+.pipeline-scroll:active { cursor: grabbing; }
+.pipeline-flow { display: flex; align-items: center; min-width: max-content; padding: 0 20px; gap: 0; }
+.pipe-node {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--nc, var(--border));
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  min-width: 108px;
+  text-align: center; cursor: pointer;
+  transition: all var(--dur-normal) var(--ease-enter);
+}
+.pipe-node:hover { border-color: var(--nc, var(--accent)); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.pipe-node.io-node { border-top-color: var(--border); cursor: default; }
+.pipe-node.io-node:hover { transform: none; box-shadow: none; }
+.pipe-icon { display: flex; justify-content: center; margin-bottom: 6px; color: var(--nc, var(--muted)); }
+.pipe-label { font-size: 11px; font-family: var(--font-mono); color: var(--text); font-weight: 600; white-space: pre; }
+.pipe-node.io-node .pipe-label { color: var(--muted); }
+.pipe-arr { padding: 0 6px; }
+.pipe-arr svg { color: var(--border-hi); }
+
+/* ── Detail panel ─────────────────────────────────────────────── */
+.detail-inner {
+  padding: 20px;
+  animation: slideInRight var(--dur-normal) var(--ease-enter) both;
+}
+.detail-hd { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+.detail-title-row { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.detail-name  { font-size: 17px; font-weight: 700; font-family: var(--font-mono); }
+.cat-pill { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 3px 8px; border-radius: 4px; }
+.close-btn {
+  background: var(--border); border: 1px solid var(--border-hi); border-radius: 6px;
+  padding: 6px; cursor: pointer; color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--dur-fast) var(--ease-enter); flex-shrink: 0;
+}
+.close-btn:hover { color: var(--text); background: var(--border-hi); }
+
+.detail-desc { font-size: 13px; margin-bottom: 10px; line-height: 1.6; }
+.philosophy  { font-size: 12px; color: var(--accent2); font-style: italic; border-left: 2px solid rgba(6,182,212,.35); padding-left: 10px; margin-bottom: 14px; line-height: 1.5; }
+.ep-row { display: inline-flex; align-items: center; gap: 8px; background: var(--border); border-radius: 6px; padding: 5px 11px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 11.5px; }
+.ep-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.sig-block { background: #080813; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; overflow-x: auto; font-family: var(--font-mono); font-size: 11.5px; color: var(--accent2); line-height: 1.5; }
+.api-strip { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 16px; }
+.api-fn { font-family: var(--font-mono); font-size: 11px; background: rgba(124,107,245,.12); color: var(--accent); border: 1px solid rgba(124,107,245,.3); padding: 3px 8px; border-radius: 4px; }
+
+/* ── Detail preview ───────────────────────────────────────────── */
+.detail-preview { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 16px; }
+.preview-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+
+/* I/O diagram */
+.io-diagram { display: flex; align-items: flex-start; gap: 14px; }
+.io-dcol    { display: flex; flex-direction: column; gap: 5px; min-width: 90px; }
+.io-dcol-hd { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 2px; }
+.io-item    { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(6,182,212,.1); color: var(--accent2); border: 1px solid rgba(6,182,212,.25); }
+.io-item.out{ background: rgba(124,107,245,.1); color: var(--accent); border-color: rgba(124,107,245,.25); }
+.io-mid     { display: flex; flex-direction: column; align-items: center; gap: 5px; padding-top: 16px; }
+.io-mid-arr { color: var(--muted); font-size: 16px; }
+.io-mbox    { background: rgba(124,107,245,.12); border: 1.5px solid rgba(124,107,245,.4); border-radius: 6px; padding: 7px 12px; font-family: var(--font-mono); font-size: 11px; color: var(--accent); text-align: center; font-weight: 600; white-space: nowrap; }
+
+/* Palette full */
+.pal-full { display: flex; gap: 6px; }
+.pal-item { flex: 1; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.pal-swatch { width: 100%; height: 32px; border-radius: 5px; }
+.pal-label  { font-size: 9px; color: var(--muted); font-family: var(--font-mono); }
+
+/* Pictograms full */
+.pict-full { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.pict-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.pict-item svg { width: 32px; height: 32px; }
+.pict-label { font-size: 9px; color: var(--muted); font-family: var(--font-mono); }
+
+/* ── Detail sections ──────────────────────────────────────────── */
+.ds-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.ds { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.ds-hd { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); padding: 6px 12px; border-bottom: 1px solid var(--border); background: var(--bg-card); }
+.pt { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.pt th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 5px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
+.pt td { padding: 6px 12px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.4; }
+.pt tr:last-child td { border-bottom: none; }
+.pk { font-family: var(--font-mono); color: var(--accent2); font-size: 11px; white-space: nowrap; }
+.pv { color: var(--muted); font-size: 11px; }
+
+/* Relationships */
+.rel-inner { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.rel-row   { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.rel-lbl   { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; min-width: 72px; }
+.rel-chip  { font-family: var(--font-mono); font-size: 11px; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: opacity var(--dur-fast); }
+.rel-chip:hover { opacity: .72; }
+.rel-dep  { background: rgba(6,182,212,.1);   color: var(--accent2); border: 1px solid rgba(6,182,212,.3); }
+.rel-used { background: rgba(124,107,245,.1); color: var(--accent);  border: 1px solid rgba(124,107,245,.3); }
+.rel-scen { background: rgba(244,114,182,.1); color: #f472b6;        border: 1px solid rgba(244,114,182,.3); }
+
+/* Deps */
+.deps-inner { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.deps-grp-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+.deps-grp ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.deps-grp li code { font-family: var(--font-mono); font-size: 11px; color: var(--text); background: var(--border); padding: 2px 7px; border-radius: 3px; }
+
+.empty-note { padding: 10px 12px; color: var(--muted); font-size: 12px; font-style: italic; }
+
+/* Detail footer */
+.detail-footer { display: flex; gap: 4px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid var(--border); }
+
+/* ── Scrollbars ───────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-mark">EK</div>
+  <span class="logo-text">EURKAI</span>
+  <span class="header-divider">/</span>
+  <span class="header-section">Module Explorer</span>
+  <div class="header-spacer"></div>
+  <span class="header-meta">v2 · 2026-03-28 22:32</span>
+  <div class="view-toggle" style="margin-left:12px">
+    <button class="vbtn active" id="vgrid" onclick="setView('grid')"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" style="margin-right:4px"><rect x="1" y="1" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="9" y="1" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="1" y="9" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="9" y="9" width="6" height="6" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>Modules</button>
+    <button class="vbtn" id="vpipe" onclick="setView('pipeline')"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" style="margin-right:4px"><line x1="1" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5"/><polyline points="9,4 13,8 9,12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>Pipeline</button>
+  </div>
+</header>
+
+<div class="shell">
+<div class="main">
+<div class="hero">
+  <h1 class="hero-title">Modules <span>EURKAI</span></h1>
+  <p class="hero-sub">Bibliothèque de modules standalone — chaque module fait une chose, fait-la bien.</p>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-val">20</span><span class="stat-lbl">Modules</span></div>
+    <div class="stat"><span class="stat-val">4</span><span class="stat-lbl">Catégories</span></div>
+    <div class="stat"><span class="stat-val">9</span><span class="stat-lbl">Tags</span></div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-row">
+    <input class="search-box" type="search" id="searchBox" placeholder="Rechercher…  ⌘K" oninput="filterSearch(this.value)"/>
+  </div>
+  <div class="filter-row">
+<button class="pill cat-pill-btn active" data-cat="all" onclick="filterCat(this,'all')" style="--pc:var(--accent)">Tous <span class="cnt">20</span></button><button class="pill cat-pill-btn" data-cat="ai" onclick="filterCat(this,'ai')" style="--pc:#818cf8"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <path d="M 28,4 L 14,26 L 24,26 L 18,44 L 34,22 L 24,22 Z" fill="none" stroke="#818cf8" stroke-width="2.0" stroke-linecap="square" stroke-linejoin="round"/>
+</svg> AI <span class="cnt">5</span></button><button class="pill cat-pill-btn" data-cat="design" onclick="filterCat(this,'design')" style="--pc:#34d399"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <path d="M 24,4 L 29,19 L 44,24 L 29,29 L 24,44 L 19,29 L 4,24 L 19,19 Z" fill="none" stroke="#34d399" stroke-width="2.0" stroke-linecap="square" stroke-linejoin="round"/>
+</svg> Design <span class="cnt">8</span></button><button class="pill cat-pill-btn" data-cat="capture" onclick="filterCat(this,'capture')" style="--pc:#22d3ee"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+  <circle cx="10" cy="10" r="6.5" fill="none" stroke="#22d3ee" stroke-width="2.0"/>
+  <line x1="14.6" y1="14.6" x2="21" y2="21" stroke="#22d3ee" stroke-width="2.0" stroke-linecap="square"/>
+</svg> Capture <span class="cnt">2</span></button><button class="pill cat-pill-btn" data-cat="quality" onclick="filterCat(this,'quality')" style="--pc:#fbbf24"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <path d="M 24,4 L 44,11 L 44,26 Q 44,38 24,45 Q 4,38 4,26 L 4,11 Z" fill="none" stroke="#fbbf24" stroke-width="2.0" stroke-linecap="square" stroke-linejoin="round"/>
+</svg> Qualité <span class="cnt">5</span></button>  </div>
+  <div class="filter-row tags-wrap">
+    <span class="tags-label">Tags</span>
+<button class="tag-chip" onclick="toggleTag('ai',this)">ai</button><button class="tag-chip" onclick="toggleTag('audit',this)">audit</button><button class="tag-chip" onclick="toggleTag('capture',this)">capture</button><button class="tag-chip" onclick="toggleTag('css',this)">css</button><button class="tag-chip" onclick="toggleTag('pipeline',this)">pipeline</button><button class="tag-chip" onclick="toggleTag('seed',this)">seed</button><button class="tag-chip" onclick="toggleTag('svg',this)">svg</button><button class="tag-chip" onclick="toggleTag('visual',this)">visual</button><button class="tag-chip" onclick="toggleTag('wcag',this)">wcag</button>  </div>
+  <div class="active-strip" id="activeStrip">
+    <span class="active-strip-label">Filtre actif :</span>
+    <span id="activeFiltersText" style="color:var(--accent);font-size:11px;font-family:var(--font-mono)"></span>
+    <button class="clear-all" onclick="clearAll()">Tout effacer</button>
+  </div>
+</div>
+
+<div class="results-bar">
+  <span class="results-label" id="resultsLabel">20 modules</span>
+</div>
+
+<div class="card-grid" id="cardGrid"></div>
+
+<div id="pipelineMount"></div>
+
+</div>
+<aside class="detail-pane" id="detailPane">
+  <div id="detailContent"></div>
+</aside>
+</div>
+
+<script>
+window.MODULES       = [{"name": "model_executor", "dir": "MODEL_EXECUTOR", "version": "1.0.0", "description": "Interface universelle pour appeler n'importe quel modèle IA (text2text, text2img, img2video, etc.) avec une méthode unique model_execute()", "philosophy": "", "category": "ai", "tags": ["ai", "pipeline"], "status": "stable", "endpoint": "/api/model/execute", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {"model_type": "Type de modèle (text2text, text2img, img2text, img2video, text2audio)", "prompt": "Prompt ou instruction pour le modèle", "data": "Données complémentaires (image, video, paramètres)", "provider": "Provider spécifique (optionnel, override config)"}, "outputs": {"result": "Résultat du modèle (texte, URL image, URL vidéo, etc.)", "metadata": "Métadonnées (coût, temps, tokens, etc.)"}, "deps_req": [], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "io", "preview_data": {"inputs": ["model_type", "prompt", "data"], "outputs": ["result", "metadata"]}}, {"name": "auto_fix_engine", "dir": "auto_fix_engine", "version": "1.0.0", "description": "Moteur de correction automatique de lisibilité — patches CSS ciblés non-destructifs via data-audit selectors", "philosophy": "", "category": "quality", "tags": ["ai", "css", "audit", "capture", "wcag", "pipeline"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {"audit_results": "list[AuditResult] — sortie de vision_audit", "initial_html": "string — HTML généré à corriger", "capture_fn": "Callable[[str], list[CaptureResult]] — injectée (screenshot_capture)", "audit_fn": "Callable[[list], list[AuditResult]]  — injectée (vision_audit)", "max_iterations": "int — défaut 3", "target_score": "int — défaut 70 (global_score minimum pour convergence)"}, "outputs": {"final_html": "HTML avec styles de correction injectés", "final_patch": "FullPatch — dict de corrections par zone", "log": "list[CorrectionEntry] — corrections appliquées avec avant/après", "converged": "bool — true si readability_pass atteint", "iterations_run": "int", "final_scores": "dict[zone → global_score]"}, "deps_req": [], "deps_opt": [], "integration": {}, "scenarios": ["design_pipeline", "design.page.fix"], "preview_type": "io", "preview_data": {"inputs": ["audit_results", "initial_html", "capture_fn"], "outputs": ["final_html", "final_patch", "log"]}}, {"name": "brand_generator", "dir": "brand_generator", "version": "0.1.0", "description": "Génère 3 directions créatives de marque (BrandDirection A/B/C) depuis un brief + BrandDNA. Point d'entrée du pipeline design EURKAI.", "philosophy": "", "category": "design", "tags": ["visual", "svg", "wcag", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "color_palette", "dir": "color_palette", "version": "1.0.0", "description": "Génère un système de couleurs cohérent, accessible et contextuel depuis un VisualIntent", "philosophy": "Toutes les couleurs dérivent d'une base hue unique. WCAG AA garanti. Zéro aléatoire — même input → même output.", "category": "design", "tags": ["visual", "ai", "css", "audit", "wcag", "pipeline", "seed"], "status": "stable", "endpoint": "", "fn_name": "generate_palette", "fn_sig": "generate_palette(visual_intent: dict, context: dict | None = None) -> dict", "public_api": ["generate_palette"], "inputs": {}, "outputs": {"primary": "#rrggbb — couleur principale (CTA, titres, éléments forts)", "secondary": "#rrggbb — couleur secondaire (sous-titres, accents légers)", "accent": "#rrggbb — couleur d'accentuation (hover, badges, highlights)", "background": "#rrggbb — fond principal de la page", "surface": "#rrggbb — fond des cartes / panels", "text_primary": "#rrggbb — texte principal (WCAG AA ≥ 4.5 sur background)", "text_secondary": "#rrggbb — texte secondaire (WCAG AA ≥ 4.5 sur surface)", "border": "#rrggbb — couleur des bordures et séparateurs", "states": {"success": "#rrggbb", "warning": "#rrggbb", "error": "#rrggbb"}, "contrast_score": {"body_text": "AAA | AA | AA Large | FAIL", "large_text": "AAA | AA | AA Large | FAIL"}}, "deps_req": ["colorsys (stdlib)", "re (stdlib)"], "deps_opt": [], "integration": {"pipeline": "generate_palette(visual_intent) appelé après generate_visual_intent()", "visual_decorators": "generate_visual_decorators(visual_intent) en parallèle", "renderer": "palette injectée dans les composants HTML/CSS générés"}, "scenarios": ["design_pipeline", "design.page.generate_full"], "preview_type": "palette", "preview_data": {"swatches": ["#2e61c6", "#c62e47", "#c62e61", "#2ec6a7", "#752ec6", "#2e66c6"], "labels": ["trust", "excitement", "desire", "calm", "curiosity", "authority"]}}, {"name": "color_psychology_engine", "dir": "color_psychology_engine", "version": "0.1.0", "description": "Recommandations colorées basées sur secteur, valeurs de marque, ton et audience. Alimente palette_generator. Zero LLM.", "philosophy": "", "category": "design", "tags": ["visual", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": ["design.brand.generate_full"], "preview_type": "palette", "preview_data": {"swatches": ["#2e61c6", "#c62e47", "#c62e61", "#2ec6a7", "#752ec6", "#2e66c6"], "labels": ["trust", "excitement", "desire", "calm", "curiosity", "authority"]}}, {"name": "conversational_brief", "dir": "conversational_brief", "version": "0.1.0", "description": "Conversation guidée (LLM) pour transformer un brief vague en JSON structuré. Prompt, checklist et schéma de sortie injectés par le projet consommateur.", "philosophy": "", "category": "ai", "tags": ["visual", "ai", "pipeline", "seed"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "design_dna_resolver", "dir": "design_dna_resolver", "version": "0.1.0", "description": "Convertit un brief texte ou structuré en DesignDNA. Infère l'archétype stylistique et produit les hints pour tous les modules design aval. Zero LLM.", "philosophy": "", "category": "design", "tags": ["visual", "svg", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "design_exploration_engine", "dir": "design_exploration_engine", "version": "0.1.0", "description": "Génère plusieurs directions de design distinctes à partir d'un DesignDNA. Mime le processus d'agence : 2–5 directions créatives présentables au client. Zero LLM.", "philosophy": "", "category": "ai", "tags": ["visual", "svg", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "design_learning", "dir": "design_learning", "version": "1.0.0", "description": "Couche d'apprentissage heuristique — stocke les patterns de correction réussis et les réutilise proactivement", "philosophy": "", "category": "quality", "tags": ["visual", "css", "audit", "capture", "wcag", "seed"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": [], "deps_opt": [], "integration": {}, "scenarios": ["design_pipeline"], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "design_plan", "dir": "design_plan", "version": "1.0.0", "description": "Générateur de plan de design déterministe — contrat de rendu strict avant le premier render", "philosophy": "", "category": "design", "tags": ["visual", "css", "wcag", "pipeline", "seed"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {"brief": "string — texte libre du projet", "seed": "int — même seed = même plan (déterministe)", "style_dna": "dict optionnel — influence les choix visuels", "theme_hints": "dict optionnel — {archetype, layout} pour forcer des choix"}, "outputs": {"layout_strategy": "string — ex: asymmetrical_split, editorial_flow, brutalist_stack", "hero": {"type": "string — ex: offset_text_image, full_bleed_with_overlay", "positioning": "string — ex: left_panel_right_media, top_left_dominant", "text_placement": "string — ex: half_panel_left, large_typographic_mass", "media_role": "string — ex: atmospheric_backdrop, product_showcase"}, "composition": {"structure": "linear | alternating | fragmented | modular_dynamic | stacked_contrast", "flow": "string — ex: tension_release, crescendo_build", "section_variation": "high | medium | controlled", "density": "low | medium | high"}, "visual_tension": {"level": "low | medium | high | extreme", "methods": ["array of techniques — overlap, rotation, scale_contrast, ..."]}, "rhythm": {"pattern": "string — ex: irregular_pulse, build_and_release", "alternation": "string — ex: wide_narrow, dense_sparse"}, "constraints": {"forbidden": ["centered_hero", "uniform_card_grid", "... layout-specific"], "required": ["asymmetry", "varying_section_heights", "... layout-specific"]}, "section_types": ["hero", "...", "cta_block"], "cta_strategy": {"placement": "string", "style": "string", "contrast_strategy": "string"}}, "deps_req": [], "deps_opt": [], "integration": {"apply_to_rc": "DesignPlan.apply_to_rc(rc) → rc surchargé avec les contraintes du plan", "validate": "DesignPlan.validate() → list[str] d'erreurs structurelles", "diff_plans": "diff_plans(a, b) → dict des dimensions qui diffèrent", "plans_distinct": "plans_are_distinct(a, b, min_diffs=3) → bool"}, "scenarios": ["design_pipeline", "design.page.generate_full"], "preview_type": "io", "preview_data": {"inputs": ["brief", "seed", "style_dna"], "outputs": ["layout_strategy", "hero", "composition"]}}, {"name": "design_validator", "dir": "design_validator", "version": "1.0.0", "description": "Validateur PASS/FAIL — vérifie que le layout généré respecte strictement le Design Plan", "philosophy": "Ce n'est PAS un système de suggestion. PASS ou FAIL. Aucun jugement esthétique.", "category": "quality", "tags": ["visual", "ai", "audit", "capture", "pipeline"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {"design_plan": "dict — issu de DesignPlan.to_dict() ou JSON brut", "layout": {"hero": {"type": "string — ex: offset_text_image", "positioning": "string — ex: left_panel_right_media", "text_placement": "string — ex: half_panel_left", "media_role": "string — ex: atmospheric_backdrop"}, "sections": [{"type": "string — ex: hero, feature_block, cta_block", "layout_variant": "string — ex: asymmetric_split, card_grid", "symmetric": "bool — True si colonnes symétriques", "visually_isolated": "bool — True si cta_block isolé visuellement"}], "structure": {"global_symmetry": "bool — True si layout global symétrique", "equal_section_heights": "bool — True si toutes sections à égale hauteur", "varying_heights": "bool — True si hauteurs variées", "has_typographic_break": "bool — True si rupture de hiérarchie typo présente", "density": "string — low | medium | high", "repeated_layouts": "dict optionnel — {variant: count} calculé si absent"}}}, "outputs": {"valid": "bool — PASS (true) ou FAIL (false)", "score": "int — 0 à 100 (seuil PASS : 70)", "fail_reasons": "list[str] — violations majeures ou contraintes dures", "warnings": "list[str] — violations mineures/medium (n'empêchent pas PASS)"}, "deps_req": [], "deps_opt": [], "integration": {"validate_layout": "validate_layout(design_plan, layout) → ValidationResult", "DesignValidator": "DesignValidator().validate(design_plan, layout) → ValidationResult", "ValidationResult.to_dict": "retourne {valid, score, fail_reasons, warnings}"}, "scenarios": ["design.page.audit"], "preview_type": "score", "preview_data": {"metrics": ["readability", "contrast", "layout"]}}, {"name": "logo_generator", "dir": "logo_generator", "version": "0.1.0", "description": "Génération de logos vectoriels SVG via Recraft v3. Pipeline : concepts → arbitration → variantes.", "philosophy": "", "category": "design", "tags": ["visual", "ai", "css", "svg", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": ["design.brand.generate_full"], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "palette_generator", "dir": "palette_generator", "version": "0.1.0", "description": "Génération standalone de palettes chromatiques depuis base_color, base_colors ou BrandDNA. Harmonies + BW + metal + WCAG. Entièrement algorithmique.", "philosophy": "", "category": "design", "tags": ["visual", "ai", "svg", "wcag", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": [], "deps_opt": ["Pillow (pour export PNG)"], "integration": {}, "scenarios": [], "preview_type": "palette", "preview_data": {"swatches": ["#2e61c6", "#c62e47", "#c62e61", "#2ec6a7", "#752ec6", "#2e66c6"], "labels": ["trust", "excitement", "desire", "calm", "curiosity", "authority"]}}, {"name": "scan_and_do", "dir": "scan_and_do", "version": "0.1.0", "description": "Moteur d'exécution générique (MVP de la MRG). Itère sur un dictionnaire d'objets et délègue chaque entrée à un scénario. Agnostique — aucune logique métier.", "philosophy": "", "category": "capture", "tags": ["capture", "pipeline"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": [], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "io", "preview_data": {"inputs": [], "outputs": []}}, {"name": "screenshot_capture", "dir": "screenshot_capture", "version": "1.0.0", "description": "Capture déterministe de screenshots via Playwright — full page, viewport, sélecteur, zones audit", "philosophy": "", "category": "capture", "tags": ["css", "audit", "capture"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {"url": "URL de la page à capturer (http ou file://)", "site": "Identifiant du site (slug, ex: maison-calva)", "page": "Identifiant de la page (ex: landing, about, product)", "viewport": "Preset viewport : desktop | tablet | mobile", "zone": "Zone audit à capturer (hero, nav, primary_cta, final_cta, first_section, section-1..3)", "selector": "Sélecteur CSS arbitraire (alternative à zone)"}, "outputs": {"path": "Chemin absolu du fichier PNG généré", "structure": "output/captures/<site>/<page>/<viewport>/<zone>.png"}, "deps_req": ["playwright"], "deps_opt": [], "integration": {}, "scenarios": ["design.page.capture", "design.page.fix"], "preview_type": "io", "preview_data": {"inputs": ["url", "site", "page"], "outputs": ["path", "structure"]}}, {"name": "vision_audit", "dir": "vision_audit", "version": "1.0.0", "description": "Audit visuel de lisibilité via LLM vision — contraste perçu, hiérarchie, visibilité CTA", "philosophy": "", "category": "ai", "tags": ["ai", "audit", "capture", "wcag", "pipeline"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {"image_path": "Chemin absolu ou relatif vers un PNG", "zone": "Identifiant de zone (hero, nav, primary_cta, final_cta, first_section, section-N)", "viewport": "desktop | tablet | mobile", "page": "Identifiant page optionnel (ex: landing, about)"}, "outputs": {"readability_pass": "boolean — passe/échoue l'audit lisibilité", "global_score": "entier 0-100 (100 = lisibilité parfaite)", "issues": [{"zone": "zone concernée", "problem": "description précise du problème (max 15 mots)", "severity": "low | medium | high", "confidence": "float 0.0-1.0", "suggested_fix": "correction actionnables (max 20 mots)"}], "quick_fixes": ["liste des 1-3 corrections les plus impactantes"]}, "deps_req": ["anthropic"], "deps_opt": [], "integration": {}, "scenarios": ["design.page.audit", "design.page.fix"], "preview_type": "score", "preview_data": {"metrics": ["contraste clairement i", "fond concurrence le te", "CTA non distinct"]}}, {"name": "visual_coherence_engine", "dir": "visual_coherence_engine", "version": "1.0.0", "description": "Règle bidirectionnelle stricte image ↔ palette. CASE 1: image_drives_palette (référence fournie → palette depuis image). CASE 2: palette_drives_image (palette d'abord → ajustements CSS duotone/overlay).", "philosophy": "", "category": "quality", "tags": ["visual", "ai", "css", "audit", "wcag", "seed"], "status": "stable", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": ["run", "analyze_image", "generate_palette_from_image", "compute_image_adjustments", "compute_readability_rules"], "inputs": {"visual_intent": "dict — depuis visual_intent_engine (emotion, mood, archetype)", "context": "dict — seed complet (name, family, seed_id, mode)", "palette": "dict | None — depuis color_palette (requis si reference_image=None)", "reference_image": "str | None — chemin local ou URL"}, "outputs": {}, "deps_req": [], "deps_opt": ["Pillow>=9.0"], "integration": {"note": "generate_brand_charter.py — _picsum_panel() overlay params, lines 3379/3634/3964/5322"}, "scenarios": ["design_pipeline", "design.page.generate_full"], "preview_type": "score", "preview_data": {"metrics": ["image/palette conflict", "overlay_opacity < min_", "text-on-image WCAG AA "]}}, {"name": "visual_consistency_validator", "dir": "visual_consistency_validator", "version": "0.1.0", "description": "Valide la cohérence de tous les assets visuels générés (logo, palette, typo, icônes, UI, visuals) contre un DesignDNA. Produit un score global et des suggestions de correction. Zero LLM.", "philosophy": "", "category": "quality", "tags": ["visual", "ai", "audit", "svg", "pipeline", "seed"], "status": "draft", "endpoint": "", "fn_name": "", "fn_sig": "", "public_api": [], "inputs": {}, "outputs": {}, "deps_req": ["internal", "external"], "deps_opt": [], "integration": {}, "scenarios": [], "preview_type": "score", "preview_data": {"metrics": ["readability", "contrast", "layout"]}}, {"name": "visual_decorators", "dir": "visual_decorators", "version": "1.0.0", "description": "Couche de signature visuelle décorative — cohérente, intentionnelle, systémique", "philosophy": "PEU d'éléments, utilisés UNIFORMÉMENT. Jamais d'accumulation décorative. La cohérence EST le design.", "category": "design", "tags": ["visual", "ai", "css", "capture", "pipeline", "seed"], "status": "stable", "endpoint": "", "fn_name": "generate_visual_decorators", "fn_sig": "generate_visual_decorators(visual_intent: dict) -> dict", "public_api": ["generate_visual_decorators"], "inputs": {}, "outputs": {"borders": {"style": "none | solid | dashed | double | glow | dotted", "thickness": "none | thin | medium | thick", "radius": "none | small | medium | large | full", "pattern": "none | uniform | top-only | accent | frame"}, "dividers": {"type": "none | line | space | ornament | gradient | zigzag", "style": "none | minimal | bold | decorative | subtle"}, "icons": {"style": "line | filled | duotone | outline-filled", "stroke": "thin | medium | thick", "corner_style": "sharp | rounded | mixed", "complexity": "simple | medium | detailed"}, "motifs": {"type": "none | geometric | blob | grid-fragment | diagonal-cut | noise | dot-pattern | line-pattern | wave", "usage": "none | background | section-accent | corner | full-bleed"}, "overlays": {"type": "none | gradient | noise | duotone | vignette | scanlines", "intensity": "none | subtle | medium | strong"}}, "deps_req": [], "deps_opt": [], "integration": {"renderer": "Applique borders identiques sur tous les composants. Même style icon partout. Motif réutilisé en pattern sur toutes les sections.", "pipeline": "generate_visual_decorators(visual_intent) appelé après generate_visual_intent()"}, "scenarios": ["design_pipeline"], "preview_type": "io", "preview_data": {"inputs": [], "outputs": ["borders", "dividers", "icons"]}}, {"name": "visual_intent_engine", "dir": "visual_intent_engine", "version": "1.1.0", "description": "Moteur de direction artistique — définit l'INTENTION visuelle avant le design plan", "philosophy": "INTENTION, pas rendu. Ce module ne génère ni HTML ni CSS. Il définit quelle audace visuelle, quelle déviation du générique.", "category": "ai", "tags": ["visual", "ai", "css", "capture", "wcag", "pipeline", "seed"], "status": "stable", "endpoint": "", "fn_name": "generate_visual_intent", "fn_sig": "generate_visual_intent(brief, style_dna=None, reference_image=None, reference_type=None, constraints=None) -> dict", "public_api": ["generate_visual_intent"], "inputs": {"brief": "str — texte libre du projet (obligatoire)", "style_dna": "dict | None — peut contenir 'archetype', 'style_family', 'intensity'", "reference_image": "str | None — chemin fichier image ou base64 — déclenche le mode référence", "reference_type": "str | None — contexte référence : 'screenshot', 'moodboard', 'design', 'brand'", "constraints": "dict | None — {'force': [...], 'avoid': [...]} — noms de style family dans force déclenchent le mode strong/hybrid"}, "outputs": {"mode": "default | strong | reference | hybrid", "art_direction": {"style_family": "str", "tone": "str", "intensity": "low | medium | high", "personality": "list[str]"}, "composition_bias": {"dominance": "text | image | balanced", "density": "low | medium | high", "asymmetry": "low | medium | high", "rhythm": "regular | alternating | chaotic"}, "visual_techniques": ["overlap", "cropping", "scale_contrast", "layering", "negative_space", "framing", "grid_breaking"], "color_strategy": {"contrast": "low | medium | high", "palette_type": "neutral | vibrant | duotone | monochrome"}, "typography_strategy": {"hierarchy_strength": "low | medium | high", "weight_contrast": "low | medium | high"}, "constraints": {"force": "list[str]", "avoid": "list[str]"}, "context": {"product_type": "str — type détecté (ecommerce, saas, event, gaming, dating, finance, luxury, health, education, food, travel, agency, generic)", "target_audience": "str — audience (young_adult, professional, senior, mass_market, niche, general)", "emotional_goal": "str — objectif émotionnel (trust, excitement, desire, calm, curiosity, authority)", "brand_positioning": "str — positionnement (premium, accessible, disruptive, playful, serious)"}}, "deps_req": [], "deps_opt": ["anthropic (pour le mode reference/hybrid avec image)"], "integration": {"design_plan": "generate_design_plan() accepte visual_intent=... — influence profile, density, tension, layout_boost/avoid, constraints", "pipeline": "pipeline.py peut recevoir visual_intent depuis run() — non encore câblé dans le pipeline principal"}, "scenarios": ["design_pipeline", "design.page.generate_full"], "preview_type": "io", "preview_data": {"inputs": ["brief", "style_dna", "reference_image"], "outputs": ["mode", "art_direction", "composition_bias"]}}];
+window.RELATIONSHIPS = {"used_by": {"design_dna_resolver": ["color_palette"], "screenshot_capture": ["color_palette"], "visual_coherence_engine": ["color_palette"]}};
+window.CAT_META      = {"ai": {"label": "AI", "color": "#818cf8"}, "design": {"label": "Design", "color": "#34d399"}, "document": {"label": "Document", "color": "#fb923c"}, "capture": {"label": "Capture", "color": "#22d3ee"}, "quality": {"label": "Qualité", "color": "#fbbf24"}, "orchestration": {"label": "Orchestration", "color": "#a78bfa"}, "utility": {"label": "Utilitaire", "color": "#6b7280"}};
+window.CAT_ICONS     = {"ai": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\" width=\"48\" height=\"48\" fill=\"none\">\n  <path d=\"M 28,4 L 14,26 L 24,26 L 18,44 L 34,22 L 24,22 Z\" fill=\"none\" stroke=\"#818cf8\" stroke-width=\"2.0\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>", "design": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\" width=\"48\" height=\"48\" fill=\"none\">\n  <path d=\"M 24,4 L 29,19 L 44,24 L 29,29 L 24,44 L 19,29 L 4,24 L 19,19 Z\" fill=\"none\" stroke=\"#34d399\" stroke-width=\"2.0\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>", "document": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\" width=\"48\" height=\"48\" fill=\"none\">\n  <rect x=\"4\" y=\"4\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"#fb923c\" stroke-width=\"2.0\" rx=\"4.0\"/>\n  <rect x=\"26\" y=\"4\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"#fb923c\" stroke-width=\"2.0\" rx=\"4.0\"/>\n  <rect x=\"4\" y=\"26\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"#fb923c\" stroke-width=\"2.0\" rx=\"4.0\"/>\n  <rect x=\"26\" y=\"26\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"#fb923c\" stroke-width=\"2.0\" rx=\"4.0\"/>\n</svg>", "capture": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\">\n  <circle cx=\"10\" cy=\"10\" r=\"6.5\" fill=\"none\" stroke=\"#22d3ee\" stroke-width=\"2.0\"/>\n  <line x1=\"14.6\" y1=\"14.6\" x2=\"21\" y2=\"21\" stroke=\"#22d3ee\" stroke-width=\"2.0\" stroke-linecap=\"square\"/>\n</svg>", "quality": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\" width=\"48\" height=\"48\" fill=\"none\">\n  <path d=\"M 24,4 L 44,11 L 44,26 Q 44,38 24,45 Q 4,38 4,26 L 4,11 Z\" fill=\"none\" stroke=\"#fbbf24\" stroke-width=\"2.0\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>", "orchestration": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\">\n  <line x1=\"2\" y1=\"12\" x2=\"18\" y2=\"12\" stroke=\"#a78bfa\" stroke-width=\"2.0\" stroke-linecap=\"square\"/>\n  <polyline points=\"12,6 18,12 12,18\" fill=\"none\" stroke=\"#a78bfa\" stroke-width=\"2.0\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>", "utility": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\">\n  <line x1=\"2\" y1=\"6\" x2=\"22\" y2=\"6\" stroke=\"#6b7280\" stroke-width=\"2.0\" stroke-linecap=\"square\"/>\n  <circle cx=\"8\" cy=\"6\" r=\"2.5\" fill=\"none\" stroke=\"#6b7280\" stroke-width=\"2.0\"/>\n  <line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\" stroke=\"#6b7280\" stroke-width=\"2.0\" stroke-linecap=\"square\"/>\n  <circle cx=\"16\" cy=\"12\" r=\"2.5\" fill=\"none\" stroke=\"#6b7280\" stroke-width=\"2.0\"/>\n  <line x1=\"2\" y1=\"18\" x2=\"22\" y2=\"18\" stroke=\"#6b7280\" stroke-width=\"2.0\" stroke-linecap=\"square\"/>\n  <circle cx=\"10\" cy=\"18\" r=\"2.5\" fill=\"none\" stroke=\"#6b7280\" stroke-width=\"2.0\"/>\n</svg>"};
+window.PIPELINE      = [{"id": "input", "label": "Brief", "io": true}, {"id": "visual_intent_engine", "label": "Visual\nIntent", "cat": "ai"}, {"id": "color_palette", "label": "Palette", "cat": "design"}, {"id": "visual_coherence_engine", "label": "Coherence", "cat": "quality"}, {"id": "design_plan", "label": "Design Plan", "cat": "design"}, {"id": "visual_decorators", "label": "Decorators", "cat": "design"}, {"id": "screenshot_capture", "label": "Capture", "cat": "capture"}, {"id": "vision_audit", "label": "Audit", "cat": "quality"}, {"id": "auto_fix_engine", "label": "Auto Fix", "cat": "quality"}, {"id": "output", "label": "HTML\nOutput", "io": true}];
+</script>
+
+<script>
+
+/* ── State ──────────────────────────────────────────────────── */
+const CAT  = window.CAT_META;
+const MODS = window.MODULES;
+const RELS = window.RELATIONSHIPS;
+const PIPE = window.PIPELINE;
+
+let state = {
+  cat:    'all',       // single-select category
+  tags:   new Set(),   // multi-select tags (OR logic)
+  search: '',
+  view:   'grid',      // 'grid' | 'pipeline'
+  sel:    null,        // selected module index
+};
+
+/* ── Utils ───────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function catColor(cat) { return (CAT[cat]||{}).color || '#6b7280'; }
+function catLabel(cat) { return (CAT[cat]||{}).label || cat; }
+function catIcon(cat)  { return window.CAT_ICONS[cat] || ''; }
+
+/* ── Card rendering ──────────────────────────────────────────── */
+function renderCardPreview(m) {
+  const p = m.preview_data, cc = catColor(m.category);
+
+  if (m.preview_type === 'palette' && p.swatches) {
+    const swatches = p.swatches.map(c =>
+      `<div class="swatch" style="background:${esc(c)}"></div>`).join('');
+    return `<div class="card-preview"><div class="pal-mini">${swatches}</div></div>`;
+  }
+
+  if (m.preview_type === 'pictograms') {
+    const icons = Object.values(p.icons||{}).slice(0,4).join('');
+    return `<div class="card-preview"><div class="pict-mini">${icons}</div></div>`;
+  }
+
+  if (m.preview_type === 'score') {
+    const bars = (p.metrics||[]).slice(0,3).map((metric, i) =>
+      `<div class="score-row">
+         <span style="width:72px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${esc(metric)}</span>
+         <div class="score-track" style="--cc:${cc}">
+           <div class="score-fill" style="width:${55+i*18}%"></div>
+         </div>
+       </div>`).join('');
+    return `<div class="card-preview"><div class="score-mini">${bars}</div></div>`;
+  }
+
+  // I/O mini
+  const ins  = (p.inputs||[]).slice(0,2).map(k=>`<span class="io-key">${esc(k)}</span>`).join('');
+  const outs = (p.outputs||[]).slice(0,2).map(k=>`<span class="io-key out">${esc(k)}</span>`).join('');
+  return `<div class="card-preview">
+    <div class="io-mini">
+      <div class="io-col">${ins||'<span class="io-key" style="opacity:.3">—</span>'}</div>
+      <span class="io-arr">→</span>
+      <div class="io-dot" style="--cc:${cc}"></div>
+      <span class="io-arr">→</span>
+      <div class="io-col">${outs||'<span class="io-key out" style="opacity:.3">—</span>'}</div>
+    </div>
+  </div>`;
+}
+
+function renderCard(m, idx) {
+  const cc  = catColor(m.category);
+  const ico = catIcon(m.category);
+  const tags = m.tags.slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+
+  return `<div class="card" data-idx="${idx}" data-cat="${m.category}"
+      data-name="${esc(m.name)}" data-tags='${JSON.stringify(m.tags)}'
+      onclick="openDetail(${idx})"
+      style="--cc:${cc}">
+    <div class="card-top">
+      <span class="card-icon">${ico}</span>
+      <span class="card-cat">${esc(catLabel(m.category))}</span>
+      <span class="vbadge">v${esc(m.version)}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${esc(m.name)}</div>
+      <div class="card-desc">${esc(m.description)}</div>
+    </div>
+    ${renderCardPreview(m)}
+    <div class="card-footer">${tags}</div>
+  </div>`;
+}
+
+/* ── Detail preview ──────────────────────────────────────────── */
+function renderDetailPreview(m) {
+  const p  = m.preview_data;
+  const cc = catColor(m.category);
+  let inner = '';
+
+  if (m.preview_type === 'palette' && p.swatches) {
+    inner = `<div class="pal-full">` +
+      p.swatches.map((c,i) =>
+        `<div class="pal-item">
+           <div class="pal-swatch" style="background:${esc(c)}"></div>
+           <span class="pal-label">${esc((p.labels||[])[i]||'')}</span>
+         </div>`).join('') + `</div>`;
+
+  } else if (m.preview_type === 'pictograms') {
+    inner = `<div class="pict-full">` +
+      Object.entries(p.icons||{}).map(([name,svg]) =>
+        `<div class="pict-item">${svg}<span class="pict-label">${esc(name)}</span></div>`
+      ).join('') + `</div>`;
+
+  } else {
+    const inKeys  = Object.keys(m.inputs||{}).slice(0,4);
+    const outKeys = Object.keys(m.outputs||{}).slice(0,4);
+    const ins  = inKeys.map(k=>`<span class="io-item">${esc(k)}</span>`).join('');
+    const outs = outKeys.map(k=>`<span class="io-item out">${esc(k)}</span>`).join('');
+    inner = `<div class="io-diagram">
+      <div class="io-dcol">
+        <div class="io-dcol-hd">Inputs</div>
+        ${ins||'<span class="io-item" style="opacity:.3">—</span>'}
+      </div>
+      <div class="io-mid">
+        <span class="io-mid-arr">→</span>
+        <div class="io-mbox" style="--cc:${cc}">${esc(m.name)}</div>
+        <span class="io-mid-arr">→</span>
+      </div>
+      <div class="io-dcol">
+        <div class="io-dcol-hd">Outputs</div>
+        ${outs||'<span class="io-item out" style="opacity:.3">—</span>'}
+      </div>
+    </div>`;
+  }
+
+  return `<div class="detail-preview">
+    <div class="preview-lbl">Aperçu</div>${inner}</div>`;
+}
+
+/* ── Detail panel ────────────────────────────────────────────── */
+function renderDetail(m) {
+  if (!m) return '';
+  const cc    = catColor(m.category);
+  const usedBy = (RELS.used_by||{})[m.name] || [];
+  const deps   = m.deps_req || [];
+  const depsOpt = m.deps_opt || [];
+  const scens  = m.scenarios || [];
+
+  // Tables
+  function tableRows(obj) {
+    const entries = Object.entries(obj||{});
+    if (!entries.length) return `<tr><td colspan="2" class="empty-note">Non documenté</td></tr>`;
+    return entries.map(([k,v]) => {
+      const vs = typeof v==='object' ? JSON.stringify(v) : String(v);
+      return `<tr><td class="pk">${esc(k)}</td><td class="pv">${esc(vs)}</td></tr>`;
+    }).join('');
+  }
+
+  // Relationships
+  const relContent = (deps.length || usedBy.length || scens.length) ? `
+    ${deps.length ? `<div class="rel-row"><span class="rel-lbl">Dépend de</span>
+      ${deps.map(d=>`<span class="rel-chip rel-dep">${esc(d.split('(')[0].trim())}</span>`).join('')}
+    </div>` : ''}
+    ${usedBy.length ? `<div class="rel-row"><span class="rel-lbl">Utilisé par</span>
+      ${usedBy.map(u=>`<span class="rel-chip rel-used" onclick="jumpToModule('${esc(u)}')" title="Ouvrir ${esc(u)}">${esc(u)}</span>`).join('')}
+    </div>` : ''}
+    ${scens.length ? `<div class="rel-row"><span class="rel-lbl">Scénarios</span>
+      ${scens.map(s=>`<span class="rel-chip rel-scen">${esc(s)}</span>`).join('')}
+    </div>` : ''}
+  ` : `<p class="empty-note">Aucune relation documentée</p>`;
+
+  // Deps section
+  const depsContent = (deps.length||depsOpt.length) ? `<div class="deps-inner">
+    ${deps.length ? `<div class="deps-grp"><div class="deps-grp-lbl">Required</div>
+      <ul>${deps.map(d=>`<li><code>${esc(d)}</code></li>`).join('')}</ul></div>` : ''}
+    ${depsOpt.length ? `<div class="deps-grp"><div class="deps-grp-lbl">Optional</div>
+      <ul>${depsOpt.map(d=>`<li><code>${esc(d)}</code></li>`).join('')}</ul></div>` : ''}
+  </div>` : `<p class="empty-note">Zéro dépendance externe</p>`;
+
+  const api = (m.public_api||[]).filter(Boolean)
+    .map(fn=>`<span class="api-fn">${esc(fn)}</span>`).join('');
+  const tags = m.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+
+  return `<div class="detail-inner" style="--cc:${cc}">
+    <div class="detail-hd">
+      <div class="detail-title-row">
+        ${catIcon(m.category)}
+        <span class="detail-name">${esc(m.name)}</span>
+        <span class="vbadge">v${esc(m.version)}</span>
+        <span class="cat-pill" style="background:${cc}20;color:${cc}">${esc(catLabel(m.category))}</span>
+      </div>
+      <button class="close-btn" onclick="closeDetail()" title="Fermer (Esc)">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
+          <line x1="3" y1="3" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="detail-desc">${esc(m.description)}</p>
+    ${m.philosophy ? `<p class="philosophy">${esc(m.philosophy)}</p>` : ''}
+    ${m.endpoint   ? `<div class="ep-row"><span class="ep-label">Endpoint</span><code>${esc(m.endpoint)}</code></div>` : ''}
+    ${m.fn_sig     ? `<div class="sig-block">${esc(m.fn_sig)}</div>` : ''}
+    ${api          ? `<div class="api-strip">${api}</div>` : ''}
+
+    ${renderDetailPreview(m)}
+
+    <div class="ds-list">
+      <div class="ds">
+        <div class="ds-hd">Inputs</div>
+        <table class="pt"><thead><tr><th>Paramètre</th><th>Description</th></tr></thead>
+          <tbody>${tableRows(m.inputs)}</tbody></table>
+      </div>
+      <div class="ds">
+        <div class="ds-hd">Outputs</div>
+        <table class="pt"><thead><tr><th>Clé</th><th>Valeur</th></tr></thead>
+          <tbody>${tableRows(m.outputs)}</tbody></table>
+      </div>
+      <div class="ds">
+        <div class="ds-hd">Relations</div>
+        <div class="rel-inner">${relContent}</div>
+      </div>
+      <div class="ds">
+        <div class="ds-hd">Dépendances</div>
+        ${depsContent}
+      </div>
+      ${Object.keys(m.integration||{}).length ? `<div class="ds">
+        <div class="ds-hd">Intégration</div>
+        <table class="pt"><tbody>${tableRows(m.integration)}</tbody></table>
+      </div>` : ''}
+    </div>
+
+    <div class="detail-footer">${tags}</div>
+  </div>`;
+}
+
+/* ── Pipeline view ───────────────────────────────────────────── */
+function renderPipeline() {
+  const nodes = PIPE.map((stage, i) => {
+    const cc  = stage.io ? '#374151' : catColor(stage.cat||'utility');
+    const ico = stage.io ? '' : catIcon(stage.cat||'utility');
+    const onClick = stage.io ? '' :
+      `onclick="document.getElementById('vgrid').click(); openModuleByName('${esc(stage.id)}')"`;
+    const arr = i < PIPE.length-1
+      ? `<div class="pipe-arr"><svg viewBox="0 0 24 12" width="20" height="12" fill="none"><line x1="0" y1="6" x2="18" y2="6" stroke="currentColor" stroke-width="1.5"/><polyline points="12,2 18,6 12,10" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg></div>`
+      : '';
+
+    return `<div class="pipe-node ${stage.io?'io-node':''}" style="--nc:${cc}" ${onClick} title="${esc(stage.id)}">
+      ${ico ? `<div class="pipe-icon">${ico}</div>` : `<div style="height:22px"></div>`}
+      <div class="pipe-label">${esc(stage.label)}</div>
+    </div>${arr}`;
+  }).join('');
+
+  return `<div class="pipeline-view" id="pipelineView">
+    <p style="color:var(--muted);font-size:12px;margin-bottom:16px">Pipeline de design — cliquez sur un nœud pour voir ses détails.</p>
+    <div class="pipeline-scroll"><div class="pipeline-flow">${nodes}</div></div>
+  </div>`;
+}
+
+/* ── Filter logic ────────────────────────────────────────────── */
+function updateVisible() {
+  const cards = document.querySelectorAll('.card');
+  let n = 0;
+
+  cards.forEach(card => {
+    const cat    = card.dataset.cat;
+    const name   = card.dataset.name.toLowerCase();
+    const tags   = JSON.parse(card.dataset.tags||'[]');
+    const descEl = card.querySelector('.card-desc');
+    const desc   = descEl ? descEl.textContent.toLowerCase() : '';
+
+    const matchCat    = state.cat === 'all' || cat === state.cat;
+    const matchSearch = !state.search || name.includes(state.search) || desc.includes(state.search);
+    const matchTags   = state.tags.size === 0 ||
+      [...state.tags].some(t => tags.includes(t));
+
+    const show = matchCat && matchSearch && matchTags;
+    card.style.display = show ? '' : 'none';
+    if (show) n++;
+  });
+
+  document.getElementById('resultsLabel').textContent = n + ' module' + (n>1?'s':'');
+  document.getElementById('noResults').style.display  = n===0 ? 'block' : 'none';
+  updateActiveStrip();
+}
+
+function updateActiveStrip() {
+  const strip   = document.getElementById('activeStrip');
+  const hasFilter = state.cat !== 'all' || state.tags.size > 0 || state.search;
+  strip.classList.toggle('visible', hasFilter);
+
+  const parts = [];
+  if (state.cat !== 'all') parts.push(catLabel(state.cat));
+  state.tags.forEach(t => parts.push(`#${t}`));
+  if (state.search) parts.push(`"${state.search}"`);
+  document.getElementById('activeFiltersText').textContent = parts.join('  ·  ');
+}
+
+function filterCat(btn, cat) {
+  document.querySelectorAll('.cat-pill-btn').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  state.cat = cat;
+  updateVisible();
+}
+
+function toggleTag(tag, el) {
+  if (state.tags.has(tag)) {
+    state.tags.delete(tag);
+    el.classList.remove('active');
+  } else {
+    state.tags.add(tag);
+    el.classList.add('active');
+  }
+  updateVisible();
+}
+
+function filterSearch(val) {
+  state.search = val.toLowerCase().trim();
+  updateVisible();
+}
+
+function clearAll() {
+  state.cat    = 'all';
+  state.tags   = new Set();
+  state.search = '';
+  document.querySelectorAll('.cat-pill-btn').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-cat="all"]').classList.add('active');
+  document.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('searchBox').value = '';
+  updateVisible();
+}
+
+/* ── Detail panel ────────────────────────────────────────────── */
+function openDetail(idx) {
+  state.sel = idx;
+  const m   = MODS[idx];
+  document.getElementById('detailContent').innerHTML = renderDetail(m);
+  document.getElementById('detailPane').classList.add('open');
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  const card = document.querySelector(`[data-idx="${idx}"]`);
+  if (card) card.classList.add('selected');
+  document.getElementById('detailPane').scrollTop = 0;
+}
+
+function closeDetail() {
+  state.sel = null;
+  document.getElementById('detailPane').classList.remove('open');
+  document.getElementById('detailContent').innerHTML = '';
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+}
+
+function jumpToModule(name) {
+  const idx = MODS.findIndex(m => m.name === name);
+  if (idx >= 0) {
+    // Switch to grid view first
+    if (state.view !== 'grid') setView('grid');
+    openDetail(idx);
+    const card = document.querySelector(`[data-idx="${idx}"]`);
+    if (card) card.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+function openModuleByName(name) {
+  jumpToModule(name);
+}
+
+/* ── View toggle ─────────────────────────────────────────────── */
+function setView(v) {
+  state.view = v;
+  document.getElementById('vgrid').classList.toggle('active', v==='grid');
+  document.getElementById('vpipe').classList.toggle('active', v==='pipeline');
+  document.getElementById('cardGrid').style.display    = v==='grid' ? '' : 'none';
+  document.getElementById('noResults').style.display   = v==='grid' ? '' : 'none';
+  const pv = document.getElementById('pipelineView');
+  pv.classList.toggle('visible', v==='pipeline');
+}
+
+/* ── Init ────────────────────────────────────────────────────── */
+function init() {
+  // Render pipeline
+  document.getElementById('pipelineMount').innerHTML = renderPipeline();
+
+  // Render cards
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = MODS.map((m, i) => renderCard(m, i)).join('') +
+    `<div class="no-results" id="noResults">Aucun module trouvé pour ces filtres.</div>`;
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDetail();
+    if ((e.ctrlKey||e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      document.getElementById('searchBox').focus();
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "module": "web_scraper",
+  "version": "1.0.0",
+  "description": "Scraper de site web complet. Deux modes : page unique ou crawl récursif. Télécharge HTML, DOM JSON, médias (img/video/audio) et scripts (js/css). Déclenché par l'extension EURKAI ou en Python direct.",
+  "status": "stable",
+  "category": "capture",
+  "function": {
+    "name": "scrape_page",
+    "inputs": {
+      "url":              "str — URL à scraper [obligatoire]",
+      "output_dir":       "str|Path|None — répertoire de sortie (défaut: ~/eurkai_scrapes/)",
+      "download_assets":  "bool — télécharger les fichiers liés (défaut: True)",
+      "timeout_ms":       "int — timeout Playwright en ms (défaut: 30000)"
+    },
+    "output": {
+      "success":       "bool",
+      "output_dir":    "str — chemin absolu du dossier créé",
+      "pages_count":   "int",
+      "assets_count":  "int",
+      "duration_s":    "float",
+      "error":         "str|None"
+    }
+  },
+  "dependencies": {
+    "external": ["playwright", "beautifulsoup4", "requests", "lxml"]
+  },
+  "consumers": ["generate_ui.py /api/scrape", "TOOLS/EURKAI_EXTENSION"]
+}

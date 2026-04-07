@@ -1,0 +1,59 @@
+{
+  "pool": {
+    "project_id": "presence-ia",
+    "name": "Warming PRESENCE_IA",
+    "session_interval_hours": 4,
+    "ramp_schedule": [
+      {"day": 1,  "eps": 4},
+      {"day": 4,  "eps": 8},
+      {"day": 8,  "eps": 12},
+      {"day": 15, "eps": 16},
+      {"day": 22, "eps": 20}
+    ]
+  },
+  "senders": [
+    {"email": "contact@presence-ia.online",  "display_name": "Contact",  "provider": "brevo"},
+    {"email": "hello@presence-ia.online",    "display_name": "Hello",    "provider": "brevo"},
+    {"email": "bonjour@presence-ia.online",  "display_name": "Bonjour",  "provider": "brevo"},
+    {"email": "info@presence-ia.online",     "display_name": "Info",     "provider": "brevo"},
+    {"email": "equipe@presence-ia.online",   "display_name": "Equipe",   "provider": "brevo"},
+    {"email": "contact@presence-ia.info",    "display_name": "Contact",  "provider": "brevo"},
+    {"email": "hello@presence-ia.info",      "display_name": "Hello",    "provider": "brevo"},
+    {"email": "bonjour@presence-ia.info",    "display_name": "Bonjour",  "provider": "brevo"},
+    {"email": "info@presence-ia.info",       "display_name": "Info",     "provider": "brevo"},
+    {"email": "equipe@presence-ia.info",     "display_name": "Equipe",   "provider": "brevo"},
+    {"email": "contact@presence-ia.cloud",   "display_name": "Contact",  "provider": "brevo"},
+    {"email": "hello@presence-ia.cloud",     "display_name": "Hello",    "provider": "brevo"},
+    {"email": "bonjour@presence-ia.cloud",   "display_name": "Bonjour",  "provider": "brevo"},
+    {"email": "info@presence-ia.cloud",      "display_name": "Info",     "provider": "brevo"},
+    {"email": "equipe@presence-ia.cloud",    "display_name": "Equipe",   "provider": "brevo"},
+    {"email": "contact@presence-ia.site",    "display_name": "Contact",  "provider": "brevo"},
+    {"email": "hello@presence-ia.site",      "display_name": "Hello",    "provider": "brevo"},
+    {"email": "bonjour@presence-ia.site",    "display_name": "Bonjour",  "provider": "brevo"},
+    {"email": "info@presence-ia.site",       "display_name": "Info",     "provider": "brevo"},
+    {"email": "equipe@presence-ia.site",     "display_name": "Equipe",   "provider": "brevo"},
+    {"email": "contact@presence-ia.website", "display_name": "Contact",  "provider": "brevo"},
+    {"email": "hello@presence-ia.website",   "display_name": "Hello",    "provider": "brevo"},
+    {"email": "bonjour@presence-ia.website", "display_name": "Bonjour",  "provider": "brevo"},
+    {"email": "info@presence-ia.website",    "display_name": "Info",     "provider": "brevo"},
+    {"email": "equipe@presence-ia.website",  "display_name": "Equipe",   "provider": "brevo"}
+  ],
+  "receivers": [
+    {
+      "email": "bot-free@presence-ia.com",
+      "display_name": "Bot Free",
+      "imap_host": "imap.ionos.fr",
+      "imap_port": 993,
+      "imap_password": "ENV:WARMING_MAILBOX_1_PWD",
+      "auto_reply": true
+    },
+    {
+      "email": "bot-paid@presence-ia.com",
+      "display_name": "Bot Paid",
+      "imap_host": "imap.ionos.fr",
+      "imap_port": 993,
+      "imap_password": "ENV:WARMING_MAILBOX_2_PWD",
+      "auto_reply": true
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+EURKAI — CADRE STABLE v0.1
+METHOD / SCENARIO / HOW / WHAT / WHY
+
+--------------------------------
+1. Rappels acquis
+--------------------------------
+
+- On ne déclare que les spécificités.
+- Tout le reste est hérité ou injecté.
+- Le catalogue ne contient que des spécificités.
+- value = valeur owned explicitement définie.
+- automated_value = valeur virtuelle, calculable à la demande, non stockée par défaut.
+- automated = no explicit payload value required.
+- Object = Dict = Container → elementlist.
+
+
+--------------------------------
+2. Object — ajout minimal
+--------------------------------
+
+Object.owned_element_list.base_list {
+  name
+  description
+  example
+  version
+  ident
+  kind
+  created_at
+  updated_at
+  created_by
+  updated_by
+  status
+  lifecycle
+  automated
+  how
+}
+
+Règles :
+- how est un attribut de Object.
+- how est vide par défaut.
+- how est redéfini au gré des opérations.
+- goal et description existent déjà dès Object.
+- Leur présence n’est donc pas spécifique à Method.
+
+
+--------------------------------
+3. Objets à poser maintenant
+--------------------------------
+
+- Scenario
+- OrchestrateScenario
+- MilestoneScenario
+- Contract
+- What
+- How
+- Why
+
+Remarques :
+- What / How / Why sont posés comme objets car ils sont manipulés explicitement.
+- Contract est requis pour exprimer proprement la méthode comme contrat minimal.
+- Scenario est requis pour OrchestrateScenario et MilestoneScenario.
+
+
+--------------------------------
+4. Axes opératoires
+--------------------------------
+
+WHY
+- trigger_list
+
+WHAT
+- SuperGet
+- result
+
+HOW
+- CentralMethod
+- exécutée via CRUSOE
+
+Règles :
+- how n’est pas porté par CentralMethod.
+- how est porté par what.
+- SuperGet résout what.
+- SuperGet met à jour what.how.
+- SuperGet prépare what.how pour la suite.
+- result est produit à l’issue de l’exécution.
+
+
+--------------------------------
+5. SuperMethods
+--------------------------------
+
+SuperMethods
+- SuperGet
+- SuperExecute
+- SuperValidate
+- SuperRender
+
+
+--------------------------------
+6. CentralMethod
+--------------------------------
+
+Method:CentralMethod
+- Create
+- Read
+- Update
+- Store
+- Orchestrate
+- Engage
+
+Règle :
+- le système appelle toujours une CentralMethod.
+
+
+--------------------------------
+7. SecondaryMethod
+--------------------------------
+
+Règles :
+- une SecondaryMethod n’est jamais le point d’entrée canonique
+- une SecondaryMethod est liée à une CentralMethod via relation_list.is_secondarymethod_of
+- une SecondaryMethod est résolue par SuperGet
+- une SecondaryMethod exécute la logique spécifique à l’objet concerné
+
+
+--------------------------------
+8. Method = contrat minimal
+--------------------------------
+
+Toute Method expose au minimum :
+- input
+- output
+- orchestrate_scenario
+
+Remarques :
+- goal et description existent déjà dans Object
+- ils ne sont donc pas des spécificités de Method
+- la méthode reste un contrat
+- la logique est portée par scenarios + formulas + rules
+
+Référence : :contentReference[oaicite:0]{index=0}
+
+
+--------------------------------
+9. Contract
+--------------------------------
+
+Contract
+- exprime le minimum requis pour qu’une méthode soit appelable et vérifiable
+- porte les éléments contractuels minimaux de Method
+
+Contract.owned_element_list {
+  input
+  output
+  orchestrate_scenario
+}
+
+
+--------------------------------
+10. Scenario
+--------------------------------
+
+Scenario
+- n’exécute rien lui-même
+- cadre l’exécution
+- porte des conditions, dépendances, bifurcations et étapes
+- pourra plus tard être converti intégralement en hooks / triggers
+
+Remarque :
+- Scenario n’est pas une simple liste linéaire de méthodes
+- on_success / on_failure ne s’exécutent ni toujours, ni ensemble
+
+
+--------------------------------
+11. OrchestrateScenario
+--------------------------------
+
+OrchestrateScenario
+- est unique par Method
+- organise 1..N milestone_scenarios
+
+Règles :
+- OrchestrateScenario.milestone_scenario_list.count >= 1
+- l’orchestration ne peut pas être vide
+
+Référence : :contentReference[oaicite:1]{index=1}
+
+
+--------------------------------
+12. MilestoneScenario
+--------------------------------
+
+MilestoneScenario
+- est un Scenario
+- est composable
+- est testable
+- est substituable
+
+Référence : :contentReference[oaicite:2]{index=2}
+
+
+--------------------------------
+13. Exécution canonique
+--------------------------------
+
+run =
+if get and execute :
+  if validate then success else failure
+after
+
+Règles :
+- les failures précoces sont gérés par la méthode concernée
+- run ne gère pas globalement les corrections locales
+- run reste minimal
+
+
+--------------------------------
+14. Parallélisme
+--------------------------------
+
+- exécution toujours par Dict
+- autant que possible en parallèle
+- chaque objet déclare ses préalables
+- chaque objet met à jour son propre status
+- à chaque loop, how s’exécute sur tous les what dont status = ready
+- le nombre de loops dépend des étapes, non du nombre d’objets
+
+
+--------------------------------
+15. Logs / traces / history
+--------------------------------
+
+Hypothèse de travail retenue :
+- how peut être à l’origine des logs
+
+Donc, forme provisoire acceptable :
+- how.after = history.update
+
+Cette méthode s’occupe ensuite de :
+- trace
+- log
+- history
+
+Objets à poser bientôt :
+- Trace
+- Log
+- History
+
+
+--------------------------------
+16. Questions laissées ouvertes
+--------------------------------
+
+- faut-il définir What / How / Why comme objets complets maintenant ou seulement comme objets minimaux ?
+- SuperGet.after = how.set ? (piste plausible, non figée)
+- how.after = history.update ? (piste plausible, non figée)
+- structure minimale exacte de Contract
+- emplacement exact de input / output : Contract seulement, ou aussi visibles dans Method

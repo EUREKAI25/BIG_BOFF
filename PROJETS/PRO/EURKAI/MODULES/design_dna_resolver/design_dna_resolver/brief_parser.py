@@ -53,28 +53,70 @@ def _to_list(value: Any) -> List[str]:
 
 # Industries détectables dans le texte
 _INDUSTRY_KEYWORDS = {
-    "finance": ["bank", "banque", "finance", "fintech", "investment", "assurance", "insurance"],
-    "healthcare": ["health", "santé", "medical", "médical", "pharma", "clinic", "wellness"],
-    "technology": ["tech", "software", "logiciel", "app", "digital", "platform", "platforme"],
-    "saas": ["saas", "b2b software", "subscription", "dashboard", "workflow"],
-    "luxury": ["luxury", "luxe", "premium", "haute couture", "prestige"],
-    "food": ["food", "restaurant", "cuisine", "eat", "manger", "beverage", "drink"],
-    "eco": ["eco", "green", "sustainable", "durability", "environment", "nature"],
-    "education": ["education", "learning", "école", "school", "cours", "training"],
-    "sport": ["sport", "fitness", "athletic", "performance", "gym"],
-    "gaming": ["game", "gaming", "jeu", "play", "esport"],
+    "finance":        ["bank", "banque", "finance", "fintech", "investment", "assurance", "insurance"],
+    "healthcare":     ["health", "santé", "medical", "médical", "pharma", "clinic", "wellness"],
+    "technology":     ["software", "logiciel", "app", "digital", "platform", "platforme"],
+    "saas":           ["saas", "b2b software", "subscription", "dashboard", "workflow"],
+    "b2b_enterprise": ["infrastructure", "data infrastructure", "enterprise", "b2b", "devops",
+                       "developer tool", "developer tools", "engineering", "data platform",
+                       "automation", "orchestration", "cto", "technical team", "engineers"],
+    "media_editorial":["editorial", "magazine", "art book", "art books", "publication",
+                       "publishing", "literary", "philosophy", "slow living", "culture",
+                       "aesthetics", "fine art", "contemporary art", "art journal",
+                       "revue", "photographie", "photography", "poetic"],
+    "luxury":         ["luxury", "luxe", "premium", "haute couture", "prestige", "high-end"],
+    "food":           ["food", "restaurant", "cuisine", "eat", "manger", "beverage", "drink"],
+    "eco":            ["eco", "green", "sustainable", "durability", "environment", "nature"],
+    "education":      ["education", "learning", "école", "school", "cours", "training"],
+    "sport":          ["sport", "fitness", "athletic", "performance", "gym"],
+    "gaming":         ["game", "gaming", "jeu", "play", "esport"],
+    "nightlife_event":["nightlife", "club", "rave", "concert", "festival", "event", "music",
+                       "performance", "immersive", "dj", "electronic", "underground"],
 }
 
 _VALUE_KEYWORDS = {
-    "trust": ["trust", "confiance", "reliable", "sécurité", "security"],
-    "innovation": ["innovation", "innovant", "cutting-edge", "disruptive", "nouveau"],
-    "energy": ["energy", "énergie", "dynamic", "dynamique", "bold"],
-    "nature": ["nature", "eco", "green", "organic", "naturel"],
-    "premium": ["premium", "luxe", "luxury", "exclusive", "haut de gamme"],
-    "playful": ["fun", "playful", "joyeux", "ludique", "colorful"],
-    "minimal": ["minimal", "simple", "clean", "épuré", "clarity"],
-    "community": ["community", "communauté", "social", "people", "humain"],
+    "trust":       ["trust", "confiance", "reliable", "sécurité", "security"],
+    "innovation":  ["innovation", "innovant", "cutting-edge", "disruptive", "nouveau"],
+    "energy":      ["energy", "énergie", "dynamic", "dynamique", "bold"],
+    "nature":      ["nature", "eco", "green", "organic", "naturel"],
+    "premium":     ["premium", "luxe", "luxury", "exclusive", "haut de gamme"],
+    "playful":     ["fun", "playful", "joyeux", "ludique", "colorful"],
+    "minimal":     ["minimal", "simple", "clean", "épuré", "clarity"],
+    "community":   ["community", "communauté", "social", "people", "humain"],
+    "structured":  ["structured", "structuré", "systematic", "precise", "rigorous",
+                    "reliable", "dependable", "swiss", "geometric", "grid"],
+    "authority":   ["enterprise", "b2b", "cto", "engineering", "infrastructure",
+                    "professional", "institutional"],
+    "elegance":    ["elegant", "élégant", "refined", "timeless", "quiet", "slow living",
+                    "intellectual", "aesthetic", "contemplative", "understated"],
+    "boldness":    ["vibrant", "energetic", "immersive", "chaotic", "controlled", "bold",
+                    "experimental", "expressive", "neon", "electric"],
 }
+
+# Mots déclenchés dans les clauses "avoid / éviter / ne pas" — signaux NÉGATIFS
+_AVOID_TRIGGER_PHRASES = [
+    r"avoid\s*[:\-–]?\s*(.+?)(?:\.|$)",
+    r"éviter\s*[:\-–]?\s*(.+?)(?:\.|$)",
+    r"ne pas\s*[:\-–]?\s*(.+?)(?:\.|$)",
+    r"no\s+(.+?)(?:\.|$)",
+    r"sans\s+(.+?)(?:\.|$)",
+]
+# Valeurs à supprimer si elles apparaissent dans une clause avoid
+_AVOID_NEGATIVE_VALUES = {
+    "playful": ["playful", "fun", "colorful", "friendly", "ludique", "joyeux"],
+    "energy":  ["bright", "vibrant", "gradients", "gradient", "startup colors"],
+    "premium": [],  # rarement négatif
+}
+
+
+def _extract_avoid_words(text: str) -> set[str]:
+    """Extrait les mots présents dans des clauses 'avoid / éviter / ne pas'."""
+    avoid_words: set[str] = set()
+    for pattern in _AVOID_TRIGGER_PHRASES:
+        for m in re.finditer(pattern, text.lower(), re.IGNORECASE):
+            segment = m.group(1) if m.lastindex else m.group(0)
+            avoid_words.update(re.findall(r"\b\w+\b", segment.lower()))
+    return avoid_words
 
 
 def _extract_from_text(text: str) -> BriefInput:
@@ -82,30 +124,46 @@ def _extract_from_text(text: str) -> BriefInput:
     text_lower = text.lower()
     words = set(re.findall(r"\b\w+\b", text_lower))
 
-    # Industrie
-    industry = None
-    for ind, kws in _INDUSTRY_KEYWORDS.items():
-        if any(kw in text_lower for kw in kws):
-            industry = ind
-            break
+    # Mots dans les clauses "avoid" — à exclure des signaux positifs
+    avoid_words = _extract_avoid_words(text)
 
-    # Valeurs
+    # Industrie — mots dans avoid ne comptent pas comme signaux industry positifs
+    industry = None
+    industry_scores: dict[str, int] = {}
+    for ind, kws in _INDUSTRY_KEYWORDS.items():
+        hits = sum(1 for kw in kws
+                   if kw in text_lower and not any(aw in kw or kw == aw for aw in avoid_words))
+        if hits:
+            industry_scores[ind] = hits
+    if industry_scores:
+        industry = max(industry_scores, key=lambda k: industry_scores[k])
+
+    # Valeurs — ignorer si le mot clé était dans une clause avoid
     brand_values = []
     for val, kws in _VALUE_KEYWORDS.items():
-        if any(kw in text_lower for kw in kws):
+        matching = [kw for kw in kws if kw in text_lower]
+        non_avoided = [kw for kw in matching if not any(aw in kw or kw in aw for aw in avoid_words)]
+        if non_avoided:
             brand_values.append(val)
 
-    # Keywords : mots significatifs (longueur > 4, non stopwords)
+    # Supprimer les valeurs explicitement dans avoid
+    for val, triggers in _AVOID_NEGATIVE_VALUES.items():
+        if any(t in avoid_words for t in triggers):
+            brand_values = [v for v in brand_values if v != val]
+
+    # Keywords : mots significatifs (longueur > 4, non stopwords, non avoid)
     _STOPWORDS = {
         "the", "a", "an", "and", "or", "for", "to", "of", "in", "is",
         "that", "this", "with", "are", "our", "we", "will", "une", "un",
         "le", "la", "les", "des", "pour", "avec", "dans", "qui",
+        "avoid", "éviter", "must", "should", "never", "everywhere",
     }
-    keywords = [w for w in words if len(w) > 4 and w not in _STOPWORDS][:10]
+    keywords = [w for w in words
+                if len(w) > 4 and w not in _STOPWORDS and w not in avoid_words][:10]
 
     return BriefInput(
         industry=industry,
-        brand_values=brand_values[:4],
+        brand_values=brand_values[:6],
         keywords=keywords,
         raw_text=text,
     )

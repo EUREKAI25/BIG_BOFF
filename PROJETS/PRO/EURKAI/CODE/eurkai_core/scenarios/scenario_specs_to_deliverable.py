@@ -193,70 +193,51 @@ def _normalize_output(deliverable_type, deliverable):
 
 def _generate_code(specs, verbose):
     """
-    Branché sur scenario_orchestrate.
-    Génère le module principal défini dans l'architecture.
+    Délègue à product_create (modules/product_create.py).
+    product_create orchestre backend_create + frontend_create + storage_create.
     """
     try:
-        from scenarios.scenario_orchestrate import run as orchestrate
+        from modules.product_create import run as product_create
     except ImportError as e:
-        return {"ok": False, "error": f"orchestrate_import_failed:{e}"}
+        return {"ok": False, "error": f"product_create_import_failed:{e}",
+                "deliverable": None}
 
-    # Extraire le composant P1 principal
-    arch       = specs.get("architecture", {})
-    components = specs.get("components", [])
-    models     = specs.get("data_models", [])
+    result = product_create({"specs": specs})
 
-    main_comp  = next((c for c in components if c.get("priority") == "P1"), None)
-    comp_name  = main_comp["name"] if main_comp else "MainModule"
-    feature    = main_comp.get("feature", comp_name) if main_comp else comp_name
-    layer      = main_comp.get("layer", "backend") if main_comp else "backend"
+    if result["status"] == "error":
+        return {"ok": False, "error": result.get("error", "product_create_failed"),
+                "deliverable": None}
 
-    # Inférer object_type depuis le layer
-    object_type = {
-        "frontend": "class",
-        "backend":  "module",
-        "shared":   "class",
-    }.get(layer, "module")
+    deliv_inner = result["deliverable"]
+    backend     = deliv_inner.get("backend", [])
+    frontend    = deliv_inner.get("frontend", [])
+    components  = specs.get("components", [])
 
-    # Construire le goal depuis l'architecture
-    goal = (
-        f"{feature}. Pattern : {arch.get('pattern', '')}. "
-        f"Stack : {arch.get('stack_notes', '')}."
+    # Entry point = premier backend P1, sinon premier backend, sinon premier frontend
+    main = (
+        next((m for m in backend if m.get("priority") == "P1"), None)
+        or (backend[0] if backend else None)
+        or (frontend[0] if frontend else None)
     )
 
-    schema_ident = _to_snake(comp_name)
-    params = {
-        "object_type":    object_type,
-        "object_goal":    goal,
-        "object_lineage": f"Module:{comp_name}",
-        "attributes":     {m["name"]: "model" for m in models[:3]},
+    if not main:
+        return {"ok": False, "error": "no_module_generated", "deliverable": None}
+
+    deliverable = {
+        "type":           "code",
+        "entry_point":    main["name"],
+        "filename":       main["filename"],
+        "code":           main["code"],
+        "validation":     {"score": 100, "issues": [], "warnings": []},
+        "modules":        deliv_inner,
+        "components_all": [c["name"] for c in components],
+        "note":           result["meta"].get("note", ""),
+        "status":         "ready",
     }
 
-    result = orchestrate(
-        schema_ident, params,
-        catalog={"_storage": None},
-        verbose=verbose,
-    )
-
-    if result.get("status") in ("success", "partial"):
-        deliverable = {
-            "type":           "code",
-            "entry_point":    comp_name,
-            "filename":       result.get("filename", ""),
-            "code":           result.get("code", ""),
-            "validation":     result.get("validation", {}),
-            "components_all": [c["name"] for c in components],
-            "note":           (
-                f"Module principal généré. "
-                f"{len(components)} composants identifiés dans les specs — "
-                f"générer chacun individuellement via scenario_orchestrate."
-            ),
-        }
-        return {"ok": True, "is_real": True, "generator_status": result["status"],
-                "deliverable": deliverable}
-
-    return {"ok": False, "error": f"orchestrate_failed:{result.get('status')}",
-            "deliverable": None}
+    gen_status = "success" if result["status"] == "success" else "partial"
+    return {"ok": True, "is_real": True, "generator_status": gen_status,
+            "deliverable": deliverable}
 
 
 def _generate_page_stub(specs):

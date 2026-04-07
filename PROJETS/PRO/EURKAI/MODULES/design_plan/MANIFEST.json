@@ -1,0 +1,69 @@
+{
+  "name": "design_plan",
+  "version": "1.0.0",
+  "description": "Générateur de plan de design déterministe — contrat de rendu strict avant le premier render",
+  "author": "EURKAI",
+  "dependencies": {},
+  "pipeline_position": "AVANT le rendu — après brief, avant generate_landing_page()",
+  "inputs": {
+    "brief":       "string — texte libre du projet",
+    "seed":        "int — même seed = même plan (déterministe)",
+    "style_dna":   "dict optionnel — influence les choix visuels",
+    "theme_hints": "dict optionnel — {archetype, layout} pour forcer des choix"
+  },
+  "output_schema": {
+    "layout_strategy": "string — ex: asymmetrical_split, editorial_flow, brutalist_stack",
+    "hero": {
+      "type":           "string — ex: offset_text_image, full_bleed_with_overlay",
+      "positioning":    "string — ex: left_panel_right_media, top_left_dominant",
+      "text_placement": "string — ex: half_panel_left, large_typographic_mass",
+      "media_role":     "string — ex: atmospheric_backdrop, product_showcase"
+    },
+    "composition": {
+      "structure":         "linear | alternating | fragmented | modular_dynamic | stacked_contrast",
+      "flow":              "string — ex: tension_release, crescendo_build",
+      "section_variation": "high | medium | controlled",
+      "density":           "low | medium | high"
+    },
+    "visual_tension": {
+      "level":   "low | medium | high | extreme",
+      "methods": ["array of techniques — overlap, rotation, scale_contrast, ..."]
+    },
+    "rhythm": {
+      "pattern":     "string — ex: irregular_pulse, build_and_release",
+      "alternation": "string — ex: wide_narrow, dense_sparse"
+    },
+    "constraints": {
+      "forbidden": ["centered_hero", "uniform_card_grid", "... layout-specific"],
+      "required":  ["asymmetry", "varying_section_heights", "... layout-specific"]
+    },
+    "section_types": ["hero", "...", "cta_block"],
+    "cta_strategy": {
+      "placement":         "string",
+      "style":             "string",
+      "contrast_strategy": "string"
+    }
+  },
+  "profiles": ["editorial", "structural", "bold", "commercial"],
+  "layout_strategies": [
+    "editorial_flow", "magazine_spread", "vertical_narrative",
+    "asymmetrical_split", "staggered_blocks", "modular_grid",
+    "brutalist_stack", "layered_overlap", "diagonal_tension"
+  ],
+  "always_forbidden": [
+    "centered_hero", "uniform_card_grid",
+    "standard_nav_hero_grid_footer", "equal_section_heights", "symmetrical_column_layout"
+  ],
+  "always_required": [
+    "varying_section_heights", "cta_visual_isolation",
+    "at_least_one_typographic_hierarchy_break"
+  ],
+  "distinctiveness": "10/10 paires distinctes sur 5 seeds — aucune répétition de layout",
+  "integration": {
+    "apply_to_rc":     "DesignPlan.apply_to_rc(rc) → rc surchargé avec les contraintes du plan",
+    "validate":        "DesignPlan.validate() → list[str] d'erreurs structurelles",
+    "diff_plans":      "diff_plans(a, b) → dict des dimensions qui diffèrent",
+    "plans_distinct":  "plans_are_distinct(a, b, min_diffs=3) → bool"
+  },
+  "status": "stable"
+}

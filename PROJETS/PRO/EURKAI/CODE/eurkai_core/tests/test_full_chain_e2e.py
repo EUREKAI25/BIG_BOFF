@@ -142,8 +142,6 @@ def test_case_1_saas_code():
     _assert(github.get("commit_message"), "CAS1 — commit_message set")
     _assert(github.get("ready") is True,  "CAS1 — github ready=True")
 
-    return True
-
 
 # ── CAS 2 — Content ───────────────────────────────────────────────────────────
 
@@ -171,8 +169,6 @@ def test_case_2_content():
 
     _assert(results["idea_to_brief"]["data"].get("brief", {}).get("project_name"),
             "CAS2 — project_name set")
-
-    return True, dtype
 
 
 # ── CAS 3 — Input invalide ────────────────────────────────────────────────────
@@ -206,8 +202,6 @@ def test_case_3_invalid_input():
     _check_envelope(r, "prod", "github", "CAS3/prod_to_github")
     _assert(r["status"] == "failure", "CAS3/prod_to_github — failure")
 
-    return True
-
 
 # ── Runner ────────────────────────────────────────────────────────────────────
 
@@ -230,9 +224,9 @@ if __name__ == "__main__":
 
     print("\n[ CAS 2 ] Série d'articles / content")
     try:
-        _, dtype = test_case_2_content()
-        print(f"  ✓ 8/8 étapes — deliverable_type={dtype}")
-        passed.append(f"CAS2 content (dtype={dtype})")
+        test_case_2_content()
+        print("  ✓ 8/8 étapes — deliverable_type=content")
+        passed.append("CAS2 content (dtype=content)")
     except AssertionError as e:
         print(f"  ✗ {e}")
         failed.append(f"CAS2 : {e}")

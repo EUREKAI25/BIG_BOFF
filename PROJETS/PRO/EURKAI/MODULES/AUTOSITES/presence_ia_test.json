@@ -1,0 +1,269 @@
+{
+  "page_type": "landing",
+  "lang": "fr",
+  "title": "Audit IA Local — {city}",
+  "description": "Découvrez si votre établissement est recommandé par ChatGPT, Claude et Gemini — audit gratuit en 48h.",
+  "theme": {
+    "color_system": {
+      "primary":   { "base": "rgb(30, 58, 138)",  "light": "rgb(59, 91, 185)",  "dark": "rgb(15, 36, 96)"  },
+      "secondary": { "base": "rgb(245, 158, 11)", "light": "rgb(251, 191, 36)", "dark": "rgb(217, 119, 6)" }
+    },
+    "font_family_headings": "Inter",
+    "font_family_body": "Inter",
+    "font_google_url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap",
+    "style_preset_name": "rounded",
+    "bg_prominence": "subtle",
+    "animation_style": "subtle",
+    "mood": "corporate"
+  },
+  "placeholder_context": {
+    "city": "Paris",
+    "metier": "restaurant",
+    "price": "97€"
+  },
+  "sections": [
+    {
+      "key": "navbar",
+      "enabled": true,
+      "order": 0,
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "navbar_block",
+          "structure": { "position": "sticky", "style": "white" },
+          "seed": {
+            "logo_text": "Présence IA",
+            "logo_href": "/",
+            "links": [
+              { "label": "Comment ça marche", "href": "#how" },
+              { "label": "Tarifs",            "href": "#pricing" },
+              { "label": "FAQ",               "href": "#faq" }
+            ]
+          }
+        }
+      }]
+    },
+    {
+      "key": "hero",
+      "enabled": true,
+      "order": 1,
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "hero_block",
+          "structure": {
+            "bg_type": "gradient",
+            "text_position": "center",
+            "overlay": false,
+            "min_height": "80vh"
+          },
+          "seed": {
+            "title": "Votre {metier} à {city} est-il visible sur les IA ?",
+            "subtitle": "ChatGPT, Claude et Gemini recommandent des établissements à leurs utilisateurs. Êtes-vous dans leurs réponses ?",
+            "badge": "Audit gratuit — résultats en 48h",
+            "cta_primary_label": "Obtenir mon audit gratuit",
+            "cta_primary_href": "#pricing",
+            "cta_secondary_label": "Voir comment ça marche",
+            "cta_secondary_href": "#how",
+            "bg_src": null
+          }
+        }
+      }]
+    },
+    {
+      "key": "stats",
+      "enabled": true,
+      "order": 2,
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "stat_block",
+          "structure": { "layout": "horizontal", "show_sources": false },
+          "seed": {
+            "stats": [
+              { "value": "87%",  "label": "des établissements absents des réponses IA", "source_url": null },
+              { "value": "3 IA", "label": "analysées simultanément (ChatGPT, Claude, Gemini)", "source_url": null },
+              { "value": "48h",  "label": "pour recevoir votre rapport complet", "source_url": null }
+            ]
+          }
+        }
+      }]
+    },
+    {
+      "key": "how",
+      "enabled": true,
+      "order": 3,
+      "id": "how",
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "steps_block",
+          "structure": { "direction": "horizontal", "numbering": "numeric", "variant": "cards" },
+          "seed": {
+            "title": "Comment ça marche",
+            "subtitle": "Un audit structuré en 4 étapes, sans installation ni technique.",
+            "steps": [
+              { "title": "Renseignez votre établissement", "description": "Nom, ville, secteur d'activité — 2 minutes suffisent." },
+              { "title": "Les IA sont interrogées", "description": "Nous posons les questions que vos clients posent à ChatGPT, Claude et Gemini." },
+              { "title": "Analyse RCA complète", "description": "Scoring sur 4 axes : Autorité, Base, Confiance, Diffusion." },
+              { "title": "Rapport et recommandations", "description": "Vous recevez votre score détaillé et un plan d'action personnalisé." }
+            ]
+          }
+        }
+      }]
+    },
+    {
+      "key": "pricing",
+      "enabled": true,
+      "order": 4,
+      "id": "pricing",
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "pricing_block",
+          "structure": { "layout": "auto", "card_style": "bordered" },
+          "seed": {
+            "title": "Nos offres",
+            "subtitle": "Sans engagement. Sans surprise.",
+            "cards": [
+              {
+                "name": "Audit",
+                "price": "{price}",
+                "period": "paiement unique",
+                "features": [
+                  "Audit sur 3 IA (ChatGPT, Claude, Gemini)",
+                  "Score RCA détaillé",
+                  "Rapport PDF complet",
+                  "Recommandations prioritaires"
+                ],
+                "is_featured": false,
+                "cta_label": "Obtenir mon audit",
+                "cta_href": "#contact"
+              },
+              {
+                "name": "Suivi 6 mois",
+                "price": "500€",
+                "period": "6 mois",
+                "features": [
+                  "Tout l'audit inclus",
+                  "Re-tests mensuels automatisés",
+                  "Suivi de progression",
+                  "Alertes si votre score baisse",
+                  "Support prioritaire"
+                ],
+                "is_featured": true,
+                "cta_label": "Choisir le suivi",
+                "cta_href": "#contact"
+              },
+              {
+                "name": "Accompagnement",
+                "price": "3 500€",
+                "period": "mission complète",
+                "features": [
+                  "Audit + suivi 6 mois inclus",
+                  "Stratégie de contenu IA",
+                  "Optimisation des citations",
+                  "Reporting mensuel dédié",
+                  "Accès API pour vos outils"
+                ],
+                "is_featured": false,
+                "cta_label": "Nous contacter",
+                "cta_href": "#contact"
+              }
+            ]
+          }
+        }
+      }]
+    },
+    {
+      "key": "faq",
+      "enabled": true,
+      "order": 5,
+      "id": "faq",
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "faq_block",
+          "structure": { "style": "accordion", "max_width": "800px" },
+          "seed": {
+            "title": "Questions fréquentes",
+            "items": [
+              {
+                "question": "Pourquoi être visible sur les IA est-il devenu important ?",
+                "answer": "De plus en plus d'utilisateurs posent des questions directement à ChatGPT ou Gemini pour trouver des prestataires locaux. Ces IA citent des établissements dans leurs réponses — sans forcément renvoyer vers Google. Si vous n'y êtes pas, vous n'existez pas pour ces utilisateurs."
+              },
+              {
+                "question": "Qu'est-ce que le score RCA ?",
+                "answer": "Le RCA (Réputation, Crédibilité, Autorité) est notre protocole d'évaluation. Il mesure 4 axes : votre Autorité sectorielle, votre Base de contenus indexables, la Confiance que les IA accordent à vos sources, et la Diffusion de votre nom sur le web."
+              },
+              {
+                "question": "Mon établissement doit-il faire quelque chose pour préparer l'audit ?",
+                "answer": "Non. Nous interrogeons les IA comme le ferait un client, sans vous impliquer. Vous n'avez besoin que de renseigner votre nom, ville et secteur."
+              },
+              {
+                "question": "Que se passe-t-il si mon score est mauvais ?",
+                "answer": "Le rapport inclut un plan d'action priorisé. Selon votre offre, nous pouvons l'implémenter avec vous (suivi 6 mois ou accompagnement complet)."
+              }
+            ]
+          }
+        }
+      }]
+    },
+    {
+      "key": "cta_final",
+      "enabled": true,
+      "order": 6,
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "cta_block",
+          "structure": { "bg_type": "gradient", "text_align": "center" },
+          "seed": {
+            "title": "Votre visibilité IA en 48h",
+            "subtitle": "Gratuit. Sans engagement. Sans installation.",
+            "btn_label": "Obtenir mon audit gratuit",
+            "btn_href": "#contact"
+          }
+        }
+      }]
+    },
+    {
+      "key": "footer",
+      "enabled": true,
+      "order": 7,
+      "columns": [{
+        "span": 12,
+        "block": {
+          "block_type": "footer_block",
+          "structure": { "columns": 2, "show_social": false },
+          "seed": {
+            "copyright": "© 2026 Présence IA. Tous droits réservés.",
+            "columns": [
+              {
+                "title": "Produit",
+                "links": [
+                  { "label": "Comment ça marche", "href": "#how" },
+                  { "label": "Tarifs",            "href": "#pricing" },
+                  { "label": "FAQ",               "href": "#faq" }
+                ]
+              },
+              {
+                "title": "Légal",
+                "links": [
+                  { "label": "Mentions légales",        "href": "/mentions" },
+                  { "label": "CGV",                     "href": "/cgv" },
+                  { "label": "Politique de confidentialité", "href": "/confidentialite" }
+                ]
+              }
+            ],
+            "social_links": []
+          }
+        }
+      }]
+    }
+  ],
+  "meta": {
+    "version": "0.2.0",
+    "generated_by": "manual_test"
+  }
+}

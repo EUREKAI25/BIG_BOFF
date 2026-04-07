@@ -1,0 +1,85 @@
+{
+  "filter_list": {
+    "has_schema": {
+      "function": "filter_has_schema"
+    }
+  },
+  "function_list": {
+    "resolve_how": {
+      "function": "resolve_how"
+    },
+    "validate_object_against_schema": {
+      "function": "validate_object_against_schema"
+    },
+    "rule_has_schema_reference": {
+      "function": "rule_has_schema_reference"
+    },
+    "validate_attending_result": {
+      "function": "validate_attending_result"
+    },
+    "render_validation_result": {
+      "function": "render_validation_result"
+    },
+    "print_success": {
+      "function": "print_success"
+    },
+    "schema_validate_failurehook_print": {
+      "function": "schema_validate_failurehook_print"
+    }
+  },
+  "object_list": {
+    "Page": {
+      "ident": "Page",
+      "name": "Page",
+      "schema": "PageSchema",
+      "how": null,
+      "owned_element_list": {
+        "base_list": {
+          "name": {
+            "value": "Page"
+          },
+          "ident": {
+            "value": "Page"
+          }
+        }
+      }
+    }
+  },
+  "schema_list": {
+    "PageSchema": {
+      "ident": "PageSchema",
+      "required_element_list": {
+        "schema": {},
+        "owned_element_list.base_list.name": {},
+        "owned_element_list.base_list.ident": {}
+      },
+      "validation_rule_list": {
+        "has_schema_rule": {
+          "ident": "has_schema_rule",
+          "how": "rule_has_schema_reference",
+          "params": {
+            "expected_schema_ident": "PageSchema"
+          }
+        }
+      }
+    }
+  },
+  "scenario_list": {
+    "schema_validate": {
+      "ident": "schema_validate",
+      "what": {
+        "filter": "has_schema"
+      },
+      "how": "validate_object_against_schema",
+      "validate": "validate_attending_result",
+      "render": "render_validation_result",
+      "hooks": {
+        "on_success": "print_success",
+        "on_failure": "schema_validate_failurehook_print"
+      },
+      "attending_result": {
+        "success": true
+      }
+    }
+  }
+}

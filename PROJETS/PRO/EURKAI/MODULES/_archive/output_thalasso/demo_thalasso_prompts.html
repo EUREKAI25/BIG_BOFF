@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thalasso & Spa — Prompts IA Générés</title>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: rgb(72, 149, 178);
+            --color-primary-light: rgb(157, 201, 219);
+            --color-primary-dark: rgb(44, 98, 120);
+            --color-secondary: rgb(138, 186, 169);
+
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            --spacing-3xl: 64px;
+
+            --shadow-md: 0 2px 4px rgba(44, 98, 120, 0.15);
+            --shadow-lg: 0 4px 12px rgba(44, 98, 120, 0.2);
+
+            --radius-sm: 4px;
+            --radius-md: 8px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            color: #2d3748;
+            background: linear-gradient(to bottom, #f0f9ff 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        header {
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+            background: white;
+            border-bottom: 2px solid var(--color-primary-light);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #64748b;
+        }
+
+        .intro {
+            padding: var(--spacing-3xl) 0;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .intro h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-primary-dark);
+        }
+
+        .intro p {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            padding: 8px 24px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-xl);
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .prompt-card {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .prompt-visual {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prompt-visual.hero {
+            background: linear-gradient(135deg,
+                rgba(72, 149, 178, 0.9) 0%,
+                rgba(138, 186, 169, 0.8) 50%,
+                rgba(157, 201, 219, 0.9) 100%);
+        }
+
+        .prompt-visual.features {
+            background: linear-gradient(45deg,
+                rgba(157, 201, 219, 0.3) 0%,
+                rgba(72, 149, 178, 0.5) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prompt-visual.cta {
+            background: linear-gradient(to right,
+                rgba(44, 98, 120, 0.85) 0%,
+                rgba(72, 149, 178, 0.75) 100%);
+        }
+
+        .prompt-visual.og {
+            background: linear-gradient(135deg,
+                rgba(138, 186, 169, 0.6) 0%,
+                rgba(72, 149, 178, 0.8) 100%);
+        }
+
+        .visual-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 64px;
+            opacity: 0.3;
+        }
+
+        .prompt-content {
+            padding: var(--spacing-xl);
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .prompt-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .prompt-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-primary-dark);
+        }
+
+        .prompt-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            font-size: 12px;
+            background: rgba(72, 149, 178, 0.1);
+            color: var(--color-primary-dark);
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+
+        .prompt-text {
+            background: #f8fafc;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .prompt-text pre {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #334155;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .design-system {
+            background: white;
+            padding: var(--spacing-3xl) 0;
+            margin-top: var(--spacing-3xl);
+            border-radius: var(--radius-md);
+        }
+
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+        }
+
+        .system-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(72, 149, 178, 0.2);
+        }
+
+        .system-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .system-card ul {
+            list-style: none;
+        }
+
+        .system-card li {
+            padding: 8px 0;
+            color: #475569;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .system-card li:last-child {
+            border-bottom: none;
+        }
+
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-right: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: var(--spacing-3xl) 0;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            color: white;
+            border-radius: var(--radius-md);
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .btn-copy {
+            background: white;
+            color: var(--color-primary-dark);
+            padding: 12px 32px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .intro h1 { font-size: 32px; }
+            .prompts-grid,
+            .system-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="ph ph-waves"></i>
+            Thalasso & Spa
+        </div>
+        <p class="tagline">Prompts IA générés automatiquement</p>
+    </header>
+
+    <div class="container">
+        <div class="intro">
+            <span class="badge">🤖 EURKAI Design System</span>
+            <h1>4 Prompts DALL-E prêts à l'emploi</h1>
+            <p>Générés automatiquement à partir du mood "cool" + use_case "wellness". Palette marine (bleu océan, turquoise, vert d'eau). Style moderne et épuré.</p>
+        </div>
+
+        <div class="prompts-grid">
+            <!-- HERO -->
+            <div class="prompt-card">
+                <div class="prompt-visual hero">
+                    <div class="visual-overlay">
+                        <i class="ph ph-image"></i>
+                    </div>
+                </div>
+                <div class="prompt-content">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">
+                            <i class="ph ph-desktop"></i>
+                        </div>
+                        <h3>Hero Section</h3>
+                    </div>
+                    <div class="prompt-meta">
+                        <span class="meta-tag">1920x1080px</span>
+                        <span class="meta-tag">16:9</span>
+                        <span class="meta-tag">Horizontal banner</span>
+                    </div>
+                    <div class="prompt-text">
+                        <pre>Luxury spa and thalassotherapy imagery with calming ocean blues, turquoise waters, soft lighting. Serene atmosphere, modern elegance, coastal wellness themes.
+Hero image for wellness website
+Style: clean, modern
+Composition: Wide aspect ratio (16:9), centered subject
+Mood: cool, welcoming, high quality
+Colors: Incorporate rgb(72, 149, 178)
+Format: Horizontal banner, 1920x1080px</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURES -->
+            <div class="prompt-card">
+                <div class="prompt-visual features">
+                    <div class="visual-overlay">
+                        <i class="ph ph-squares-four"></i>
+                    </div>
+                </div>
+                <div class="prompt-content">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">
+                            <i class="ph ph-grid-four"></i>
+                        </div>
+                        <h3>Features / Services</h3>
+                    </div>
+                    <div class="prompt-meta">
+                        <span class="meta-tag">800x800px</span>
+                        <span class="meta-tag">Square</span>
+                        <span class="meta-tag">Isometric</span>
+                    </div>
+                    <div class="prompt-text">
+                        <pre>Abstract illustration representing wellness features
+Style: clean, modern, isometric or flat design
+Mood: cool
+Colors: Use palette from rgb(72, 149, 178)
+Elements: Icons, simple shapes, minimal detail
+Format: Square or portrait, 800x800px</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="prompt-card">
+                <div class="prompt-visual cta">
+                    <div class="visual-overlay">
+                        <i class="ph ph-megaphone"></i>
+                    </div>
+                </div>
+                <div class="prompt-content">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">
+                            <i class="ph ph-hand-pointing"></i>
+                        </div>
+                        <h3>Call-to-Action Background</h3>
+                    </div>
+                    <div class="prompt-meta">
+                        <span class="meta-tag">Wide format</span>
+                        <span class="meta-tag">Background</span>
+                        <span class="meta-tag">Subtle</span>
+                    </div>
+                    <div class="prompt-text">
+                        <pre>Luxury spa and thalassotherapy imagery with calming ocean blues, turquoise waters, soft lighting. Serene atmosphere, modern elegance, coastal wellness themes.
+Background for call-to-action section
+Style: clean, modern, subtle, not distracting
+Mood: cool, inviting
+Treatment: Soft gradient or subtle pattern
+Colors: rgb(72, 149, 178) as accent
+Format: Wide, suitable as background</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OG IMAGE -->
+            <div class="prompt-card">
+                <div class="prompt-visual og">
+                    <div class="visual-overlay">
+                        <i class="ph ph-share-network"></i>
+                    </div>
+                </div>
+                <div class="prompt-content">
+                    <div class="prompt-header">
+                        <div class="prompt-icon">
+                            <i class="ph ph-share-fat"></i>
+                        </div>
+                        <h3>Social Media Preview (OG)</h3>
+                    </div>
+                    <div class="prompt-meta">
+                        <span class="meta-tag">1200x630px</span>
+                        <span class="meta-tag">Facebook/Twitter</span>
+                        <span class="meta-tag">Readable</span>
+                    </div>
+                    <div class="prompt-text">
+                        <pre>Social media preview card for wellness
+Style: clean, modern, clean, readable
+Mood: cool
+Layout: Title + visual element, 1200x630px
+Colors: Palette based on rgb(72, 149, 178)</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-system">
+            <div class="container">
+                <div class="intro">
+                    <h2 style="font-size: 36px; margin-bottom: 16px; color: var(--color-primary-dark);">Design System extrait</h2>
+                    <p style="font-size: 16px;">Palette, icônes, traitements décoratifs</p>
+                </div>
+
+                <div class="system-grid">
+                    <div class="system-card">
+                        <h3><i class="ph ph-palette"></i> Palette Couleurs</h3>
+                        <ul>
+                            <li>
+                                <span class="color-preview" style="background: rgb(72, 149, 178);"></span>
+                                Primary: rgb(72, 149, 178)
+                            </li>
+                            <li>
+                                <span class="color-preview" style="background: rgb(157, 201, 219);"></span>
+                                Primary Light: rgb(157, 201, 219)
+                            </li>
+                            <li>
+                                <span class="color-preview" style="background: rgb(44, 98, 120);"></span>
+                                Primary Dark: rgb(44, 98, 120)
+                            </li>
+                            <li>
+                                <span class="color-preview" style="background: rgb(138, 186, 169);"></span>
+                                Secondary: rgb(138, 186, 169)
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="system-card">
+                        <h3><i class="ph ph-polygon"></i> Guidelines Icônes</h3>
+                        <ul>
+                            <li><strong>Style:</strong> geometric</li>
+                            <li><strong>Corners:</strong> sharp (4px)</li>
+                            <li><strong>Weight:</strong> thin (stroke 1px)</li>
+                            <li><strong>Library:</strong> heroicons-outline</li>
+                            <li><strong>Size:</strong> 20px-32px</li>
+                        </ul>
+                    </div>
+
+                    <div class="system-card">
+                        <h3><i class="ph ph-paint-brush"></i> Traitements</h3>
+                        <ul>
+                            <li><strong>Shadow:</strong> sharp</li>
+                            <li><strong>Gradient:</strong> linear</li>
+                            <li><strong>Animation:</strong> snappy (0.15s)</li>
+                            <li><strong>Buttons:</strong> glow effect</li>
+                            <li><strong>Shape:</strong> clean/minimal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <div class="container">
+                <h2>Prêt à générer les images ?</h2>
+                <p>Copie ces prompts dans DALL-E 3, Midjourney, Stable Diffusion ou Ideogram</p>
+                <button class="btn-copy" onclick="copyAllPrompts()">
+                    <i class="ph ph-copy"></i> Copier tous les prompts
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyAllPrompts() {
+            const prompts = `
+=== HERO (1920x1080px) ===
+Luxury spa and thalassotherapy imagery with calming ocean blues, turquoise waters, soft lighting. Serene atmosphere, modern elegance, coastal wellness themes.
+Hero image for wellness website
+Style: clean, modern
+Composition: Wide aspect ratio (16:9), centered subject
+Mood: cool, welcoming, high quality
+Colors: Incorporate rgb(72, 149, 178)
+Format: Horizontal banner, 1920x1080px
+
+=== FEATURES (800x800px) ===
+Abstract illustration representing wellness features
+Style: clean, modern, isometric or flat design
+Mood: cool
+Colors: Use palette from rgb(72, 149, 178)
+Elements: Icons, simple shapes, minimal detail
+Format: Square or portrait, 800x800px
+
+=== CTA BACKGROUND ===
+Luxury spa and thalassotherapy imagery with calming ocean blues, turquoise waters, soft lighting. Serene atmosphere, modern elegance, coastal wellness themes.
+Background for call-to-action section
+Style: clean, modern, subtle, not distracting
+Mood: cool, inviting
+Treatment: Soft gradient or subtle pattern
+Colors: rgb(72, 149, 178) as accent
+Format: Wide, suitable as background
+
+=== OG IMAGE (1200x630px) ===
+Social media preview card for wellness
+Style: clean, modern, clean, readable
+Mood: cool
+Layout: Title + visual element, 1200x630px
+Colors: Palette based on rgb(72, 149, 178)
+            `;
+
+            navigator.clipboard.writeText(prompts.trim());
+
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-check"></i> Copié !';
+            btn.style.background = 'rgba(16, 185, 129, 0.2)';
+            btn.style.color = '#059669';
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = 'white';
+                btn.style.color = 'var(--color-primary-dark)';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

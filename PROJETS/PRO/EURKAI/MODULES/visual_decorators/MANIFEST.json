@@ -1,0 +1,84 @@
+{
+  "module": "visual_decorators",
+  "version": "1.0.0",
+  "description": "Couche de signature visuelle décorative — cohérente, intentionnelle, systémique",
+  "philosophy": "PEU d'éléments, utilisés UNIFORMÉMENT. Jamais d'accumulation décorative. La cohérence EST le design.",
+
+  "function": {
+    "name": "generate_visual_decorators",
+    "signature": "generate_visual_decorators(visual_intent: dict) -> dict",
+    "input": "VisualIntent produit par visual_intent_engine (champs utilisés : context.emotional_goal, context.brand_positioning, art_direction.style_family, art_direction.intensity, composition_bias.density)",
+    "output": "dict strict — 5 clés : borders, dividers, icons, motifs, overlays"
+  },
+
+  "output_schema": {
+    "borders": {
+      "style":     "none | solid | dashed | double | glow | dotted",
+      "thickness": "none | thin | medium | thick",
+      "radius":    "none | small | medium | large | full",
+      "pattern":   "none | uniform | top-only | accent | frame"
+    },
+    "dividers": {
+      "type":  "none | line | space | ornament | gradient | zigzag",
+      "style": "none | minimal | bold | decorative | subtle"
+    },
+    "icons": {
+      "style":        "line | filled | duotone | outline-filled",
+      "stroke":       "thin | medium | thick",
+      "corner_style": "sharp | rounded | mixed",
+      "complexity":   "simple | medium | detailed"
+    },
+    "motifs": {
+      "type":  "none | geometric | blob | grid-fragment | diagonal-cut | noise | dot-pattern | line-pattern | wave",
+      "usage": "none | background | section-accent | corner | full-bleed"
+    },
+    "overlays": {
+      "type":      "none | gradient | noise | duotone | vignette | scanlines",
+      "intensity": "none | subtle | medium | strong"
+    }
+  },
+
+  "priority_logic": {
+    "1_style_family": "Si style_family connue → override complet (prime sur tout)",
+    "2_emotional_goal": "Preset emotional_goal comme base",
+    "3_brand_positioning": "Fine-tune brand_positioning par-dessus",
+    "4_intensity": "low → retire motifs/overlays ; high → peut ajouter overlay léger",
+    "5_density": "low density → réduit motif.usage (jamais full-bleed)"
+  },
+
+  "presets": {
+    "trust":     "solid thin, line minimal, icons line sharp simple, no motifs, no overlays",
+    "excitement":"glow medium, zigzag bold, icons filled sharp medium, diagonal-cut, scanlines",
+    "desire":    "solid thin radius-medium, gradient subtle, icons duotone rounded, blob background",
+    "calm":      "solid thin radius-large, space subtle, icons line rounded simple, wave background",
+    "curiosity": "dashed thin, ornament decorative, icons outline-filled mixed, grid-fragment",
+    "authority": "solid medium top-only, line bold, icons filled sharp, geometric corner",
+    "default":   "solid thin small, line minimal, icons line rounded simple"
+  },
+
+  "style_family_overrides": {
+    "editorial_luxury":  "double thin frame, line decorative, icons line sharp simple, aucun motif",
+    "brutalist":         "solid thick frame, line bold, icons filled sharp, grid-fragment full-bleed",
+    "tech_minimal":      "solid thin top-only, line minimal, icons line sharp, dot-pattern background",
+    "experimental_grid": "dashed medium, zigzag decorative, icons outline-filled mixed detailed, grid-fragment, noise",
+    "premium_brand":     "solid thin frame, line decorative, icons duotone rounded, gradient overlay",
+    "bold_marketing":    "solid thick frame, gradient bold, icons filled rounded medium, diagonal-cut"
+  },
+
+  "context_examples": {
+    "gaming":   "excitement+disruptive → glow/zigzag/sharp/diagonal-cut/scanlines",
+    "dating":   "desire+playful → solid-radius-large/gradient/duotone-rounded/blob",
+    "finance":  "trust+serious → solid-thin/line-minimal/line-sharp/none/none",
+    "luxury":   "desire+premium → double-thin/line-decorative/duotone-rounded/none/gradient"
+  },
+
+  "integration": {
+    "renderer": "Applique borders identiques sur tous les composants. Même style icon partout. Motif réutilisé en pattern sur toutes les sections.",
+    "pipeline": "generate_visual_decorators(visual_intent) appelé après generate_visual_intent()"
+  },
+
+  "dependencies": {
+    "required": [],
+    "optional": []
+  }
+}

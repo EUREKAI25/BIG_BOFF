@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Harmony Transfer - Variantes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, sans-serif;
+            padding: 48px 24px;
+            background: #fafafa;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .variant {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .variant h3 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        .palette {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .color-box {
+            height: 80px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Harmony Transfer</h1>
+        <p style="margin-top: 8px; color: #666;">Même harmonie, 5 couleurs différentes</p>
+        <p style="margin-top: 16px; padding: 16px; background: white; border-radius: 8px; max-width: 600px; margin: 16px auto;">
+            <strong>Principe :</strong> Les rapports entre couleurs (HSL) sont préservés, seule la couleur de base change.
+        </p>
+    </div>
+
+    <div class="grid">
+
+        <div class="variant">
+            <h3>Blue Variant</h3>
+            <div class="palette">
+                <div class="color-box" style="background: rgb(59, 130, 246);" title="rgb(59, 130, 246)"></div>
+                <div class="color-box" style="background: rgb(0, 95, 237);" title="rgb(0, 95, 237)"></div>
+                <div class="color-box" style="background: rgb(0, 81, 176);" title="rgb(0, 81, 176)"></div>
+            </div>
+            <button class="btn" style="background: rgb(59, 130, 246); color: white;">Bouton Primary</button>
+        </div>
+    
+        <div class="variant">
+            <h3>Red Variant</h3>
+            <div class="palette">
+                <div class="color-box" style="background: rgb(239, 68, 68);" title="rgb(239, 68, 68)"></div>
+                <div class="color-box" style="background: rgb(231, 7, 12);" title="rgb(231, 7, 12)"></div>
+                <div class="color-box" style="background: rgb(178, 0, 15);" title="rgb(178, 0, 15)"></div>
+            </div>
+            <button class="btn" style="background: rgb(239, 68, 68); color: white;">Bouton Primary</button>
+        </div>
+    
+        <div class="variant">
+            <h3>Green Variant</h3>
+            <div class="palette">
+                <div class="color-box" style="background: rgb(16, 185, 129);" title="rgb(16, 185, 129)"></div>
+                <div class="color-box" style="background: rgb(4, 128, 84);" title="rgb(4, 128, 84)"></div>
+                <div class="color-box" style="background: rgb(0, 72, 41);" title="rgb(0, 72, 41)"></div>
+            </div>
+            <button class="btn" style="background: rgb(16, 185, 129); color: white;">Bouton Primary</button>
+        </div>
+    
+        <div class="variant">
+            <h3>Purple Variant</h3>
+            <div class="palette">
+                <div class="color-box" style="background: rgb(139, 92, 246);" title="rgb(139, 92, 246)"></div>
+                <div class="color-box" style="background: rgb(82, 15, 254);" title="rgb(82, 15, 254)"></div>
+                <div class="color-box" style="background: rgb(45, 0, 209);" title="rgb(45, 0, 209)"></div>
+            </div>
+            <button class="btn" style="background: rgb(139, 92, 246); color: white;">Bouton Primary</button>
+        </div>
+    
+        <div class="variant">
+            <h3>Amber Variant</h3>
+            <div class="palette">
+                <div class="color-box" style="background: rgb(245, 158, 11);" title="rgb(245, 158, 11)"></div>
+                <div class="color-box" style="background: rgb(188, 113, 0);" title="rgb(188, 113, 0)"></div>
+                <div class="color-box" style="background: rgb(127, 68, 0);" title="rgb(127, 68, 0)"></div>
+            </div>
+            <button class="btn" style="background: rgb(245, 158, 11); color: white;">Bouton Primary</button>
+        </div>
+    
+    </div>
+</body>
+</html>

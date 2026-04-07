@@ -76,7 +76,7 @@ def _execute_with_provider(provider: str, model_type: str, prompt: str, data: Di
 
     # Charger API key et modèle
     api_key = config.get_api_key(provider)
-    model = config.get_model_name(provider, model_type)
+    model   = data.get("model_override") or config.get_model_name(provider, model_type)
 
     if not model:
         raise ValueError(f"Provider {provider} ne supporte pas {model_type}")
@@ -88,7 +88,12 @@ def _execute_with_provider(provider: str, model_type: str, prompt: str, data: Di
     elif provider == "anthropic":
         from .providers.anthropic_provider import AnthropicProvider
         p = AnthropicProvider(api_key)
-    # ... autres providers à ajouter au fur et à mesure
+    elif provider == "gemini":
+        from .providers.gemini_provider import GeminiProvider
+        p = GeminiProvider(api_key)
+    elif provider == "replicate":
+        from .providers.replicate_provider import ReplicateProvider
+        p = ReplicateProvider(api_key)
     else:
         raise NotImplementedError(f"Provider {provider} pas encore implémenté")
 

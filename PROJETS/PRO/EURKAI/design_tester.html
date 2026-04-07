@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EURKAI — Design Tester</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+#ctrl {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: #000; color: #fff; padding: 0 20px;
+  display: flex; gap: 12px; align-items: center; height: 44px;
+  font-family: monospace; font-size: 11px; border-bottom: 1px solid #333;
+}
+#ctrl button {
+  background: #fff; color: #000; border: none; padding: 6px 18px;
+  font-family: monospace; font-size: 12px; font-weight: 700;
+  cursor: pointer; border-radius: 3px; white-space: nowrap; flex-shrink: 0;
+}
+#ctrl button:hover { background: #ddd; }
+#brief { color: #888; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#brief b { color: #fff; }
+#ctrl select {
+  background: #111; color: #fff; border: 1px solid #444;
+  padding: 4px 8px; font-family: monospace; font-size: 11px; border-radius: 3px;
+}
+#hint { color: #444; font-size: 10px; flex-shrink: 0; }
+#page { margin-top: 44px; }
+</style>
+</head>
+<body>
+
+<div id="ctrl">
+  <button onclick="generate()">↻ Générer</button>
+  <div id="brief">Appuie sur R ou Espace pour générer un nouveau site...</div>
+  <select id="arch" onchange="generate()">
+    <option value="all">Tous</option>
+    <option value="editorial">Editorial</option>
+    <option value="playful">Playful</option>
+    <option value="saas">SaaS</option>
+  </select>
+  <span id="hint">R / Espace = nouveau site</span>
+</div>
+<div id="page"></div>
+
+<script>
+// ── DATA POOLS ───────────────────────────────────────────────────────────────
+
+const D = {
+  editorial: {
+    names: ['Liminal','Nocturne','Palimpseste','Brûlant','Archive','Manifeste','Cartographie','Lumen','Umbra','Spectre','Confluences','Marges'],
+    industries: ['culture & arts','philosophie','littérature','architecture','photographie','cinéma','design contemporain','musique expérimentale','théâtre'],
+    taglines: ['Penser autrement','La lenteur comme résistance',"L'art de l'inachèvement",'Entre les lignes','Ce que les images taisent','Contre la vitesse','La pensée comme acte','Pour une lecture lente','Formes du silence'],
+    keywords: ['culture','philosophie','art','pensée','regard','littérature','esthétique','mémoire','archive','trace','forme','sens','image','corps','temps'],
+    values: ['rigueur','singularité','profondeur','contemplation','résistance','lenteur','précision','beauté','honnêteté'],
+    audiences: ['les lecteurs exigeants','les curieux de culture',"les amateurs d'art",'celles et ceux qui pensent en lisant','un lectorat international','les chercheurs et créateurs'],
+    fonts: [
+      { h:'Cormorant Garamond', b:'Lora', url:'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap' },
+      { h:'Playfair Display', b:'Crimson Text', url:'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap' },
+      { h:'EB Garamond', b:'EB Garamond', url:'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap' },
+      { h:'DM Serif Display', b:'DM Serif Text', url:'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Serif+Text:ital@0;1&display=swap' },
+    ],
+    palettes: [
+      { p:'hsl(355,65%,45%)', s:'hsl(30,40%,55%)' },
+      { p:'hsl(220,60%,40%)', s:'hsl(35,50%,50%)' },
+      { p:'hsl(22,70%,45%)',  s:'hsl(200,40%,40%)' },
+      { p:'hsl(155,35%,35%)',s:'hsl(355,50%,40%)' },
+      { p:'hsl(270,40%,40%)',s:'hsl(40,60%,50%)' },
+      { p:'hsl(10,55%,40%)', s:'hsl(180,30%,40%)' },
+    ],
+  },
+  playful: {
+    names: ['Sparkly','Confetti','Bloom','Fizz','Glitter','Sprinkle','Piñata','Disco','Petal','Popcorn','Twinkle','Burst','Hooray','Zappy'],
+    industries: ['anniversaires & fêtes','célébrations','mariages','gifting','events & surprises','cartes de vœux','surprise parties'],
+    taglines: ['Make it magical','Joy in every pixel','Celebrate louder','Spread the joy','The happiest page on the internet','Born to celebrate','Make memories','For the ones who deserve it','Life is short, celebrate everything'],
+    keywords: ['celebration','birthday','joy','memories','surprise','gift','party','love','confetti','magic','sparkle','happy','fun','cheer'],
+    values: ['joy','simplicity','heart','fun','warmth','inclusivity','delight'],
+    audiences: ['friends & family','birthday planners','people who love birthdays','anyone who wants to celebrate','hopeless romantics'],
+    fonts: [
+      { h:'Nunito', b:'Nunito', url:'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap' },
+      { h:'Fredoka', b:'Poppins', url:'https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap' },
+      { h:'Righteous', b:'DM Sans', url:'https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:wght@400;500;700&display=swap' },
+      { h:'Pacifico', b:'Nunito', url:'https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap' },
+    ],
+    palettes: [
+      { p:'hsl(355,85%,55%)', s:'hsl(190,75%,45%)' },
+      { p:'hsl(285,70%,55%)', s:'hsl(45,90%,55%)' },
+      { p:'hsl(20,90%,55%)',  s:'hsl(200,80%,50%)' },
+      { p:'hsl(160,70%,40%)',s:'hsl(330,80%,58%)' },
+      { p:'hsl(45,95%,50%)', s:'hsl(330,80%,55%)' },
+      { p:'hsl(210,80%,55%)',s:'hsl(30,90%,55%)' },
+    ],
+  },
+  saas: {
+    names: ['Flux','Forge','Nexus','Beacon','Meridian','Apex','Prism','Vertex','Cascade','Sentinel','Helm','Lattice','Pivot','Stratum'],
+    industries: ['infrastructure','data engineering','devops','observability','security','platform engineering','CI/CD','cloud infrastructure','MLOps'],
+    taglines: ['Built for precision','Reliability at scale','Ship faster, break nothing','Infrastructure that gets out of your way','Zero surprises','The platform serious teams trust','Engineered for the edge cases','Control at any scale','Less ops, more product'],
+    keywords: ['automation','reliability','observability','deployment','security','scalability','performance','compliance','monitoring','orchestration','pipelines','drift'],
+    values: ['precision','control','reliability','transparency','performance','simplicity','trust'],
+    audiences: ['platform engineers','engineering teams','DevOps teams','SREs','infrastructure teams','serious teams','backend engineers'],
+    fonts: [
+      { h:'Inter', b:'Inter', url:'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap' },
+      { h:'Plus Jakarta Sans', b:'Inter', url:'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap' },
+      { h:'Space Grotesk', b:'Inter', url:'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap' },
+      { h:'Manrope', b:'Inter', url:'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap' },
+    ],
+    palettes: [
+      { p:'hsl(221,83%,53%)', s:'hsl(160,60%,42%)' },
+      { p:'hsl(265,70%,55%)', s:'hsl(200,75%,50%)' },
+      { p:'hsl(200,85%,48%)',s:'hsl(280,60%,55%)' },
+      { p:'hsl(155,65%,40%)',s:'hsl(221,80%,50%)' },
+      { p:'hsl(240,70%,58%)',s:'hsl(170,65%,42%)' },
+      { p:'hsl(185,80%,42%)',s:'hsl(280,60%,52%)' },
+    ],
+  },
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+
+const pick  = a => a[Math.floor(Math.random() * a.length)]
+const picks = (a,n) => [...a].sort(()=>Math.random()-.5).slice(0,n)
+const cap   = s => s.charAt(0).toUpperCase() + s.slice(1)
+const uid   = () => Math.random().toString(36).slice(2,7)
+const img   = (seed,w,h,gray=false) => `https://picsum.photos/seed/${seed}/${w}/${h}${gray?'?grayscale':''}`
+
+function makeCtx(arch) {
+  const d = D[arch], pal = pick(d.palettes), font = pick(d.fonts)
+  const kw = picks(d.keywords, 5), vals = picks(d.values, 3)
+  const s = uid()
+  return {
+    arch, name: pick(d.names), industry: pick(d.industries),
+    tagline: pick(d.taglines), audience: pick(d.audiences),
+    keywords: kw, values: vals,
+    hf: font.h, bf: font.b, gf: font.url,
+    p: pal.p, s2: pal.s,
+    img_hero:    img(s+'h',1400,700, arch==='editorial'),
+    img_dash:    img(s+'d',1200,600),
+    img_team:    img(s+'t',200,200,  arch!=='playful'),
+    imgs:        [0,1,2,3,4,5].map(i=>img(s+i,400,280, arch==='editorial')),
+    seed: s,
+  }
+}
+
+// ── FONT LOADER ───────────────────────────────────────────────────────────────
+
+let fontEl = null
+function loadFont(url) {
+  if (fontEl) fontEl.remove()
+  fontEl = Object.assign(document.createElement('link'), { rel:'stylesheet', href:url })
+  document.head.appendChild(fontEl)
+}
+
+// ── EDITORIAL ────────────────────────────────────────────────────────────────
+
+function editorial(ctx) {
+  const {p,s2:s,hf,bf,name,tagline,industry,audience,keywords:kw,values:vals,img_hero,imgs,seed} = ctx
+  const nu = name.toUpperCase()
+  const ind = (industry||'CULTURE & ARTS').toUpperCase()
+  const cats = [...kw,'essai','critique','entretien'].map(k=>k.toUpperCase())
+  const titles = [
+    `Les formes du ${kw[0]||'doute'} dans la pensée contemporaine`,
+    `Cartographies du ${kw[1]||'vide'} — cinq perspectives critiques`,
+    `Relire ${name} en 2026 — ce qui reste`,
+    `Ce que ${kw[2]||'le silence'} révèle encore`,
+  ]
+  const note = `Nous croyons à la ${vals[0]||'profondeur'}, à la ${vals[1]||'rigueur'}, et au pouvoir du ${kw[0]||'sens'}.`
+  const quote = `Nous vivons dans une époque qui confond vitesse et intelligence, volume et profondeur. ${name} est une tentative de résistance — douce, mais déterminée.`
+
+  const sidebar = [
+    [cats[0]||'ESSAI', `La ${vals[0]||'lenteur'} comme acte politique`, 'M. Descamps · 14 min'],
+    [cats[1]||'ART',   `Ce que ${kw[1]||'le silence'} révèle dans l'art`, 'A. Moreau · 9 min'],
+    ['ENTRETIEN',      `Conversation sur ${kw[0]||'les arts'} et la vitesse`, 'S. Laurent · 18 min'],
+  ].map(([cat,t,auth])=>`
+    <div style="padding-bottom:22px;border-bottom:1px solid #1e1b18">
+      <div style="font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:${p};margin-bottom:8px">${cat}</div>
+      <p style="font-size:13px;color:#e2ddd4;line-height:1.45;margin-bottom:5px">${t}</p>
+      <span style="font-size:10px;color:#4a4540">${auth}</span>
+    </div>`).join('')
+
+  const sommaire = titles.map((t,i)=>`
+    <div style="display:grid;grid-template-columns:80px 1fr;gap:0;padding:24px ${i%2===1?'48px 24px 0':'0 48px 24px'};border-bottom:1px solid #1e1b18${i%2===0?';border-right:1px solid #1e1b18':''}">
+      <div style="width:72px;height:52px;overflow:hidden">
+        <img src="${imgs[i]}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(100%) brightness(.65)" alt="">
+      </div>
+      <div style="padding-left:16px">
+        <div style="font-size:8px;letter-spacing:.35em;text-transform:uppercase;color:${p};margin-bottom:7px">${cats[i%cats.length]}</div>
+        <h3 style="font-family:'${hf}',Georgia,serif;font-size:.9rem;font-weight:400;color:#e2ddd4;line-height:1.4;margin-bottom:5px">${t}</h3>
+        <span style="font-size:9px;color:#4a4540">${['D. Ricard · 22 min','L. Fassi · 16 min','T. Nora · 11 min','H. Leroux · 8 min'][i]}</span>
+      </div>
+    </div>`).join('')
+
+  return `<div style="font-family:'${bf}',Georgia,serif;background:#0f0d0a;color:#e2ddd4;line-height:1.6;-webkit-font-smoothing:antialiased">
+<nav style="position:sticky;top:44px;z-index:100;background:#0f0d0a;border-bottom:1px solid #1e1b18;height:52px;display:flex;align-items:center;padding:0 56px">
+  <div style="width:100%;max-width:1120px;margin:0 auto;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-family:'${hf}',serif;font-size:1rem;font-weight:300;letter-spacing:.14em">${nu}</span>
+    <div style="display:flex;gap:36px;align-items:center">
+      ${kw.slice(0,3).map(k=>`<a style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#4a4540;cursor:pointer">${k}</a>`).join('')}
+      <a style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#e2ddd4;border-bottom:1px solid ${p};padding-bottom:2px;cursor:pointer">S'abonner</a>
+    </div>
+  </div>
+</nav>
+<div style="background:#0a0806;border-bottom:1px solid #1e1b18;padding:14px 56px">
+  <div style="max-width:1120px;margin:0 auto;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:8px;letter-spacing:.32em;text-transform:uppercase;color:#4a4540">N°47 · PRINTEMPS 2026</span>
+    <div style="display:flex;gap:20px">${kw.slice(0,3).map(k=>`<span style="font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:${p}">${k.toUpperCase()}</span>`).join('')}</div>
+    <span style="font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:#4a4540">${ind}</span>
+  </div>
+</div>
+<div style="height:440px;overflow:hidden;position:relative;border-bottom:1px solid #1e1b18">
+  <img src="${img_hero}" alt="${name}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(100%) contrast(1.15) brightness(.55)">
+  <div style="position:absolute;bottom:0;left:0;right:0;height:220px;background:linear-gradient(transparent,#0f0d0a)"></div>
+  <div style="position:absolute;bottom:28px;left:56px">
+    <div style="font-size:8px;letter-spacing:.38em;text-transform:uppercase;color:${p};margin-bottom:8px">${cats[0]} — UNE</div>
+    <div style="font-family:'${hf}',serif;font-size:2rem;font-weight:300;color:#e8e4dc;max-width:580px;line-height:1.2">${titles[0]}</div>
+  </div>
+</div>
+<section style="position:relative;overflow:hidden;border-bottom:1px solid #1e1b18;background:#0f0d0a">
+  <div style="position:absolute;right:-20px;top:-60px;font-family:'${hf}',serif;font-size:340px;font-weight:200;line-height:1;color:rgba(255,255,255,.018);pointer-events:none;user-select:none;letter-spacing:-.04em">47</div>
+  <div style="max-width:1120px;margin:0 auto;padding:72px 56px;display:grid;grid-template-columns:1fr 320px;gap:80px;align-items:start;position:relative">
+    <div>
+      <div style="font-size:8px;letter-spacing:.38em;text-transform:uppercase;color:${p};margin-bottom:22px">${cats[0]} — ARTICLE DE FOND</div>
+      <h1 style="font-family:'${hf}',serif;font-size:4.5rem;font-weight:300;line-height:.95;letter-spacing:-.028em;color:#e8e4dc;margin-bottom:16px">${titles[0]}</h1>
+      <div style="width:36px;height:1px;background:${p};margin-bottom:24px"></div>
+      <p style="font-size:15px;color:#7a7368;line-height:1.95;max-width:520px;margin-bottom:40px">${note} Pour ${audience||'celles et ceux qui prennent le temps de penser'}.</p>
+      <a style="font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#e2ddd4;border-bottom:1px solid #e2ddd4;padding-bottom:2px;cursor:pointer">LIRE L'ARTICLE →</a>
+    </div>
+    <div style="border-left:1px solid #1e1b18;padding-left:40px;display:flex;flex-direction:column;gap:22px">
+      <div style="font-size:8px;letter-spacing:.38em;text-transform:uppercase;color:#4a4540;margin-bottom:4px">À LIRE AUSSI</div>
+      ${sidebar}
+    </div>
+  </div>
+</section>
+<section style="border-bottom:1px solid #1e1b18;background:#0c0a08">
+  <div style="max-width:1120px;margin:0 auto;padding:64px 56px">
+    <div style="font-size:8px;letter-spacing:.42em;text-transform:uppercase;color:#4a4540;margin-bottom:48px">DANS CE NUMÉRO</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">${sommaire}</div>
+  </div>
+</section>
+<section style="background:#0a0807;border-bottom:1px solid #1e1b18">
+  <div style="max-width:1120px;margin:0 auto;padding:100px 56px;display:grid;grid-template-columns:72px 1fr;gap:40px;align-items:start">
+    <div style="font-family:'${hf}',serif;font-size:8rem;font-weight:200;line-height:.65;color:${p};opacity:.45">"</div>
+    <div>
+      <p style="font-family:'${hf}',serif;font-size:2.1rem;font-weight:300;line-height:1.55;color:#e8e4dc;font-style:italic;margin-bottom:40px">${quote}</p>
+      <div style="display:flex;align-items:center;gap:20px">
+        <div style="width:28px;height:1px;background:${p}"></div>
+        <span style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#4a4540">La rédaction · ${name}</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="border-bottom:1px solid #1e1b18;background:#0f0d0a">
+  <div style="max-width:1120px;margin:0 auto;padding:72px 56px;display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:center">
+    <div>
+      <div style="font-size:8px;letter-spacing:.38em;text-transform:uppercase;color:#4a4540;margin-bottom:22px">S'ABONNER</div>
+      <h2 style="font-family:'${hf}',serif;font-size:2.8rem;font-weight:300;line-height:1.15;color:#e8e4dc;margin-bottom:18px">Quatre numéros par an.<br>Une pensée continue.</h2>
+      <p style="font-size:13px;color:#7a7368;line-height:1.9">Recevez ${name} chez vous. Archives numériques incluses.</p>
+    </div>
+    <div style="border:1px solid #1e1b18;padding:36px;background:#0a0807">
+      <div style="border-bottom:1px solid #1a1714;padding-bottom:24px;margin-bottom:24px">
+        <div style="font-size:8px;letter-spacing:.32em;text-transform:uppercase;color:#4a4540;margin-bottom:12px">Abonnement annuel</div>
+        <div style="font-family:'${hf}',serif;font-size:3.5rem;font-weight:200;color:#e8e4dc;line-height:1">48 <span style="font-size:1rem;color:#4a4540">€/an</span></div>
+      </div>
+      <button style="width:100%;background:#e2ddd4;color:#0f0d0a;border:none;padding:15px;font-size:9px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;font-weight:700">S'ABONNER</button>
+    </div>
+  </div>
+</section>
+<footer style="background:#090705;padding:36px 56px">
+  <div style="max-width:1120px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+    <span style="font-family:'${hf}',serif;font-size:.8rem;font-weight:300;color:#2e2a25;letter-spacing:.12em">${nu}</span>
+    <div style="display:flex;gap:28px">${kw.slice(0,3).map(k=>`<a style="font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#2e2a25;cursor:pointer">${k}</a>`).join('')}</div>
+    <span style="font-size:8px;color:#1a1714">© 2026 ${name}</span>
+  </div>
+</footer></div>`
+}
+
+// ── PLAYFUL ──────────────────────────────────────────────────────────────────
+
+function playful(ctx) {
+  const {p,s2:s,hf,bf,name,tagline,audience,keywords:kw,values:vals,img_dash,imgs,seed} = ctx
+  const heroH1 = tagline || `The most beautiful ${kw[0]||'celebration'} page they've ever seen`
+  const heroSub = [audience?`For ${audience}.`:'', vals.length>=2?`Built around ${vals[0]} and ${vals[1]}.`:''].filter(Boolean).join(' ')
+
+  const steps = [
+    ['🎨', `Choose your ${kw[0]||'style'}`, `Dozens of themes inspired by ${kw[0]||'your vibe'}.`, p],
+    ['📸', `Add your ${kw[1]||'magic'}`, 'Upload photos, write messages — make it yours.', s],
+    ['🔗', 'Share the joy', 'One link. Send by text or WhatsApp. Watch them react.', '#16a34a'],
+  ].map(([em,t,d,bg],i)=>`
+    <div style="text-align:center">
+      <div style="width:80px;height:80px;background:${bg};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;box-shadow:0 8px 24px ${bg}66">${em}</div>
+      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:${bg};font-weight:800;margin-bottom:10px">STEP ${i+1}</div>
+      <h3 style="font-family:'${hf}',sans-serif;font-size:1.1rem;font-weight:800;color:#111;margin-bottom:8px">${t}</h3>
+      <p style="font-size:13px;color:#777;line-height:1.75;max-width:200px;margin:0 auto">${d}</p>
+    </div>`).join('')
+
+  const featureData = [
+    ['🖼️', `${cap(kw[0]||'Photo')} gallery`,  `Showcase up to 50 ${kw[0]||'moments'} in a stunning layout.`],
+    ['🎵', 'Music playlist',                    `Curate the perfect soundtrack for the ${kw[1]||'celebration'}.`],
+    ['💌', 'Group messages',                    `Invite anyone to contribute ${kw[2]||'messages'} — secretly.`],
+    ['🎊', `${cap(vals[0]||'Confetti')} effect`,'Because every celebration deserves spectacular chaos.'],
+    ['⏳', 'Countdown timer',                   `Build suspense. Let the ${kw[3]||'excitement'} grow.`],
+    ['📱', 'Mobile-first',                       'Looks stunning on any screen. No app, no friction.'],
+  ]
+  const rots = [-1,.5,1,-.5,.5,-1]
+  const cols = [p,s,p,s,p,s]
+  const features = featureData.map(([em,t,d],i)=>`
+    <div style="background:#fff;border:2px solid ${cols[i]}40;border-radius:20px;padding:28px;transform:rotate(${rots[i]}deg)">
+      <div style="font-size:2rem;margin-bottom:12px">${em}</div>
+      <h3 style="font-family:'${hf}',sans-serif;font-size:.95rem;font-weight:800;color:#111;margin-bottom:8px">${t}</h3>
+      <p style="font-size:12px;color:#888;line-height:1.7">${d}</p>
+    </div>`).join('')
+
+  const testimonials = [
+    [`${p}22`,'⭐⭐⭐⭐⭐',`I made one for my mom's 60th using ${name}. She cried for 10 minutes. Best gift ever and it was free.`,'Léa M., Lyon'],
+    [`${s}22`,'⭐⭐⭐⭐⭐',`My whole friend group contributed ${kw[2]||'messages'} for my partner's birthday. Completely speechless.`,'Théo K., Berlin'],
+    ['#fff0f833','⭐⭐⭐⭐⭐',`Not creative at all but the ${name} page looked stunning. 8 minutes to create, 9 to send.`,'Priya S., Londres'],
+  ].map(([bg,stars,q,auth])=>`
+    <div style="background:${bg};border-radius:20px 20px 20px 4px;padding:28px">
+      <div style="font-size:1.2rem;margin-bottom:10px">${stars}</div>
+      <p style="font-size:14px;color:#333;line-height:1.7;font-style:italic;margin-bottom:16px">"${q}"</p>
+      <div style="font-size:12px;font-weight:700;color:#555">${auth}</div>
+    </div>`).join('')
+
+  const gallery = imgs.slice(0,3).map(src=>`
+    <div style="aspect-ratio:4/3;overflow:hidden">
+      <img src="${src}" style="width:100%;height:100%;object-fit:cover;filter:saturate(1.2)" alt="">
+    </div>`).join('')
+
+  return `<style>.cb-${seed}{background-image:radial-gradient(circle,${p} 1.5px,transparent 1.5px),radial-gradient(circle,${s} 1.5px,transparent 1.5px),radial-gradient(circle,#16a34a 1.5px,transparent 1.5px);background-size:44px 44px,36px 36px,28px 28px;background-position:0 0,22px 22px,11px 33px;background-color:${p}}</style>
+<div style="font-family:'${bf}',sans-serif;background:#fffcf5;color:#111;line-height:1.6;-webkit-font-smoothing:antialiased">
+<nav style="background:#fff;border-bottom:2px solid ${p}22;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:44px;z-index:100">
+  <span style="font-family:'${hf}',sans-serif;font-size:1.2rem;font-weight:900;color:${p}">🕯️ ${name}</span>
+  <div style="display:flex;gap:24px;align-items:center">
+    ${kw.slice(0,2).map(k=>`<a style="font-size:13px;color:#666;font-weight:500;cursor:pointer">${cap(k)}</a>`).join('')}
+    <button style="background:${p};color:#fff;border:none;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:800;cursor:pointer">Try for free 🎉</button>
+  </div>
+</nav>
+<section class="cb-${seed}" style="padding:80px 32px 0">
+  <div style="max-width:1060px;margin:0 auto;text-align:center">
+    <div style="font-size:3.5rem;margin-bottom:16px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))">🕯️ ✨ 🎂</div>
+    <h1 style="font-family:'${hf}',sans-serif;font-size:3.6rem;font-weight:900;color:#fff;line-height:1.0;margin-bottom:20px;text-shadow:0 2px 12px rgba(0,0,0,.2);letter-spacing:-.02em">${heroH1}</h1>
+    <p style="font-size:1.05rem;color:rgba(255,255,255,.88);max-width:500px;margin:0 auto 36px;line-height:1.7">${heroSub}</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:48px">
+      <button style="background:#fff;color:${p};border:none;padding:18px 40px;border-radius:100px;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 8px 28px rgba(0,0,0,.2)">🎂 Create mine — it's free</button>
+      <button style="background:rgba(255,255,255,.18);color:#fff;border:2px solid rgba(255,255,255,.5);padding:18px 32px;border-radius:100px;font-size:1rem;font-weight:600;cursor:pointer">See examples →</button>
+    </div>
+    <div style="border-radius:16px 16px 0 0;overflow:hidden;max-width:720px;margin:0 auto;box-shadow:0 -4px 40px rgba(0,0,0,.3)">
+      <img src="${img_dash}" alt="${name}" style="width:100%;display:block;filter:brightness(.92)">
+    </div>
+  </div>
+</section>
+<section style="padding:88px 0;background:#fff5f9;border-bottom:2px dashed ${p}22">
+  <div style="max-width:1060px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:60px">
+      <h2 style="font-family:'${hf}',sans-serif;font-size:2.2rem;font-weight:900;color:#111;margin-bottom:12px">As easy as 1, 2, 🎁</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;align-items:start">${steps}</div>
+  </div>
+</section>
+<section style="padding:88px 0;background:#fffcf5;border-bottom:2px dashed ${p}22;overflow:hidden">
+  <div style="max-width:1060px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:52px">
+      <h2 style="font-family:'${hf}',sans-serif;font-size:2.2rem;font-weight:900;color:#111;margin-bottom:12px">Everything you need ✨</h2>
+      <p style="font-size:15px;color:#777;max-width:420px;margin:0 auto">Built for ${audience||'people who care about the details'}.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">${features}</div>
+  </div>
+</section>
+<section style="padding:88px 0;background:#f0fff8;border-bottom:2px dashed ${p}22">
+  <div style="max-width:1060px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:52px">
+      <h2 style="font-family:'${hf}',sans-serif;font-size:2.2rem;font-weight:900;color:#111;margin-bottom:12px">People are actually crying 🥹</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">${testimonials}</div>
+  </div>
+</section>
+<section style="background:#111;overflow:hidden;border-bottom:2px dashed ${p}22">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px">${gallery}</div>
+</section>
+<section class="cb-${seed}" style="padding:96px 32px;text-align:center">
+  <div style="max-width:1060px;margin:0 auto">
+    <div style="font-size:3rem;margin-bottom:20px">🎂</div>
+    <h2 style="font-family:'${hf}',sans-serif;font-size:2.8rem;font-weight:900;color:#fff;margin-bottom:16px;text-shadow:0 2px 8px rgba(0,0,0,.2)">Someone's birthday is coming up.</h2>
+    <p style="font-size:1.05rem;color:rgba(255,255,255,.88);max-width:400px;margin:0 auto 36px;line-height:1.7">Create something they'll screenshot and save forever.</p>
+    <button style="background:#fff;color:${p};border:none;padding:20px 52px;border-radius:100px;font-size:1.1rem;font-weight:900;cursor:pointer;box-shadow:0 8px 28px rgba(0,0,0,.2)">✨ Create your page now</button>
+  </div>
+</section>
+<footer style="background:#111;padding:48px 32px">
+  <div style="max-width:1060px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
+    <span style="font-family:'${hf}',sans-serif;font-size:1rem;font-weight:900;color:#fff">🕯️ ${name}</span>
+    <div style="display:flex;gap:24px">${kw.slice(0,3).map(k=>`<a style="font-size:12px;color:#777;cursor:pointer">${cap(k)}</a>`).join('')}</div>
+    <span style="font-size:12px;color:#555">Made with ❤️ · © 2026 ${name}</span>
+  </div>
+</footer></div>`
+}
+
+// ── SAAS ─────────────────────────────────────────────────────────────────────
+
+function saas(ctx) {
+  const {p,s2:s,hf,bf,name,tagline,industry,audience,keywords:kw,values:vals,img_dash,img_team,seed} = ctx
+  const heroH1 = tagline || `${cap(kw[0]||'Infrastructure')} automation\nbuilt for ${vals[0]||'precision'}`
+  const heroSub = [audience?`For ${audience}.`:'', kw.length>=2?`Built around ${kw[0]} and ${kw[1]}.`:''].filter(Boolean).join(' ')
+  const cmd = name.toLowerCase().replace(/\s+/g,'')
+  const ind = industry||'infrastructure'
+
+  const ficons = ['⚡','📊','🔒','🔄','🧩','📍']
+  const fcols  = [p,s,p,s,p,s]
+  const ftitles = [
+    kw[0]?`Zero-downtime ${kw[0]}`:'Zero-downtime deploys',
+    kw[1]?`Real-time ${kw[1]}`:'Real-time observability',
+    kw[2]?`${cap(kw[2])} by default`:'Security by default',
+    'Intelligent auto-scaling','API-first design','Multi-region by default',
+  ]
+  const fdescs = [
+    'Blue/green and canary deployments out of the box. Roll forward or back in under 30 seconds.',
+    'Full-stack traces, structured logs, and custom metrics — one unified view.',
+    'SOC 2 Type II. RBAC, audit logs, end-to-end encryption. Compliance built in.',
+    'Scale from 0 to millions of requests without touching a config file.',
+    'Everything you can do in the UI, you can do via API. Integrate in minutes.',
+    'Deploy to 20+ regions globally. Latency-optimized routing and automatic failover.',
+  ]
+  const features = ftitles.map((t,i)=>`
+    <div style="background:#111217;border:1px solid #1e2028;border-left:3px solid ${fcols[i]};padding:28px;border-radius:0 4px 4px 0">
+      <div style="font-size:1.4rem;margin-bottom:14px">${ficons[i]}</div>
+      <h3 style="font-family:'${hf}',sans-serif;font-size:.95rem;font-weight:700;color:#e6edf3;margin-bottom:8px">${t}</h3>
+      <p style="font-size:13px;color:#7c8894;line-height:1.75">${fdescs[i]}</p>
+    </div>`).join('')
+
+  const metrics = [['99.99%','Uptime SLA'],['<200ms','p99 latency'],['2,400+','Teams'],['10B+','Events / day']].map(
+    ([v,l],i)=>`<div style="text-align:center;padding:0 32px${i<3?';border-right:1px solid #21262d':''}">
+      <div style="font-family:monospace;font-size:2.4rem;font-weight:700;color:${p};text-shadow:0 0 20px ${p}55;margin-bottom:8px">${v}</div>
+      <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6e7681">${l}</div>
+    </div>`).join('')
+
+  const steps = [
+    [`Connect your ${ind}`, `Point ${name} at your existing cloud accounts. Supports AWS, GCP, Azure, and any Kubernetes cluster.`],
+    [`Define your ${kw[0]||'deployment'} policy`, `Set your rollout strategy, health checks, scaling rules — once, in code.`],
+    [`Deploy with ${vals[0]||'confidence'}`, `${name} handles orchestration, rollback, and observability. You focus on shipping.`],
+  ].map(([t,d],i)=>`
+    <div style="display:flex;gap:20px;align-items:flex-start">
+      <div style="flex-shrink:0;width:36px;height:36px;border:1px solid ${p};border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:13px;font-weight:700;color:${p}">${String(i+1).padStart(2,'0')}</div>
+      <div style="padding-top:6px">
+        <h3 style="font-family:'${hf}',sans-serif;font-size:.95rem;font-weight:700;color:#e6edf3;margin-bottom:6px">${t}</h3>
+        <p style="font-size:13px;color:#6e7681;line-height:1.7">${d}</p>
+      </div>
+    </div>`).join('')
+
+  return `<style>.dg-${seed}{background-image:radial-gradient(circle,#21262d 1px,transparent 1px);background-size:28px 28px}</style>
+<div style="font-family:'${bf}',system-ui,sans-serif;background:#09090b;color:#c9d1d9;line-height:1.6;-webkit-font-smoothing:antialiased">
+<nav style="position:sticky;top:44px;z-index:100;background:rgba(9,9,11,.92);border-bottom:1px solid #21262d;height:56px;display:flex;align-items:center;padding:0 48px;backdrop-filter:blur(12px)">
+  <div style="width:100%;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-family:'${hf}',sans-serif;font-size:1rem;font-weight:700;color:#e6edf3">${name}</span>
+    <div style="display:flex;gap:28px;align-items:center">
+      ${kw.slice(0,3).map(k=>`<a style="font-size:13px;color:#6e7681;font-weight:500;cursor:pointer">${cap(k)}</a>`).join('')}
+      <a style="font-size:13px;color:#6e7681;font-weight:500;cursor:pointer">Sign in</a>
+      <button style="background:${p};color:#fff;border:none;padding:8px 20px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer">Get started →</button>
+    </div>
+  </div>
+</nav>
+<section class="dg-${seed}" style="padding:96px 48px 80px;position:relative;overflow:hidden;border-bottom:1px solid #21262d">
+  <div style="position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse,${p}18 0%,transparent 65%);pointer-events:none;z-index:0"></div>
+  <div style="max-width:1080px;margin:0 auto;position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#161b22;border:1px solid #30363d;padding:6px 16px;border-radius:100px;font-size:11px;color:#8b949e;letter-spacing:.05em;margin-bottom:32px">
+      <span style="width:7px;height:7px;background:#3fb950;border-radius:50%;display:inline-block"></span>
+      NOW IN PUBLIC BETA — Join 2,000+ ${audience||'engineering teams'}
+    </div>
+    <h1 style="font-family:'${hf}',sans-serif;font-size:4rem;font-weight:700;color:#e6edf3;line-height:1.05;margin-bottom:20px;letter-spacing:-.03em;max-width:700px;white-space:pre-line">${heroH1}</h1>
+    <p style="font-size:1.05rem;color:#8b949e;max-width:560px;margin-bottom:40px;line-height:1.75">${heroSub}</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:56px">
+      <button style="background:${p};color:#fff;border:none;padding:14px 32px;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 0 20px ${p}44">Start for free →</button>
+      <button style="background:transparent;color:#e6edf3;border:1px solid #30363d;padding:14px 28px;border-radius:4px;font-size:14px;cursor:pointer">Schedule a demo</button>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:24px 28px;max-width:580px;font-size:13px;font-family:monospace">
+      <div style="display:flex;gap:6px;margin-bottom:16px">
+        <span style="width:11px;height:11px;background:#ff5f57;border-radius:50%"></span>
+        <span style="width:11px;height:11px;background:#febc2e;border-radius:50%"></span>
+        <span style="width:11px;height:11px;background:#28c840;border-radius:50%"></span>
+      </div>
+      <div style="color:#7c8894;margin-bottom:6px">$ ${cmd} deploy --env production --strategy canary</div>
+      <div style="color:#3fb950;margin-bottom:4px">✓  Validating ${kw[0]||'deployment'} config...</div>
+      <div style="color:#3fb950;margin-bottom:4px">✓  Building container image  <span style="color:#8b949e">(2.1s)</span></div>
+      <div style="color:#3fb950;margin-bottom:8px">✓  Zero-downtime rollout complete  <span style="color:#8b949e">(18s)</span></div>
+      <div style="color:#8b949e">→  Live at https://api.${cmd}.io/v2  · p99: 142ms</div>
+    </div>
+  </div>
+</section>
+<section style="padding:0 48px;background:#0d1117;border-bottom:1px solid #21262d">
+  <div style="max-width:1080px;margin:0 auto;padding-bottom:64px;margin-top:-2px">
+    <div style="border:1px solid #21262d;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6)">
+      <img src="${img_dash}" alt="${name}" style="width:100%;display:block;filter:brightness(.65) saturate(.7) contrast(1.1)">
+    </div>
+  </div>
+</section>
+<section style="background:#0d1117;border-bottom:1px solid #21262d;padding:40px 48px">
+  <div style="max-width:1080px;margin:0 auto;display:flex;justify-content:center;align-items:center">${metrics}</div>
+</section>
+<section style="padding:88px 48px;border-bottom:1px solid #21262d;background:#09090b">
+  <div style="max-width:1080px;margin:0 auto">
+    <div style="margin-bottom:56px">
+      <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:${p};margin-bottom:12px">CAPABILITIES</div>
+      <h2 style="font-family:'${hf}',sans-serif;font-size:2.2rem;font-weight:700;color:#e6edf3;margin-bottom:14px;letter-spacing:-.02em">Every layer of ${ind}, covered.</h2>
+      <p style="font-size:15px;color:#6e7681;max-width:500px;line-height:1.75">For ${audience||'engineering teams'} that move fast without breaking things.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">${features}</div>
+  </div>
+</section>
+<section style="padding:88px 48px;background:#0d1117;border-bottom:1px solid #21262d">
+  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 480px;gap:80px;align-items:center">
+    <div>
+      <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:${p};margin-bottom:16px">HOW IT WORKS</div>
+      <h2 style="font-family:'${hf}',sans-serif;font-size:2.2rem;font-weight:700;color:#e6edf3;margin-bottom:16px;letter-spacing:-.02em">Up and running<br>in under an hour.</h2>
+      <p style="font-size:15px;color:#6e7681;line-height:1.75;max-width:360px">No complex onboarding. Connect, configure, ship.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:32px;position:relative">
+      <div style="position:absolute;left:17px;top:36px;bottom:36px;width:1px;background:${p}33;z-index:0"></div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:32px">${steps}</div>
+    </div>
+  </div>
+</section>
+<section style="padding:80px 48px;border-bottom:1px solid #21262d;background:#09090b">
+  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 280px;gap:64px;align-items:center">
+    <div>
+      <p style="font-family:'${hf}',sans-serif;font-size:1.6rem;font-weight:400;color:#e6edf3;line-height:1.55;margin-bottom:28px">"We cut our ${kw[0]||'deployment'} time from 45 minutes to under 90 seconds. Zero unplanned incidents since switching to ${name}."</p>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:40px;height:40px;overflow:hidden;border-radius:50%;border:1px solid ${p}44"><img src="${img_team}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(80%)" alt=""></div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#e6edf3">Zara Chen</div>
+          <div style="font-size:12px;color:#6e7681">Head of Platform Engineering</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:#0d1117;border:1px solid #21262d;border-radius:4px;padding:20px;text-align:center">
+        <div style="font-family:monospace;font-size:2rem;font-weight:700;color:${p};text-shadow:0 0 16px ${p}44;margin-bottom:6px">-97%</div>
+        <div style="font-size:11px;color:#6e7681;letter-spacing:.08em;text-transform:uppercase">${cap(kw[0]||'Deploy')} failures</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid #21262d;border-radius:4px;padding:20px;text-align:center">
+        <div style="font-family:monospace;font-size:2rem;font-weight:700;color:${s};text-shadow:0 0 16px ${s}44;margin-bottom:6px">30×</div>
+        <div style="font-size:11px;color:#6e7681;letter-spacing:.08em;text-transform:uppercase">Faster rollouts</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="padding:88px 48px;text-align:center;background:#0d1117;border-bottom:1px solid #21262d;position:relative;overflow:hidden">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,${p}12 0%,transparent 65%);pointer-events:none"></div>
+  <div style="max-width:1080px;margin:0 auto;position:relative;z-index:1">
+    <h2 style="font-family:'${hf}',sans-serif;font-size:2.8rem;font-weight:700;color:#e6edf3;margin-bottom:16px;letter-spacing:-.025em">Start shipping with ${vals[0]||'confidence'}.</h2>
+    <p style="font-size:1rem;color:#6e7681;max-width:440px;margin:0 auto 36px;line-height:1.75">Free for teams up to 5. No credit card required.</p>
+    <button style="background:${p};color:#fff;border:none;padding:18px 52px;border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 0 28px ${p}55">Get started for free →</button>
+  </div>
+</section>
+<footer style="background:#09090b;padding:48px;border-top:1px solid #21262d">
+  <div style="max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
+    <span style="font-family:'${hf}',sans-serif;font-size:.95rem;font-weight:700;color:#3a3f47">${name}</span>
+    <div style="display:flex;gap:28px">${kw.slice(0,4).map(k=>`<a style="font-size:12px;color:#3a3f47;cursor:pointer">${cap(k)}</a>`).join('')}</div>
+    <span style="font-size:12px;color:#21262d">© 2026 ${name}. All rights reserved.</span>
+  </div>
+</footer></div>`
+}
+
+// ── MAIN ─────────────────────────────────────────────────────────────────────
+
+function generate() {
+  const filter = document.getElementById('arch').value
+  const pool = filter === 'all' ? ['editorial','playful','saas'] : [filter]
+  const arch = pick(pool)
+  const ctx = makeCtx(arch)
+
+  loadFont(ctx.gf)
+
+  const html = arch === 'editorial' ? editorial(ctx)
+             : arch === 'playful'   ? playful(ctx)
+             :                        saas(ctx)
+
+  document.getElementById('page').innerHTML = html
+  document.getElementById('brief').innerHTML =
+    `<b>${ctx.name}</b> · <span style="color:${ctx.p};font-weight:700">${arch}</span> · ${ctx.industry} · <b>${ctx.hf}</b> · ${ctx.keywords.slice(0,3).join(', ')} · <span style="color:#555">seed:${ctx.seed}</span>`
+  document.getElementById('page').scrollIntoView({ behavior:'instant' })
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target !== document.body) return
+  if (e.key === ' ') { e.preventDefault(); generate() }
+  if (e.key === 'r' || e.key === 'R') generate()
+})
+
+generate()
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "name": "auto_fix_engine",
+  "version": "1.0.0",
+  "description": "Moteur de correction automatique de lisibilité — patches CSS ciblés non-destructifs via data-audit selectors",
+  "author": "EURKAI",
+  "dependencies": {},
+  "inputs": {
+    "audit_results":  "list[AuditResult] — sortie de vision_audit",
+    "initial_html":   "string — HTML généré à corriger",
+    "capture_fn":     "Callable[[str], list[CaptureResult]] — injectée (screenshot_capture)",
+    "audit_fn":       "Callable[[list], list[AuditResult]]  — injectée (vision_audit)",
+    "max_iterations": "int — défaut 3",
+    "target_score":   "int — défaut 70 (global_score minimum pour convergence)"
+  },
+  "outputs": {
+    "final_html":     "HTML avec styles de correction injectés",
+    "final_patch":    "FullPatch — dict de corrections par zone",
+    "log":            "list[CorrectionEntry] — corrections appliquées avec avant/après",
+    "converged":      "bool — true si readability_pass atteint",
+    "iterations_run": "int",
+    "final_scores":   "dict[zone → global_score]"
+  },
+  "fix_types": [
+    "text_contrast    — couleur texte + text-shadow",
+    "overlay_increase — opacité overlay ::before progressif",
+    "background_simplify — blur + overlay léger sur images",
+    "cta_emphasis     — font-weight CTA",
+    "typography_safety — font-weight + font-size scale",
+    "text_plate       — fond rgba derrière les éléments texte"
+  ],
+  "correction_principle": "CSS injection via [data-audit=zone] selectors — non-destructif, idempotent, réversible",
+  "zone_priority": ["hero", "nav", "primary_cta", "final_cta", "first_section", "section-1", "section-2", "section-3"],
+  "iteration_loop": "render → capture → audit → fix → repeat (max 3 itérations, stop si converged)",
+  "dependency_injection": "capture_fn et audit_fn injectées — aucun couplage direct aux modules screenshot/vision",
+  "safety_rules": [
+    "jamais de layout modification",
+    "jamais de suppression de sections",
+    "jamais de changement de contenu",
+    "uniquement des paramètres visuels"
+  ],
+  "status": "stable",
+  "next": "vision_fix_loop — pipeline complet screenshot → audit → fix → reaudit avec rapport final"
+}

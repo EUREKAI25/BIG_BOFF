@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extraction Design System - Exemple Visuel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background: #fafafa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* HEADER EXPLICATION */
+        .header-explanation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .header-explanation h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .header-explanation p {
+            font-size: 18px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ANNOTATION OVERLAY */
+        .annotation {
+            position: absolute;
+            background: #fbbf24;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .annotation::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .annotation.top::after {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px 6px 0 6px;
+            border-color: #fbbf24 transparent transparent transparent;
+        }
+
+        .annotation.left::after {
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%);
+            border-width: 6px 0 6px 6px;
+            border-color: transparent transparent transparent #fbbf24;
+        }
+
+        /* SECTION WRAPPER */
+        .section {
+            position: relative;
+            background: white;
+            margin: 48px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-label {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            padding: 80px 48px;
+            align-items: center;
+        }
+
+        .hero-content h2 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+            color: #1a202c;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            padding: 16px 48px;
+            background: #1a202c;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #2d3748;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            padding: 16px 48px;
+            background: transparent;
+            color: #1a202c;
+            border: 2px solid #1a202c;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #1a202c;
+            color: white;
+        }
+
+        .hero-image {
+            position: relative;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #9ca3af;
+        }
+
+        /* PRODUCT GRID */
+        .product-grid {
+            padding: 64px 48px;
+        }
+
+        .grid-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .grid-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .product-card {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            aspect-ratio: 1/1;
+            background: #f7fafc;
+            border-radius: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e0;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #2d3748;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        /* TESTIMONIALS */
+        .testimonials {
+            padding: 64px 48px;
+            background: #f7fafc;
+        }
+
+        .testimonials-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .testimonials-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .quote-icon {
+            font-size: 32px;
+            color: rgba(102, 126, 234, 0.3);
+            margin-bottom: 16px;
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.6;
+            font-style: italic;
+            margin-bottom: 24px;
+            color: #4a5568;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid white;
+        }
+
+        .author-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .author-info p {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #f7fafc;
+            padding: 80px 48px 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-column h3 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            color: #2d3748;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 8px;
+        }
+
+        .footer-column a {
+            font-size: 14px;
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: #667eea;
+        }
+
+        .footer-bottom {
+            padding-top: 32px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-icon {
+            width: 24px;
+            height: 24px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .social-icon:hover {
+            background: #667eea;
+        }
+
+        /* ANNOTATIONS POSITIONNÉES */
+        .hero-annotations {
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .hero,
+            .products,
+            .testimonials-grid,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER EXPLICATION -->
+    <div class="header-explanation">
+        <h1>🎨 Extraction Design System</h1>
+        <p>Ce qu'on extrait d'un site : <strong>rapports, échelles, traitements</strong> — pas les contenus sémantiques</p>
+    </div>
+
+    <!-- SECTION HERO -->
+    <div class="section">
+        <div class="section-label">SECTION 1 : HERO</div>
+        <div class="hero" style="position: relative;">
+            <div class="hero-content">
+                <h2>Votre titre principal ici</h2>
+                <p>Une description engageante qui explique votre proposition de valeur principale en quelques phrases claires.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary">Action Principale</button>
+                    <button class="btn-secondary">En savoir plus</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                Image 4:3
+            </div>
+
+            <!-- ANNOTATIONS -->
+            <div class="annotation top" style="top: -40px; left: 50px;">Layout: Split 50-50</div>
+            <div class="annotation top" style="top: 50px; left: 80px;">Font-size: 3.5x base (56px)</div>
+            <div class="annotation top" style="top: 140px; left: 80px;">Line-height: 1.6</div>
+            <div class="annotation top" style="top: 220px; left: 80px;">Border-radius: 24px (pills)</div>
+            <div class="annotation top" style="top: 220px; left: 280px;">Hover: darken-10</div>
+            <div class="annotation top" style="top: 100px; right: 150px;">Aspect-ratio: 4:3</div>
+            <div class="annotation top" style="top: -40px; left: 300px;">Padding: 80px vertical</div>
+        </div>
+    </div>
+
+    <!-- SECTION PRODUCT GRID -->
+    <div class="section">
+        <div class="section-label">SECTION 2 : PRODUCT GRID</div>
+        <div class="product-grid">
+            <div class="grid-header">
+                <h2>Nos Produits</h2>
+                <p style="color: #718096;">Découvrez notre sélection</p>
+            </div>
+            <div class="products" style="position: relative;">
+                <div class="product-card">
+                    <div class="product-badge">Nouveau</div>
+                    <div class="product-image">Image 1:1</div>
+                    <div class="product-title">Produit 1</div>
+                    <div class="product-price">99€</div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image 1:1</div>
+                    <div class="product-title">Produit 2</div>
+                    <div class="product-price">149€</div>
+                </div>
+                <div class="product-card">
+                    <div class="product-badge">-20%</div>
+                    <div class="product-image">Image 1:1</div>
+                    <div class="product-title">Produit 3</div>
+                    <div class="product-price">79€</div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">Image 1:1</div>
+                    <div class="product-title">Produit 4</div>
+                    <div class="product-price">199€</div>
+                </div>
+
+                <!-- ANNOTATIONS -->
+                <div class="annotation top" style="top: -40px; left: 0;">Grid: 4 colonnes</div>
+                <div class="annotation top" style="top: -40px; left: 200px;">Gap: 24px</div>
+                <div class="annotation left" style="top: 80px; left: -150px;">Aspect-ratio: 1:1</div>
+                <div class="annotation left" style="top: 150px; left: -150px;">Hover: scale-105</div>
+                <div class="annotation top" style="top: 10px; left: 20px;">Badge position: top-8 left-8</div>
+                <div class="annotation top" style="top: 350px; left: 100px;">Font-size: 1x base (16px)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION TESTIMONIALS -->
+    <div class="section">
+        <div class="section-label">SECTION 3 : TESTIMONIALS</div>
+        <div class="testimonials">
+            <div class="testimonials-header">
+                <h2>Ce qu'ils disent</h2>
+            </div>
+            <div class="testimonials-grid" style="position: relative;">
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        Un témoignage authentique qui décrit l'expérience positive du client avec le produit ou service.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Marie Dupont</h4>
+                            <p>CEO, StartupCo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        Un autre témoignage qui renforce la crédibilité et montre la diversité des cas d'usage.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Thomas Martin</h4>
+                            <p>Designer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        Un troisième témoignage pour compléter la preuve sociale et convaincre les prospects.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Sophie Bernard</h4>
+                            <p>Marketing Manager</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANNOTATIONS -->
+                <div class="annotation top" style="top: -40px; left: 0;">Grid: 3 colonnes</div>
+                <div class="annotation top" style="top: -40px; left: 200px;">Gap: 32px</div>
+                <div class="annotation left" style="top: 80px; left: -140px;">Border-radius: 12px</div>
+                <div class="annotation left" style="top: 120px; left: -100px;">Padding: 32px</div>
+                <div class="annotation left" style="top: 160px; left: -120px;">Shadow: soft</div>
+                <div class="annotation top" style="top: 20px; left: 20px;">Icon opacity: 0.3</div>
+                <div class="annotation top" style="top: 180px; left: 100px;">Font-style: italic</div>
+                <div class="annotation top" style="top: 280px; left: 50px;">Avatar: 48px, border-radius 50%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION FOOTER -->
+    <div class="section">
+        <div class="section-label">SECTION 4 : FOOTER</div>
+        <div class="footer">
+            <div class="footer-grid" style="position: relative;">
+                <div class="footer-column">
+                    <h3>Produits</h3>
+                    <ul>
+                        <li><a href="#">Fonctionnalités</a></li>
+                        <li><a href="#">Tarifs</a></li>
+                        <li><a href="#">Démo</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Entreprise</h3>
+                    <ul>
+                        <li><a href="#">À propos</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Carrières</a></li>
+                        <li><a href="#">Presse</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Ressources</h3>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Guides</a></li>
+                        <li><a href="#">Statut</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Légal</h3>
+                    <ul>
+                        <li><a href="#">Confidentialité</a></li>
+                        <li><a href="#">CGU</a></li>
+                        <li><a href="#">Cookies</a></li>
+                        <li><a href="#">Licences</a></li>
+                    </ul>
+                </div>
+
+                <!-- ANNOTATIONS -->
+                <div class="annotation top" style="top: -40px; left: 0;">Grid: 4 colonnes</div>
+                <div class="annotation top" style="top: -40px; left: 200px;">Gap: 48px</div>
+                <div class="annotation top" style="top: 10px; left: 20px;">Text-transform: uppercase</div>
+                <div class="annotation top" style="top: 10px; left: 200px;">Letter-spacing: 0.05em</div>
+                <div class="annotation left" style="top: 100px; left: -150px;">Line-height: 2 (espacement)</div>
+                <div class="annotation left" style="top: 140px; left: -180px;">Hover: color-primary (0.2s)</div>
+            </div>
+
+            <div class="footer-bottom">
+                <p style="font-size: 14px; color: #718096;">© 2026 VotreMarque. Tous droits réservés.</p>
+                <div class="social-icons">
+                    <div class="social-icon"></div>
+                    <div class="social-icon"></div>
+                    <div class="social-icon"></div>
+                    <div class="social-icon"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RÉSUMÉ EXTRACTION -->
+    <div class="section" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+        <div style="padding: 64px 48px;">
+            <h2 style="font-size: 40px; margin-bottom: 32px; text-align: center;">📊 Ce qu'on extrait de ce site</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px;">
+                <div style="background: rgba(255,255,255,0.1); padding: 24px; border-radius: 12px;">
+                    <h3 style="margin-bottom: 16px;">🎯 Échelles</h3>
+                    <ul style="list-style: none; line-height: 2;">
+                        <li>• Spacing: [4, 8, 12, 16, 24, 32, 48, 64, 80]</li>
+                        <li>• Font-size: [0.75, 0.875, 1, 1.125, 1.5, 2, 3.5]</li>
+                        <li>• Border-radius: [0, 4, 8, 12, 24]</li>
+                    </ul>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); padding: 24px; border-radius: 12px;">
+                    <h3 style="margin-bottom: 16px;">🎨 Traitements</h3>
+                    <ul style="list-style: none; line-height: 2;">
+                        <li>• Buttons: pills, hover-darken</li>
+                        <li>• Cards: shadow-soft, radius-12px</li>
+                        <li>• Images: aspect-1:1, hover-scale</li>
+                        <li>• Icons: size-24px, hover-color</li>
+                    </ul>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); padding: 24px; border-radius: 12px;">
+                    <h3 style="margin-bottom: 16px;">📐 Layouts</h3>
+                    <ul style="list-style: none; line-height: 2;">
+                        <li>• Hero: split-50-50, align-center</li>
+                        <li>• Grid: 4-cols, gap-24px</li>
+                        <li>• Testimonials: 3-cols, gap-32px</li>
+                        <li>• Footer: 4-cols, gap-48px</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 48px; padding: 32px; background: rgba(255,255,255,0.15); border-radius: 12px; text-align: center;">
+                <p style="font-size: 18px; line-height: 1.8;">
+                    <strong>❌ On N'extrait PAS :</strong> les icônes spécifiques (leaf, sun), les textes, les images<br>
+                    <strong>✅ On extrait :</strong> les rapports, échelles, traitements → réutilisables sur N'IMPORTE QUEL projet
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

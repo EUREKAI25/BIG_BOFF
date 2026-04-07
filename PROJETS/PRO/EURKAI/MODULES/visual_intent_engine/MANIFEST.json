@@ -1,0 +1,128 @@
+{
+  "module": "visual_intent_engine",
+  "version": "1.1.0",
+  "description": "Moteur de direction artistique — définit l'INTENTION visuelle avant le design plan",
+  "philosophy": "INTENTION, pas rendu. Ce module ne génère ni HTML ni CSS. Il définit quelle audace visuelle, quelle déviation du générique.",
+
+  "modes": {
+    "default":   "Propre, lisible, risque minimal — aucun biais visuel fort",
+    "strong":    "Direction artistique forte depuis une style family prédéfinie",
+    "reference": "Extraction de principes visuels depuis une image de référence (vision API)",
+    "hybrid":    "Blend : le style définit l'intention, la référence guide la structure"
+  },
+
+  "style_families": [
+    "editorial_luxury",
+    "brutalist",
+    "tech_minimal",
+    "experimental_grid",
+    "premium_brand",
+    "bold_marketing"
+  ],
+
+  "function": {
+    "name": "generate_visual_intent",
+    "signature": "generate_visual_intent(brief, style_dna=None, reference_image=None, reference_type=None, constraints=None) -> dict",
+    "inputs": {
+      "brief":           "str — texte libre du projet (obligatoire)",
+      "style_dna":       "dict | None — peut contenir 'archetype', 'style_family', 'intensity'",
+      "reference_image": "str | None — chemin fichier image ou base64 — déclenche le mode référence",
+      "reference_type":  "str | None — contexte référence : 'screenshot', 'moodboard', 'design', 'brand'",
+      "constraints":     "dict | None — {'force': [...], 'avoid': [...]} — noms de style family dans force déclenchent le mode strong/hybrid"
+    },
+    "output": {
+      "mode": "default | strong | reference | hybrid",
+      "art_direction": {
+        "style_family": "str",
+        "tone":         "str",
+        "intensity":    "low | medium | high",
+        "personality":  "list[str]"
+      },
+      "composition_bias": {
+        "dominance": "text | image | balanced",
+        "density":   "low | medium | high",
+        "asymmetry": "low | medium | high",
+        "rhythm":    "regular | alternating | chaotic"
+      },
+      "visual_techniques": ["overlap", "cropping", "scale_contrast", "layering", "negative_space", "framing", "grid_breaking"],
+      "color_strategy": {
+        "contrast":     "low | medium | high",
+        "palette_type": "neutral | vibrant | duotone | monochrome"
+      },
+      "typography_strategy": {
+        "hierarchy_strength": "low | medium | high",
+        "weight_contrast":    "low | medium | high"
+      },
+      "constraints": {
+        "force": "list[str]",
+        "avoid": "list[str]"
+      },
+      "context": {
+        "product_type":      "str — type détecté (ecommerce, saas, event, gaming, dating, finance, luxury, health, education, food, travel, agency, generic)",
+        "target_audience":   "str — audience (young_adult, professional, senior, mass_market, niche, general)",
+        "emotional_goal":    "str — objectif émotionnel (trust, excitement, desire, calm, curiosity, authority)",
+        "brand_positioning": "str — positionnement (premium, accessible, disruptive, playful, serious)"
+      }
+    }
+  },
+
+  "contextual_alignment": {
+    "description": "Extraction automatique du contexte produit depuis le brief — influence les paramètres visuels selon la sémantique du produit",
+    "function": "_extract_context(brief) -> dict",
+    "applies_fn": "_apply_context_adjustments(intent, context, mode) -> dict",
+    "mode_interaction": {
+      "default":   "Le contexte DRIVE composition_bias, color_strategy, typography_strategy, visual_techniques",
+      "reference": "Le contexte ajuste color_strategy + typography_strategy seulement — la référence guide la structure",
+      "strong":    "Le contexte ajoute UNIQUEMENT aux constraints (style family prime)",
+      "hybrid":    "Idem strong — le style prime"
+    },
+    "product_types": ["ecommerce", "saas", "event", "editorial", "gaming", "dating", "finance", "luxury", "health", "education", "food", "travel", "agency"],
+    "emotional_goals": ["trust", "excitement", "desire", "calm", "curiosity", "authority"],
+    "brand_positionings": ["premium", "accessible", "disruptive", "playful", "serious"],
+    "examples": {
+      "dating":   "desire + playful → dominance=image, density=low, palette=vibrant",
+      "gaming":   "excitement + disruptive → density=high, palette=vibrant, contrast=high",
+      "finance":  "trust + serious → dominance=text, palette=neutral, asymmetry=low",
+      "luxury":   "desire + premium → density=low, palette=neutral, contrast=low"
+    }
+  },
+
+  "helper_function": {
+    "name": "intent_to_plan_overrides",
+    "description": "Traduit un VisualIntent en overrides pour generate_design_plan()",
+    "returns": {
+      "profile_override":  "str | None — remplace _extract_profile()",
+      "density_override":  "str | None — remplace le choix de density",
+      "tension_override":  "str | None — remplace le choix de tension level",
+      "tension_methods":   "list[str] — méthodes de tension à utiliser",
+      "layout_boost":      "list[str] — layouts à favoriser (poids ×3)",
+      "layout_avoid":      "list[str] — layouts à filtrer",
+      "extra_required":    "list[str] — ajouts à constraints.required",
+      "extra_forbidden":   "list[str] — ajouts à constraints.forbidden"
+    }
+  },
+
+  "mode_detection_logic": {
+    "default":   "Aucun style fort + pas d'image de référence",
+    "strong":    "constraints.force contient un nom de style family OU style_dna.style_family/archetype est fort",
+    "reference": "reference_image fournie, pas de style fort",
+    "hybrid":    "reference_image + style fort — blend des deux"
+  },
+
+  "reference_extraction": {
+    "api":      "Claude Haiku vision (claude-haiku-4-5-20251001)",
+    "fallback": "Si API indisponible → intent default valide retourné",
+    "input":    "Chemin fichier local (PNG/JPG/WEBP) ou données base64",
+    "output":   "Principes abstraits uniquement — jamais reproduction pixel-perfect"
+  },
+
+  "integration": {
+    "design_plan": "generate_design_plan() accepte visual_intent=... — influence profile, density, tension, layout_boost/avoid, constraints",
+    "pipeline":    "pipeline.py peut recevoir visual_intent depuis run() — non encore câblé dans le pipeline principal"
+  },
+
+  "dependencies": {
+    "required":  [],
+    "optional":  ["anthropic (pour le mode reference/hybrid avec image)"]
+  }
+}

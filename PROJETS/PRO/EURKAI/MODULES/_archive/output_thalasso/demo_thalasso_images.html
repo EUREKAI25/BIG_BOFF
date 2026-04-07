@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thalasso & Spa — Images IA Générées</title>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: rgb(72, 149, 178);
+            --color-primary-light: rgb(157, 201, 219);
+            --color-primary-dark: rgb(44, 98, 120);
+            --color-secondary: rgb(138, 186, 169);
+
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            --spacing-3xl: 64px;
+
+            --shadow-md: 0 4px 6px rgba(44, 98, 120, 0.1);
+            --shadow-lg: 0 10px 20px rgba(44, 98, 120, 0.15);
+
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            color: #2d3748;
+            background: #f8fafb;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        header {
+            padding: var(--spacing-lg) 0;
+            background: white;
+            border-bottom: 1px solid rgba(72, 149, 178, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero {
+            position: relative;
+            height: 600px;
+            background-image: url('');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(44, 98, 120, 0.7) 0%, rgba(72, 149, 178, 0.5) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.95;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--color-primary-dark);
+            padding: 16px 48px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .features {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(72, 149, 178, 0.1);
+            color: var(--color-primary-dark);
+            padding: 4px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--color-primary-dark);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+        }
+
+        .feature-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .feature-image {
+            width: 100%;
+            height: 200px;
+            background-image: url('');
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto var(--spacing-md);
+            background: linear-gradient(135deg, rgba(72, 149, 178, 0.1), rgba(138, 186, 169, 0.1));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+            font-size: 28px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-primary-dark);
+        }
+
+        .cta {
+            position: relative;
+            height: 400px;
+            background-image: url('');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(72, 149, 178, 0.85) 0%, rgba(138, 186, 169, 0.75) 100%);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+        }
+
+        .cta h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .prompts-section {
+            padding: var(--spacing-3xl) 0;
+            background: white;
+        }
+
+        .prompt-card {
+            background: #f8fafb;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .prompt-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-primary-dark);
+        }
+
+        .prompt-card pre {
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4a5568;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="ph ph-waves"></i>
+                    Thalasso & Spa
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>L'océan comme thérapie</h1>
+            <p>Découvrez les bienfaits de la thalassothérapie dans un cadre d'exception face à la mer</p>
+            <button class="btn-primary">Réserver un séjour</button>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Nos soins</span>
+                <h2>Une expérience complète de bien-être</h2>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-waves"></i>
+                    </div>
+                    <h3>Hydrothérapie marine</h3>
+                    <p>Bains d'eau de mer chauffée, jets sous-marins, parcours aquatiques tonifiants</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-spa"></i>
+                    </div>
+                    <h3>Soins du corps</h3>
+                    <p>Enveloppements d'algues, gommages marins, massages aux huiles essentielles</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-heart"></i>
+                    </div>
+                    <h3>Relaxation</h3>
+                    <p>Espace détente, sauna, hammam, salle de repos avec vue océan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Offrez-vous une pause bien-être</h2>
+            <p>Forfaits séjours de 3 à 7 jours — Tarifs à partir de 590€</p>
+            <button class="btn-primary">Découvrir nos offres</button>
+        </div>
+    </section>
+
+    <section class="prompts-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Technique</span>
+                <h2>Prompts DALL-E 3 utilisés</h2>
+                <p>Générés automatiquement par visual_assets_generator</p>
+            </div>
+
+            <div class="prompt-card">
+                <h3>🖼️ Hero Section</h3>
+                <pre>Luxury spa and thalassotherapy imagery with calming ocean blues, turquoise waters, soft lighting. Serene atmosphere, modern elegance, coastal wellness themes.
+Hero image for wellness website
+Style: clean, modern
+Composition: Wide aspect ratio (16:9), centered subject
+Mood: cool, welcoming, high quality
+Colors: Incorporate rgb(72, 149, 178)
+Format: Horizontal banner, 1920x1080px</pre>
+            </div>
+
+            <div class="prompt-card">
+                <h3>🎨 Features Section</h3>
+                <pre>Abstract illustration representing wellness features
+Style: clean, modern, isometric or flat design
+Mood: cool
+Colors: Use palette from rgb(72, 149, 178)
+Elements: Icons, simple shapes, minimal detail
+Format: Square or portrait, 800x800px</pre>
+            </div>
+
+            <div class="prompt-card">
+                <h3>📢 CTA Section</h3>
+                <pre>Luxury spa and thalassotherapy imagery with calming ocean blues, turquoise waters, soft lighting. Serene atmosphere, modern elegance, coastal wellness themes.
+Background for call-to-action section
+Style: clean, modern, subtle, not distracting
+Mood: cool, inviting
+Treatment: Soft gradient or subtle pattern
+Colors: rgb(72, 149, 178) as accent
+Format: Wide, suitable as background</pre>
+            </div>
+
+            <div class="prompt-card">
+                <h3>📱 OG Image (social)</h3>
+                <pre>Social media preview card for wellness
+Style: clean, modern, clean, readable
+Mood: cool
+Layout: Title + visual element, 1200x630px
+Colors: Palette based on rgb(72, 149, 178)</pre>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

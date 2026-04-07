@@ -1,0 +1,55 @@
+{
+  "name": "vision_audit",
+  "version": "1.0.0",
+  "description": "Audit visuel de lisibilité via LLM vision — contraste perçu, hiérarchie, visibilité CTA",
+  "author": "EURKAI",
+  "dependencies": {
+    "anthropic": ">=0.40.0"
+  },
+  "env": {
+    "ANTHROPIC_API_KEY": "required"
+  },
+  "default_model": "claude-haiku-4-5-20251001",
+  "inputs": {
+    "image_path": "Chemin absolu ou relatif vers un PNG",
+    "zone":       "Identifiant de zone (hero, nav, primary_cta, final_cta, first_section, section-N)",
+    "viewport":   "desktop | tablet | mobile",
+    "page":       "Identifiant page optionnel (ex: landing, about)"
+  },
+  "outputs": {
+    "readability_pass": "boolean — passe/échoue l'audit lisibilité",
+    "global_score":     "entier 0-100 (100 = lisibilité parfaite)",
+    "issues": [
+      {
+        "zone":          "zone concernée",
+        "problem":       "description précise du problème (max 15 mots)",
+        "severity":      "low | medium | high",
+        "confidence":    "float 0.0-1.0",
+        "suggested_fix": "correction actionnables (max 20 mots)"
+      }
+    ],
+    "quick_fixes": ["liste des 1-3 corrections les plus impactantes"]
+  },
+  "evaluation_criteria": [
+    "TEXT CONTRAST — contraste perçu (pas théorique)",
+    "BACKGROUND INTERFERENCE — fond trop chargé vs texte",
+    "TEXT HIERARCHY — lisibilité instantanée du message principal",
+    "CTA VISIBILITY — visibilité et distinction du call-to-action",
+    "GLOBAL CLARITY — compréhension en moins de 2 secondes"
+  ],
+  "high_priority_zones": ["hero", "nav", "primary_cta"],
+  "severity_levels": ["low", "medium", "high"],
+  "fail_conditions": [
+    "contraste clairement insuffisant",
+    "fond concurrence le texte",
+    "CTA non distinct",
+    "message principal incompréhensible en 2s"
+  ],
+  "batch_api": {
+    "function":    "audit_page(captures: list[dict]) -> list[AuditResult]",
+    "integration": "audit_from_capture_results(capture_results: list[CaptureResult]) -> list[AuditResult]"
+  },
+  "cli": "python src/vision_audit.py --image <path> --zone <zone> [--viewport <vp>] [--batch <json>] [--output <out.json>]",
+  "status": "stable",
+  "next": "vision_fix — module de correction automatique basé sur les AuditResult"
+}

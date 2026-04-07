@@ -1,0 +1,83 @@
+{
+  "module": "color_palette",
+  "version": "1.0.0",
+  "description": "Génère un système de couleurs cohérent, accessible et contextuel depuis un VisualIntent",
+  "philosophy": "Toutes les couleurs dérivent d'une base hue unique. WCAG AA garanti. Zéro aléatoire — même input → même output.",
+
+  "function": {
+    "name": "generate_palette",
+    "signature": "generate_palette(visual_intent: dict, context: dict | None = None) -> dict",
+    "input": "VisualIntent produit par visual_intent_engine. context optionnel : écrase visual_intent['context'] si fourni.",
+    "output": "dict strict — 10 clés : primary, secondary, accent, background, surface, text_primary, text_secondary, border, states, contrast_score"
+  },
+
+  "output_schema": {
+    "primary":        "#rrggbb — couleur principale (CTA, titres, éléments forts)",
+    "secondary":      "#rrggbb — couleur secondaire (sous-titres, accents légers)",
+    "accent":         "#rrggbb — couleur d'accentuation (hover, badges, highlights)",
+    "background":     "#rrggbb — fond principal de la page",
+    "surface":        "#rrggbb — fond des cartes / panels",
+    "text_primary":   "#rrggbb — texte principal (WCAG AA ≥ 4.5 sur background)",
+    "text_secondary": "#rrggbb — texte secondaire (WCAG AA ≥ 4.5 sur surface)",
+    "border":         "#rrggbb — couleur des bordures et séparateurs",
+    "states": {
+      "success": "#rrggbb",
+      "warning": "#rrggbb",
+      "error":   "#rrggbb"
+    },
+    "contrast_score": {
+      "body_text":  "AAA | AA | AA Large | FAIL",
+      "large_text": "AAA | AA | AA Large | FAIL"
+    }
+  },
+
+  "priority_logic": {
+    "1_style_family": "Si style_family connue → palette prédéfinie (prime sur tout)",
+    "2_emotional_goal": "Base hue depuis emotional_goal (_BASE_HUE)",
+    "3_brand_positioning": "Ajustements saturation + offset accent (_POSITIONING_MOD)",
+    "4_product_type": "dark vs light mode (_DARK_PRODUCTS / _LIGHT_PRODUCTS)"
+  },
+
+  "guarantees": {
+    "wcag": "text_primary sur background ≥ AA (4.5:1) — garanti par _fix_contrast() itératif",
+    "wcag_secondary": "text_secondary sur surface ≥ AA (4.5:1) — même garantie",
+    "determinism": "Même visual_intent → même palette toujours. Zéro aléatoire.",
+    "hex_validity": "Toutes les valeurs sont des hex #rrggbb valides"
+  },
+
+  "emotional_goal_hues": {
+    "trust":      "220° (bleu)",
+    "excitement": "350° (rouge-rose)",
+    "desire":     "340° (rose chaud)",
+    "calm":       "168° (teal-vert)",
+    "curiosity":  "268° (violet)",
+    "authority":  "218° (marine)"
+  },
+
+  "style_family_palettes": {
+    "editorial_luxury":  "cream/gold/near-black warm — dark",
+    "brutalist":         "blanc/rouge stark/noir — dark",
+    "tech_minimal":      "bleu Google/gris/blanc — light",
+    "experimental_grid": "fuchsia/violet/near-black — dark",
+    "premium_brand":     "or chaud/fond warm-black — dark",
+    "bold_marketing":    "orange-rouge/jaune/noir — dark"
+  },
+
+  "context_examples": {
+    "dating":  "desire+playful → fond clair rose, accent corail — WCAG AA",
+    "gaming":  "excitement+disruptive → fond sombre rouge, accent jaune — WCAG AA",
+    "finance": "trust+serious → fond clair bleu désaturé — WCAG AA",
+    "luxury":  "desire+premium → fond sombre, saturation réduite, accent discret — WCAG AA"
+  },
+
+  "integration": {
+    "pipeline": "generate_palette(visual_intent) appelé après generate_visual_intent()",
+    "visual_decorators": "generate_visual_decorators(visual_intent) en parallèle",
+    "renderer": "palette injectée dans les composants HTML/CSS générés"
+  },
+
+  "dependencies": {
+    "required": ["colorsys (stdlib)", "re (stdlib)"],
+    "optional": []
+  }
+}

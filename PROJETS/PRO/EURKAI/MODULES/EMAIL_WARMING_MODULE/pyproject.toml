@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "email-warming-module"
+version = "1.0.0"
+description = "EURKAI — Module de warming email bidirectionnel (Brevo/SMTP + IMAP)"
+requires-python = ">=3.11"
+dependencies = [
+    "sqlalchemy>=2.0",
+    "requests>=2.31",
+    "apscheduler>=3.10",
+    "fastapi>=0.110",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "httpx"]

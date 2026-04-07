@@ -1,0 +1,68 @@
+{
+  "name": "design_validator",
+  "version": "1.0.0",
+  "description": "Validateur PASS/FAIL — vérifie que le layout généré respecte strictement le Design Plan",
+  "author": "EURKAI",
+  "dependencies": {},
+  "pipeline_position": "APRÈS le rendu — avant capture et audit vision",
+  "inputs": {
+    "design_plan": "dict — issu de DesignPlan.to_dict() ou JSON brut",
+    "layout": {
+      "hero": {
+        "type":           "string — ex: offset_text_image",
+        "positioning":    "string — ex: left_panel_right_media",
+        "text_placement": "string — ex: half_panel_left",
+        "media_role":     "string — ex: atmospheric_backdrop"
+      },
+      "sections": [
+        {
+          "type":              "string — ex: hero, feature_block, cta_block",
+          "layout_variant":    "string — ex: asymmetric_split, card_grid",
+          "symmetric":         "bool — True si colonnes symétriques",
+          "visually_isolated": "bool — True si cta_block isolé visuellement"
+        }
+      ],
+      "structure": {
+        "global_symmetry":       "bool — True si layout global symétrique",
+        "equal_section_heights": "bool — True si toutes sections à égale hauteur",
+        "varying_heights":       "bool — True si hauteurs variées",
+        "has_typographic_break": "bool — True si rupture de hiérarchie typo présente",
+        "density":               "string — low | medium | high",
+        "repeated_layouts":      "dict optionnel — {variant: count} calculé si absent"
+      }
+    }
+  },
+  "output_schema": {
+    "valid":        "bool — PASS (true) ou FAIL (false)",
+    "score":        "int — 0 à 100 (seuil PASS : 70)",
+    "fail_reasons": "list[str] — violations majeures ou contraintes dures",
+    "warnings":     "list[str] — violations mineures/medium (n'empêchent pas PASS)"
+  },
+  "validation_checks": [
+    "forbidden_items — toute violation → FAIL immédiat (hard constraint)",
+    "required_items — absence d'élément requis → FAIL immédiat",
+    "hero_type_match — medium (−20)",
+    "hero_positioning_match — medium (−20)",
+    "hero_text_placement_match — minor (−5)",
+    "section_repetition — même layout_variant > 3× → FAIL (major/hard)",
+    "global_symmetry_check — symétrie globale si interdite → FAIL (major/hard)",
+    "section_count_minimum — < 3 sections → medium (−20)",
+    "cta_block_presence — absent si requis par plan → FAIL (major/hard)",
+    "density_coherence — minor (−5)"
+  ],
+  "scoring": {
+    "start":          100,
+    "major_deduction": 50,
+    "medium_deduction": 20,
+    "minor_deduction":   5,
+    "pass_threshold":   70,
+    "note": "score < 70 → FAIL même sans hard constraint ; hard constraint → FAIL même si score >= 70"
+  },
+  "philosophy": "Ce n'est PAS un système de suggestion. PASS ou FAIL. Aucun jugement esthétique.",
+  "integration": {
+    "validate_layout": "validate_layout(design_plan, layout) → ValidationResult",
+    "DesignValidator": "DesignValidator().validate(design_plan, layout) → ValidationResult",
+    "ValidationResult.to_dict": "retourne {valid, score, fail_reasons, warnings}"
+  },
+  "status": "stable"
+}

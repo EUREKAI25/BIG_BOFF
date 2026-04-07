@@ -1,0 +1,54 @@
+{
+  "name": "design_learning",
+  "version": "1.0.0",
+  "description": "Couche d'apprentissage heuristique — stocke les patterns de correction réussis et les réutilise proactivement",
+  "author": "EURKAI",
+  "dependencies": {},
+  "storage": {
+    "type": "JSON file",
+    "path": "data/design_patterns.json",
+    "format": "{version, saved_at, patterns:[]}",
+    "max_patterns": 500,
+    "write_strategy": "atomic (tempfile + os.replace)"
+  },
+  "pattern_schema": {
+    "id":                "UUID",
+    "recorded_at":       "ISO datetime",
+    "context":           "{zone, background_type, text_color_class, theme_type}",
+    "problem":           "FixType.value (text_contrast, overlay_increase, ...)",
+    "fix":               "dict — champs d'un ZonePatch (overlay_opacity, text_color, ...)",
+    "score_improvement": "int — delta global_score avant/après correction",
+    "iterations_needed": "int — nb d'itérations pour converger",
+    "use_count":         "int — usages proactifs",
+    "success_count":     "int — usages ayant évité une correction",
+    "failure_count":     "int — usages n'ayant pas suffi",
+    "success_rate":      "float (calculé) — success_count / (success+failure)"
+  },
+  "context_dimensions": {
+    "zone":             "weight=2 — identifiant zone (hero, nav, primary_cta, ...)",
+    "background_type":  "weight=1 — image | gradient | color",
+    "text_color_class": "weight=1 — light | dark",
+    "theme_type":       "weight=1 — dark | light"
+  },
+  "matching": {
+    "max_score":        5,
+    "min_score":        2,
+    "max_suggestions":  3,
+    "strategy":         "keyword exact match par dimension — déterministe, zéro LLM"
+  },
+  "reliability_threshold": {
+    "min_usages":       3,
+    "min_success_rate": 0.6
+  },
+  "deduplication": "patterns identiques (même contexte + problème) = merge avec moyenne des valeurs numériques",
+  "api": {
+    "record_fix":                    "enregistre un pattern depuis des params explicites",
+    "record_from_loop_result":       "enregistre depuis un LoopResult (auto_fix_engine)",
+    "retrieve_relevant_patterns":    "retrouve patterns par contexte (scorés, triés)",
+    "suggest_preemptive_adjustments":"retourne un FullPatch à appliquer AVANT le premier render",
+    "mark_preemptive_result":        "feedback success/failure sur usage proactif",
+    "stats":                         "statistiques globales de la base"
+  },
+  "feedback_loop": "generate → apply_learned_patterns → render → capture → audit → fix → learn",
+  "status": "stable"
+}

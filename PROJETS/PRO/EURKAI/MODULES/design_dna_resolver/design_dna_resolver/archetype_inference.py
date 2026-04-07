@@ -34,38 +34,50 @@ from .schemas import BriefInput
 _ARCHETYPE_SIGNALS: dict[str, dict] = {
 
     "luxury_minimal": {
-        "industry":    {"luxury": 3.0, "fashion": 1.5, "beauty": 1.5, "real_estate": 1.0},
+        "industry":    {"luxury": 3.0, "fashion": 1.5, "beauty": 1.5, "real_estate": 1.0,
+                        "media_editorial": 1.5},
         "tone":        {"luxury": 3.0, "premium": 2.5, "modern_premium": 2.5, "elegant": 2.0, "minimal": 1.5},
-        "values":      {"premium": 2.0, "luxury": 2.0, "elegance": 2.0, "exclusivity": 1.5, "sophistication": 1.5},
-        "keywords":    {"exclusive": 2.0, "prestige": 2.0, "timeless": 1.5, "refined": 1.5, "gold": 1.0},
+        "values":      {"premium": 2.0, "luxury": 2.0, "elegance": 3.0, "exclusivity": 1.5,
+                        "sophistication": 1.5, "elegance": 2.5},
+        "keywords":    {"exclusive": 2.0, "prestige": 2.0, "timeless": 2.0, "refined": 2.0,
+                        "gold": 1.0, "high-end": 2.0, "slow": 1.5, "quiet": 1.5},
     },
 
     "startup_clean": {
-        "industry":    {"technology": 2.5, "saas": 3.0, "fintech": 2.0},
+        "industry":    {"technology": 1.5, "saas": 3.0, "fintech": 2.0},
         "tone":        {"modern": 2.0, "modern_premium": 1.5, "minimal": 1.5, "tech": 2.0, "professional": 1.0},
-        "values":      {"innovation": 2.0, "efficiency": 2.0, "simplicity": 1.5, "trust": 1.0},
+        "values":      {"innovation": 2.0, "efficiency": 2.0, "simplicity": 1.5, "trust": 0.5},
         "keywords":    {"clean": 2.0, "digital": 2.0, "platform": 1.5, "dashboard": 1.5, "saas": 1.5, "app": 1.5},
     },
 
     "editorial_magazine": {
-        "industry":    {"fashion": 3.0, "beauty": 2.0, "luxury": 1.5, "travel": 1.5},
-        "tone":        {"editorial": 3.0, "bold": 2.0, "elegant": 1.5},
-        "values":      {"elegance": 1.5, "bold": 2.0, "sophistication": 1.5},
-        "keywords":    {"editorial": 2.5, "fashion": 2.0, "magazine": 2.5, "photography": 1.5, "campaign": 1.5},
+        "industry":    {"fashion": 3.0, "beauty": 2.0, "luxury": 1.5, "travel": 1.5,
+                        "media_editorial": 4.0},
+        "tone":        {"editorial": 3.0, "bold": 2.0, "elegant": 2.0, "minimal": 1.5},
+        "values":      {"elegance": 2.5, "bold": 1.5, "sophistication": 2.0, "elegance": 3.0},
+        "keywords":    {"editorial": 2.5, "fashion": 2.0, "magazine": 2.5, "photography": 1.5,
+                        "campaign": 1.5, "whitespace": 2.5, "typography": 2.5, "rhythm": 2.0,
+                        "timeless": 2.0, "refined": 2.0, "quiet": 2.0, "intellectual": 2.0,
+                        "philosophy": 2.0, "art": 1.5, "aesthetic": 2.0},
     },
 
     "tech_futurist": {
-        "industry":    {"gaming": 3.0, "technology": 2.0, "fintech": 1.5},
+        "industry":    {"gaming": 3.0, "technology": 2.0, "fintech": 1.5,
+                        "nightlife_event": 2.0},
         "tone":        {"tech": 2.5, "dark": 2.5, "bold": 1.5, "vibrant": 1.5},
-        "values":      {"innovation": 2.0, "disruption": 2.5, "futurism": 3.0, "energy": 1.5},
-        "keywords":    {"neon": 2.0, "cyber": 2.5, "futur": 2.0, "dark": 2.0, "electric": 2.0, "metaverse": 2.0},
+        "values":      {"innovation": 2.0, "disruption": 2.5, "futurism": 3.0, "energy": 1.5,
+                        "boldness": 2.0},
+        "keywords":    {"neon": 2.5, "cyber": 2.5, "futur": 2.0, "dark": 2.0, "electric": 2.5,
+                        "metaverse": 2.0, "immersive": 2.0, "underground": 2.0},
     },
 
     "creative_studio": {
-        "industry":    {"technology": 1.0, "education": 1.0},
+        "industry":    {"technology": 1.0, "education": 1.0, "nightlife_event": 2.5},
         "tone":        {"vibrant": 2.5, "creative": 2.5, "bold": 1.5, "playful": 1.5},
-        "values":      {"creativity": 3.0, "expression": 2.5, "innovation": 1.5},
-        "keywords":    {"creative": 2.5, "studio": 2.5, "design": 2.0, "agency": 2.0, "colorful": 2.0, "expressive": 2.0},
+        "values":      {"creativity": 3.0, "expression": 2.5, "innovation": 1.5, "boldness": 2.0},
+        "keywords":    {"creative": 2.5, "studio": 2.5, "design": 2.0, "agency": 2.0,
+                        "colorful": 2.0, "expressive": 2.0, "experimental": 2.5,
+                        "performance": 1.5, "composition": 1.5, "visual": 1.5},
     },
 
     "brutalist": {
@@ -90,10 +102,16 @@ _ARCHETYPE_SIGNALS: dict[str, dict] = {
     },
 
     "corporate_pro": {
-        "industry":    {"finance": 3.0, "real_estate": 2.0, "healthcare": 1.5},
-        "tone":        {"professional": 3.0, "trustworthy": 2.5, "modern": 1.0},
-        "values":      {"trust": 2.5, "stability": 2.5, "authority": 2.0, "reliability": 2.0},
-        "keywords":    {"corporate": 2.5, "professional": 2.0, "b2b": 2.0, "enterprise": 2.5, "consulting": 2.0},
+        "industry":    {"finance": 3.0, "real_estate": 2.0, "healthcare": 1.5,
+                        "b2b_enterprise": 3.0, "technology": 1.0},
+        "tone":        {"professional": 3.0, "trustworthy": 2.5, "modern": 1.0, "minimal": 1.5},
+        "values":      {"trust": 2.5, "stability": 2.5, "authority": 2.0, "reliability": 2.0,
+                        "structured": 3.0, "minimal": 1.0},
+        "keywords":    {"corporate": 2.5, "professional": 2.0, "b2b": 2.0, "enterprise": 2.5,
+                        "consulting": 2.0, "infrastructure": 2.5, "developer": 2.0, "engineering": 2.0,
+                        "swiss": 2.5, "geometric": 2.0, "structured": 2.5, "systematic": 2.5,
+                        "dashboard": 1.5, "reliable": 2.0, "precision": 2.0, "precise": 2.0,
+                        "automation": 1.5, "devops": 2.0, "cto": 2.0, "technical": 1.5},
     },
 
     "premium_craft": {

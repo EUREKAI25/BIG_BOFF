@@ -1,0 +1,104 @@
+{
+  "_comment": "Seed de configuration Présence IA pour OUTBOUND_EMAIL_MODULE. Charger via seed_loader.py.",
+  "project_id": "presence-ia",
+
+  "domains": [
+    {"name": "presence-ia.online",   "role": "sending", "provider": "brevo"},
+    {"name": "presence-ia.info",     "role": "sending", "provider": "brevo"},
+    {"name": "presence-ia.cloud",    "role": "sending", "provider": "brevo"},
+    {"name": "presence-ia.site",     "role": "sending", "provider": "brevo"},
+    {"name": "presence-ia.website",  "role": "sending", "provider": "brevo"}
+  ],
+
+  "mailboxes": [
+    {"local_part": "contact", "domain": "presence-ia.online",  "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "audit",   "domain": "presence-ia.online",  "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "analyse", "domain": "presence-ia.online",  "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "rapport", "domain": "presence-ia.online",  "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "team",    "domain": "presence-ia.online",  "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+
+    {"local_part": "contact", "domain": "presence-ia.info",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "audit",   "domain": "presence-ia.info",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "analyse", "domain": "presence-ia.info",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "rapport", "domain": "presence-ia.info",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "team",    "domain": "presence-ia.info",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+
+    {"local_part": "contact", "domain": "presence-ia.cloud",   "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "audit",   "domain": "presence-ia.cloud",   "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "analyse", "domain": "presence-ia.cloud",   "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "rapport", "domain": "presence-ia.cloud",   "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "team",    "domain": "presence-ia.cloud",   "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+
+    {"local_part": "contact", "domain": "presence-ia.site",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "audit",   "domain": "presence-ia.site",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "analyse", "domain": "presence-ia.site",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "rapport", "domain": "presence-ia.site",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "team",    "domain": "presence-ia.site",    "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+
+    {"local_part": "contact", "domain": "presence-ia.website", "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "audit",   "domain": "presence-ia.website", "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "analyse", "domain": "presence-ia.website", "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "rapport", "domain": "presence-ia.website", "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25},
+    {"local_part": "team",    "domain": "presence-ia.website", "smtp_host": "smtp-relay.brevo.com", "smtp_port": 587, "daily_limit": 200, "hourly_limit": 25}
+  ],
+
+  "warmup_strategy": {
+    "name": "Presence IA — Standard Warmup",
+    "max_daily_volume": 200,
+    "reply_simulation": false,
+    "auto_pause_on_issue": true,
+    "health_rules": {
+      "max_bounce_rate": 0.04,
+      "max_spam_rate": 0.002
+    },
+    "ramp_schedule": [
+      {"day": 1,  "volume": 5},
+      {"day": 2,  "volume": 10},
+      {"day": 3,  "volume": 20},
+      {"day": 4,  "volume": 30},
+      {"day": 5,  "volume": 50},
+      {"day": 7,  "volume": 75},
+      {"day": 10, "volume": 100},
+      {"day": 14, "volume": 150},
+      {"day": 21, "volume": 200}
+    ]
+  },
+
+  "rotation_strategy": {
+    "name": "Presence IA — Round Robin",
+    "algorithm": "round_robin",
+    "per_mailbox_daily_cap": 200,
+    "per_domain_daily_cap": 1000,
+    "cooldown_hours": 0,
+    "failure_rules": {
+      "pause_after_consecutive_failures": 3
+    }
+  },
+
+  "compliance_rules": [
+    {
+      "name": "Bounce rate mailbox > 5%",
+      "scope": "mailbox",
+      "rule_type": "bounce_rate",
+      "threshold": 0.05,
+      "window_hours": 24,
+      "action_on_trigger": "pause_mailbox"
+    },
+    {
+      "name": "Bounce rate mailbox critique > 10%",
+      "scope": "mailbox",
+      "rule_type": "bounce_rate",
+      "threshold": 0.10,
+      "window_hours": 24,
+      "action_on_trigger": "pause_mailbox"
+    },
+    {
+      "name": "Failure rate campagne > 15%",
+      "scope": "campaign",
+      "rule_type": "failure_rate",
+      "threshold": 0.15,
+      "window_hours": 48,
+      "action_on_trigger": "alert"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eurkai-seed-builder"
+version = "0.1.0"
+description = "Génère des seeds de pages web depuis l'analyse de maquettes (Claude Vision)"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.28.0",
+    "pydantic>=2.5.0",
+]
+
+[project.scripts]
+seed-build = "seed_builder.cli:main"
+
+[tool.setuptools]
+packages = ["seed_builder"]

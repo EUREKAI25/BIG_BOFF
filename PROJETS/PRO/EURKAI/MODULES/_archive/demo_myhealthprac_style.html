@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Practice - Style MyHealthPrac</title>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* DESIGN SYSTEM EXTRAIT DE MYHEALTHPRAC */
+        :root {
+            /* Palette naturelle (extraite de la vidéo/image) */
+            --color-primary: rgb(176, 144, 111);        /* Beige doré */
+            --color-primary-light: rgb(213, 193, 171);  /* Beige clair */
+            --color-primary-dark: rgb(124, 72, 34);     /* Terre cuite */
+
+            --color-secondary: rgb(162, 130, 96);       /* Bronze */
+            --color-secondary-light: rgb(213, 193, 171);
+            --color-secondary-dark: rgb(87, 58, 32);    /* Marron foncé */
+
+            --color-neutral: rgb(241, 241, 241);
+            --color-text: rgb(31, 31, 31);
+            --color-bg: rgb(250, 248, 245);             /* Fond légèrement beige */
+
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-size-base: 16px;
+            --line-height-base: 1.6;
+
+            /* Spacing (warm = généreux) */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            --spacing-3xl: 64px;
+
+            /* Shadows (soft pour warm) */
+            --shadow-sm: 0 1px 2px rgba(124, 72, 34, 0.1);
+            --shadow-md: 0 4px 6px rgba(124, 72, 34, 0.15);
+            --shadow-lg: 0 10px 15px rgba(124, 72, 34, 0.2);
+
+            /* Border radius (rounded pour warm) */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            color: var(--color-text);
+            background: var(--color-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        /* PATTERN BACKGROUND */
+        .pattern-bg {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(176, 144, 111, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(162, 130, 96, 0.03) 0%, transparent 50%);
+        }
+
+        .dots-pattern {
+            background-image:
+                radial-gradient(circle, rgba(176, 144, 111, 0.1) 2px, transparent 2px);
+            background-size: 20px 20px;
+        }
+
+        /* HEADER */
+        header {
+            padding: var(--spacing-lg) 0;
+            background: rgba(250, 248, 245, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(176, 144, 111, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-xl);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .btn-header {
+            background: var(--color-primary);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-header:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: var(--spacing-3xl) 0;
+            background: linear-gradient(135deg,
+                rgba(213, 193, 171, 0.2) 0%,
+                rgba(176, 144, 111, 0.1) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(176, 144, 111, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary-dark);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-primary-dark);
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.6;
+            color: rgb(87, 58, 32);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--color-primary-dark);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--color-primary);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* FEATURES SECTION */
+        .features {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(176, 144, 111, 0.1);
+            color: var(--color-primary-dark);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .section-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-primary-dark);
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: rgb(87, 58, 32);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+        }
+
+        .feature-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(176, 144, 111, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg,
+                rgba(176, 144, 111, 0.1) 0%,
+                rgba(162, 130, 96, 0.1) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-primary-dark);
+            font-size: 28px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-primary-dark);
+        }
+
+        .feature-card p {
+            color: rgb(87, 58, 32);
+            line-height: 1.6;
+        }
+
+        /* STATS SECTION */
+        .stats {
+            padding: var(--spacing-3xl) 0;
+            background: white;
+            position: relative;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(176, 144, 111, 0.3) 50%,
+                transparent 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-2xl);
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: var(--spacing-lg);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: rgb(87, 58, 32);
+        }
+
+        /* TESTIMONIALS */
+        .testimonials {
+            padding: var(--spacing-3xl) 0;
+            background: var(--color-bg);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-xl);
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            font-size: 64px;
+            color: rgba(176, 144, 111, 0.1);
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: 18px;
+            line-height: 1.6;
+            font-style: italic;
+            color: rgb(87, 58, 32);
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .author-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border: 3px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .author-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-primary-dark);
+            margin-bottom: 2px;
+        }
+
+        .author-info p {
+            font-size: 14px;
+            color: rgb(87, 58, 32);
+        }
+
+        /* CTA SECTION */
+        .cta {
+            padding: var(--spacing-3xl) 0;
+            background: linear-gradient(135deg,
+                var(--color-primary-light) 0%,
+                var(--color-primary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+            background-size: 30px 30px;
+            opacity: 0.5;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cta p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-xl);
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+        }
+
+        .btn-cta-white {
+            background: white;
+            color: var(--color-primary-dark);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-cta-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        /* FOOTER */
+        footer {
+            background: rgb(31, 31, 31);
+            color: white;
+            padding: var(--spacing-3xl) 0 var(--spacing-lg);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: var(--spacing-2xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .footer-brand h3 {
+            font-size: 24px;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-primary-light);
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-column a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: var(--color-primary-light);
+        }
+
+        .footer-bottom {
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+
+        .social-icon:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            /* Header mobile */
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: var(--spacing-md);
+            }
+
+            .nav-links {
+                display: none; /* Masquer nav en mobile (à remplacer par burger si besoin) */
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            /* Hero mobile */
+            .hero {
+                padding: var(--spacing-2xl) 0;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Grids mobile */
+            .features-grid,
+            .stats-grid,
+            .testimonials-grid,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Section headers mobile */
+            .section-header h2 {
+                font-size: 32px;
+            }
+
+            .cta h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="ph ph-leaf"></i>
+                    Wellness Practice
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="btn-header">
+                    Prendre RDV
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="ph ph-sparkle"></i>
+                    Approche holistique naturelle
+                </div>
+                <h1>Votre bien-être naturel commence ici</h1>
+                <p>Découvrez une approche personnalisée de la santé qui respecte votre corps et votre rythme de vie.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary">
+                        <i class="ph ph-calendar-check"></i>
+                        Réserver une consultation
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="ph ph-play-circle"></i>
+                        Découvrir notre approche
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Nos services</span>
+                <h2>Une approche complète du bien-être</h2>
+                <p>Des solutions naturelles adaptées à vos besoins spécifiques</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-heart"></i>
+                    </div>
+                    <h3>Soins holistiques</h3>
+                    <p>Une approche globale qui prend en compte tous les aspects de votre santé physique et mentale.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-sun"></i>
+                    </div>
+                    <h3>Thérapies naturelles</h3>
+                    <p>Des méthodes douces et naturelles pour restaurer l'équilibre de votre organisme.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-user-focus"></i>
+                    </div>
+                    <h3>Suivi personnalisé</h3>
+                    <p>Un accompagnement sur mesure qui évolue avec vos besoins et vos progrès.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-flower"></i>
+                    </div>
+                    <h3>Médecine douce</h3>
+                    <p>Des traitements respectueux de votre corps et de ses capacités d'auto-guérison.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-brain"></i>
+                    </div>
+                    <h3>Équilibre mental</h3>
+                    <p>Techniques de gestion du stress et de développement de la résilience émotionnelle.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ph ph-drop"></i>
+                    </div>
+                    <h3>Nutrition consciente</h3>
+                    <p>Conseils alimentaires personnalisés pour nourrir votre corps de manière optimale.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="ph ph-users-three"></i>
+                    </div>
+                    <div class="stat-number">2,500+</div>
+                    <div class="stat-label">Patients suivis</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="ph ph-calendar"></i>
+                    </div>
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Années d'expérience</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="ph ph-medal"></i>
+                    </div>
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Taux de satisfaction</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="ph ph-star"></i>
+                    </div>
+                    <div class="stat-number">4.9/5</div>
+                    <div class="stat-label">Note moyenne</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Témoignages</span>
+                <h2>Ce que disent nos patients</h2>
+                <p>Des retours authentiques sur leur parcours de bien-être</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        "Une approche vraiment différente qui m'a permis de retrouver mon équilibre après des années de traitements inefficaces. L'écoute et la personnalisation font toute la différence."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Sophie Martineau</h4>
+                            <p>Patiente depuis 2 ans</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        "J'ai enfin trouvé une approche globale qui prend en compte tous les aspects de ma santé. Les résultats sont visibles et durables, sans effets secondaires."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Marc Dubois</h4>
+                            <p>Patiente depuis 3 ans</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        "Le suivi personnalisé et les conseils pratiques m'ont aidée à reprendre le contrôle de ma santé. Je me sens enfin écoutée et comprise."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Claire Renard</h4>
+                            <p>Patiente depuis 1 an</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    <div class="testimonial-text">
+                        "Une transformation complète de mon bien-être, tant physique que mental. L'approche holistique a changé ma vie de manière profonde et durable."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Thomas Legrand</h4>
+                            <p>Patient depuis 4 ans</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Prêt à commencer votre parcours bien-être ?</h2>
+                <p>Prenez rendez-vous pour une première consultation gratuite et découvrez comment nous pouvons vous accompagner.</p>
+                <div class="cta-buttons">
+                    <button class="btn-cta-white">
+                        Réserver ma consultation gratuite
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>Wellness Practice</h3>
+                    <p>Votre partenaire de confiance pour un bien-être naturel et durable.</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="ph ph-facebook-logo"></i></a>
+                        <a href="#" class="social-icon"><i class="ph ph-instagram-logo"></i></a>
+                        <a href="#" class="social-icon"><i class="ph ph-linkedin-logo"></i></a>
+                        <a href="#" class="social-icon"><i class="ph ph-youtube-logo"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Soins holistiques</a></li>
+                        <li><a href="#">Thérapies naturelles</a></li>
+                        <li><a href="#">Nutrition</a></li>
+                        <li><a href="#">Équilibre mental</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>À propos</h4>
+                    <ul>
+                        <li><a href="#">Notre approche</a></li>
+                        <li><a href="#">L'équipe</a></li>
+                        <li><a href="#">Témoignages</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="#">Prendre RDV</a></li>
+                        <li><a href="#">Nous écrire</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Mentions légales</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Wellness Practice. Tous droits réservés.</p>
+                <p>Conçu avec EURKAI Design System</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thalasso & Spa — Bien-être Marine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: rgb(72, 149, 178);
+            --color-primary-light: rgb(157, 201, 219);
+            --color-primary-dark: rgb(44, 98, 120);
+            --color-secondary: rgb(138, 186, 169);
+            --color-text: #1e293b;
+            --color-text-light: #64748b;
+            --spacing: clamp(1rem, 3vw, 2rem);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--color-text);
+            background: linear-gradient(to bottom, #f0f9ff 0%, #ffffff 100%);
+            line-height: 1.6;
+        }
+
+        /* HERO FULL SCREEN */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('https://replicate.delivery/czjl/SdllBXzbIuKfcyH9oYqPtQzBlkf6ikdeEBKgtEvVcKHg11SsA/out-0.webp') center/cover;
+            filter: brightness(0.8);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(44, 98, 120, 0.7) 0%, rgba(72, 149, 178, 0.4) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            padding: var(--spacing);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: white;
+            color: var(--color-primary-dark);
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* BENTO GRID SECTION */
+        .bento-section {
+            max-width: 1400px;
+            margin: -80px auto 0;
+            padding: 0 var(--spacing);
+            position: relative;
+            z-index: 10;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 200px);
+            gap: 1.5rem;
+        }
+
+        .bento-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-large {
+            grid-column: span 3;
+            grid-row: span 2;
+        }
+
+        .card-tall {
+            grid-column: span 2;
+            grid-row: span 3;
+        }
+
+        .card-wide {
+            grid-column: span 4;
+            grid-row: span 2;
+        }
+
+        .card-small {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            position: absolute;
+            inset: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+            color: white;
+        }
+
+        .card-content h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-content p {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        /* STATS OVERLAY */
+        .stats-overlay {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* CTA FINAL */
+        .cta-final {
+            margin: 6rem auto;
+            max-width: 1400px;
+            padding: 0 var(--spacing);
+        }
+
+        .cta-card {
+            position: relative;
+            height: 500px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .cta-bg {
+            position: absolute;
+            inset: 0;
+            background: url('https://replicate.delivery/czjl/t1Npf6k7cvU2LCfTRZJ3drfIJuK2SMel4vejsv1HB2pbWXLxC/out-0.webp') center/cover;
+        }
+
+        .cta-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(72, 149, 178, 0.9) 0%, rgba(138, 186, 169, 0.85) 100%);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            max-width: 700px;
+            padding: var(--spacing);
+        }
+
+        .cta-content h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-content p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 2rem;
+            border-radius: 999px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+            }
+
+            .card-large,
+            .card-tall,
+            .card-wide,
+            .card-small {
+                grid-column: span 1;
+                grid-row: span 1;
+                min-height: 250px;
+            }
+
+            .stats-overlay {
+                position: static;
+                margin: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO FULL SCREEN -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>L'Océan comme Thérapie</h1>
+            <p>Thalassothérapie & Spa de luxe face à la mer</p>
+            <button class="btn">Découvrir nos soins</button>
+        </div>
+    </section>
+
+    <!-- BENTO GRID -->
+    <section class="bento-section">
+        <div class="bento-grid">
+            <!-- Card 1 : Hydrothérapie (large) -->
+            <div class="bento-card card-large">
+                <img src="https://replicate.delivery/czjl/kC6mdMyce0THDqaVO6Do9nsy3xKq62knePSBHf0H3Srp11SsA/out-0.webp" alt="Hydrothérapie" class="card-image">
+                <div class="card-content">
+                    <h3>Hydrothérapie Marine</h3>
+                    <p>Bains d'eau de mer chauffée, jets tonifiants, parcours aquatique</p>
+                </div>
+            </div>
+
+            <!-- Card 2 : Stats (tall) -->
+            <div class="bento-card card-tall" style="background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);">
+                <div class="stats-overlay" style="position: static; margin: auto; max-width: 200px;">
+                    <div class="stat">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">Années</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">5000+</div>
+                        <div class="stat-label">Clients</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">4.9/5</div>
+                        <div class="stat-label">Note</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 : Massage (large) -->
+            <div class="bento-card card-large">
+                <img src="https://replicate.delivery/czjl/c267y8HkppofUasf7LGlQepQJnVO2BlDiWAJbsplLmdq11SsA/out-0.webp" alt="Massage" class="card-image">
+                <div class="card-content">
+                    <h3>Soins & Massages</h3>
+                    <p>Enveloppements d'algues, gommages marins, huiles essentielles</p>
+                </div>
+            </div>
+
+            <!-- Card 4 : Abstract (small) -->
+            <div class="bento-card card-small">
+                <img src="https://replicate.delivery/czjl/C5hL5BgokQopH1AGtKczwVsfcmVajkolSb4wshB9FjGZdtELA/out-0.webp" alt="Services" class="card-image">
+            </div>
+
+            <!-- Card 5 : Relaxation (wide) -->
+            <div class="bento-card card-wide">
+                <img src="https://replicate.delivery/czjl/MBczbpIOBqI9Ola61aX7tU5WzTuoStTV6tMevNvdfj526aJWA/out-0.webp" alt="Relaxation" class="card-image">
+                <div class="card-content">
+                    <h3>Espace Détente</h3>
+                    <p>Sauna, hammam, salle de repos avec vue panoramique sur l'océan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta-final">
+        <div class="cta-card">
+            <div class="cta-bg"></div>
+            <div class="cta-overlay"></div>
+            <div class="cta-content">
+                <h2>Réservez votre séjour</h2>
+                <div class="price-tag">À partir de 590€ / 3 jours</div>
+                <p>Forfaits tout compris : hébergement, soins, repas gastronomiques</p>
+                <button class="btn">Voir les offres</button>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

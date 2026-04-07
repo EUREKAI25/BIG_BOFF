@@ -1,0 +1,116 @@
+{
+  "status": "success",
+  "from": "specs",
+  "to": "deliverable",
+  "data": {
+    "deliverable_type": "code",
+    "deliverable": {
+      "type": "code",
+      "entry_point": "InvoiceModule",
+      "filename": "invoice_module.py",
+      "code": "\"\"\"\ninvoice_module\nInvoice creation and management. Pattern : REST API — versioned.\n\"\"\"\n\n\ndef run(params: dict) -> dict:\n    \"\"\"\n    Point d'entrée principal.\n    \"\"\"\n    return {\"success\": True, \"result\": None, \"params\": params}\n\n\nif __name__ == \"__main__\":\n    print(run({}))\n",
+      "validation": {
+        "score": 100,
+        "issues": [],
+        "warnings": []
+      },
+      "modules": {
+        "backend": [
+          {
+            "name": "InvoiceModule",
+            "filename": "invoice_module.py",
+            "code": "\"\"\"\ninvoice_module\nInvoice creation and management. Pattern : REST API — versioned.\n\"\"\"\n\n\ndef run(params: dict) -> dict:\n    \"\"\"\n    Point d'entrée principal.\n    \"\"\"\n    return {\"success\": True, \"result\": None, \"params\": params}\n\n\nif __name__ == \"__main__\":\n    print(run({}))\n",
+            "layer": "backend",
+            "priority": "P1",
+            "validation": {
+              "score": 100,
+              "issues": [],
+              "warnings": []
+            }
+          },
+          {
+            "name": "PaymentService",
+            "filename": "payment_service.py",
+            "code": "\"\"\"\npayment_service\nPayment tracking and status updates. Pattern : REST API — versioned.\n\"\"\"\n\n\ndef run(params: dict) -> dict:\n    \"\"\"\n    Point d'entrée principal.\n    \"\"\"\n    return {\"success\": True, \"result\": None, \"params\": params}\n\n\nif __name__ == \"__main__\":\n    print(run({}))\n",
+            "layer": "backend",
+            "priority": "P1",
+            "validation": {
+              "score": 100,
+              "issues": [],
+              "warnings": []
+            }
+          },
+          {
+            "name": "AuthModule",
+            "filename": "auth_module.py",
+            "code": "\"\"\"\nauth_module\nAuthentication and authorization. Pattern : REST API — versioned.\n\"\"\"\n\n\ndef run(params: dict) -> dict:\n    \"\"\"\n    Point d'entrée principal.\n    \"\"\"\n    return {\"success\": True, \"result\": None, \"params\": params}\n\n\nif __name__ == \"__main__\":\n    print(run({}))\n",
+            "layer": "shared",
+            "priority": "P1",
+            "validation": {
+              "score": 100,
+              "issues": [],
+              "warnings": []
+            }
+          },
+          {
+            "name": "BillingService",
+            "filename": "billing_service.py",
+            "code": "\"\"\"\nbilling_service\nRecurring billing and subscriptions. Pattern : REST API — versioned.\n\"\"\"\n\n\ndef run(params: dict) -> dict:\n    \"\"\"\n    Point d'entrée principal.\n    \"\"\"\n    return {\"success\": True, \"result\": None, \"params\": params}\n\n\nif __name__ == \"__main__\":\n    print(run({}))\n",
+            "layer": "backend",
+            "priority": "P2",
+            "validation": {
+              "score": 100,
+              "issues": [],
+              "warnings": []
+            }
+          }
+        ],
+        "frontend": [
+          {
+            "name": "DashboardView",
+            "filename": "dashboard_view.py",
+            "code": "from typing import Any, Dict\n\n\nclass DashboardView:\n    \"\"\"\n    Dashboard UI with real-time data\n    \"\"\"\n\n    def __init__(self):\n        pass\n\n    def validate(self) -> Dict[str, Any]:\n        errors = []\n        return {\"valid\": len(errors) == 0, \"errors\": errors}\n\n    def to_dict(self) -> Dict[str, Any]:\n        return {k: v for k, v in self.__dict__.items()}\n\n    @classmethod\n    def test(cls) -> bool:\n        obj = cls()\n        assert \"valid\" in obj.validate()\n        return True\n",
+            "layer": "frontend"
+          }
+        ],
+        "storage": []
+      },
+      "components_all": [
+        "InvoiceModule",
+        "PaymentService",
+        "AuthModule",
+        "DashboardView",
+        "BillingService"
+      ],
+      "note": "product_create — 4 backend, 1 frontend, 0 storage.",
+      "status": "ready"
+    }
+  },
+  "meta": {
+    "steps": [
+      {
+        "step": "validate_input",
+        "status": "ok"
+      },
+      {
+        "step": "detect_type",
+        "status": "ok"
+      },
+      {
+        "step": "route_generation",
+        "status": "ok"
+      },
+      {
+        "step": "normalize_output",
+        "status": "ok"
+      },
+      {
+        "step": "assemble_result",
+        "status": "ok"
+      }
+    ],
+    "errors": [],
+    "deliverable_type": "code",
+    "generator_status": "success"
+  }
+}
