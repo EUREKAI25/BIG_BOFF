@@ -133,6 +133,17 @@ def _detect_type(specs):
     is_doc     = bool(re.search(r"\bdocument\b|\bguide\b|\breport\b|\boutline\b", all_text))
     is_media   = bool(re.search(r"\bvisuals?\b|\bassets?\b|\bmockup\b|\billustration\b", all_text))
 
+    # Signal content fort : présence d'articles/posts mais modèles uniquement génériques (User seul)
+    # → pas un vrai système backend, juste du contenu éditorial
+    if is_content:
+        model_names = {m.get("name", "").lower()
+                       for m in (specs.get("data_models") or [])}
+        # Modèles non-génériques = tout sauf User/Session/Auth
+        _generic_models = {"user", "session", "auth", "token"}
+        has_domain_models = bool(model_names - _generic_models)
+        if not has_domain_models:
+            return "content"
+
     # Code : signaux backend explicites, ou architecture + composants sans override
     if has_models or has_endpoints:
         return "code"
