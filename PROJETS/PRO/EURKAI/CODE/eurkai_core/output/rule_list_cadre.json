@@ -1,0 +1,1295 @@
+{
+  "rule_list": [
+
+    {
+      "rule_ident": "rule_naming_objects_pascal_case",
+      "rule_source": "CONSTITUTION_v0 — Section 0. Convention de nommage",
+      "rule_type": "convention",
+      "rule_statement": "Les objets doivent être nommés en PascalCase.",
+      "rule_condition": "MATCHES_REGEX(name, \"^[A-Z][A-Za-z0-9]*$\")",
+      "rule_severity": "error",
+      "rule_message": "Le nom d'un objet doit être en PascalCase.",
+      "rule_justification": "Distinguer clairement les objets des attributs et méthodes dans tout le système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_naming_attributes_snake_case",
+      "rule_source": "CONSTITUTION_v0 — Section 0. Convention de nommage",
+      "rule_type": "convention",
+      "rule_statement": "Les attributs, méthodes et règles doivent être nommés en snake_case.",
+      "rule_condition": "MATCHES_REGEX(name, \"^[a-z][a-z0-9_]*$\")",
+      "rule_severity": "error",
+      "rule_message": "Le nom d'un attribut, méthode ou règle doit être en snake_case.",
+      "rule_justification": "Distinguer clairement les attributs/méthodes/règles des objets dans tout le système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_naming_unique_per_type",
+      "rule_source": "CONSTITUTION_v0 — Section 0. Convention de nommage",
+      "rule_type": "contrainte",
+      "rule_statement": "Un nom ne peut être affecté qu'à un seul type d'objet.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Ce nom est déjà utilisé pour un autre type d'objet.",
+      "rule_justification": "Éviter les ambiguïtés de résolution dans le système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_everything_is_object",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A1",
+      "rule_type": "axiome",
+      "rule_statement": "Tout est objet.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Tout élément du système doit être un objet.",
+      "rule_justification": "Principe fondateur du modèle EURKAI : uniformité structurelle totale.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_every_object_is_dict",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A2",
+      "rule_type": "axiome",
+      "rule_statement": "Tout objet est un dict.",
+      "rule_condition": "TYPEOF(object, dict)",
+      "rule_severity": "error",
+      "rule_message": "Un objet doit être de type dict.",
+      "rule_justification": "Structure canonique uniforme pour tous les objets du système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_every_object_is_container",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A3",
+      "rule_type": "axiome",
+      "rule_statement": "Tout objet est un container.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un objet doit être capable de contenir d'autres objets.",
+      "rule_justification": "Modèle récursif : chaque objet peut en contenir d'autres.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_every_object_has_elementlist",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A4",
+      "rule_type": "axiome",
+      "rule_statement": "Tout objet possède une elementlist.",
+      "rule_condition": "HAS_FIELD(object, \"elementlist\")",
+      "rule_severity": "error",
+      "rule_message": "Tout objet doit posséder une elementlist.",
+      "rule_justification": "Structure fondamentale du container récursif.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_elementlist_can_be_empty",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A5",
+      "rule_type": "axiome",
+      "rule_statement": "elementlist peut être vide.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Une elementlist vide est valide.",
+      "rule_justification": "Permet les feuilles de l'arbre structurel sans violation du modèle.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_root_has_no_container",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A6",
+      "rule_type": "axiome",
+      "rule_statement": "Seul l'objet racine n'appartient à aucun container.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "L'objet racine ne doit pas avoir de container.",
+      "rule_justification": "Il ne peut exister qu'une racine dans la hiérarchie des objets.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_non_root_belongs_to_exactly_one_container",
+      "rule_source": "CONSTITUTION_v0 — Section 1. Axiomes fondamentaux / A7",
+      "rule_type": "axiome",
+      "rule_statement": "Tout objet non racine appartient à exactement un container.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un objet non racine doit appartenir à exactement un container.",
+      "rule_justification": "Garantit l'unicité du chemin hiérarchique pour tout objet.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_list_is_specialised_dict",
+      "rule_source": "CONSTITUTION_v0 — Section 3. Structures",
+      "rule_type": "axiome",
+      "rule_statement": "List est un dict spécialisé à clés actionnables.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Une List est un type spécialisé de Dict.",
+      "rule_justification": "Unification du modèle : tout est Dict, List en est un cas particulier.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_method_belongs_to_object",
+      "rule_source": "CONSTITUTION_v0 — Section 6. Exécution",
+      "rule_type": "obligation",
+      "rule_statement": "Les méthodes appartiennent à l'objet qu'elles manipulent ou décrivent.",
+      "rule_condition": "HAS_FIELD(method, \"method_of\")",
+      "rule_severity": "error",
+      "rule_message": "Une méthode doit être rattachée à un objet.",
+      "rule_justification": "Les méthodes ne sont pas libres : elles sont toujours portées par un objet.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_scenario_does_not_execute_itself",
+      "rule_source": "CONSTITUTION_v0 — Section 6. Exécution",
+      "rule_type": "contrainte",
+      "rule_statement": "Un Scenario ne s'exécute pas lui-même. Il définit une séquence de méthodes destinée à être convertie en hooks/triggers.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un Scenario ne peut pas s'auto-exécuter.",
+      "rule_justification": "Séparation claire entre définition et exécution dans le modèle.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_kind_is_temporary",
+      "rule_source": "CONSTITUTION_v0 — Section 10. Règles globales",
+      "rule_type": "convention",
+      "rule_statement": "kind est temporaire et sera remplacé plus tard par la lignée.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "L'attribut kind est provisoire.",
+      "rule_justification": "Le système évolue vers un modèle basé sur le lineage, rendant kind obsolète.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_objects_do_not_execute_themselves",
+      "rule_source": "CONSTITUTION_v0 — Section 10. Règles globales",
+      "rule_type": "contrainte",
+      "rule_statement": "Les méthodes portent l'exécution, les objets ne s'exécutent pas eux-mêmes.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un objet ne peut pas s'exécuter lui-même.",
+      "rule_justification": "Séparation nette entre données (objets) et comportement (méthodes).",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_schema_rules_constrain_structures",
+      "rule_source": "CONSTITUTION_v0 — Section 10. Règles globales",
+      "rule_type": "obligation",
+      "rule_statement": "Les règles de schéma cadrent les structures autorisées.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Toute structure doit être conforme aux règles de son schéma.",
+      "rule_justification": "Le schéma est l'autorité structurelle de chaque objet.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_define_only_specificities",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 1. Principes fondamentaux",
+      "rule_type": "axiome",
+      "rule_statement": "On ne définit que les spécificités. Tout le reste est hérité ou injecté.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Il ne faut définir que ce qui est spécifique à l'objet.",
+      "rule_justification": "Minimisation de la redondance et maximisation de la réutilisabilité.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_catalogue_contains_only_specificities",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 1. Principes fondamentaux",
+      "rule_type": "contrainte",
+      "rule_statement": "Le catalogue ne contient que des spécificités.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Le catalogue ne doit pas contenir d'éléments hérités ou redondants.",
+      "rule_justification": "Garantit la compacité et la maintenabilité du catalogue.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_values_resolved_on_demand",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 1. Principes fondamentaux",
+      "rule_type": "axiome",
+      "rule_statement": "Les valeurs complètes sont résolues à la demande.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Les valeurs ne doivent pas être précalculées systématiquement.",
+      "rule_justification": "Performance et flexibilité : résolution lazy pour les valeurs automatisées.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_automated_means_no_explicit_payload",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 1. Principes fondamentaux",
+      "rule_type": "convention",
+      "rule_statement": "automated = no explicit payload value required.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Un objet marqué automated ne nécessite pas de payload explicite.",
+      "rule_justification": "Permet aux agents de calculer automatiquement la valeur sans intervention.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_parameter_applies_to_its_object",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 3. Parameter",
+      "rule_type": "obligation",
+      "rule_statement": "Tout Parameter s'applique à l'objet dont il est paramètre.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un Parameter doit être lié à son objet.",
+      "rule_justification": "Les paramètres n'existent pas de manière isolée.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_contract_must_expose_required_element_list",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 4. Contract",
+      "rule_type": "obligation",
+      "rule_statement": "Contract doit exposer : required_element_list, validation_rule_list, scope.",
+      "rule_condition": "AND(HAS_FIELD(contract, \"required_element_list\"), AND(HAS_FIELD(contract, \"validation_rule_list\"), HAS_FIELD(contract, \"scope\")))",
+      "rule_severity": "error",
+      "rule_message": "Un Contract doit posséder required_element_list, validation_rule_list et scope.",
+      "rule_justification": "Structure minimale obligatoire pour que le Contract soit utilisable.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_scope_null_must_be_resolved",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 5. Scope",
+      "rule_type": "obligation",
+      "rule_statement": "scope = null → à résoudre par héritage, injection ou méthode.",
+      "rule_condition": "ISNULL(scope)",
+      "rule_severity": "warning",
+      "rule_message": "Le scope est null et doit être résolu.",
+      "rule_justification": "Un scope non résolu empêche la validation contextuelle correcte.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_scope_star_is_universal",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 5. Scope",
+      "rule_type": "convention",
+      "rule_statement": "scope = * → universel, aucune restriction de périmètre.",
+      "rule_condition": "EQ(scope, \"*\")",
+      "rule_severity": "info",
+      "rule_message": "Le scope est universel.",
+      "rule_justification": "Valeur spéciale indiquant l'absence de restriction de périmètre.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_scope_value_overrides_locally",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 5. Scope",
+      "rule_type": "convention",
+      "rule_statement": "scope avec valeur explicite → override local. Ordre : owned.value > tag-affined > category > inherited/default > automated.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Le scope local override le scope hérité.",
+      "rule_justification": "Permet la spécialisation locale sans duplication.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_method_has_method_of",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 6. Method",
+      "rule_type": "obligation",
+      "rule_statement": "method_of → objet auquel la méthode s'applique.",
+      "rule_condition": "HAS_FIELD(method, \"method_of\")",
+      "rule_severity": "error",
+      "rule_message": "Une Method doit déclarer l'objet auquel elle s'applique (method_of).",
+      "rule_justification": "Toute méthode doit être rattachée à un objet pour être exécutable.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_secondary_method_has_central",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 6. Method",
+      "rule_type": "obligation",
+      "rule_statement": "is_secondarymethod_of → CentralMethod associée.",
+      "rule_condition": "HAS_FIELD(method, \"is_secondarymethod_of\")",
+      "rule_severity": "error",
+      "rule_message": "Une SecondaryMethod doit référencer sa CentralMethod via is_secondarymethod_of.",
+      "rule_justification": "Les méthodes secondaires ne sont pas autonomes : elles dépendent d'une CentralMethod.",
+      "rule_scope": "SecondaryMethod"
+    },
+    {
+      "rule_ident": "rule_method_contract_required_elements",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 7. MethodContract",
+      "rule_type": "obligation",
+      "rule_statement": "MethodContract.required_element_list doit contenir : input, output, payload, method_of, orchestrate_scenario, validation_rule_list, test_list.",
+      "rule_condition": "AND(HAS_FIELD(method, \"input\"), AND(HAS_FIELD(method, \"output\"), AND(HAS_FIELD(method, \"payload\"), AND(HAS_FIELD(method, \"method_of\"), AND(HAS_FIELD(method, \"orchestrate_scenario\"), AND(HAS_FIELD(method, \"validation_rule_list\"), HAS_FIELD(method, \"test_list\")))))))",
+      "rule_severity": "error",
+      "rule_message": "La Method ne satisfait pas le MethodContract : éléments requis manquants.",
+      "rule_justification": "Garantit qu'une Method est appelable, testable, orchestrable et validable.",
+      "rule_scope": "Method"
+    },
+    {
+      "rule_ident": "rule_execution_starts_with_central_method",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 8. CentralMethod",
+      "rule_type": "obligation",
+      "rule_statement": "Toute exécution démarre par une CentralMethod.",
+      "rule_condition": "IN(entry_method, [\"Create\", \"Read\", \"Update\", \"Store\", \"Orchestrate\", \"Engage\"])",
+      "rule_severity": "error",
+      "rule_message": "L'exécution doit démarrer par une CentralMethod (Create, Read, Update, Store, Orchestrate, Engage).",
+      "rule_justification": "Point d'entrée canonique unique pour garantir la traçabilité et l'orchestrabilité.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_central_scenario_linked_to_central_method",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 10. CentralScenario",
+      "rule_type": "obligation",
+      "rule_statement": "Chaque CentralScenario est lié à une CentralMethod et ne définit que ses spécificités.",
+      "rule_condition": "HAS_FIELD(scenario, \"central_method\")",
+      "rule_severity": "error",
+      "rule_message": "Un CentralScenario doit être lié à une CentralMethod.",
+      "rule_justification": "Garantit la traçabilité entre scénarios et méthodes centrales.",
+      "rule_scope": "CentralScenario"
+    },
+    {
+      "rule_ident": "rule_how_belongs_to_what",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 11. Axes opératoires",
+      "rule_type": "obligation",
+      "rule_statement": "how appartient à what. how n'est défini que par les opérations. SuperGet met à jour what.how.",
+      "rule_condition": "HAS_FIELD(what, \"how\")",
+      "rule_severity": "error",
+      "rule_message": "how doit être un attribut de what.",
+      "rule_justification": "Séparation canonique des axes : WHY (triggers), WHAT (données), HOW (exécution).",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_execution_parallel_by_default",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 14. Parallélisme",
+      "rule_type": "convention",
+      "rule_statement": "L'exécution se fait par dict, en parallèle par défaut. Fallback séquentiel si nécessaire.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "L'exécution doit être parallèle par défaut.",
+      "rule_justification": "Performance maximale : le parallélisme est la norme, la séquence est l'exception.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_no_duplication_only_override",
+      "rule_source": "EURKAI — CADRE STABLE v0.3 — Section 16. Règle de non-duplication",
+      "rule_type": "interdiction",
+      "rule_statement": "Pas de copie. Seulement override. Une donnée owned est spécifique si elle diffère de sa valeur automatisée.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "La duplication d'éléments hérités est interdite. Utiliser override.",
+      "rule_justification": "Maintenabilité et cohérence : une seule source de vérité par élément.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_how_defined_by_how_method",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 1",
+      "rule_type": "obligation",
+      "rule_statement": "how est toujours défini par la méthode de l'objet how.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "how doit être défini par la méthode de l'objet how.",
+      "rule_justification": "Cohérence structurelle entre l'axe HOW et la méthode qui le porte.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_how_can_carry_param_list",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 2",
+      "rule_type": "convention",
+      "rule_statement": "how peut porter how.param_list.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "how.param_list est optionnel mais autorisé.",
+      "rule_justification": "Flexibilité de la configuration de l'axe HOW.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_superget_prepares_how_to_ready",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 3",
+      "rule_type": "obligation",
+      "rule_statement": "SuperGet prépare how et met à jour what.how pour qu'il passe à status=ready.",
+      "rule_condition": "EQ(what.how.status, \"ready\")",
+      "rule_severity": "error",
+      "rule_message": "SuperGet doit mettre what.how en status=ready avant exécution.",
+      "rule_justification": "Garantit que l'exécution ne démarre que sur des éléments préparés.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_run_canonical_logic",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 5",
+      "rule_type": "obligation",
+      "rule_statement": "run suit la logique canonique : if get and execute : if validate then success else failure / after.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "La logique d'exécution run doit suivre le schéma canonique GEVR.",
+      "rule_justification": "Standardisation de l'exécution pour garantir la prévisibilité et la testabilité.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_early_failures_handled_by_method",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 6",
+      "rule_type": "contrainte",
+      "rule_statement": "Les failures précoces sont traités par la méthode concernée, pas par run.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "run ne doit pas gérer les failures précoces locales.",
+      "rule_justification": "Responsabilité déléguée à chaque méthode pour garder run minimal.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_execution_by_dict",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 8",
+      "rule_type": "obligation",
+      "rule_statement": "L'exécution se fait toujours par dict.",
+      "rule_condition": "TYPEOF(execution_target, dict)",
+      "rule_severity": "error",
+      "rule_message": "L'exécution doit se faire par dict.",
+      "rule_justification": "Cohérence avec le modèle fondamental : tout est dict.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_execution_parallel_as_possible",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 9",
+      "rule_type": "obligation",
+      "rule_statement": "L'exécution se fait autant que possible en parallèle.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Préférer l'exécution parallèle à la séquentielle.",
+      "rule_justification": "Performance maximale du système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_object_declares_execution_prerequisites",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 10",
+      "rule_type": "obligation",
+      "rule_statement": "Chaque objet déclare ses préalables d'exécution et de validation.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "L'objet ne déclare pas ses préalables d'exécution.",
+      "rule_justification": "Permet l'orchestration correcte des dépendances dans l'exécution parallèle.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_object_updates_own_status",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 11",
+      "rule_type": "obligation",
+      "rule_statement": "Chaque objet met à jour son propre status après exécution.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "L'objet doit mettre à jour son status après exécution.",
+      "rule_justification": "Responsabilité locale du status pour permettre l'exécution parallèle.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_loop_executes_on_ready_objects",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 12",
+      "rule_type": "obligation",
+      "rule_statement": "À chaque loop, how s'exécute sur tous les what dont status=ready.",
+      "rule_condition": "EQ(what.status, \"ready\")",
+      "rule_severity": "error",
+      "rule_message": "how ne doit s'exécuter que sur les what dont status=ready.",
+      "rule_justification": "Garantit que seuls les objets préparés sont traités à chaque itération.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_loops_depend_on_steps_not_objects",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Rules / 13",
+      "rule_type": "obligation",
+      "rule_statement": "Le nombre de loops dépend des étapes et non du nombre d'objets.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Le nombre de boucles ne doit pas dépendre du nombre d'objets.",
+      "rule_justification": "Séparation entre la logique d'étapes et le volume de données.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_status_defined_per_object_type",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Status/Lifecycle / 1",
+      "rule_type": "obligation",
+      "rule_statement": "status est défini pour chaque type d'objet concerné.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Le status doit être défini pour ce type d'objet.",
+      "rule_justification": "Chaque type d'objet a son propre cycle de vie.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_lifecycle_defined_with_status",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Status/Lifecycle / 2",
+      "rule_type": "obligation",
+      "rule_statement": "lifecycle est défini pour chaque type d'objet dont on définit le status.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "lifecycle doit être défini pour tout objet ayant un status.",
+      "rule_justification": "Le lifecycle encode les transitions de status autorisées.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_lifecycle_starts_at_2",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Status/Lifecycle / 4",
+      "rule_type": "convention",
+      "rule_statement": "lifecycle commence à 2.",
+      "rule_condition": "GTE(lifecycle_start_index, 2)",
+      "rule_severity": "warning",
+      "rule_message": "lifecycle doit commencer à l'index 2.",
+      "rule_justification": "Convention de numérotation du système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_lifecycle_2_is_validation_scenario",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Status/Lifecycle / 5",
+      "rule_type": "obligation",
+      "rule_statement": "lifecycle[2] désigne l'ident du scénario de validation permettant d'activer status=ready.",
+      "rule_condition": "ISNOTNULL(lifecycle[2])",
+      "rule_severity": "error",
+      "rule_message": "lifecycle[2] doit contenir l'ident du scénario de validation pour status=ready.",
+      "rule_justification": "Garantit que tout objet a un chemin défini pour atteindre status=ready.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_status_upgrade_requires_validate_success",
+      "rule_source": "EXECUTION CONSTITUTION v0 — Status/Lifecycle / 6",
+      "rule_type": "contrainte",
+      "rule_statement": "L'upgrade d'un status n'est autorisé qu'après validate.success du scénario correspondant.",
+      "rule_condition": "EQ(scenario.validate.result, \"success\")",
+      "rule_severity": "error",
+      "rule_message": "Le status ne peut pas être upgradé sans validate.success du scénario correspondant.",
+      "rule_justification": "Sécurité du cycle de vie : tout upgrade doit être validé.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_schema_is_attribute_of_object",
+      "rule_source": "SCHEMA v0 — Section 1. Position",
+      "rule_type": "obligation",
+      "rule_statement": "Tout objet possède un schema.",
+      "rule_condition": "HAS_FIELD(object, \"schema\")",
+      "rule_severity": "error",
+      "rule_message": "Tout objet doit posséder un schema.",
+      "rule_justification": "Le schema est la source d'autorité structurelle de chaque objet.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_schema_defines_structure_not_usage",
+      "rule_source": "SCHEMA v0 — Section 5. Règle courte",
+      "rule_type": "contrainte",
+      "rule_statement": "Schema ne définit pas l'usage de l'objet. Schema définit sa structure et les règles de validation de cette structure.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "Schema ne doit pas encoder la logique d'usage de l'objet.",
+      "rule_justification": "Séparation des responsabilités : structure (Schema) vs usage (Contract).",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_contract_does_not_execute",
+      "rule_source": "CONTRACT v0 — Section 1. Nature",
+      "rule_type": "contrainte",
+      "rule_statement": "Contract n'exécute rien.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un Contract ne peut pas porter de logique d'exécution.",
+      "rule_justification": "Le Contract est déclaratif : il cadre la validité sans exécuter.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_contract_contains_only_specificities",
+      "rule_source": "CONTRACT v0 — Section 3. Principe",
+      "rule_type": "contrainte",
+      "rule_statement": "Un Contract ne contient que des spécificités. Il ne duplique aucune structure héritée.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Un Contract ne doit pas dupliquer une structure héritée.",
+      "rule_justification": "Minimisation de la redondance dans le système.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_contract_required_element_must_exist",
+      "rule_source": "CONTRACT v0 — Section 5. required_element_list",
+      "rule_type": "obligation",
+      "rule_statement": "Chaque élément de required_element_list doit exister dans l'objet validé.",
+      "rule_condition": "ALL(contract.required_element_list, HAS_FIELD(object, element))",
+      "rule_severity": "error",
+      "rule_message": "Un ou plusieurs éléments requis par le Contract sont absents de l'objet.",
+      "rule_justification": "Le Contract définit les conditions minimales d'usage d'un objet.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_contract_valid_if_required_and_rules_satisfied",
+      "rule_source": "CONTRACT v0 — Section 8. Validation",
+      "rule_type": "obligation",
+      "rule_statement": "Un objet est valide vis-à-vis d'un Contract si tous les éléments de required_element_list sont présents et toutes les règles de validation_rule_list sont satisfaites. Sinon : validation.failure.",
+      "rule_condition": "AND(ALL(contract.required_element_list, HAS_FIELD(object, element)), ALL(contract.validation_rule_list, rule.satisfied))",
+      "rule_severity": "error",
+      "rule_message": "L'objet ne satisfait pas son Contract.",
+      "rule_justification": "Définition formelle de la validité d'un objet vis-à-vis de son Contract.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_contract_no_redefinition_of_inherited",
+      "rule_source": "CONTRACT v0 — Section 9. Non-redondance",
+      "rule_type": "interdiction",
+      "rule_statement": "Contract n'impose jamais une redéfinition explicite d'un élément déjà disponible par héritage ou injection. Il impose seulement sa présence et sa validité.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Le Contract impose une redéfinition d'un élément hérité, ce qui est interdit.",
+      "rule_justification": "Cohérence du principe de non-duplication dans les Contracts.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_method_contract_applies_to_method",
+      "rule_source": "METHOD CONTRACT v0.1 — Section 1. Règle d'application",
+      "rule_type": "obligation",
+      "rule_statement": "Un Contract s'applique par défaut à l'objet qui le porte.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Le Contract doit s'appliquer à l'objet qui le porte.",
+      "rule_justification": "Garantit la cohérence entre le Contract et son objet cible.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_method_valid_if_contract_satisfied",
+      "rule_source": "METHOD CONTRACT v0.1 — Section 10. Règle courte",
+      "rule_type": "obligation",
+      "rule_statement": "Une Method est valide si tous les éléments requis par MethodContract existent et si toutes les règles de validation sont satisfaites.",
+      "rule_condition": "AND(ALL(method.contract.required_element_list, HAS_FIELD(method, element)), ALL(method.contract.validation_rule_list, rule.satisfied))",
+      "rule_severity": "error",
+      "rule_message": "La Method n'est pas valide selon son MethodContract.",
+      "rule_justification": "Définition formelle de la validité d'une Method.",
+      "rule_scope": "Method"
+    },
+    {
+      "rule_ident": "rule_orchestrate_scenario_is_unique",
+      "rule_source": "METHOD CONTRACT v0.1 — Section 9. Orchestration",
+      "rule_type": "obligation",
+      "rule_statement": "orchestrate_scenario est unique par Method. Il organise 1..N milestone.scenario_list.",
+      "rule_condition": "EQ(COUNT(method.orchestrate_scenario_list, true), 1)",
+      "rule_severity": "error",
+      "rule_message": "Une Method ne peut avoir qu'un seul orchestrate_scenario.",
+      "rule_justification": "Un point d'orchestration unique garantit la lisibilité et la traçabilité.",
+      "rule_scope": "Method"
+    },
+    {
+      "rule_ident": "rule_method_does_not_copy_contract_structure",
+      "rule_source": "METHOD CONTRACT v0.1 — Section 8. Non-redondance",
+      "rule_type": "interdiction",
+      "rule_statement": "Method ne copie pas la structure du contract. Elle respecte les exigences et ne définit que ses spécificités.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "La Method ne doit pas copier la structure du Contract.",
+      "rule_justification": "Application du principe de non-duplication au niveau des méthodes.",
+      "rule_scope": "Method"
+    },
+
+    {
+      "rule_ident": "rule_supermethod_is_agnostic",
+      "rule_source": "SUPERMETHOD v0.1 — Section 4. Règle générale",
+      "rule_type": "obligation",
+      "rule_statement": "scan_and_do ne porte pas de logique métier. scan_and_do est agnostique.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "scan_and_do ne doit pas contenir de logique métier.",
+      "rule_justification": "SuperMethod est une couche opératoire générique réutilisable.",
+      "rule_scope": "SuperMethod"
+    },
+    {
+      "rule_ident": "rule_validation_result_is_agnostic",
+      "rule_source": "SUPERMETHOD v0.1 — Section 10. ValidationResult",
+      "rule_type": "contrainte",
+      "rule_statement": "On n'impose rien de spécial à ValidationResult. Il reste agnostique et reflète le test de what par how sans porter de logique additionnelle propre.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "ValidationResult ne doit pas porter de logique additionnelle.",
+      "rule_justification": "Agnosticisme de la couche de validation pour maximiser la réutilisabilité.",
+      "rule_scope": "SuperValidate"
+    },
+    {
+      "rule_ident": "rule_generate_object_prompt_must_be_well_defined",
+      "rule_source": "SUPERMETHOD v0.1 — Section 11. Génération d'objet",
+      "rule_type": "obligation",
+      "rule_statement": "Le prompt et les objets doivent être suffisamment bien définis pour minimiser les erreurs de génération.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "Le prompt ou les paramètres de génération sont insuffisamment définis.",
+      "rule_justification": "Qualité de la génération d'objet via agent IA.",
+      "rule_scope": "generate_object_from_schema"
+    },
+    {
+      "rule_ident": "rule_construction_order",
+      "rule_source": "SUPERMETHOD v0.1 — Section 12. Ordre de construction",
+      "rule_type": "obligation",
+      "rule_statement": "Ordre de construction : 1.Schema 2.SuperMethod 3.scan_and_do 4.validator 5.generate_object_from_schema 6.catalogue minimal 7.enregistrer et valider 8.créer EurkaiToolPage.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "L'ordre de construction n'est pas respecté.",
+      "rule_justification": "L'ordre garantit que les fondations sont posées avant les couches supérieures.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_pipeline_scenario_has_chain_list",
+      "rule_source": "PIPELINESCENARIO v0 — Section 5. Règles minimales",
+      "rule_type": "obligation",
+      "rule_statement": "PipelineScenario porte un chain_list lisible. Chaque élément du chain_list correspond à une étape exécutable ou validable.",
+      "rule_condition": "AND(HAS_FIELD(pipeline_scenario, \"chain_list\"), GT(LENGTH(pipeline_scenario.chain_list), 0))",
+      "rule_severity": "error",
+      "rule_message": "PipelineScenario doit avoir un chain_list non vide.",
+      "rule_justification": "Un PipelineScenario sans chaîne est invalide.",
+      "rule_scope": "PipelineScenario"
+    },
+
+    {
+      "rule_ident": "rule_scope_contextualises_not_describes",
+      "rule_source": "SCOPE v0 — Section 10. Règle courte",
+      "rule_type": "contrainte",
+      "rule_statement": "Scope contextualise le périmètre d'application. Il ne décrit pas ce qu'est l'objet. Il décrit où, sur quoi et jusqu'où il vaut.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "Le scope ne doit pas décrire la nature de l'objet.",
+      "rule_justification": "Séparation des responsabilités entre identité (lineage) et portée (scope).",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_scope_null_resolved_by_inheritance_or_automated",
+      "rule_source": "SCOPE v0 — Section 7. Règles",
+      "rule_type": "obligation",
+      "rule_statement": "Si scope = null, il doit être résolu par héritage, injection ou automated_value.",
+      "rule_condition": "ISNULL(scope)",
+      "rule_severity": "warning",
+      "rule_message": "scope est null et doit être résolu.",
+      "rule_justification": "Un scope indéfini doit toujours être résolvable.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_scope_local_overrides_inherited",
+      "rule_source": "SCOPE v0 — Section 7. Règles",
+      "rule_type": "convention",
+      "rule_statement": "Si scope est défini localement, il override le scope hérité ou injecté.",
+      "rule_condition": "ISNOTNULL(scope.value)",
+      "rule_severity": "info",
+      "rule_message": "Le scope local prend priorité sur le scope hérité.",
+      "rule_justification": "Permet la spécialisation locale sans impacter les ancêtres.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_tag_affines_does_not_replace_category",
+      "rule_source": "SCOPE v0 — Section 8. Héritage / affinage",
+      "rule_type": "contrainte",
+      "rule_statement": "Un Tag affine / complète ; il ne remplace pas à lui seul la logique portée par Category sauf override explicite plus local.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "Un Tag ne peut pas remplacer la logique d'une Category sans override explicite.",
+      "rule_justification": "La Category est plus forte que le Tag dans la hiérarchie de résolution du scope.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_how_empty_by_default",
+      "rule_source": "METHOD— CADRE STABLE v0 — Section 2. Object — ajout minimal",
+      "rule_type": "convention",
+      "rule_statement": "how est vide par défaut. how est redéfini au gré des opérations.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "how est vide par défaut et doit être défini par les opérations.",
+      "rule_justification": "how est transitoire et opératoire, pas structural.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_secondary_method_not_entry_point",
+      "rule_source": "METHOD— CADRE STABLE v0 — Section 7. SecondaryMethod",
+      "rule_type": "interdiction",
+      "rule_statement": "Une SecondaryMethod n'est jamais le point d'entrée canonique.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Une SecondaryMethod ne peut pas être le point d'entrée d'une exécution.",
+      "rule_justification": "Garantit que tout appel passe par une CentralMethod.",
+      "rule_scope": "SecondaryMethod"
+    },
+    {
+      "rule_ident": "rule_orchestrate_scenario_not_empty",
+      "rule_source": "METHOD— CADRE STABLE v0 — Section 11. OrchestrateScenario",
+      "rule_type": "obligation",
+      "rule_statement": "OrchestrateScenario est unique par Method et organise 1..N milestone_scenarios. OrchestrateScenario.milestone_scenario_list.count >= 1.",
+      "rule_condition": "GTE(COUNT(orchestrate_scenario.milestone_scenario_list, true), 1)",
+      "rule_severity": "error",
+      "rule_message": "OrchestrateScenario doit contenir au moins un MilestoneScenario.",
+      "rule_justification": "Un orchestrate_scenario vide est invalide fonctionnellement.",
+      "rule_scope": "OrchestrateScenario"
+    },
+    {
+      "rule_ident": "rule_system_always_calls_central_method",
+      "rule_source": "METHOD— CADRE STABLE v0 — Section 6. CentralMethod",
+      "rule_type": "obligation",
+      "rule_statement": "Le système appelle toujours une CentralMethod.",
+      "rule_condition": "IN(called_method, [\"Create\", \"Read\", \"Update\", \"Store\", \"Orchestrate\", \"Engage\"])",
+      "rule_severity": "error",
+      "rule_message": "Le système ne peut appeler qu'une CentralMethod en point d'entrée.",
+      "rule_justification": "Garantit la traçabilité et la standardisation de tous les appels.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_erk_document_is_source_of_truth",
+      "rule_source": "ERK_LANG_v1 — Section Préambule",
+      "rule_type": "axiome",
+      "rule_statement": "ERK_LANG_v1 est la source de vérité unique. En cas de conflit avec une autre source, ce document prime.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "ERK_LANG_v1 est la source de vérité : en cas de conflit, ce document prime.",
+      "rule_justification": "Garantit la cohérence du système en cas de divergence entre documents.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_every_object_has_unique_lineage",
+      "rule_source": "ERK_LANG_v1 — Section 1. Principes fondamentaux / A2",
+      "rule_type": "axiome",
+      "rule_statement": "Tout objet a un lineage unique.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Deux objets ne peuvent pas avoir le même lineage.",
+      "rule_justification": "Le lineage est l'identifiant hiérarchique unique de chaque objet.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_every_object_descends_from_object",
+      "rule_source": "ERK_LANG_v1 — Section 1. Principes fondamentaux / A3",
+      "rule_type": "axiome",
+      "rule_statement": "Tout objet descend de Object (racine unique).",
+      "rule_condition": "STARTS_WITH(lineage, \"Object:\")",
+      "rule_severity": "error",
+      "rule_message": "Tout objet doit descendre de Object (racine unique).",
+      "rule_justification": "Hiérarchie universelle : une seule racine pour tous les objets.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_erk_is_runtime_agnostic",
+      "rule_source": "ERK_LANG_v1 — Section 1. Principes fondamentaux / A4",
+      "rule_type": "axiome",
+      "rule_statement": "ERK est agnostique du runtime (Python, JSON, JS...).",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "ERK ne doit pas dépendre d'un runtime spécifique.",
+      "rule_justification": "Portabilité maximale du modèle EURKAI.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_no_negative_definition",
+      "rule_source": "ERK_LANG_v1 — Section 1. Principes fondamentaux / A7",
+      "rule_type": "interdiction",
+      "rule_statement": "On ne définit pas ce que les objets ne sont pas.",
+      "rule_condition": null,
+      "rule_severity": "warning",
+      "rule_message": "La définition d'un objet ne doit pas contenir de négations structurelles.",
+      "rule_justification": "Clarté et positivité des définitions pour éviter les ambiguïtés.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_lineage_starts_with_uppercase",
+      "rule_source": "ERK_LANG_v1 — Section 2. Lineage",
+      "rule_type": "convention",
+      "rule_statement": "Le lineage commence par une majuscule. Alphanumérique + underscore : [A-Z][A-Za-z0-9_]*. Segments séparés par ':'.",
+      "rule_condition": "MATCHES_REGEX(lineage, \"^[A-Z][A-Za-z0-9_]*(:[A-Z][A-Za-z0-9_]*)*:$\")",
+      "rule_severity": "error",
+      "rule_message": "Le lineage ne respecte pas le format attendu.",
+      "rule_justification": "Convention de nommage hiérarchique EURKAI.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_colon_final_indicates_declaration",
+      "rule_source": "ERK_LANG_v1 — Section 2. Lineage",
+      "rule_type": "convention",
+      "rule_statement": "Le ':' final indique une déclaration (les ancêtres sont créés si nécessaires).",
+      "rule_condition": "ENDS_WITH(lineage, \":\")",
+      "rule_severity": "info",
+      "rule_message": "Le ':' final indique une déclaration de lineage.",
+      "rule_justification": "Convention syntaxique ERK pour distinguer référence et déclaration.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_no_bundles_lists_are_direct",
+      "rule_source": "ERK_LANG_v1 — Section 4. Listes",
+      "rule_type": "interdiction",
+      "rule_statement": "Pas de bundles. Les listes sont directes.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Les listes ne doivent pas être encapsulées dans des bundles.",
+      "rule_justification": "Simplicité et accessibilité directe des éléments des listes.",
+      "rule_scope": "*"
+    },
+    {
+      "rule_ident": "rule_rule_condition_uses_formulas",
+      "rule_source": "ERK_LANG_v1 — Section 4.3 RuleList",
+      "rule_type": "convention",
+      "rule_statement": ".condition utilise les FORMULAS (voir FORMULAS_v1.md). severity : error | warning | info.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "La condition d'une règle doit utiliser les FORMULAS ERK.",
+      "rule_justification": "Standardisation des conditions de règles pour l'interopérabilité.",
+      "rule_scope": "RuleList"
+    },
+    {
+      "rule_ident": "rule_how_reset_after_execution",
+      "rule_source": "ERK_LANG_v1 — Section 10. MRG",
+      "rule_type": "convention",
+      "rule_statement": "how.execute.after[] = value.reset (remise à zéro après exécution, sauf overwrite).",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "how doit être remis à zéro après exécution.",
+      "rule_justification": "Nettoyage automatique de l'état transitoire après exécution.",
+      "rule_scope": "*"
+    },
+
+    {
+      "rule_ident": "rule_formulas_are_deterministic",
+      "rule_source": "FORMULAS_v1 — Préambule",
+      "rule_type": "axiome",
+      "rule_statement": "Les formules sont déterministes : même entrée → même sortie.",
+      "rule_condition": null,
+      "rule_severity": "error",
+      "rule_message": "Une formule EURKAI doit être déterministe.",
+      "rule_justification": "Garantit la prévisibilité et la reproductibilité des validations.",
+      "rule_scope": "FORMULAS"
+    },
+    {
+      "rule_ident": "rule_formulas_are_combinable",
+      "rule_source": "FORMULAS_v1 — Préambule",
+      "rule_type": "convention",
+      "rule_statement": "Les formules sont combinables récursivement.",
+      "rule_condition": null,
+      "rule_severity": "info",
+      "rule_message": "Les formules peuvent être imbriquées récursivement.",
+      "rule_justification": "Expressivité maximale du langage de conditions.",
+      "rule_scope": "FORMULAS"
+    },
+    {
+      "rule_ident": "rule_div_b_not_zero",
+      "rule_source": "FORMULAS_v1 — Section 1. ARITHMETIC",
+      "rule_type": "contrainte",
+      "rule_statement": "DIV(a, b) : b != 0.",
+      "rule_condition": "NEQ(b, 0)",
+      "rule_severity": "error",
+      "rule_message": "Division par zéro interdite dans DIV(a, b).",
+      "rule_justification": "Prévention des erreurs arithmétiques critiques.",
+      "rule_scope": "FORMULAS.ARITHMETIC"
+    },
+    {
+      "rule_ident": "rule_typeof_valid_types",
+      "rule_source": "FORMULAS_v1 — Section 2. EXISTENCE",
+      "rule_type": "contrainte",
+      "rule_statement": "Types valides pour TYPEOF : string, int, number, bool, date, json, lineage, list, dict.",
+      "rule_condition": "IN(type_arg, [\"string\", \"int\", \"number\", \"bool\", \"date\", \"json\", \"lineage\", \"list\", \"dict\"])",
+      "rule_severity": "error",
+      "rule_message": "Type invalide passé à TYPEOF.",
+      "rule_justification": "Contrôle des types supportés par le système ERK.",
+      "rule_scope": "FORMULAS.EXISTENCE"
+    }
+  ],
+
+  "method_list": [
+
+    {
+      "method_ident": "method_create",
+      "method_object": "Object",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Paramètres de création de l'objet",
+      "method_output": "Objet créé",
+      "method_scope": "*",
+      "method_source": "CONSTITUTION_v0 — Section 6. Exécution / EXECUTION CONSTITUTION v0 / ERK_LANG_v1 Section 10"
+    },
+    {
+      "method_ident": "method_read",
+      "method_object": "Object",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Identifiant ou critères de lecture",
+      "method_output": "Objet lu",
+      "method_scope": "*",
+      "method_source": "CONSTITUTION_v0 — Section 6. Exécution / EXECUTION CONSTITUTION v0 / ERK_LANG_v1 Section 10"
+    },
+    {
+      "method_ident": "method_update",
+      "method_object": "Object",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Identifiant + champs à mettre à jour",
+      "method_output": "Objet mis à jour",
+      "method_scope": "*",
+      "method_source": "CONSTITUTION_v0 — Section 6. Exécution / EXECUTION CONSTITUTION v0 / ERK_LANG_v1 Section 10"
+    },
+    {
+      "method_ident": "method_store",
+      "method_object": "Object",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Objet à stocker",
+      "method_output": "Confirmation de stockage",
+      "method_scope": "*",
+      "method_source": "CONSTITUTION_v0 — Section 6. Exécution / EXECUTION CONSTITUTION v0 / ERK_LANG_v1 Section 10"
+    },
+    {
+      "method_ident": "method_orchestrate",
+      "method_object": "Object",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Scénario d'orchestration + objets cibles",
+      "method_output": "Résultat d'orchestration",
+      "method_scope": "*",
+      "method_source": "CONSTITUTION_v0 — Section 6. Exécution / EXECUTION CONSTITUTION v0 / ERK_LANG_v1 Section 10"
+    },
+    {
+      "method_ident": "method_engage",
+      "method_object": "Object",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Contexte d'engagement + triggers",
+      "method_output": "Résultat d'engagement",
+      "method_scope": "*",
+      "method_source": "CONSTITUTION_v0 — Section 6. Exécution / EXECUTION CONSTITUTION v0 / ERK_LANG_v1 Section 10"
+    },
+
+    {
+      "method_ident": "method_super_get",
+      "method_object": "SuperMethod",
+      "method_type": "supermethod",
+      "method_parent": null,
+      "method_input": "what (objet cible), paramètres de résolution",
+      "method_output": "what.how en status=ready",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 5. SuperGet / EURKAI CADRE STABLE v0.3 Section 12 / ERK_LANG_v1 Section 10"
+    },
+    {
+      "method_ident": "method_super_execute",
+      "method_object": "SuperMethod",
+      "method_type": "supermethod",
+      "method_parent": null,
+      "method_input": "what (en status=ready), how",
+      "method_output": "result de l'exécution",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 6. SuperExecute / EURKAI CADRE STABLE v0.3 Section 12"
+    },
+    {
+      "method_ident": "method_super_validate",
+      "method_object": "SuperMethod",
+      "method_type": "supermethod",
+      "method_parent": null,
+      "method_input": "what (règle_list / contract / schema / objet à valider), how (validation methods)",
+      "method_output": "ValidationResult (agnostique)",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 7. SuperValidate / EURKAI CADRE STABLE v0.3 Section 12"
+    },
+    {
+      "method_ident": "method_super_render",
+      "method_object": "SuperMethod",
+      "method_type": "supermethod",
+      "method_parent": null,
+      "method_input": "result de l'exécution, contexte de rendu",
+      "method_output": "Sortie standardisée et pluggable (brut / rendu / formaté)",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 8. SuperRender / EURKAI CADRE STABLE v0.3 Section 12"
+    },
+
+    {
+      "method_ident": "method_scan_and_do",
+      "method_object": "SuperMethod",
+      "method_type": "supermethod",
+      "method_parent": "method_super_execute",
+      "method_input": "what, how",
+      "method_output": "result",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 3. Cœur MRG"
+    },
+
+    {
+      "method_ident": "method_resolve_what",
+      "method_object": "SuperGet",
+      "method_type": "secondary",
+      "method_parent": "method_super_get",
+      "method_input": "Référence à l'objet cible",
+      "method_output": "what résolu",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 5. SuperGet / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_resolve_how",
+      "method_object": "SuperGet",
+      "method_type": "secondary",
+      "method_parent": "method_super_get",
+      "method_input": "what résolu",
+      "method_output": "how résolu",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 5. SuperGet / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_resolve_payload",
+      "method_object": "SuperGet",
+      "method_type": "secondary",
+      "method_parent": "method_super_get",
+      "method_input": "Paramètres d'entrée",
+      "method_output": "Payload résolu",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 5. SuperGet / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_set_ready_status",
+      "method_object": "SuperGet",
+      "method_type": "secondary",
+      "method_parent": "method_super_get",
+      "method_input": "what avec how résolu",
+      "method_output": "what.how.status = ready",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 5. SuperGet / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_collect_result",
+      "method_object": "SuperExecute",
+      "method_type": "secondary",
+      "method_parent": "method_super_execute",
+      "method_input": "result de scan_and_do",
+      "method_output": "result collecté et normalisé",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 6. SuperExecute / Fonctions minimales"
+    },
+
+    {
+      "method_ident": "method_resolve_validation_rule_list",
+      "method_object": "SuperValidate",
+      "method_type": "secondary",
+      "method_parent": "method_super_validate",
+      "method_input": "what",
+      "method_output": "Liste des règles de validation applicables",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 7. SuperValidate / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_resolve_validation_method_list",
+      "method_object": "SuperValidate",
+      "method_type": "secondary",
+      "method_parent": "method_super_validate",
+      "method_input": "what, how",
+      "method_output": "Liste des méthodes de validation applicables",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 7. SuperValidate / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_validate_object_vs_schema",
+      "method_object": "SuperValidate",
+      "method_type": "secondary",
+      "method_parent": "method_super_validate",
+      "method_input": "Objet, Schema",
+      "method_output": "Résultat de validation structurelle",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 7. SuperValidate / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_validate_object_vs_contract",
+      "method_object": "SuperValidate",
+      "method_type": "secondary",
+      "method_parent": "method_super_validate",
+      "method_input": "Objet, Contract",
+      "method_output": "Résultat de validation contractuelle",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 7. SuperValidate / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_score_validation",
+      "method_object": "SuperValidate",
+      "method_type": "secondary",
+      "method_parent": "method_super_validate",
+      "method_input": "Résultats de validation",
+      "method_output": "Score de validation global",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 7. SuperValidate / Fonctions minimales"
+    },
+
+    {
+      "method_ident": "method_render_raw_output",
+      "method_object": "SuperRender",
+      "method_type": "secondary",
+      "method_parent": "method_super_render",
+      "method_input": "result brut",
+      "method_output": "Sortie brute",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 8. SuperRender / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_render_standard_output",
+      "method_object": "SuperRender",
+      "method_type": "secondary",
+      "method_parent": "method_super_render",
+      "method_input": "result",
+      "method_output": "Sortie standardisée",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 8. SuperRender / Fonctions minimales"
+    },
+    {
+      "method_ident": "method_map_output_format",
+      "method_object": "SuperRender",
+      "method_type": "secondary",
+      "method_parent": "method_super_render",
+      "method_input": "result, contexte cible",
+      "method_output": "Sortie formatée selon le contexte",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 8. SuperRender / Fonctions minimales"
+    },
+
+    {
+      "method_ident": "method_generate_object_from_schema",
+      "method_object": "Object",
+      "method_type": "utility",
+      "method_parent": null,
+      "method_input": "Schema, paramètres d'objet, agent IA",
+      "method_output": "Instance d'objet générée et validée via SuperValidate",
+      "method_scope": "*",
+      "method_source": "SUPERMETHOD v0.1 — Section 11. Génération d'objet"
+    },
+
+    {
+      "method_ident": "method_palette_create",
+      "method_object": "Palette",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Paramètres de création de la Palette",
+      "method_output": "Palette créée",
+      "method_scope": "Palette",
+      "method_source": "CONSTITUTION_v0 — Section 11. Objets métier initiaux"
+    },
+    {
+      "method_ident": "method_palette_generate",
+      "method_object": "Palette",
+      "method_type": "secondary",
+      "method_parent": "method_palette_create",
+      "method_input": "Paramètres de génération (brief, archetype, etc.)",
+      "method_output": "Palette générée",
+      "method_scope": "Palette",
+      "method_source": "CONSTITUTION_v0 — Section 11. Objets métier initiaux"
+    },
+    {
+      "method_ident": "method_palette_update",
+      "method_object": "Palette",
+      "method_type": "central",
+      "method_parent": null,
+      "method_input": "Palette existante + modifications",
+      "method_output": "Palette mise à jour",
+      "method_scope": "Palette",
+      "method_source": "CONSTITUTION_v0 — Section 11. Objets métier initiaux"
+    },
+    {
+      "method_ident": "method_palette_decline",
+      "method_object": "Palette",
+      "method_type": "secondary",
+      "method_parent": "method_palette_update",
+      "method_input": "Palette + règles de déclinaison",
+      "method_output": "Variantes déclinées de la Palette",
+      "method_scope": "Palette",
+      "method_source": "CONSTITUTION_v0 — Section 11. Objets métier initiaux"
+    },
+    {
+      "method_ident": "method_palette_validate",
+      "method_object": "Palette",
+      "method_type": "secondary",
+      "method_parent": "method_super_validate",
+      "method_input": "Palette à valider",
+      "method_output": "Résultat de validation de la Palette",
+      "method_scope": "Palette",
+      "method_source": "CONSTITUTION_v0 — Section 11. Objets métier initiaux"
+    },
+
+    {
+      "method_ident": "method_create_from",
+      "method_object": "Object:Agent",
+      "method_type": "secondary",
+      "method_parent": "method_create",
+      "method_input": "source (référence externe)",
+      "method_output": "Agent créé depuis la source",
+      "method_scope": "Object:Agent",
+      "method_source": "ERK_LANG_v1 — Section 4.2 MethodList / Exemple"
+    }
+  ]
+}

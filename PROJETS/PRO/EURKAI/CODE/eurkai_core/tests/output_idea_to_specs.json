@@ -1,0 +1,492 @@
+{
+  "brief": {
+    "project_name": "Freelancers Invoices Payments",
+    "project_type": "saas",
+    "description": "A SaaS that helps freelancers track invoices and payments",
+    "target_users": "freelancers",
+    "core_features": [
+      "Invoice creation and management",
+      "Payment tracking and status updates",
+      "Expense recording and categorization"
+    ],
+    "constraints": {
+      "tech": [
+        "Responsive web (desktop-first)",
+        "API-first architecture"
+      ],
+      "ux": [
+        "Onboarding in < 5 min",
+        "Contextual help / tooltips"
+      ]
+    },
+    "monetization": "subscription (monthly/yearly)",
+    "priority": "high"
+  },
+  "cdc": {
+    "project_overview": {
+      "project_name": "Freelancers Invoices Payments",
+      "project_type": "saas",
+      "summary": "A SaaS that helps freelancers track invoices and payments",
+      "context": "Freelancers Invoices Payments addresses a recurring workflow pain point and is delivered as a cloud-based subscription service.",
+      "monetization": "Monthly and yearly plans. Yearly discount (~20%). Free trial recommended."
+    },
+    "objectives": [
+      "Provide a scalable, subscription-based solution accessible from any browser",
+      "Reduce manual effort through automation of key workflows",
+      "Enable teams to collaborate and track progress in real time",
+      "Offer clear onboarding to reach activation in under 5 minutes"
+    ],
+    "target_users": {
+      "primary": "freelancers",
+      "profiles": [
+        {
+          "type": "freelancers",
+          "description": "Independent workers managing their own clients and projects"
+        },
+        {
+          "type": "admin",
+          "description": "Platform administrator managing users, settings, and monitoring"
+        }
+      ]
+    },
+    "core_features": [
+      {
+        "name": "Invoice creation and management",
+        "priority": "P1",
+        "user_story": "As a freelancers, I want to create invoice creation and management so that I can achieve my goal efficiently."
+      },
+      {
+        "name": "Payment tracking and status updates",
+        "priority": "P1",
+        "user_story": "As a freelancers, I want to track payment tracking and status updates so that I can achieve my goal efficiently."
+      },
+      {
+        "name": "Expense recording and categorization",
+        "priority": "P2",
+        "user_story": "As a freelancers, I want to use expense recording and categorization so that I can achieve my goal efficiently."
+      }
+    ],
+    "user_flows": [
+      "Sign up → email verification → onboarding wizard → first action",
+      "Daily use: log in → dashboard → perform core action → review results",
+      "Admin: manage team members → assign roles → track usage"
+    ],
+    "constraints": {
+      "tech": [
+        "Responsive web (desktop-first)",
+        "API-first architecture",
+        "Responsive design (mobile + desktop)",
+        "Secure HTTPS, authentication required"
+      ],
+      "ux": [
+        "Onboarding in < 5 min",
+        "Contextual help / tooltips",
+        "Accessible (WCAG 2.1 AA)",
+        "Loading state on all async actions"
+      ],
+      "business": [
+        "GDPR compliance — user data handling and deletion",
+        "Subscription billing integration (Stripe or equivalent)",
+        "Multi-tenant data isolation"
+      ]
+    },
+    "success_metrics": [
+      {
+        "name": "Activation rate",
+        "target": "> 40% of signups complete onboarding"
+      },
+      {
+        "name": "MRR growth",
+        "target": "Month-over-month revenue growth"
+      },
+      {
+        "name": "Churn rate",
+        "target": "< 5% monthly churn"
+      }
+    ]
+  },
+  "specs": {
+    "architecture": {
+      "pattern": "Client-Server · REST API · SPA frontend",
+      "layers": [
+        "Frontend (SPA) — React / Vue / SvelteKit",
+        "Backend API — REST (FastAPI / Express)",
+        "Database — PostgreSQL (primary) + Redis (cache/sessions)",
+        "Auth — JWT access token + refresh token rotation",
+        "Background jobs — async tasks (Celery / BullMQ)"
+      ],
+      "stack_notes": "Containerized. Deploy on Railway / Fly.io / Vercel."
+    },
+    "components": [
+      {
+        "name": "InvoiceCreationAndManagement",
+        "type": "Module",
+        "layer": "backend",
+        "feature": "Invoice creation and management",
+        "priority": "P1"
+      },
+      {
+        "name": "PaymentTrackingAndStatusUpdates",
+        "type": "Module",
+        "layer": "backend",
+        "feature": "Payment tracking and status updates",
+        "priority": "P1"
+      },
+      {
+        "name": "ExpenseRecordingAndCategorization",
+        "type": "Module",
+        "layer": "shared",
+        "feature": "Expense recording and categorization",
+        "priority": "P2"
+      },
+      {
+        "name": "AuthModule",
+        "type": "Auth module",
+        "layer": "shared",
+        "feature": "Authentication",
+        "priority": "P1"
+      },
+      {
+        "name": "ApiClient",
+        "type": "Service",
+        "layer": "frontend",
+        "feature": "API calls",
+        "priority": "P1"
+      },
+      {
+        "name": "ErrorBoundary",
+        "type": "UI component",
+        "layer": "frontend",
+        "feature": "Error handling",
+        "priority": "P1"
+      },
+      {
+        "name": "BillingService",
+        "type": "Service",
+        "layer": "backend",
+        "feature": "Subscription billing",
+        "priority": "P1"
+      }
+    ],
+    "data_models": [
+      {
+        "name": "User",
+        "table": "users",
+        "fields": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "notes": "primary key"
+          },
+          {
+            "name": "email",
+            "type": "string",
+            "notes": "unique, indexed"
+          },
+          {
+            "name": "password_hash",
+            "type": "string",
+            "notes": "bcrypt"
+          },
+          {
+            "name": "role",
+            "type": "enum",
+            "notes": "user | admin"
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp",
+            "notes": "auto"
+          }
+        ]
+      },
+      {
+        "name": "Invoice",
+        "table": "invoices",
+        "fields": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "notes": "primary key"
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "notes": "FK → User"
+          },
+          {
+            "name": "amount",
+            "type": "decimal",
+            "notes": "2 decimal places"
+          },
+          {
+            "name": "status",
+            "type": "enum",
+            "notes": "draft | sent | paid | overdue"
+          },
+          {
+            "name": "due_date",
+            "type": "date",
+            "notes": ""
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp",
+            "notes": "auto"
+          }
+        ]
+      },
+      {
+        "name": "Payment",
+        "table": "payments",
+        "fields": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "notes": "primary key"
+          },
+          {
+            "name": "invoice_id",
+            "type": "uuid",
+            "notes": "FK → Invoice"
+          },
+          {
+            "name": "amount",
+            "type": "decimal",
+            "notes": ""
+          },
+          {
+            "name": "provider",
+            "type": "string",
+            "notes": "stripe | manual"
+          },
+          {
+            "name": "transaction_id",
+            "type": "string",
+            "notes": "external ref"
+          },
+          {
+            "name": "paid_at",
+            "type": "timestamp",
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "name": "Notification",
+        "table": "notifications",
+        "fields": [
+          {
+            "name": "id",
+            "type": "uuid",
+            "notes": "primary key"
+          },
+          {
+            "name": "user_id",
+            "type": "uuid",
+            "notes": "FK → User"
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "notes": ""
+          },
+          {
+            "name": "payload",
+            "type": "json",
+            "notes": ""
+          },
+          {
+            "name": "read_at",
+            "type": "timestamp",
+            "notes": "nullable"
+          },
+          {
+            "name": "created_at",
+            "type": "timestamp",
+            "notes": "auto"
+          }
+        ]
+      }
+    ],
+    "api_endpoints": [
+      {
+        "method": "POST",
+        "path": "/auth/register",
+        "description": "Create account",
+        "auth": false
+      },
+      {
+        "method": "POST",
+        "path": "/auth/login",
+        "description": "Get access token",
+        "auth": false
+      },
+      {
+        "method": "POST",
+        "path": "/auth/refresh",
+        "description": "Refresh access token",
+        "auth": true
+      },
+      {
+        "method": "DELETE",
+        "path": "/auth/logout",
+        "description": "Revoke refresh token",
+        "auth": true
+      },
+      {
+        "method": "GET",
+        "path": "/invoices",
+        "description": "List invoices",
+        "auth": true
+      },
+      {
+        "method": "POST",
+        "path": "/invoices",
+        "description": "Create invoice",
+        "auth": true
+      },
+      {
+        "method": "GET",
+        "path": "/invoices/{id}",
+        "description": "Get invoice by id",
+        "auth": true
+      },
+      {
+        "method": "PATCH",
+        "path": "/invoices/{id}",
+        "description": "Update invoice",
+        "auth": true
+      },
+      {
+        "method": "DELETE",
+        "path": "/invoices/{id}",
+        "description": "Delete invoice",
+        "auth": true
+      },
+      {
+        "method": "GET",
+        "path": "/payments",
+        "description": "List payments",
+        "auth": true
+      },
+      {
+        "method": "POST",
+        "path": "/payments",
+        "description": "Create payment",
+        "auth": true
+      },
+      {
+        "method": "GET",
+        "path": "/payments/{id}",
+        "description": "Get payment by id",
+        "auth": true
+      },
+      {
+        "method": "PATCH",
+        "path": "/payments/{id}",
+        "description": "Update payment",
+        "auth": true
+      },
+      {
+        "method": "DELETE",
+        "path": "/payments/{id}",
+        "description": "Delete payment",
+        "auth": true
+      },
+      {
+        "method": "GET",
+        "path": "/notifications",
+        "description": "List notifications",
+        "auth": true
+      },
+      {
+        "method": "POST",
+        "path": "/notifications",
+        "description": "Create notification",
+        "auth": true
+      },
+      {
+        "method": "GET",
+        "path": "/notifications/{id}",
+        "description": "Get notification by id",
+        "auth": true
+      },
+      {
+        "method": "PATCH",
+        "path": "/notifications/{id}",
+        "description": "Update notification",
+        "auth": true
+      },
+      {
+        "method": "DELETE",
+        "path": "/notifications/{id}",
+        "description": "Delete notification",
+        "auth": true
+      },
+      {
+        "method": "POST",
+        "path": "/webhooks/stripe",
+        "description": "Handle Stripe events",
+        "auth": false
+      }
+    ],
+    "tech_flows": [
+      {
+        "flow": "Sign up → email verification → onboarding wizard → first action",
+        "steps": [
+          "POST /auth/register",
+          "Send verification email",
+          "Redirect to onboarding"
+        ],
+        "components": [
+          "AuthModule"
+        ]
+      },
+      {
+        "flow": "Daily use: log in → dashboard → perform core action → review results",
+        "steps": [
+          "POST /auth/login",
+          "Store JWT in httpOnly cookie",
+          "Redirect to dashboard"
+        ],
+        "components": [
+          "AuthModule"
+        ]
+      },
+      {
+        "flow": "Admin: manage team members → assign roles → track usage",
+        "steps": [
+          "GET /[resource] → fetch → render"
+        ],
+        "components": [
+          "AuthModule"
+        ]
+      }
+    ],
+    "tech_constraints": {
+      "security": [
+        "Authentication: JWT with 15-min access tokens + 7-day refresh tokens",
+        "Password: bcrypt, min 8 chars, breach check via HaveIBeenPwned API",
+        "HTTPS enforced everywhere, HSTS preload"
+      ],
+      "performance": [
+        "DB: row-level security for multi-tenant data isolation",
+        "API rate limiting: 100 req/min per authenticated user",
+        "Logging: structured JSON logs, no PII in logs"
+      ],
+      "from_cdc_tech": [
+        "Responsive web (desktop-first)",
+        "API-first architecture",
+        "Responsive design (mobile + desktop)",
+        "Secure HTTPS, authentication required"
+      ],
+      "from_cdc_ux": [
+        "Onboarding in < 5 min",
+        "Contextual help / tooltips",
+        "Accessible (WCAG 2.1 AA)",
+        "Loading state on all async actions"
+      ]
+    }
+  }
+}

@@ -1,0 +1,96 @@
+============================================================
+  EURKAI — résultats intake → orchestrate
+============================================================
+
+--- VAT function ---
+STATUS : partial
+FILE   : calculates_vat_price_rate.py
+CODE   :
+  def calculates_vat_price_rate(price, rate):
+      """
+      Fonction calculates vat price rate — create a python function that calculates VAT from price and rate
+      """
+      # price: float
+      # rate: float
+      return None
+
+--- User profile ---
+STATUS : partial
+FILE   : represent_user_profile_name.py
+CODE   :
+  from typing import Any, Dict
+  
+  
+  class RepresentUserProfileName:
+      """
+      Classe represent user profile name — build a class to represent a user profile with name and email
+      """
+  
+      def __init__(self, name=None, email=None, user_id=None):
+          self.name = name
+          self.email = email
+          self.user_id = user_id
+  
+      def validate(self) -> Dict[str, Any]:
+          errors = []
+          return {"valid": len(errors) == 0, "errors": errors}
+  
+      def to_dict(self) -> Dict[str, Any]:
+          return {k: v for k, v in self.__dict__.items()}
+  
+      @classmethod
+      def test(cls) -> bool:
+          obj = cls()
+          assert "valid" in obj.validate()
+          return True
+
+--- Email module ---
+STATUS : partial
+FILE   : sending_outbound_emails.py
+CODE   :
+  """
+  sending_outbound_emails
+  module for sending outbound emails
+  """
+  
+  
+  def run(params: dict) -> dict:
+      """
+      Point d'entrée principal.
+      """
+      return {"success": True, "result": None, "params": params}
+  
+  
+  if __name__ == "__main__":
+      print(run({}))
+
+--- Checkout flow ---
+STATUS : partial
+FILE   : orchestrates_payment_checkout_flow.py
+CODE   :
+  """
+  orchestrates_payment_checkout_flow
+  scenario that orchestrates the payment checkout flow
+  """
+  
+  
+  class OrchestratesPaymentCheckoutFlow:
+      """
+      scenario that orchestrates the payment checkout flow
+      """
+  
+      NAME    = "orchestrates_payment_checkout_flow"
+      VERSION = "0.1.0"
+  
+      def run(self, context: dict, catalog: dict) -> dict:
+          return {"success": True, "outputs": {}}
+  
+      @classmethod
+      def test(cls) -> bool:
+          r = cls().run({}, {})
+          assert r.get("success") is True
+          return True
+  
+  
+  if __name__ == "__main__":
+      print(OrchestratesPaymentCheckoutFlow().run({}, {}))

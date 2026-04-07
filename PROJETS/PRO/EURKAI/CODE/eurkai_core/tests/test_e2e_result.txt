@@ -1,0 +1,165 @@
+============================================================
+  EURKAI — test e2e minimal
+  Partie 1 : chaîne nominale
+============================================================
+
+✓ Function : additionne deux nombres
+  STATUS : partial
+  FILE   : add_numbers.py
+  TIME   : 0.5ms
+  WARN   : schema_not_in_catalog:add_numbers
+  CODE   :
+    def add_numbers(a, b):
+        """
+        Additionne deux nombres et retourne le résultat.
+        """
+        # a: float
+        # b: float
+        return None
+
+✓ Class : profil utilisateur
+  STATUS : partial
+  FILE   : user_profile.py
+  TIME   : 0.2ms
+  WARN   : schema_not_in_catalog:UserProfile
+  CODE   :
+    from typing import Any, Dict
+    
+    
+    class UserProfile:
+        """
+        Représente un profil utilisateur avec nom et email.
+        """
+    
+        def __init__(self, name=None, email=None):
+            self.name = name
+            self.email = email
+    
+        def validate(self) -> Dict[str, Any]:
+            errors = []
+            return {"valid": len(errors) == 0, "errors": errors}
+    
+        def to_dict(self) -> Dict[str, Any]:
+            return {k: v for k, v in self.__dict__.items()}
+    
+        @classmethod
+        def test(cls) -> bool:
+            obj = cls()
+            assert "valid" in obj.validate()
+            return True
+
+✓ Module : calcul TVA
+  STATUS : partial
+  FILE   : tva_calculator.py
+  TIME   : 0.1ms
+  WARN   : schema_not_in_catalog:tva_calculator
+  CODE   :
+    """
+    tva_calculator
+    Calcule le montant TTC depuis un prix HT et un taux TVA.
+    """
+    
+    
+    def run(params: dict) -> dict:
+        """
+        Point d'entrée principal.
+        """
+        return {"success": True, "result": None, "params": params}
+    
+    
+    if __name__ == "__main__":
+        print(run({}))
+
+✓ Scenario : orchestration paiement
+  STATUS : partial
+  FILE   : checkout_scenario.py
+  TIME   : 0.1ms
+  WARN   : schema_not_in_catalog:CheckoutScenario
+  CODE   :
+    """
+    checkout_scenario
+    Orchestration du tunnel de paiement.
+    """
+    
+    
+    class CheckoutScenario:
+        """
+        Orchestration du tunnel de paiement.
+        """
+    
+        NAME    = "checkout_scenario"
+        VERSION = "0.1.0"
+    
+        def run(self, context: dict, catalog: dict) -> dict:
+            return {"success": True, "outputs": {}}
+    
+        @classmethod
+        def test(cls) -> bool:
+            r = cls().run({}, {})
+            assert r.get("success") is True
+            return True
+    
+    
+    if __name__ == "__main__":
+        print(CheckoutScenario().run({}, {}))
+
+============================================================
+  Partie 2 : fix loop — generate → casser → fix
+============================================================
+
+✓ Fix loop — return manquant
+  BREAK  : remove_return
+  STATUS : success
+  FIX    : fix_missing_return  ✓ attendu
+  CONF   : 0.75
+  TIME   : 0.5ms
+  BROKEN CODE :
+    def calcule_la_moyenne_d(values):
+        """
+        Calcule la moyenne d'une liste.
+        """
+        # values: list
+  FIXED CODE  :
+    def calcule_la_moyenne_d(values):
+        """
+        Calcule la moyenne d'une liste.
+        """
+        # values: list
+        return None
+
+✓ Fix loop — indentation cassée
+  BREAK  : bad_indent
+  STATUS : success
+  FIX    : fix_indentation  ✓ attendu
+  CONF   : 0.75
+  TIME   : 0.6ms
+  BROKEN CODE :
+    def convertit_celsius_en(celsius):
+    """
+    Convertit Celsius en Fahrenheit.
+    """
+    # celsius: float
+    return None
+  FIXED CODE  :
+    def convertit_celsius_en(celsius):
+        """
+        Convertit Celsius en Fahrenheit.
+        """
+        # celsius: float
+        return None
+
+✓ Fix loop — corps de fonction vide
+  BREAK  : incomplete_body
+  STATUS : success
+  FIX    : fix_incomplete_function  ✓ attendu
+  CONF   : 0.8
+  TIME   : 0.2ms
+  BROKEN CODE :
+    def incomplete_stub():
+  FIXED CODE  :
+    def incomplete_stub():
+        pass
+
+============================================================
+  7/7 cas OK — 2ms total
+============================================================

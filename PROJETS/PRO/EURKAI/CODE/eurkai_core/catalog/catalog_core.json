@@ -1,0 +1,2839 @@
+{
+  "catalog_ident": "catalog_core",
+  "catalog_version": "1.0",
+  "catalog_description": "Noyau constitutionnel EURKAI — Object, Schema, Rule, History, AiModel",
+  "catalog_created_at": "2026-04-02",
+  "catalog_object_list": {
+    "Object": {
+      "object_ident": "Object",
+      "object_lineage": "Object",
+      "object_version": "1.0",
+      "object_description": "Objet père dont tout dérive dans EURKAI. Tout objet hérite de sa structure.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_status": null,
+      "object_lifecycle": null,
+      "object_automated": false,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "object_lineage": {
+            "field_type": "lineage",
+            "field_required": true,
+            "field_default": null
+          },
+          "object_name": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_version": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_description": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_example": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_created_at": {
+            "field_type": "date",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_updated_at": {
+            "field_type": "date",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_created_by": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_updated_by": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_status": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_lifecycle": {
+            "field_type": "int",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_category": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "object_tag_list": {
+            "field_type": "list",
+            "field_required": false,
+            "field_default": []
+          },
+          "object_automated": {
+            "field_type": "bool",
+            "field_required": false,
+            "field_default": false
+          },
+          "object_how": {
+            "field_type": "json",
+            "field_required": false,
+            "field_default": null
+          }
+        },
+        "object_tree_list": {
+          "object_parent_list": {
+            "field_type": "list",
+            "field_required": false,
+            "field_default": []
+          },
+          "object_child_list": {
+            "field_type": "list",
+            "field_required": false,
+            "field_default": []
+          },
+          "object_sibling_list": {
+            "field_type": "list",
+            "field_required": false,
+            "field_default": []
+          }
+        },
+        "object_method_list": {},
+        "object_rule_list": {},
+        "object_relation_list": {},
+        "object_option_list": {
+          "option_value": {
+            "field_type": "any",
+            "field_required": false,
+            "field_default": null
+          },
+          "option_default_value": {
+            "field_type": "any",
+            "field_required": false,
+            "field_default": null
+          },
+          "option_automated_value": {
+            "field_type": "any",
+            "field_required": false,
+            "field_default": null
+          },
+          "option_instance_list": {
+            "field_type": "list",
+            "field_required": false,
+            "field_default": []
+          }
+        },
+        "object_transversal_parameter_list": {}
+      }
+    },
+    "Schema": {
+      "object_ident": "Schema",
+      "object_lineage": "Object:Schema",
+      "object_version": "1.0",
+      "object_description": "Cadre la structure d'un objet. Définit les éléments requis, optionnels et les règles de validation structurelle.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "schema_owned_list": {
+          "schema_ident": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "schema_required_element_list": {
+            "field_type": "json",
+            "field_required": true,
+            "field_default": {}
+          },
+          "schema_validation_rule_list": {
+            "field_type": "json",
+            "field_required": true,
+            "field_default": {}
+          },
+          "schema_field_list": {
+            "field_type": "json",
+            "field_required": false,
+            "field_default": {}
+          }
+        }
+      }
+    },
+    "Rule": {
+      "object_ident": "Rule",
+      "object_lineage": "Object:Rule",
+      "object_version": "1.0",
+      "object_description": "Contrainte, axiome, obligation ou interdiction applicable à un objet. La condition est exprimée en FORMULAS.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "rule_owned_list": {
+          "rule_ident": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "rule_source": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "rule_type": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_enum": [
+              "axiome",
+              "contrainte",
+              "interdiction",
+              "obligation",
+              "convention"
+            ]
+          },
+          "rule_statement": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "rule_condition": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "rule_severity": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": "error",
+            "field_enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
+          "rule_message": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "rule_justification": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "rule_scope": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": "*"
+          }
+        }
+      }
+    },
+    "History": {
+      "object_ident": "History",
+      "object_lineage": "Object:History",
+      "object_version": "1.0",
+      "object_description": "Enregistre 100% des actions MRG. Toute exécution produit une entrée History justifiée.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "history_owned_list": {
+          "history_ident": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_action": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_trigger": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_result": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_justification": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_timestamp": {
+            "field_type": "date",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_agent": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "history_scenario": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "history_object_ident": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null
+          },
+          "history_status": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_enum": [
+              "success",
+              "failure",
+              "partial"
+            ]
+          }
+        }
+      }
+    },
+    "AiModel": {
+      "object_ident": "AiModel",
+      "object_lineage": "Object:AiModel",
+      "object_version": "1.0",
+      "object_description": "Modèle IA enregistré dans le catalog. Tous les modèles s'exécutent via prompt_execute(model_type, prompt, params).",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "model_owned_list": {
+          "model_ident": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "model_type": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_enum": [
+              "llm",
+              "image",
+              "audio",
+              "embedding",
+              "multimodal"
+            ]
+          },
+          "model_provider": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "model_version": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null
+          },
+          "model_strengths": {
+            "field_type": "list",
+            "field_required": true,
+            "field_default": []
+          },
+          "model_weaknesses": {
+            "field_type": "list",
+            "field_required": true,
+            "field_default": []
+          },
+          "model_cost_tier": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "model_speed_tier": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_enum": [
+              "fast",
+              "medium",
+              "slow"
+            ]
+          },
+          "model_recommended_missions": {
+            "field_type": "list",
+            "field_required": false,
+            "field_default": []
+          },
+          "model_active": {
+            "field_type": "bool",
+            "field_required": true,
+            "field_default": true
+          }
+        }
+      }
+    },
+    "Scenario": {
+      "object_ident": "Scenario",
+      "object_lineage": "Object:Scenario",
+      "object_version": "1.0",
+      "object_description": "Unité d exécution de la MRG. Définit what, how, hooks et résultat attendu.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "scenario_owned_list": {
+          "scenario_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "scenario_description": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "scenario_what": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "scenario_how": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "scenario_steps": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "scenario_hooks": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "scenario_attending_result": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "scenario_execution_modality": {
+            "field_type": "string",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Placeholder": {
+      "object_ident": "Placeholder",
+      "object_lineage": "Object:Placeholder",
+      "object_version": "1.0",
+      "object_description": "Définit la méthode placeholder_resolve universelle. Overridée par Format et ses descendants, de plus en plus spécialisés.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_method_list": {
+        "placeholder_resolve": {
+          "method_ident": "placeholder_resolve",
+          "method_object": "Placeholder",
+          "method_type": "central",
+          "method_input": "template, context",
+          "method_output": "resolved_string",
+          "method_scope": "*"
+        }
+      }
+    },
+    "Format": {
+      "object_ident": "Format",
+      "object_lineage": "Object:Format",
+      "object_version": "1.0",
+      "object_description": "Définit un format de rendu. Override placeholder_resolve selon ses spécificités. Hérité par SystemFormat, JsonFormat, etc.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_method_list": {
+        "placeholder_resolve": {
+          "method_ident": "placeholder_resolve",
+          "method_object": "Format",
+          "method_type": "central",
+          "method_input": "template, context",
+          "method_output": "resolved_string",
+          "method_scope": "Object:Format:*",
+          "method_override": "Placeholder.placeholder_resolve"
+        }
+      }
+    },
+    "Structure": {
+      "object_ident": "Structure",
+      "object_lineage": "Object:Structure",
+      "object_version": "1.0",
+      "object_description": "Unité organisée ayant une frontière, des composantes internes, et pouvant être référencée comme un tout. Objet père de Unit, DataStructure, FractalStructure.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Unit": {
+      "object_ident": "Unit",
+      "object_lineage": "Object:Structure:Unit",
+      "object_version": "1.0",
+      "object_description": "Structure fonctionnelle avec une mission unique. Père de Module, Component, Product, Service, Document.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "unit_owned_list": {
+          "unit_mission": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "unit_scope": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "unit_slot": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "unit_status": {
+            "field_type": "string",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Slot": {
+      "object_ident": "Slot",
+      "object_lineage": "Object:Slot",
+      "object_version": "1.0",
+      "object_description": "Paramètre configurable d un objet (notamment Module). Porte une valeur par défaut, un type et des contraintes.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "slot_owned_list": {
+          "slot_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "slot_type": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "slot_default": {
+            "field_type": "any",
+            "field_required": false
+          },
+          "slot_required": {
+            "field_type": "boolean",
+            "field_required": false
+          },
+          "slot_schema": {
+            "field_type": "string",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Module": {
+      "object_ident": "Module",
+      "object_lineage": "Object:Structure:Unit:Module",
+      "object_version": "1.0",
+      "object_description": "Mini-EURKAI autonome avec une mission unique. Peut être fonctionnel, display, génératif, orchestrateur. Doit être validé avant instanciation.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "unit_inherited_list": {
+          "unit_mission": null,
+          "unit_scope": null,
+          "unit_slot": null,
+          "unit_status": null
+        },
+        "module_owned_list": {
+          "module_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "module_type": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "module_composition": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "module_contract": {
+            "module_input": {
+              "field_type": "json",
+              "field_required": true
+            },
+            "module_output": {
+              "field_type": "json",
+              "field_required": true
+            },
+            "module_function": {
+              "field_type": "string",
+              "field_required": true
+            }
+          },
+          "module_dependency": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "module_validation_required": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "module_sensitivity": {
+            "field_type": "json",
+            "field_required": false
+          },
+          "module_version": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "module_active": {
+            "field_type": "boolean",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Delimiter": {
+      "object_ident": "Delimiter",
+      "object_lineage": "Object:Delimiter",
+      "object_version": "1.0",
+      "object_description": "Marqueur syntaxique ou typographique structurant un contenu. Parent de PairDelimiter et SingleDelimiter.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "delimiter_owned_list": {
+          "delimiter_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "delimiter_context": {
+            "field_type": "string",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "PairDelimiter": {
+      "object_ident": "PairDelimiter",
+      "object_lineage": "Object:Delimiter:PairDelimiter",
+      "object_version": "1.0",
+      "object_description": "Délimiteur à deux caractères encadrants (ouverture + fermeture). Ex : {{}}, <>, \"\", [].",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "delimiter_inherited_list": {
+          "delimiter_ident": null,
+          "delimiter_context": null
+        },
+        "pair_delimiter_owned_list": {
+          "delimiter_open": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "delimiter_close": {
+            "field_type": "string",
+            "field_required": true
+          }
+        }
+      }
+    },
+    "SingleDelimiter": {
+      "object_ident": "SingleDelimiter",
+      "object_lineage": "Object:Delimiter:SingleDelimiter",
+      "object_version": "1.0",
+      "object_description": "Délimiteur à caractère unique. Ex : •, -, *, |, >.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "delimiter_inherited_list": {
+          "delimiter_ident": null,
+          "delimiter_context": null
+        },
+        "single_delimiter_owned_list": {
+          "delimiter_char": {
+            "field_type": "string",
+            "field_required": true
+          }
+        }
+      }
+    },
+    "Env": {
+      "object_ident": "Env",
+      "object_lineage": "Object:Env",
+      "object_version": "1.0",
+      "object_description": "Environnement de configuration. Regroupe les variables d environnement par famille. Les valeurs ne sont jamais stockées dans le catalog — chargées depuis secrets.env au runtime.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "env_owned_list": {
+          "env_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "env_source": {
+            "field_type": "string",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "EnvItem": {
+      "object_ident": "EnvItem",
+      "object_lineage": "Object:Env:EnvItem",
+      "object_version": "1.0",
+      "object_description": "Variable d environnement. La valeur (envitem_value) n est jamais stockée dans le catalog — sensible, chargée au runtime. Le catalog ne stocke que les métadonnées.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "envitem_owned_list": {
+          "envitem_key": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "envitem_status": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "envitem_family": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "envitem_provider_id": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "envitem_sensitive": {
+            "field_type": "boolean",
+            "field_required": false
+          },
+          "envitem_rotation_policy": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "envitem_rotated_at": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "envitem_alert_on_expiry": {
+            "field_type": "boolean",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Entity": {
+      "object_ident": "Entity",
+      "object_lineage": "Object:Entity",
+      "object_version": "1.0",
+      "object_description": "Acteur autonome du système. Père de Agent, Avatar, Company, Provider.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Agent": {
+      "object_ident": "Agent",
+      "object_lineage": "Object:Entity:Agent",
+      "object_version": "1.0",
+      "object_description": "Agent IA autonome. Porte un rôle, un goal, une famille. Animé via Avatar (futur).",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "agent_owned_list": {
+          "agent_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "agent_type": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "agent_role": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "agent_goal": {
+            "field_type": "string",
+            "field_required": false
+          },
+          "agent_active": {
+            "field_type": "boolean",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Avatar": {
+      "object_ident": "Avatar",
+      "object_lineage": "Object:Entity:Avatar",
+      "object_version": "1.0",
+      "object_description": "Personnalité et apparence d un agent. Affecté à un Agent pour l animer.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Frame": {
+      "object_ident": "Frame",
+      "object_lineage": "Object:Frame",
+      "object_version": "1.0",
+      "object_description": "Structure encadrante réutilisable. Père de Template, Layout, etc.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Template": {
+      "object_ident": "Template",
+      "object_lineage": "Object:Frame:Template",
+      "object_version": "1.0",
+      "object_description": "Frame instanciable avec des slots et composants ordonnés. Père de PromptTemplate.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "PromptTemplate": {
+      "object_ident": "PromptTemplate",
+      "object_lineage": "Object:Frame:Template:PromptTemplate",
+      "object_version": "1.0",
+      "object_description": "Template de construction de prompt IA. Définit l ordre et les composants du prompt.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "prompt_template_owned_list": {
+          "prompt_template_ident": {
+            "field_type": "string",
+            "field_required": true
+          },
+          "prompt_template_component_list": {
+            "field_type": "json",
+            "field_required": true
+          },
+          "prompt_template_agent_type": {
+            "field_type": "string",
+            "field_required": false
+          }
+        }
+      }
+    },
+    "Role": {
+      "object_ident": "Role",
+      "object_lineage": "Object:Role",
+      "object_version": "1.0",
+      "object_description": "Rôle d un agent dans un contexte donné. Hérité depuis la famille d agents.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Goal": {
+      "object_ident": "Goal",
+      "object_lineage": "Object:Goal",
+      "object_version": "1.0",
+      "object_description": "Objectif à atteindre. Porté par un Agent ou une méthode.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Constraint": {
+      "object_ident": "Constraint",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_version": "1.0",
+      "object_description": "Règle de type contrainte — limite ou condition imposée à une exécution ou un objet.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "ExpectedOutput": {
+      "object_ident": "ExpectedOutput",
+      "object_lineage": "Object:ExpectedOutput",
+      "object_version": "1.0",
+      "object_description": "Définit le format et le contenu attendus en sortie d une exécution.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Example": {
+      "object_ident": "Example",
+      "object_lineage": "Object:Example",
+      "object_version": "1.0",
+      "object_description": "Exemple positif illustrant un comportement attendu. Père de CounterExample.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "CounterExample": {
+      "object_ident": "CounterExample",
+      "object_lineage": "Object:Example:CounterExample",
+      "object_version": "1.0",
+      "object_description": "Exemple négatif illustrant un comportement à éviter.",
+      "object_schema": "ObjectSchema",
+      "object_how": null
+    },
+    "Design": {
+      "object_ident": "Design",
+      "object_lineage": "Object:Design",
+      "object_version": "1.0",
+      "object_description": "Objet parent de tous les objets de conception visuelle EURKAI.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_status": null,
+      "object_lifecycle": null,
+      "object_automated": false
+    },
+    "VisualIntent": {
+      "object_ident": "VisualIntent",
+      "object_lineage": "Object:Design:VisualIntent",
+      "object_version": "1.0",
+      "object_description": "Direction artistique abstraite d'un projet. Définit l'intention, pas le rendu. Produit par visual_intent_engine depuis un brief.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_status": null,
+      "object_lifecycle": null,
+      "object_automated": true,
+      "object_elementlist": {
+        "object_base_list": {
+          "visual_intent_mode": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": "default"
+          },
+          "visual_intent_art_direction": {
+            "field_type": "object",
+            "field_required": true,
+            "field_default": null
+          },
+          "visual_intent_context": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          },
+          "visual_intent_composition_bias": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          },
+          "visual_intent_color_strategy": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          },
+          "visual_intent_typography_strategy": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          }
+        }
+      }
+    },
+    "Palette": {
+      "object_ident": "Palette",
+      "object_lineage": "Object:Design:Palette",
+      "object_version": "1.0",
+      "object_description": "Palette de couleurs WCAG AA garantie. Produite par color_palette depuis un VisualIntent.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_status": null,
+      "object_lifecycle": null,
+      "object_automated": true,
+      "object_elementlist": {
+        "object_base_list": {
+          "palette_primary": {
+            "field_type": "hex_color",
+            "field_required": true,
+            "field_default": null
+          },
+          "palette_secondary": {
+            "field_type": "hex_color",
+            "field_required": true,
+            "field_default": null
+          },
+          "palette_accent": {
+            "field_type": "hex_color",
+            "field_required": true,
+            "field_default": null
+          },
+          "palette_background": {
+            "field_type": "hex_color",
+            "field_required": true,
+            "field_default": null
+          },
+          "palette_surface": {
+            "field_type": "hex_color",
+            "field_required": false,
+            "field_default": null
+          },
+          "palette_text_primary": {
+            "field_type": "hex_color",
+            "field_required": true,
+            "field_default": null
+          },
+          "palette_text_secondary": {
+            "field_type": "hex_color",
+            "field_required": false,
+            "field_default": null
+          },
+          "palette_border": {
+            "field_type": "hex_color",
+            "field_required": false,
+            "field_default": null
+          },
+          "palette_state_list": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          }
+        }
+      }
+    },
+    "DesignSystem": {
+      "object_ident": "DesignSystem",
+      "object_lineage": "Object:Design:DesignSystem",
+      "object_version": "1.0",
+      "object_description": "Système de design complet : VisualIntent + Palette + DesignPlan + Decorators. Agrège les outputs du pipeline design.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_status": null,
+      "object_lifecycle": null,
+      "object_automated": true,
+      "object_elementlist": {
+        "object_base_list": {
+          "design_system_visual_intent": {
+            "field_type": "object",
+            "field_required": true,
+            "field_default": null
+          },
+          "design_system_palette": {
+            "field_type": "object",
+            "field_required": true,
+            "field_default": null
+          },
+          "design_system_plan": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          },
+          "design_system_decorator_list": {
+            "field_type": "object",
+            "field_required": false,
+            "field_default": null
+          }
+        }
+      }
+    },
+    "Criteria": {
+      "object_ident": "Criteria",
+      "object_lineage": "Object:Criteria",
+      "object_version": "1.0",
+      "object_description": "Paramètre d'entrée pour une requête récursive. Définit un préfixe de lineage, des filtres sur champs et des contraintes relationnelles composables.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "criteria_owned_list": {
+          "criteria_lineage_prefix": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null,
+            "field_description": "Filtre par préfixe de lineage (ex: Object:Document:Invoice)"
+          },
+          "criteria_type_name": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": "object",
+            "field_description": "Type catalog cible (object, schema, rule...)"
+          },
+          "criteria_filters": {
+            "field_type": "json",
+            "field_required": false,
+            "field_default": [],
+            "field_description": "Liste de filtres [(field, operator, value), ...]"
+          },
+          "criteria_relations": {
+            "field_type": "json",
+            "field_required": false,
+            "field_default": [],
+            "field_description": "Contraintes relationnelles [(field, subcriteria, direction), ...]"
+          },
+          "criteria_of": {
+            "field_type": "lineage",
+            "field_required": false,
+            "field_default": null,
+            "field_description": "Objet qui utilise cette criteria (ex: Object:Query, Object:Filter)"
+          }
+        }
+      }
+    },
+    "Query": {
+      "object_ident": "Query",
+      "object_lineage": "Object:Query",
+      "object_version": "1.0",
+      "object_description": "Requête récursive sur le catalog. Porte un Criteria et peut mettre en cache son résultat. Exécutée via recursive_query().",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "query_owned_list": {
+          "query_criteria": {
+            "field_type": "lineage",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Référence vers un objet Object:Criteria"
+          },
+          "query_result_list": {
+            "field_type": "json",
+            "field_required": false,
+            "field_default": [],
+            "field_description": "Résultats mis en cache après exécution"
+          },
+          "query_cache_key": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": null,
+            "field_description": "Clé de cache (hash des critères)"
+          },
+          "query_executed_at": {
+            "field_type": "date",
+            "field_required": false,
+            "field_default": null
+          },
+          "query_result_count": {
+            "field_type": "int",
+            "field_required": false,
+            "field_default": null
+          }
+        }
+      }
+    },
+    "Relation": {
+      "object_ident": "Relation",
+      "object_lineage": "Object:Relation",
+      "object_version": "1.0",
+      "object_description": "Relation sémantique formelle entre deux objets EURKAI. Toute relation XOf est une instance de Relation.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "relation_owned_list": {
+          "relation_source_lineage": {
+            "field_type": "lineage",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Lineage de l'objet source de la relation"
+          },
+          "relation_target_lineage": {
+            "field_type": "lineage",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Lineage de l'objet cible de la relation"
+          },
+          "relation_field_name": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Nom du champ snake_case sur l'objet source (ex: criteria_of)"
+          },
+          "relation_cardinality": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": "many_to_one",
+            "field_enum": [
+              "one_to_one",
+              "one_to_many",
+              "many_to_one",
+              "many_to_many"
+            ]
+          },
+          "relation_direction": {
+            "field_type": "string",
+            "field_required": false,
+            "field_default": "outgoing",
+            "field_enum": [
+              "outgoing",
+              "incoming",
+              "bidirectional"
+            ]
+          }
+        }
+      }
+    },
+    "CriteriaOf": {
+      "object_ident": "CriteriaOf",
+      "object_lineage": "Object:Relation:CriteriaOf",
+      "object_version": "1.0",
+      "object_description": "Relation : une Criteria appartient à (est le paramètre de) un objet cible. Champ source : criteria_of.",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "relation_source_lineage": "Object:Criteria",
+      "relation_target_lineage": "Object",
+      "relation_field_name": "criteria_of",
+      "relation_cardinality": "many_to_one",
+      "relation_direction": "outgoing"
+    },
+    "StandardQuery": {
+      "object_ident": "StandardQuery",
+      "object_lineage": "Object:Query:StandardQuery",
+      "object_version": "1.0",
+      "object_description": "Query prédéfinie, nommée, réutilisable. Wraps recursive_query avec une extraction de sous-liste ciblée. Signature : (catalog, object_ident, criteria=None).",
+      "object_schema": "ObjectSchema",
+      "object_how": null,
+      "object_elementlist": {
+        "object_base_list": {
+          "object_ident": null,
+          "object_lineage": null
+        },
+        "standard_query_owned_list": {
+          "query_function_name": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Nom de la fonction Python"
+          },
+          "query_returns": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Clé ou sous-liste extraite du résultat"
+          },
+          "query_source_list": {
+            "field_type": "string",
+            "field_required": true,
+            "field_default": null,
+            "field_description": "Source dans le cadre (ex: object_attribute_list)"
+          }
+        }
+      }
+    }
+  },
+  "catalog_schema_list": {
+    "ObjectSchema": {
+      "schema_ident": "ObjectSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "AND(EXISTS(object_lineage), STARTS_WITH(object_lineage, 'Object'))"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_ident_is_pascal_case": {
+          "rule_condition": "MATCHES_REGEX(object_ident, '^[A-Z][A-Za-z0-9_]*$')",
+          "rule_severity": "error"
+        },
+        "rule_lineage_starts_with_object": {
+          "rule_condition": "STARTS_WITH(object_lineage, 'Object')",
+          "rule_severity": "error"
+        }
+      },
+      "object_schema": "SchemaSchema"
+    },
+    "SchemaSchema": {
+      "schema_ident": "SchemaSchema",
+      "schema_required_element_list": {
+        "schema_ident": {
+          "rule_condition": "AND(EXISTS(schema_ident), IS_NOT_EMPTY(schema_ident))"
+        },
+        "schema_required_element_list": {
+          "rule_condition": "EXISTS(schema_required_element_list)"
+        },
+        "schema_validation_rule_list": {
+          "rule_condition": "EXISTS(schema_validation_rule_list)"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_schema_ident_ends_with_schema": {
+          "rule_condition": "ENDS_WITH(schema_ident, 'Schema')",
+          "rule_severity": "warning"
+        }
+      },
+      "object_schema": "SchemaSchema"
+    },
+    "RuleSchema": {
+      "schema_ident": "RuleSchema",
+      "schema_required_element_list": {
+        "rule_ident": {
+          "rule_condition": "AND(EXISTS(rule_ident), IS_NOT_EMPTY(rule_ident))"
+        },
+        "rule_type": {
+          "rule_condition": "IN(rule_type, ['axiome','contrainte','interdiction','obligation','convention'])"
+        },
+        "rule_statement": {
+          "rule_condition": "AND(EXISTS(rule_statement), IS_NOT_EMPTY(rule_statement))"
+        },
+        "rule_severity": {
+          "rule_condition": "IN(rule_severity, ['error','warning','info'])"
+        },
+        "rule_message": {
+          "rule_condition": "AND(EXISTS(rule_message), IS_NOT_EMPTY(rule_message))"
+        },
+        "rule_scope": {
+          "rule_condition": "EXISTS(rule_scope)"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_ident_prefix": {
+          "rule_condition": "STARTS_WITH(rule_ident, 'rule_')",
+          "rule_severity": "error"
+        }
+      },
+      "object_schema": "SchemaSchema"
+    },
+    "HistorySchema": {
+      "schema_ident": "HistorySchema",
+      "schema_required_element_list": {
+        "history_ident": {
+          "rule_condition": "AND(EXISTS(history_ident), IS_NOT_EMPTY(history_ident))"
+        },
+        "history_action": {
+          "rule_condition": "AND(EXISTS(history_action), IS_NOT_EMPTY(history_action))"
+        },
+        "history_trigger": {
+          "rule_condition": "EXISTS(history_trigger)"
+        },
+        "history_result": {
+          "rule_condition": "EXISTS(history_result)"
+        },
+        "history_justification": {
+          "rule_condition": "AND(EXISTS(history_justification), IS_NOT_EMPTY(history_justification))"
+        },
+        "history_timestamp": {
+          "rule_condition": "EXISTS(history_timestamp)"
+        },
+        "history_agent": {
+          "rule_condition": "AND(EXISTS(history_agent), IS_NOT_EMPTY(history_agent))"
+        },
+        "history_status": {
+          "rule_condition": "IN(history_status, ['success','failure','partial'])"
+        }
+      },
+      "schema_validation_rule_list": {},
+      "object_schema": "SchemaSchema"
+    },
+    "AiModelSchema": {
+      "schema_ident": "AiModelSchema",
+      "schema_required_element_list": {
+        "model_ident": {
+          "rule_condition": "AND(EXISTS(model_ident), IS_NOT_EMPTY(model_ident))"
+        },
+        "model_type": {
+          "rule_condition": "IN(model_type, ['llm','image','audio','embedding','multimodal'])"
+        },
+        "model_provider": {
+          "rule_condition": "AND(EXISTS(model_provider), IS_NOT_EMPTY(model_provider))"
+        },
+        "model_version": {
+          "rule_condition": "AND(EXISTS(model_version), IS_NOT_EMPTY(model_version))"
+        },
+        "model_cost_tier": {
+          "rule_condition": "IN(model_cost_tier, ['low','medium','high'])"
+        },
+        "model_speed_tier": {
+          "rule_condition": "IN(model_speed_tier, ['fast','medium','slow'])"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_model_ident_prefix": {
+          "rule_condition": "STARTS_WITH(model_ident, 'model_')",
+          "rule_severity": "warning"
+        }
+      },
+      "object_schema": "SchemaSchema"
+    },
+    "ScenarioSchema": {
+      "schema_ident": "ScenarioSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "scenario_ident": {
+          "rule_condition": "AND(EXISTS(scenario_ident), IS_NOT_EMPTY(scenario_ident))"
+        },
+        "scenario_how": {
+          "rule_condition": "AND(EXISTS(scenario_how), IS_NOT_EMPTY(scenario_how))"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_scenario_ident_prefix": {
+          "rule_condition": "STARTS_WITH(scenario_ident, \"scenario_\")",
+          "rule_severity": "warning"
+        }
+      }
+    },
+    "PlaceholderSchema": {
+      "schema_ident": "PlaceholderSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "placeholder_ident": {
+          "rule_condition": "AND(EXISTS(placeholder_ident), IS_NOT_EMPTY(placeholder_ident))"
+        },
+        "placeholder_pattern": {
+          "rule_condition": "AND(EXISTS(placeholder_pattern), IS_NOT_EMPTY(placeholder_pattern))"
+        },
+        "placeholder_delimiter": {
+          "rule_condition": "EXISTS(placeholder_delimiter)",
+          "rule_comment": "doit référencer un PairDelimiter — jamais la valeur directe"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "FormatSchema": {
+      "schema_ident": "FormatSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "format_ident": {
+          "rule_condition": "AND(EXISTS(format_ident), IS_NOT_EMPTY(format_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "StructureSchema": {
+      "schema_ident": "StructureSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "structure_ident": {
+          "rule_condition": "AND(EXISTS(structure_ident), IS_NOT_EMPTY(structure_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "UnitSchema": {
+      "schema_ident": "UnitSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "unit_mission": {
+          "rule_condition": "AND(EXISTS(unit_mission), IS_NOT_EMPTY(unit_mission))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "SlotSchema": {
+      "schema_ident": "SlotSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "slot_ident": {
+          "rule_condition": "AND(EXISTS(slot_ident), IS_NOT_EMPTY(slot_ident))"
+        },
+        "slot_type": {
+          "rule_condition": "AND(EXISTS(slot_type), IS_NOT_EMPTY(slot_type))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "ModuleSchema": {
+      "schema_ident": "ModuleSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "module_ident": {
+          "rule_condition": "AND(EXISTS(module_ident), IS_NOT_EMPTY(module_ident))"
+        },
+        "module_type": {
+          "rule_condition": "AND(EXISTS(module_type), IS_NOT_EMPTY(module_type))"
+        },
+        "module_validation_required": {
+          "rule_condition": "IN(module_validation_required, [\"L1\",\"L1+L2\",\"L1+L2+L3\",\"L1+L2+L3+L4\"])"
+        },
+        "module_contract": {
+          "rule_condition": "EXISTS(module_contract)"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_module_type_known": {
+          "rule_condition": "IN(module_type, [\"functional\",\"generative\",\"ui\",\"orchestrator\",\"validator\",\"storage\",\"conversion\",\"display\"])",
+          "rule_severity": "warning"
+        }
+      }
+    },
+    "DelimiterSchema": {
+      "schema_ident": "DelimiterSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "delimiter_ident": {
+          "rule_condition": "AND(EXISTS(delimiter_ident), IS_NOT_EMPTY(delimiter_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "PairDelimiterSchema": {
+      "schema_ident": "PairDelimiterSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "delimiter_ident": {
+          "rule_condition": "AND(EXISTS(delimiter_ident), IS_NOT_EMPTY(delimiter_ident))"
+        },
+        "delimiter_open": {
+          "rule_condition": "AND(EXISTS(delimiter_open), IS_NOT_EMPTY(delimiter_open))"
+        },
+        "delimiter_close": {
+          "rule_condition": "AND(EXISTS(delimiter_close), IS_NOT_EMPTY(delimiter_close))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "SingleDelimiterSchema": {
+      "schema_ident": "SingleDelimiterSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "delimiter_ident": {
+          "rule_condition": "AND(EXISTS(delimiter_ident), IS_NOT_EMPTY(delimiter_ident))"
+        },
+        "delimiter_char": {
+          "rule_condition": "AND(EXISTS(delimiter_char), IS_NOT_EMPTY(delimiter_char))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "EnvSchema": {
+      "schema_ident": "EnvSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "env_ident": {
+          "rule_condition": "AND(EXISTS(env_ident), IS_NOT_EMPTY(env_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "EnvItemSchema": {
+      "schema_ident": "EnvItemSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "envitem_key": {
+          "rule_condition": "AND(EXISTS(envitem_key), IS_NOT_EMPTY(envitem_key))"
+        },
+        "envitem_status": {
+          "rule_condition": "IN(envitem_status, [\"active\",\"revoked\",\"unknown\"])"
+        },
+        "envitem_family": {
+          "rule_condition": "AND(EXISTS(envitem_family), IS_NOT_EMPTY(envitem_family))"
+        }
+      },
+      "schema_validation_rule_list": {
+        "rule_rotation_policy_known": {
+          "rule_condition": "IN(envitem_rotation_policy, [\"monthly\",\"quarterly\",\"on_event\",\"never\"])",
+          "rule_severity": "warning"
+        }
+      }
+    },
+    "EntitySchema": {
+      "schema_ident": "EntitySchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "entity_ident": {
+          "rule_condition": "AND(EXISTS(entity_ident), IS_NOT_EMPTY(entity_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "AgentSchema": {
+      "schema_ident": "AgentSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "agent_ident": {
+          "rule_condition": "AND(EXISTS(agent_ident), IS_NOT_EMPTY(agent_ident))"
+        },
+        "agent_type": {
+          "rule_condition": "AND(EXISTS(agent_type), IS_NOT_EMPTY(agent_type))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "AvatarSchema": {
+      "schema_ident": "AvatarSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "avatar_ident": {
+          "rule_condition": "AND(EXISTS(avatar_ident), IS_NOT_EMPTY(avatar_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "FrameSchema": {
+      "schema_ident": "FrameSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "frame_ident": {
+          "rule_condition": "AND(EXISTS(frame_ident), IS_NOT_EMPTY(frame_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "TemplateSchema": {
+      "schema_ident": "TemplateSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "template_ident": {
+          "rule_condition": "AND(EXISTS(template_ident), IS_NOT_EMPTY(template_ident))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "PromptTemplateSchema": {
+      "schema_ident": "PromptTemplateSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "prompt_template_ident": {
+          "rule_condition": "AND(EXISTS(prompt_template_ident), IS_NOT_EMPTY(prompt_template_ident))"
+        },
+        "prompt_template_component_list": {
+          "rule_condition": "EXISTS(prompt_template_component_list)"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "RoleSchema": {
+      "schema_ident": "RoleSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "role_ident": {
+          "rule_condition": "AND(EXISTS(role_ident), IS_NOT_EMPTY(role_ident))"
+        },
+        "role_description": {
+          "rule_condition": "AND(EXISTS(role_description), IS_NOT_EMPTY(role_description))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "GoalSchema": {
+      "schema_ident": "GoalSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "goal_ident": {
+          "rule_condition": "AND(EXISTS(goal_ident), IS_NOT_EMPTY(goal_ident))"
+        },
+        "goal_description": {
+          "rule_condition": "AND(EXISTS(goal_description), IS_NOT_EMPTY(goal_description))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "ConstraintSchema": {
+      "schema_ident": "ConstraintSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "constraint_ident": {
+          "rule_condition": "AND(EXISTS(constraint_ident), IS_NOT_EMPTY(constraint_ident))"
+        },
+        "constraint_statement": {
+          "rule_condition": "AND(EXISTS(constraint_statement), IS_NOT_EMPTY(constraint_statement))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "ExpectedOutputSchema": {
+      "schema_ident": "ExpectedOutputSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "expected_output_ident": {
+          "rule_condition": "AND(EXISTS(expected_output_ident), IS_NOT_EMPTY(expected_output_ident))"
+        },
+        "expected_output_format": {
+          "rule_condition": "AND(EXISTS(expected_output_format), IS_NOT_EMPTY(expected_output_format))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "ExampleSchema": {
+      "schema_ident": "ExampleSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "example_ident": {
+          "rule_condition": "AND(EXISTS(example_ident), IS_NOT_EMPTY(example_ident))"
+        },
+        "example_content": {
+          "rule_condition": "EXISTS(example_content)"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "CounterExampleSchema": {
+      "schema_ident": "CounterExampleSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "example_ident": {
+          "rule_condition": "AND(EXISTS(example_ident), IS_NOT_EMPTY(example_ident))"
+        },
+        "example_content": {
+          "rule_condition": "EXISTS(example_content)"
+        },
+        "counter_example_reason": {
+          "rule_condition": "AND(EXISTS(counter_example_reason), IS_NOT_EMPTY(counter_example_reason))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "DesignSchema": {
+      "schema_ident": "DesignSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "AND(EXISTS(object_lineage), STARTS_WITH(object_lineage, \"Object:Design\"))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "VisualIntentSchema": {
+      "schema_ident": "VisualIntentSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "AND(EXISTS(object_lineage), STARTS_WITH(object_lineage, \"Object:Design:VisualIntent\"))"
+        },
+        "visual_intent_mode": {
+          "rule_condition": "AND(EXISTS(visual_intent_mode), IS_NOT_EMPTY(visual_intent_mode))"
+        },
+        "visual_intent_art_direction": {
+          "rule_condition": "EXISTS(visual_intent_art_direction)"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "PaletteSchema": {
+      "schema_ident": "PaletteSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "AND(EXISTS(object_lineage), STARTS_WITH(object_lineage, \"Object:Design:Palette\"))"
+        },
+        "palette_primary": {
+          "rule_condition": "AND(EXISTS(palette_primary), IS_NOT_EMPTY(palette_primary))"
+        },
+        "palette_secondary": {
+          "rule_condition": "AND(EXISTS(palette_secondary), IS_NOT_EMPTY(palette_secondary))"
+        },
+        "palette_accent": {
+          "rule_condition": "AND(EXISTS(palette_accent), IS_NOT_EMPTY(palette_accent))"
+        },
+        "palette_background": {
+          "rule_condition": "AND(EXISTS(palette_background), IS_NOT_EMPTY(palette_background))"
+        },
+        "palette_text_primary": {
+          "rule_condition": "AND(EXISTS(palette_text_primary), IS_NOT_EMPTY(palette_text_primary))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "DesignSystemSchema": {
+      "schema_ident": "DesignSystemSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "AND(EXISTS(object_lineage), STARTS_WITH(object_lineage, \"Object:Design:DesignSystem\"))"
+        },
+        "design_system_visual_intent": {
+          "rule_condition": "EXISTS(design_system_visual_intent)"
+        },
+        "design_system_palette": {
+          "rule_condition": "EXISTS(design_system_palette)"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "CriteriaSchema": {
+      "schema_ident": "CriteriaSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "STARTS_WITH(object_lineage, 'Object:Criteria')"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "QuerySchema": {
+      "schema_ident": "QuerySchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "STARTS_WITH(object_lineage, 'Object:Query')"
+        },
+        "query_criteria": {
+          "rule_condition": "AND(EXISTS(query_criteria), IS_NOT_EMPTY(query_criteria))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    },
+    "RelationSchema": {
+      "schema_ident": "RelationSchema",
+      "object_schema": "SchemaSchema",
+      "schema_required_element_list": {
+        "object_ident": {
+          "rule_condition": "AND(EXISTS(object_ident), IS_NOT_EMPTY(object_ident))"
+        },
+        "object_lineage": {
+          "rule_condition": "STARTS_WITH(object_lineage, 'Object:Relation')"
+        },
+        "relation_source_lineage": {
+          "rule_condition": "AND(EXISTS(relation_source_lineage), IS_NOT_EMPTY(relation_source_lineage))"
+        },
+        "relation_target_lineage": {
+          "rule_condition": "AND(EXISTS(relation_target_lineage), IS_NOT_EMPTY(relation_target_lineage))"
+        },
+        "relation_field_name": {
+          "rule_condition": "AND(EXISTS(relation_field_name), IS_NOT_EMPTY(relation_field_name))"
+        }
+      },
+      "schema_validation_rule_list": {}
+    }
+  },
+  "catalog_scenario_list": {
+    "scenario_debug_validate": {
+      "scenario_ident": "scenario_debug_validate",
+      "scenario_description": "Valide tout objet exécuté contre son schema. S'exécute automatiquement via le hook after de toute MRG. Produit une entrée History.",
+      "scenario_execution_modality": "automatic",
+      "scenario_what": {
+        "object_lineage": "*"
+      },
+      "scenario_how": "validate_object_vs_schema",
+      "scenario_validate": "validate_attending_result",
+      "scenario_render": "render_validation_result",
+      "scenario_hooks": {
+        "after": "history_update",
+        "on_success": "log_success",
+        "on_failure": "log_failure"
+      },
+      "scenario_attending_result": {
+        "success": true
+      },
+      "object_schema": "ScenarioSchema"
+    },
+    "scenario_validate": {
+      "scenario_ident": "scenario_validate",
+      "object_schema": "ScenarioSchema",
+      "scenario_description": "Valide un objet contre son schema. Scénario métier autonome.",
+      "scenario_what": {
+        "object_lineage": "*"
+      },
+      "scenario_how": "validate_object_vs_schema",
+      "scenario_hooks": {
+        "after": "history_update",
+        "on_success": "log_success",
+        "on_failure": "log_failure"
+      },
+      "scenario_attending_result": {
+        "success": true
+      }
+    },
+    "scenario_get_create": {
+      "scenario_ident": "scenario_get_create",
+      "object_schema": "ScenarioSchema",
+      "scenario_description": "Cherche un objet (3 niveaux SuperGet). Si absent, le crée via agent puis valide.",
+      "scenario_what": {
+        "object_lineage": "*"
+      },
+      "scenario_how": "coming:get_or_create",
+      "scenario_steps": [
+        "super_get",
+        "coming:agent_generate_object",
+        "validate_object_vs_schema"
+      ],
+      "scenario_hooks": {
+        "after": "history_update",
+        "on_success": "log_success",
+        "on_failure": "log_failure"
+      },
+      "scenario_attending_result": {
+        "success": true
+      }
+    },
+    "scenario_check_rotation": {
+      "scenario_ident": "scenario_check_rotation",
+      "object_schema": "ScenarioSchema",
+      "scenario_description": "Vérifie les clés dont la rotation est échue. Alerte email (Brevo) + SMS (coming) au responsable sécurité. Fallback : EURKAI_EMAIL_NATHALIE + ALERT_PHONE.",
+      "scenario_what": {
+        "object_lineage": "Object:Env:EnvItem"
+      },
+      "scenario_how": "check_rotation",
+      "scenario_execution_modality": "cron:monthly",
+      "scenario_hooks": {
+        "after": "history_update",
+        "on_overdue": "alert_security"
+      }
+    },
+    "scenario_define_agent": {
+      "scenario_ident": "scenario_define_agent",
+      "object_schema": "ScenarioSchema",
+      "scenario_description": "Instancie et configure un agent depuis son type et ses paramètres. Affecte role, goal, avatar si disponible.",
+      "scenario_what": {
+        "object_lineage": "Object:Entity:Agent"
+      },
+      "scenario_how": "coming",
+      "scenario_hooks": {
+        "after": "history_update"
+      }
+    },
+    "scenario_extract_rules": {
+      "scenario_ident": "scenario_extract_rules",
+      "object_schema": "ScenarioSchema",
+      "scenario_what": {
+        "object_lineage": "Object:Rule"
+      },
+      "scenario_how": "extract_rules",
+      "scenario_attending_result": {
+        "type": "rule_method_list"
+      },
+      "scenario_execution_modality": "L1"
+    }
+  },
+  "catalog_ai_model_list": {
+    "model_claude_opus": {
+      "model_ident": "model_claude_opus",
+      "model_type": "llm",
+      "model_provider": "anthropic",
+      "model_version": "claude-opus-4-6",
+      "model_strengths": [
+        "architecture complexe",
+        "cohérence sur contexte long",
+        "raisonnement profond",
+        "design de prompts"
+      ],
+      "model_weaknesses": [
+        "coût élevé",
+        "plus lent"
+      ],
+      "model_cost_tier": "high",
+      "model_speed_tier": "slow",
+      "model_recommended_missions": [
+        "mrg_architecture",
+        "agent_prompt_design",
+        "superget_semantic",
+        "complex_code_generation"
+      ],
+      "model_active": true,
+      "object_schema": "AiModelSchema"
+    },
+    "model_claude_sonnet": {
+      "model_ident": "model_claude_sonnet",
+      "model_type": "llm",
+      "model_provider": "anthropic",
+      "model_version": "claude-sonnet-4-6",
+      "model_strengths": [
+        "équilibre coût/performance",
+        "bon sur tâches structurées",
+        "polyvalent"
+      ],
+      "model_weaknesses": [
+        "moins bon qu'Opus sur architectures très complexes"
+      ],
+      "model_cost_tier": "medium",
+      "model_speed_tier": "medium",
+      "model_recommended_missions": [
+        "catalog_construction",
+        "rule_extraction",
+        "scenario_definition",
+        "code_generation"
+      ],
+      "model_active": true,
+      "object_schema": "AiModelSchema"
+    },
+    "model_claude_haiku": {
+      "model_ident": "model_claude_haiku",
+      "model_type": "llm",
+      "model_provider": "anthropic",
+      "model_version": "claude-haiku-4-5-20251001",
+      "model_strengths": [
+        "très rapide",
+        "peu coûteux",
+        "déterministe sur tâches définies"
+      ],
+      "model_weaknesses": [
+        "moins performant sur tâches complexes ou ambiguës"
+      ],
+      "model_cost_tier": "low",
+      "model_speed_tier": "fast",
+      "model_recommended_missions": [
+        "validation_loops",
+        "rule_extraction_at_scale",
+        "repetitive_testing",
+        "placeholder_resolve"
+      ],
+      "model_active": true,
+      "object_schema": "AiModelSchema"
+    }
+  },
+  "catalog_delimiter_list": {
+    "double_brace": {
+      "delimiter_ident": "double_brace",
+      "object_schema": "PairDelimiterSchema",
+      "delimiter_open": "{{",
+      "delimiter_close": "}}",
+      "delimiter_context": "placeholder"
+    },
+    "angle_bracket": {
+      "delimiter_ident": "angle_bracket",
+      "object_schema": "PairDelimiterSchema",
+      "delimiter_open": "<",
+      "delimiter_close": ">",
+      "delimiter_context": "markup"
+    },
+    "square_bracket": {
+      "delimiter_ident": "square_bracket",
+      "object_schema": "PairDelimiterSchema",
+      "delimiter_open": "[",
+      "delimiter_close": "]",
+      "delimiter_context": "array"
+    },
+    "single_brace": {
+      "delimiter_ident": "single_brace",
+      "object_schema": "PairDelimiterSchema",
+      "delimiter_open": "{",
+      "delimiter_close": "}",
+      "delimiter_context": "template"
+    },
+    "double_quote": {
+      "delimiter_ident": "double_quote",
+      "object_schema": "PairDelimiterSchema",
+      "delimiter_open": "\"",
+      "delimiter_close": "\"",
+      "delimiter_context": "string"
+    },
+    "bullet": {
+      "delimiter_ident": "bullet",
+      "object_schema": "SingleDelimiterSchema",
+      "delimiter_char": "•",
+      "delimiter_context": "list"
+    },
+    "dash": {
+      "delimiter_ident": "dash",
+      "object_schema": "SingleDelimiterSchema",
+      "delimiter_char": "-",
+      "delimiter_context": "list"
+    },
+    "pipe": {
+      "delimiter_ident": "pipe",
+      "object_schema": "SingleDelimiterSchema",
+      "delimiter_char": "|",
+      "delimiter_context": "separator"
+    },
+    "chevron": {
+      "delimiter_ident": "chevron",
+      "object_schema": "SingleDelimiterSchema",
+      "delimiter_char": ">",
+      "delimiter_context": "quote"
+    }
+  },
+  "catalog_agent_list": {
+    "agent_generate_object": {
+      "agent_ident": "agent_generate_object",
+      "object_schema": "AgentSchema",
+      "agent_type": "generation",
+      "agent_role": "role_generation_agent",
+      "agent_goal": "Générer des objets EURKAI conformes depuis un schema et des règles.",
+      "agent_prompt_template": "template_generate_object",
+      "agent_active": true
+    },
+    "agent_extract_rules": {
+      "agent_ident": "agent_extract_rules",
+      "object_schema": "AgentSchema",
+      "agent_type": "extraction",
+      "agent_role": "role_extraction_agent",
+      "agent_goal": "Extraire et normaliser les règles et méthodes depuis des documents de cadrage.",
+      "agent_prompt_template": "template_extract_rules",
+      "agent_active": true
+    }
+  },
+  "catalog_role_list": {
+    "role_generation_agent": {
+      "role_ident": "role_generation_agent",
+      "object_lineage": "Object:Frame:Role",
+      "object_schema": "RoleSchema",
+      "role_description": "Tu es un agent de génération d'objets EURKAI. Tu connais la règle fondamentale : tout est Object. Chaque objet a un object_lineage qui commence par Object:. Tu génères des objets JSON stricts, conformes au schema fourni, sans texte libre en dehors du JSON."
+    },
+    "role_extraction_agent": {
+      "role_ident": "role_extraction_agent",
+      "object_lineage": "Object:Frame:Role",
+      "object_schema": "RoleSchema",
+      "role_description": "Tu es un agent d'extraction de règles et de méthodes à partir de documents de cadrage EURKAI. Tu lis un document et tu extrais TOUTES les règles et méthodes énoncées explicitement ou implicitement. Règles d'extraction : (1) Extrais TOUT — mieux vaut trop que trop peu. (2) Ne déduis pas ce qui n'est pas énoncé. (3) Si une règle est énoncée plusieurs fois dans des docs différents, crée une entrée par source. (4) rule_ident doit être unique et explicite : préfère rule_object_single_container à rule_a7. (5) rule_condition : utilise les FORMULAS si possible (EXISTS, IS_NOT_EMPTY, IN, AND, OR), sinon null. (6) rule_severity : error pour les axiomes et contraintes dures, warning pour les conventions, info pour les recommandations. (7) rule_scope : * si la règle s'applique à tout, null si le scope n'est pas précisé."
+    }
+  },
+  "catalog_constraint_list": {
+    "constraint_all_is_object": {
+      "constraint_ident": "constraint_all_is_object",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "Tout objet descend de Object. Le champ object_lineage commence TOUJOURS par Object:. Aucune exception."
+    },
+    "constraint_snake_case": {
+      "constraint_ident": "constraint_snake_case",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "Tous les identifiants sont en snake_case. Aucun espace, aucune majuscule, aucun tiret."
+    },
+    "constraint_no_plural": {
+      "constraint_ident": "constraint_no_plural",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "Les identifiants ne sont jamais au pluriel. catalog_object_list est un conteneur, pas un objet. Les objets eux-mêmes sont au singulier."
+    },
+    "constraint_required_fields": {
+      "constraint_ident": "constraint_required_fields",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "Tous les champs marqués field_required:true dans le schema doivent être présents et non null dans l'objet généré."
+    },
+    "constraint_lineage_colon": {
+      "constraint_ident": "constraint_lineage_colon",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "Le lineage utilise : comme séparateur. Exemple : Object:Entity:Agent. Jamais de slash, point ou autre séparateur."
+    },
+    "constraint_schema_containers": {
+      "constraint_ident": "constraint_schema_containers",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "Les schemas définissent des conteneurs et types uniquement. Jamais de valeurs directes dans un schema. Les valeurs vivent dans les instances."
+    },
+    "constraint_output_json_only": {
+      "constraint_ident": "constraint_output_json_only",
+      "object_lineage": "Object:Rule:Constraint",
+      "object_schema": "ConstraintSchema",
+      "constraint_statement": "La réponse est un objet JSON valide uniquement. Aucun texte avant ou après. Aucun markdown. Aucun commentaire."
+    }
+  },
+  "catalog_expected_output_list": {
+    "expected_output_json_object": {
+      "expected_output_ident": "expected_output_json_object",
+      "object_lineage": "Object:Frame:ExpectedOutput",
+      "object_schema": "ExpectedOutputSchema",
+      "expected_output_description": "Un objet JSON valide, conforme au schema cible, avec tous les champs requis renseignés, sans placeholder non résolu, sans valeur null pour un champ required.",
+      "expected_output_format": "json_object"
+    },
+    "expected_output_rule_list": {
+      "expected_output_ident": "expected_output_rule_list",
+      "object_lineage": "Object:Frame:ExpectedOutput",
+      "object_schema": "ExpectedOutputSchema",
+      "expected_output_description": "Un objet JSON avec deux clés : rule_list (array de règles) et method_list (array de méthodes). Chaque entrée respecte la structure définie. Aucun texte libre, aucun markdown, JSON pur.",
+      "expected_output_format": "json_list"
+    }
+  },
+  "catalog_prompt_template_list": {
+    "template_generate_object": {
+      "prompt_template_ident": "template_generate_object",
+      "object_lineage": "Object:Frame:Template:PromptTemplate",
+      "object_schema": "PromptTemplateSchema",
+      "prompt_template_text": "{{role_description}}\n\nPRINCIPES EURKAI :\n{{erk_principles}}\n\nCONTRAINTES :\n{{constraint_list}}\n\nSCHEMA CIBLE :\n{{schema_json}}\n\nPARAMETRES :\n{{params_json}}\n\nEXEMPLE DE REFERENCE :\n{{example_json}}\n\nOBJECTIF :\n{{goal_description}}\n\nRESULTAT ATTENDU :\n{{expected_output_description}}\n\nGenere l'objet JSON maintenant.",
+      "prompt_template_component_list": [
+        "role",
+        "constraint_list",
+        "schema_json",
+        "params_json",
+        "example_json",
+        "expected_output"
+      ]
+    },
+    "template_extract_rules": {
+      "prompt_template_ident": "template_extract_rules",
+      "object_lineage": "Object:Frame:Template:PromptTemplate",
+      "object_schema": "PromptTemplateSchema",
+      "prompt_template_text": "{{role_description}}\n\nSTRUCTURE rule_list — chaque règle :\n{ \"rule_ident\": \"rule_<nom_snake_case>\", \"rule_source\": \"<doc> — <section>\", \"rule_type\": \"axiome|contrainte|interdiction|obligation|convention\", \"rule_statement\": \"<énoncé exact>\", \"rule_condition\": \"<FORMULAS ou null>\", \"rule_severity\": \"error|warning|info\", \"rule_message\": \"<message si violation>\", \"rule_justification\": \"<pourquoi>\", \"rule_scope\": \"*|null|<valeur>\" }\n\nSTRUCTURE method_list — chaque méthode :\n{ \"method_ident\": \"method_<nom>\", \"method_object\": \"<objet porteur>\", \"method_type\": \"central|secondary|supermethod|utility\", \"method_parent\": \"<méthode centrale si secondary>\", \"method_input\": \"<inputs>\", \"method_output\": \"<outputs>\", \"method_scope\": \"*|null|<valeur>\", \"method_source\": \"<doc> — <section>\" }\n\nDOCUMENT SOURCE :\n{{source_document}}\n\nRÉSULTAT ATTENDU :\n{{expected_output_description}}\n\nRetourne maintenant le JSON avec deux clés : rule_list et method_list.",
+      "prompt_template_component_list": [
+        "role",
+        "constraint_list",
+        "source_document",
+        "expected_output"
+      ]
+    }
+  },
+  "catalog_env_item_list": {
+    "ANTHROPIC_API_KEY": {
+      "envitem_key": "ANTHROPIC_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:anthropic",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "OPENAI_API_KEY": {
+      "envitem_key": "OPENAI_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:openai",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "OPENAI_API_KEY_AI_SEO": {
+      "envitem_key": "OPENAI_API_KEY_AI_SEO",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:openai",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "GEMINI_API_KEY": {
+      "envitem_key": "GEMINI_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:google",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "MINIMAX_API_KEY": {
+      "envitem_key": "MINIMAX_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:minimax",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "FAL_KEY": {
+      "envitem_key": "FAL_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:fal",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "REPLICATE_API_TOKEN": {
+      "envitem_key": "REPLICATE_API_TOKEN",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:replicate",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "RUNWAY_API_KEY": {
+      "envitem_key": "RUNWAY_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:runway",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "ELEVEN_LABS": {
+      "envitem_key": "ELEVEN_LABS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "ai",
+      "envitem_provider_id": "coming:elevenlabs",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "monthly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "BREVO_API_KEY": {
+      "envitem_key": "BREVO_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming:brevo",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_CONTACT": {
+      "envitem_key": "EURKAI_EMAIL_CONTACT",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_CONTACT_PASS": {
+      "envitem_key": "EURKAI_EMAIL_CONTACT_PASS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_INFO": {
+      "envitem_key": "EURKAI_EMAIL_INFO",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_INFO_PASS": {
+      "envitem_key": "EURKAI_EMAIL_INFO_PASS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_NATHALIE": {
+      "envitem_key": "EURKAI_EMAIL_NATHALIE",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_NATHALIE_PASS": {
+      "envitem_key": "EURKAI_EMAIL_NATHALIE_PASS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_WEBMASTER": {
+      "envitem_key": "EURKAI_EMAIL_WEBMASTER",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "EURKAI_EMAIL_WEBMASTER_PASS": {
+      "envitem_key": "EURKAI_EMAIL_WEBMASTER_PASS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "email",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "STRIPE_SECRET_KEY": {
+      "envitem_key": "STRIPE_SECRET_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "payment",
+      "envitem_provider_id": "coming:stripe",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "STRIPE_PUBLISHABLE_KEY": {
+      "envitem_key": "STRIPE_PUBLISHABLE_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "payment",
+      "envitem_provider_id": "coming:stripe",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "STRIPE_WEBHOOK_SECRET": {
+      "envitem_key": "STRIPE_WEBHOOK_SECRET",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "payment",
+      "envitem_provider_id": "coming:stripe",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "STRIPE_SECRET_KEY_TEST": {
+      "envitem_key": "STRIPE_SECRET_KEY_TEST",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "payment",
+      "envitem_provider_id": "coming:stripe",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "STRIPE_PUBLISHABLE_KEY_TEST": {
+      "envitem_key": "STRIPE_PUBLISHABLE_KEY_TEST",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "payment",
+      "envitem_provider_id": "coming:stripe",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "VPS_IP": {
+      "envitem_key": "VPS_IP",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "VPS_USER": {
+      "envitem_key": "VPS_USER",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "VPS_PASSWORD": {
+      "envitem_key": "VPS_PASSWORD",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "VPS_SSH_PORT": {
+      "envitem_key": "VPS_SSH_PORT",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "VPS_DOMAIN": {
+      "envitem_key": "VPS_DOMAIN",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "VPS_PROVIDER": {
+      "envitem_key": "VPS_PROVIDER",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "IONOS_API_KEY": {
+      "envitem_key": "IONOS_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "IONOS_API_PREFIX": {
+      "envitem_key": "IONOS_API_PREFIX",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming:ionos",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "DEPLOY_SECRET": {
+      "envitem_key": "DEPLOY_SECRET",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "ADMIN_TOKEN": {
+      "envitem_key": "ADMIN_TOKEN",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "infra",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "GOOGLE_CALENDAR_CLIENT_ID": {
+      "envitem_key": "GOOGLE_CALENDAR_CLIENT_ID",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "google",
+      "envitem_provider_id": "coming:google",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "GOOGLE_CALENDAR_CLIENT_SECRET": {
+      "envitem_key": "GOOGLE_CALENDAR_CLIENT_SECRET",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "google",
+      "envitem_provider_id": "coming:google",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "GOOGLE_CALENDAR_ID": {
+      "envitem_key": "GOOGLE_CALENDAR_ID",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "google",
+      "envitem_provider_id": "coming:google",
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "GOOGLE_CALENDAR_REFRESH_TOKEN": {
+      "envitem_key": "GOOGLE_CALENDAR_REFRESH_TOKEN",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "google",
+      "envitem_provider_id": "coming:google",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "GOOGLE_MAPS_API_KEY": {
+      "envitem_key": "GOOGLE_MAPS_API_KEY",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "google",
+      "envitem_provider_id": "coming:google",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "CALENDLY_TOKEN": {
+      "envitem_key": "CALENDLY_TOKEN",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": "coming:calendly",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "PRESENCE_IA_WP_URL": {
+      "envitem_key": "PRESENCE_IA_WP_URL",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "PRESENCE_IA_WP_USER": {
+      "envitem_key": "PRESENCE_IA_WP_USER",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "PRESENCE_IA_WP_PASS": {
+      "envitem_key": "PRESENCE_IA_WP_PASS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": "coming",
+      "envitem_sensitive": true,
+      "envitem_rotation_policy": "quarterly",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": true
+    },
+    "ALERT_EMAILS": {
+      "envitem_key": "ALERT_EMAILS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "ALERT_PHONE": {
+      "envitem_key": "ALERT_PHONE",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "SULYM_ADMIN_EMAIL": {
+      "envitem_key": "SULYM_ADMIN_EMAIL",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "EURKAI_ADMIN_EMAIL": {
+      "envitem_key": "EURKAI_ADMIN_EMAIL",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "on_event",
+      "envitem_rotated_at": "2026-04-02",
+      "envitem_alert_on_expiry": false
+    },
+    "DEBUG": {
+      "envitem_key": "DEBUG",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "NODE_ENV": {
+      "envitem_key": "NODE_ENV",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "LOG_COSTS": {
+      "envitem_key": "LOG_COSTS",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "PYTHON_PATH": {
+      "envitem_key": "PYTHON_PATH",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "SCRIPTS_PATH": {
+      "envitem_key": "SCRIPTS_PATH",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    },
+    "STORAGE_PATH": {
+      "envitem_key": "STORAGE_PATH",
+      "object_schema": "EnvItemSchema",
+      "envitem_status": "active",
+      "envitem_family": "app",
+      "envitem_provider_id": null,
+      "envitem_sensitive": false,
+      "envitem_rotation_policy": "never",
+      "envitem_rotated_at": null,
+      "envitem_alert_on_expiry": false
+    }
+  },
+  "catalog_standard_query_list": {
+    "get_attributes_by_object": {
+      "object_ident": "get_attributes_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_attributes_by_object",
+      "query_returns": "object_attribute_list",
+      "query_source_list": "owned_element_list.attribute_list"
+    },
+    "get_methods_by_object": {
+      "object_ident": "get_methods_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_methods_by_object",
+      "query_returns": "object_method_list",
+      "query_source_list": "owned_element_list.method_list"
+    },
+    "get_rules_by_object": {
+      "object_ident": "get_rules_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_rules_by_object",
+      "query_returns": "object_rule_list",
+      "query_source_list": "owned_element_list.rule_list"
+    },
+    "get_options_by_object": {
+      "object_ident": "get_options_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_options_by_object",
+      "query_returns": "object_option_list",
+      "query_source_list": "owned_element_list.option_list"
+    },
+    "get_relations_by_object": {
+      "object_ident": "get_relations_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_relations_by_object",
+      "query_returns": "object_relation_list",
+      "query_source_list": "owned_element_list.relation_list"
+    },
+    "get_tags_by_object": {
+      "object_ident": "get_tags_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_tags_by_object",
+      "query_returns": "tag_list",
+      "query_source_list": "owned_element_list.base_list.tag_list"
+    },
+    "get_owned_by_object": {
+      "object_ident": "get_owned_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_owned_by_object",
+      "query_returns": "object_elementlist",
+      "query_source_list": "owned_element_list"
+    },
+    "get_inherited_by_object": {
+      "object_ident": "get_inherited_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_inherited_by_object",
+      "query_returns": "object_elementlist",
+      "query_source_list": "parent.owned_element_list"
+    },
+    "get_injected_by_object": {
+      "object_ident": "get_injected_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_injected_by_object",
+      "query_returns": "object_transversal_parameter_list",
+      "query_source_list": "owned_element_list.transversal_parameter_list"
+    },
+    "get_children_by_object": {
+      "object_ident": "get_children_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_children_by_object",
+      "query_returns": "child_list",
+      "query_source_list": "owned_element_list.tree_list.child_list"
+    },
+    "get_parents_by_object": {
+      "object_ident": "get_parents_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_parents_by_object",
+      "query_returns": "parent_list",
+      "query_source_list": "owned_element_list.tree_list.parent_list"
+    },
+    "get_siblings_by_object": {
+      "object_ident": "get_siblings_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_siblings_by_object",
+      "query_returns": "sibling_list",
+      "query_source_list": "owned_element_list.tree_list.sibling_list"
+    },
+    "get_tree_by_object": {
+      "object_ident": "get_tree_by_object",
+      "object_lineage": "Object:Query:StandardQuery",
+      "query_function_name": "get_tree_by_object",
+      "query_returns": "object_tree_list",
+      "query_source_list": "owned_element_list.tree_list"
+    }
+  }
+}

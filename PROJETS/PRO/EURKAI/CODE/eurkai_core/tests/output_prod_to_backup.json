@@ -1,0 +1,75 @@
+{
+  "status": "success",
+  "from": "prod",
+  "to": "backup",
+  "data": {
+    "backup_env": {
+      "deliverable_type": "code",
+      "backup_path": "backup/invoicemodule_0_1_0",
+      "backup_manifest": {
+        "version": "0.1.0",
+        "deliverable_type": "code",
+        "source_prod": "prod/invoicemodule_0_1_0",
+        "archived_artifacts": [
+          "invoice_module.py",
+          "requirements.txt",
+          "README.md"
+        ],
+        "ready_for_github": true,
+        "restorable": true
+      },
+      "archived_artifacts": [
+        "invoice_module.py",
+        "requirements.txt",
+        "README.md"
+      ],
+      "restore_plan": {
+        "mode": "simulated",
+        "steps": [
+          "restore_artifacts",
+          "restore_manifest",
+          "verify_integrity",
+          "install_dependencies",
+          "restore_env_variables",
+          "run_smoke_test"
+        ]
+      },
+      "checks": {
+        "artifacts_ok": true,
+        "prod_ready": true,
+        "restorable": true
+      }
+    }
+  },
+  "meta": {
+    "steps": [
+      {
+        "step": "validate_input",
+        "status": "ok"
+      },
+      {
+        "step": "verify_prod_state",
+        "status": "ok"
+      },
+      {
+        "step": "prepare_backup_config",
+        "status": "ok"
+      },
+      {
+        "step": "simulate_backup",
+        "status": "ok"
+      },
+      {
+        "step": "normalize_output",
+        "status": "ok"
+      },
+      {
+        "step": "assemble_result",
+        "status": "ok"
+      }
+    ],
+    "errors": [],
+    "prod_ready": true,
+    "archived_count": 3
+  }
+}

@@ -1,0 +1,133 @@
+============================================================
+  EURKAI — idea → intake → architect → code
+============================================================
+
+--- idea VAT function ---
+STATUS  : partial
+FILE    : calculates_vat_price_rate.py
+STEPS   : ['architect', 'generate_object', 'generate_code']
+DOMAIN  : finance
+INPUTS  : {'price': 'float', 'rate': 'float'}
+OUTPUTS : {'amount_ht': 'float', 'amount_ttc': 'float', 'rate_applied': 'float'}
+STRUCT  : {"signature": "calculates_vat_price_rate(price, rate)", "returns": "amount_ht", "pure": true}
+CODE    :
+  def calculates_vat_price_rate(price, rate):
+      """
+      [finance] Fonction calculates vat price rate — create a python function that calculates VAT from price and rate. Entrées : price (float), rate (float). Sorties : amount_ht (float), amount_ttc (float).
+      """
+      # price: float
+      # rate: float
+      return None
+
+--- idea user class ---
+STATUS  : partial
+FILE    : represent_user_profile_name.py
+STEPS   : ['architect', 'generate_object', 'generate_code']
+DOMAIN  : email
+INPUTS  : {'name': 'str', 'email': 'str', 'user_id': 'str'}
+OUTPUTS : {'success': 'bool', 'message_id': 'str'}
+STRUCT  : {"attributes": {"name": "str", "email": "str", "user_id": "str"}, "methods": ["__init__", "validate", "to_dict"]}
+CODE    :
+  from typing import Any, Dict
+  
+  
+  class RepresentUserProfileName:
+      """
+      [email] Classe represent user profile name — build a class to represent a user profile with name and email. Entrées : name (str), email (str), user_id (str). Sorties : success (bool), message_id (str).
+      """
+  
+      def __init__(self, name=None, email=None, user_id=None):
+          self.name = name
+          self.email = email
+          self.user_id = user_id
+  
+      def validate(self) -> Dict[str, Any]:
+          errors = []
+          return {"valid": len(errors) == 0, "errors": errors}
+  
+      def to_dict(self) -> Dict[str, Any]:
+          return {k: v for k, v in self.__dict__.items()}
+  
+      @classmethod
+      def test(cls) -> bool:
+          obj = cls()
+          assert "valid" in obj.validate()
+          return True
+
+--- idea email module ---
+STATUS  : partial
+FILE    : sending_outbound_emails.py
+STEPS   : ['architect', 'generate_object', 'generate_code']
+DOMAIN  : generic
+INPUTS  : {}
+OUTPUTS : {'success': 'bool', 'result': 'Any'}
+STRUCT  : {"entry_point": "run(params: dict) -> dict", "params": {}, "returns": {"success": "bool", "result": "Any"}}
+CODE    :
+  """
+  sending_outbound_emails
+  module for sending outbound emails.
+  """
+  
+  
+  def run(params: dict) -> dict:
+      """
+      Point d'entrée principal.
+      """
+      return {"success": True, "result": None, "params": params}
+  
+  
+  if __name__ == "__main__":
+      print(run({}))
+
+--- idea checkout flow ---
+STATUS  : partial
+FILE    : orchestrates_payment_checkout_flow.py
+STEPS   : ['architect', 'generate_object', 'generate_code']
+DOMAIN  : payment
+INPUTS  : {}
+OUTPUTS : {'success': 'bool', 'transaction_id': 'str', 'status': 'str'}
+STRUCT  : {"steps": ["validate_inputs", "process_payment", "return_output"], "context": [], "outputs": ["success", "transaction_id", "status"]}
+CODE    :
+  """
+  orchestrates_payment_checkout_flow
+  [payment] scenario that orchestrates the payment checkout flow.
+  """
+  
+  
+  class OrchestratesPaymentCheckoutFlow:
+      """
+      [payment] scenario that orchestrates the payment checkout flow.
+      """
+  
+      NAME    = "orchestrates_payment_checkout_flow"
+      VERSION = "0.1.0"
+  
+      def run(self, context: dict, catalog: dict) -> dict:
+          return {"success": True, "outputs": {}}
+  
+      @classmethod
+      def test(cls) -> bool:
+          r = cls().run({}, {})
+          assert r.get("success") is True
+          return True
+  
+  
+  if __name__ == "__main__":
+      print(OrchestratesPaymentCheckoutFlow().run({}, {}))
+
+--- structured function ---
+STATUS  : partial
+FILE    : generated.py
+STEPS   : ['architect', 'generate_object', 'generate_code']
+DOMAIN  : —
+INPUTS  : —
+OUTPUTS : —
+STRUCT  : {}
+CODE    :
+  def (a, b):
+      """
+      adds two numbers
+      """
+      # a: float
+      # b: float
+      return None

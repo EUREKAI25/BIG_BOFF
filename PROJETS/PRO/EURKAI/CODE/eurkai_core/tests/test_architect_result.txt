@@ -1,0 +1,35 @@
+============================================================
+  agent_architect — smoke test
+============================================================
+
+✓ Function VAT
+  domain   : finance
+  goal     : [finance] calculates VAT from price and rate. Entrées : price (float), rate (float). Sorties : amount_ht (float), amount_ttc (float).
+  inputs   : {'price': 'float', 'rate': 'float'}
+  outputs  : {'amount_ht': 'float', 'amount_ttc': 'float', 'rate_applied': 'float'}
+  struct   : {"signature": "calculate_vat(price, rate)", "returns": "amount_ht", "pure": true}
+
+✓ Class UserProfile
+  domain   : user
+  goal     : [user] represents a user profile. Entrées : name (str), email (str), user_id (str). Sorties : success (bool), user (dict).
+  inputs   : {'name': 'str', 'email': 'str', 'user_id': 'str'}
+  outputs  : {'success': 'bool', 'user': 'dict'}
+  struct   : {"attributes": {"name": "str", "email": "str", "user_id": "str"}, "methods": ["__init__", "validate", "to_dict"]}
+
+✓ Module email
+  domain   : generic
+  goal     : module for sending outbound emails.
+  inputs   : {}
+  outputs  : {'success': 'bool', 'result': 'Any'}
+  struct   : {"entry_point": "run(params: dict) -> dict", "params": {}, "returns": {"success": "bool", "result": "Any"}}
+
+✓ Scenario checkout
+  domain   : payment
+  goal     : [payment] orchestrates the payment checkout flow.
+  inputs   : {}
+  outputs  : {'success': 'bool', 'transaction_id': 'str', 'status': 'str'}
+  struct   : {"steps": ["validate_inputs", "process_payment", "return_output"], "context": [], "outputs": ["success", "transaction_id", "status"]}
+
+============================================================
+  4/4 passed
+============================================================
