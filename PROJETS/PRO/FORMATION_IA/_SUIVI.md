@@ -107,6 +107,12 @@ training_generator v2.0.0
   - Brand colors : `var(--color-xxx)` | Sémantiques : `var(--sem-xxx)`
 - [x] `training_generator.erk` → contrat design documenté (5 règles)
 
+### 2026-04-29 — Fix sidebar progression
+
+- [x] Bug : sidebar + barre de progression ne se rafraîchissaient pas à la complétion d'une tâche
+  - Cause : `markDone()`, `toggleCheck()`, `setRating()` appelaient `renderContent()` au lieu de `render()`
+  - Fix : 3 appels → `render()` pour inclure `renderSidebar()` + `updateProgressBar()`
+
 ## Prochaines étapes
 
 1. Créer les 3 manifests (offres A, B, C)

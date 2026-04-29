@@ -884,7 +884,7 @@ function copyPrompt(btn, text) {
 
 function setRating(tid, val) {
   state.taskValues[tid] = val;
-  saveState(); renderContent();
+  saveState(); render();
 }
 
 function saveTaskValue(tid, val) {
@@ -903,11 +903,11 @@ function toggleCheck(tid, cid, total) {
   state.taskValues[cid] = !state.taskValues[cid];
   const allDone = Array.from({length: total}, (_,i) => state.taskValues[tid + '_c' + i]).every(Boolean);
   if (allDone) state.tasks[tid] = true;
-  saveState(); renderContent();
+  saveState(); render();
 }
 
 function markDone(tid) {
-  state.tasks[tid] = true; saveState(); renderContent();
+  state.tasks[tid] = true; saveState(); render();
 }
 
 function validateLesson(lessonId, chId) {
