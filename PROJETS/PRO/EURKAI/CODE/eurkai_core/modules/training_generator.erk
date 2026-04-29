@@ -1,0 +1,62 @@
+# EURKAI ERK — training_generator
+# Created: 2026-04-29
+# Source: modules/training_generator.py
+
+Object:Module:training_generator:
+  .name = training_generator
+  .module_type = module
+  .version = "1.0.0"
+  .description = "Génère une structure de formation pédagogique agnostique depuis des logiques abstraites."
+  .inputs = [topic, level, objectives, logics, format, catalog]
+  .outputs = [training]
+  .function_path = modules.training_generator.run
+  .layer = generation
+  .mode = llm_with_deterministic_fallback
+
+Object:Module:training_generator:Input:topic:
+  .type = string
+  .required = true
+  .description = "Sujet de la formation — agnostique, aucune référence métier"
+
+Object:Module:training_generator:Input:level:
+  .type = string
+  .required = false
+  .default = "intermediate"
+  .allowed_values = [beginner, intermediate, advanced]
+
+Object:Module:training_generator:Input:objectives:
+  .type = list
+  .required = false
+  .description = "Liste d'objectifs pédagogiques — injectés depuis le manifest"
+
+Object:Module:training_generator:Input:logics:
+  .type = list
+  .required = false
+  .default = [editorial, technical, operational]
+  .allowed_values = [editorial, technical, strategic, operational, cognitive, collaborative, creative]
+  .description = "Logiques pédagogiques à activer — le manifest choisit lesquelles"
+
+Object:Module:training_generator:Input:format:
+  .type = string
+  .required = false
+  .default = "standard"
+  .allowed_values = [short, standard, long]
+  .description = "short=2 sections/logique | standard=3 | long=5"
+
+Object:Module:training_generator:Input:catalog:
+  .type = dict
+  .required = false
+  .description = "Catalog EURKAI — si présent, active le mode LLM. Absent = mode déterministe."
+
+Object:Module:training_generator:Output:training:
+  .type = dict
+  .schema = TrainingOutput
+
+Object:Schema:TrainingOutput:
+  .fields = [training_title, level, modules, summary, next_steps]
+
+Object:Schema:TrainingModule:
+  .fields = [logic_type, sections]
+
+Object:Schema:TrainingSection:
+  .fields = [title, description, key_concepts, examples, exercises, prompts]
