@@ -1,12 +1,13 @@
 # EURKAI ERK — training_generator
-# Created: 2026-04-29
+# Version: 2.0.0
+# Updated: 2026-04-29
 # Source: modules/training_generator.py
 
 Object:Module:training_generator:
   .name = training_generator
   .module_type = module
-  .version = "1.0.0"
-  .description = "Génère une structure de formation pédagogique agnostique depuis des logiques abstraites."
+  .version = "2.0.0"
+  .description = "Génère un parcours de formation interactif structuré en chapitres > leçons > tâches."
   .inputs = [topic, level, objectives, logics, format, catalog]
   .outputs = [training]
   .function_path = modules.training_generator.run
@@ -27,36 +28,61 @@ Object:Module:training_generator:Input:level:
 Object:Module:training_generator:Input:objectives:
   .type = list
   .required = false
-  .description = "Liste d'objectifs pédagogiques — injectés depuis le manifest"
+  .description = "Objectifs pédagogiques — injectés depuis le manifest"
 
 Object:Module:training_generator:Input:logics:
   .type = list
   .required = false
   .default = [editorial, technical, operational]
   .allowed_values = [editorial, technical, strategic, operational, cognitive, collaborative, creative]
-  .description = "Logiques pédagogiques à activer — le manifest choisit lesquelles"
+  .description = "1 logic = 1 chapter. Le manifest choisit les logiques."
 
 Object:Module:training_generator:Input:format:
   .type = string
   .required = false
   .default = "standard"
   .allowed_values = [short, standard, long]
-  .description = "short=2 sections/logique | standard=3 | long=5"
+  .description = "short=2 leçons/ch | standard=3 | long=5"
 
 Object:Module:training_generator:Input:catalog:
   .type = dict
   .required = false
-  .description = "Catalog EURKAI — si présent, active le mode LLM. Absent = mode déterministe."
+  .description = "Catalog EURKAI — présent = mode LLM, absent = mode déterministe"
 
 Object:Module:training_generator:Output:training:
   .type = dict
-  .schema = TrainingOutput
+  .schema = InteractiveTrainingStructure
 
-Object:Schema:TrainingOutput:
-  .fields = [training_title, level, modules, summary, next_steps]
+Object:Schema:InteractiveTrainingStructure:
+  .fields = [training_title, level, estimated_duration, progression, chapters, final_validation, certificate_data]
 
-Object:Schema:TrainingModule:
-  .fields = [logic_type, sections]
+Object:Schema:Chapter:
+  .fields = [chapter_id, order, title, logic_type, objective, status, estimated_duration, lessons, chapter_validation]
+  .status_values = [available, locked, completed]
 
-Object:Schema:TrainingSection:
-  .fields = [title, description, key_concepts, examples, exercises, prompts]
+Object:Schema:Lesson:
+  .fields = [lesson_id, order, title, objective, status, content_blocks, interactive_tasks, completion_rules]
+  .status_values = [available, locked, completed]
+
+Object:Schema:ContentBlock:
+  .fields = [type, title, content]
+  .type_values = [theory, example, method, warning, prompt, checklist]
+
+Object:Schema:InteractiveTask:
+  .fields = [task_id, type, instruction, expected_user_action, validation_mode, success_criteria]
+  .type_values = [question, exercise, prompt_practice, self_assessment, checklist]
+  .validation_mode_values = [manual, self_check]
+
+Object:Schema:CompletionRules:
+  .fields = [required_tasks, minimum_score, can_skip]
+
+Object:Schema:ChapterValidation:
+  .fields = [type, instructions, success_criteria]
+  .type_values = [quiz, practical_case, checklist, reflection]
+
+Object:Schema:FinalValidation:
+  .fields = [type, instructions, success_criteria]
+  .type_values = [practical_case, quiz, action_plan]
+
+Object:Schema:CertificateData:
+  .fields = [enabled, requires_completion, tracked_items]

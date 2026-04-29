@@ -3,246 +3,774 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Formation : Utiliser l'IA dans son travail quotidien</title>
+<title>Formation IA — Parcours interactif</title>
 <style>
-  :root {
-    --primary: #1a1a2e;
-    --accent: #e94560;
-    --bg: #f8f9fa;
-    --card: #ffffff;
-    --text: #2d3436;
-    --muted: #636e72;
-    --border: #e0e0e0;
-    --logic: #0f3460;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          background: var(--bg); color: var(--text); line-height: 1.6; }
-  header {
-    background: var(--primary); color: white; padding: 2.5rem 2rem;
-    border-bottom: 4px solid var(--accent);
-  }
-  header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .5rem; }
-  .meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .75rem; }
-  .badge {
-    display: inline-block; padding: .25rem .75rem; border-radius: 20px;
-    font-size: .8rem; font-weight: 600;
-  }
-  .badge-level { background: var(--accent); color: white; }
-  .badge-mode  { background: rgba(255,255,255,.15); color: white; }
-  .badge-eurkai { background: #16213e; color: #e94560; border: 1px solid #e94560; }
-  main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
-  .summary-card {
-    background: var(--card); border-radius: 8px; padding: 1.5rem;
-    border-left: 4px solid var(--accent); margin-bottom: 2rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  }
-  .summary-card h2 { font-size: 1rem; color: var(--muted); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .05em; }
-  .module {
-    background: var(--card); border-radius: 8px; margin-bottom: 2rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden;
-  }
-  .module-header {
-    background: var(--logic); padding: .75rem 1.5rem;
-  }
-  .logic-badge {
-    display: inline-block; background: var(--accent); color: white;
-    padding: .2rem .8rem; border-radius: 20px; font-size: .85rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .05em;
-  }
-  .section {
-    padding: 1.5rem; border-bottom: 1px solid var(--border);
-  }
-  .section:last-child { border-bottom: none; }
-  .section h3 { font-size: 1.1rem; color: var(--primary); margin-bottom: .5rem; }
-  .desc { color: var(--muted); margin-bottom: 1rem; }
-  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-  h4 { font-size: .85rem; text-transform: uppercase; letter-spacing: .05em;
-        color: var(--accent); margin-bottom: .4rem; }
-  ul { padding-left: 1.2rem; }
-  li { margin-bottom: .3rem; font-size: .9rem; }
-  .prompts { margin-top: 1rem; background: #f0f4ff; border-radius: 6px; padding: 1rem; }
-  .prompts code { font-size: .85rem; color: var(--logic); background: #e8eeff;
-                   padding: .1rem .4rem; border-radius: 3px; }
-  .next-steps {
-    background: var(--card); border-radius: 8px; padding: 1.5rem;
-    border-left: 4px solid #27ae60; margin-top: 2rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  }
-  .next-steps h2 { font-size: 1rem; color: var(--muted); margin-bottom: .75rem;
-                    text-transform: uppercase; letter-spacing: .05em; }
-  footer {
-    text-align: center; padding: 2rem; color: var(--muted); font-size: .8rem;
-    border-top: 1px solid var(--border); margin-top: 3rem;
-  }
+:root {
+  --navy:    #1a1a2e;
+  --navy2:   #16213e;
+  --accent:  #e94560;
+  --green:   #27ae60;
+  --orange:  #f39c12;
+  --purple:  #8e44ad;
+  --teal:    #16a085;
+  --blue:    #2980b9;
+  --bg:      #f0f2f5;
+  --card:    #ffffff;
+  --border:  #e0e3e8;
+  --text:    #2d3436;
+  --muted:   #636e72;
+  --sidebar-w: 280px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+       background: var(--bg); color: var(--text); }
+
+/* ── Header ── */
+#header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--navy); color: white;
+  display: flex; align-items: center; gap: 1.5rem;
+  padding: .8rem 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+#header-title { font-size: 1rem; font-weight: 700; flex: 1; white-space: nowrap;
+                overflow: hidden; text-overflow: ellipsis; }
+#header-progress { display: flex; align-items: center; gap: .75rem; min-width: 220px; }
+#progress-bar-wrap { flex: 1; height: 8px; background: rgba(255,255,255,.15);
+                     border-radius: 4px; overflow: hidden; }
+#progress-bar-fill { height: 100%; background: var(--accent); border-radius: 4px;
+                     transition: width .4s ease; }
+#progress-text { font-size: .8rem; color: rgba(255,255,255,.8); white-space: nowrap; }
+
+/* ── Layout ── */
+#layout { display: flex; min-height: 100vh; padding-top: 52px; }
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w); flex-shrink: 0;
+  background: var(--navy2); color: white;
+  position: fixed; top: 52px; bottom: 0; left: 0;
+  overflow-y: auto; padding: 1rem 0;
+}
+#sidebar h2 { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
+              color: rgba(255,255,255,.4); padding: .5rem 1.2rem .25rem; }
+.ch-item {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .65rem 1.2rem; cursor: pointer;
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.ch-item:hover { background: rgba(255,255,255,.06); }
+.ch-item.active { background: rgba(233,69,96,.15); border-left-color: var(--accent); }
+.ch-item.completed .ch-icon { color: var(--green); }
+.ch-item.locked { opacity: .45; cursor: not-allowed; }
+.ch-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+.ch-label { font-size: .85rem; line-height: 1.3; }
+.ch-label small { display: block; font-size: .72rem; color: rgba(255,255,255,.45); margin-top: .15rem; }
+.sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,.1); margin-top: .5rem; }
+.sidebar-footer .stat { font-size: .78rem; color: rgba(255,255,255,.5); margin-bottom: .3rem; }
+
+/* ── Main content ── */
+#main { margin-left: var(--sidebar-w); flex: 1; padding: 2rem; }
+
+/* ── Chapter view ── */
+.ch-header { margin-bottom: 1.5rem; }
+.ch-header h1 { font-size: 1.4rem; color: var(--navy); margin-bottom: .4rem; }
+.ch-header .objective { color: var(--muted); font-size: .95rem; }
+.ch-header .meta { display: flex; gap: .75rem; margin-top: .75rem; flex-wrap: wrap; }
+.badge { display: inline-block; padding: .2rem .65rem; border-radius: 20px;
+         font-size: .75rem; font-weight: 600; }
+.badge-logic { background: var(--navy); color: white; }
+.badge-duration { background: rgba(0,0,0,.06); color: var(--muted); }
+.badge-status-available { background: #e8f5e9; color: var(--green); }
+.badge-status-locked { background: #f5f5f5; color: #bbb; }
+.badge-status-completed { background: #e8f5e9; color: var(--green); }
+
+/* ── Lesson card ── */
+.lesson-card {
+  background: var(--card); border-radius: 10px; margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden;
+}
+.lesson-header {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1rem 1.25rem; cursor: pointer; user-select: none;
+  transition: background .15s;
+}
+.lesson-header:hover { background: #fafafa; }
+.lesson-header.locked { cursor: not-allowed; opacity: .5; }
+.lesson-status-icon { font-size: 1.1rem; width: 24px; text-align: center; flex-shrink: 0; }
+.lesson-title-wrap { flex: 1; }
+.lesson-title { font-size: .95rem; font-weight: 600; color: var(--navy); }
+.lesson-obj { font-size: .8rem; color: var(--muted); margin-top: .1rem; }
+.lesson-toggle { color: var(--muted); transition: transform .2s; font-size: .8rem; }
+.lesson-toggle.open { transform: rotate(180deg); }
+.lesson-body { padding: 0 1.25rem 1.25rem; border-top: 1px solid var(--border); }
+
+/* ── Content blocks ── */
+.content-block {
+  border-radius: 8px; padding: .9rem 1rem; margin: .85rem 0;
+  border-left: 4px solid transparent;
+}
+.cb-theory   { background: #e8f4fd; border-color: var(--blue); }
+.cb-example  { background: #e8f8f1; border-color: var(--green); }
+.cb-method   { background: #f3e8fd; border-color: var(--purple); }
+.cb-warning  { background: #fef9e7; border-color: var(--orange); }
+.cb-prompt   { background: #1e1e2e; border-color: #555; color: #cdd3de; }
+.cb-checklist { background: #e8f5f4; border-color: var(--teal); }
+.cb-label {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  opacity: .65; margin-bottom: .35rem;
+}
+.cb-theory .cb-label   { color: var(--blue); }
+.cb-example .cb-label  { color: var(--green); }
+.cb-method .cb-label   { color: var(--purple); }
+.cb-warning .cb-label  { color: var(--orange); }
+.cb-prompt .cb-label   { color: #7a8399; }
+.cb-checklist .cb-label { color: var(--teal); }
+.cb-title { font-size: .9rem; font-weight: 700; margin-bottom: .4rem; }
+.cb-prompt .cb-title { color: #e2e8f0; }
+.cb-content { font-size: .88rem; line-height: 1.65; white-space: pre-wrap; }
+.cb-prompt .cb-content { color: #a8b3cf; font-family: 'SF Mono', monospace; font-size: .82rem; }
+.copy-btn {
+  margin-top: .5rem; padding: .3rem .75rem; background: #3a3a5c; border: none;
+  color: #a8b3cf; border-radius: 5px; cursor: pointer; font-size: .78rem;
+}
+.copy-btn:hover { background: #4a4a6c; }
+
+/* ── Interactive tasks ── */
+.task-block {
+  background: #f8f9fa; border-radius: 8px; padding: 1rem;
+  margin: .85rem 0; border: 1px solid var(--border);
+}
+.task-block.completed { border-color: var(--green); background: #f0faf4; }
+.task-type-badge {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  padding: .15rem .5rem; border-radius: 20px; margin-bottom: .5rem; display: inline-block;
+}
+.tt-question       { background: #dbeafe; color: #1d4ed8; }
+.tt-exercise       { background: #ede9fe; color: #7c3aed; }
+.tt-prompt_practice { background: #1e1e2e; color: #a78bfa; }
+.tt-self_assessment { background: #fef3c7; color: #d97706; }
+.tt-checklist      { background: #d1fae5; color: #059669; }
+.task-instruction { font-size: .88rem; margin-bottom: .75rem; line-height: 1.5; }
+.task-input {
+  width: 100%; padding: .6rem .75rem; border: 1px solid var(--border);
+  border-radius: 6px; font-size: .87rem; resize: vertical; min-height: 80px;
+  font-family: inherit; background: white;
+}
+.task-input:focus { outline: none; border-color: var(--accent); }
+.rating-wrap { display: flex; gap: .5rem; margin: .5rem 0; }
+.rating-btn {
+  width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--border);
+  background: white; cursor: pointer; font-size: .9rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.rating-btn:hover { border-color: var(--accent); color: var(--accent); }
+.rating-btn.selected { background: var(--accent); border-color: var(--accent); color: white; }
+.task-checklist-items { list-style: none; margin: .5rem 0; }
+.task-checklist-items li {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .3rem 0; font-size: .88rem; cursor: pointer;
+}
+.task-checklist-items li input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; }
+.task-checklist-items li.checked { color: var(--green); text-decoration: line-through; opacity: .7; }
+.done-btn {
+  margin-top: .75rem; padding: .5rem 1.25rem;
+  background: var(--navy); color: white; border: none;
+  border-radius: 6px; cursor: pointer; font-size: .85rem;
+  transition: background .15s;
+}
+.done-btn:hover { background: var(--accent); }
+.done-btn:disabled { background: var(--green); cursor: default; }
+.task-done-label {
+  color: var(--green); font-size: .85rem; font-weight: 600;
+  display: flex; align-items: center; gap: .4rem;
+}
+.success-criteria { margin-top: .75rem; font-size: .8rem; color: var(--muted); }
+.success-criteria ul { padding-left: 1.2rem; margin-top: .25rem; }
+.success-criteria li { margin-bottom: .2rem; }
+
+/* ── Lesson completion / chapter validation ── */
+.section-divider {
+  border: none; border-top: 1px dashed var(--border); margin: 1.25rem 0;
+}
+.validate-lesson-btn, .validate-chapter-btn {
+  display: block; width: 100%; padding: .75rem 1rem;
+  background: var(--navy2); color: white; border: none;
+  border-radius: 8px; cursor: pointer; font-size: .9rem; font-weight: 600;
+  text-align: center; margin-top: 1rem; transition: background .15s;
+}
+.validate-lesson-btn:hover { background: var(--accent); }
+.validate-chapter-btn { background: var(--accent); font-size: 1rem; padding: 1rem; }
+.validate-chapter-btn:hover { background: #c0392b; }
+.validate-chapter-btn:disabled { background: var(--green); cursor: default; }
+.lesson-completed-banner {
+  background: #e8f8f1; border: 1px solid var(--green); border-radius: 8px;
+  padding: .75rem 1rem; color: var(--green); font-weight: 600; font-size: .9rem;
+  display: flex; align-items: center; gap: .5rem; margin-top: 1rem;
+}
+.chapter-validated-banner {
+  background: #e8f8f1; border: 2px solid var(--green); border-radius: 10px;
+  padding: 1rem 1.25rem; color: var(--green); font-weight: 700;
+  display: flex; align-items: center; gap: .75rem; margin-top: 1.25rem;
+}
+
+/* ── Chapter validation form ── */
+.ch-validation-card {
+  background: var(--card); border-radius: 10px; padding: 1.5rem;
+  border: 2px solid var(--navy2); margin-top: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.ch-validation-card h3 { color: var(--navy); margin-bottom: .5rem; }
+.ch-validation-card .val-type {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase;
+  color: var(--accent); letter-spacing: .07em; margin-bottom: .75rem;
+}
+.ch-validation-card .val-instructions {
+  font-size: .9rem; color: var(--text); margin-bottom: .75rem; line-height: 1.6;
+}
+.ch-validation-card .val-criteria { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
+.ch-validation-card .val-criteria ul { padding-left: 1.2rem; margin-top: .3rem; }
+.ch-validation-card .val-criteria li { margin-bottom: .2rem; }
+
+/* ── Final validation ── */
+.final-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  color: white; border-radius: 12px; padding: 2rem; margin-top: 2rem;
+}
+.final-card h2 { font-size: 1.3rem; margin-bottom: .5rem; }
+.final-card p  { opacity: .8; font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; }
+.final-card textarea {
+  width: 100%; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px; color: white; padding: .75rem; font-size: .88rem;
+  resize: vertical; min-height: 120px; font-family: inherit;
+}
+.final-card textarea::placeholder { color: rgba(255,255,255,.4); }
+.final-validate-btn {
+  margin-top: 1rem; padding: .85rem 2rem; background: var(--accent); color: white;
+  border: none; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 700;
+  transition: background .15s;
+}
+.final-validate-btn:hover { background: #c0392b; }
+.final-validate-btn:disabled { background: var(--green); cursor: default; }
+
+/* ── Certificate ── */
+#certificate {
+  display: none; background: var(--card); border-radius: 12px;
+  border: 3px solid var(--accent); padding: 2.5rem; text-align: center;
+  margin-top: 2rem; box-shadow: 0 4px 20px rgba(233,69,96,.15);
+}
+#certificate.show { display: block; }
+#certificate .cert-icon { font-size: 3rem; margin-bottom: .75rem; }
+#certificate h2 { font-size: 1.6rem; color: var(--navy); margin-bottom: .5rem; }
+#certificate p { color: var(--muted); margin-bottom: .25rem; }
+#certificate .cert-title { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin: .75rem 0; }
+#certificate .cert-date { font-size: .85rem; color: var(--muted); }
+
+/* ── Empty state ── */
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.empty-state h2 { font-size: 1.2rem; margin-bottom: .5rem; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  #sidebar { transform: translateX(-100%); transition: transform .3s; z-index: 50; width: 260px; }
+  #sidebar.open { transform: translateX(0); --sidebar-w: 260px; }
+  #main { margin-left: 0; padding: 1rem; }
+  #menu-btn { display: flex !important; }
+}
+#menu-btn { display: none; background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
 </style>
 </head>
 <body>
-<header>
-  <h1>Formation : Utiliser l'IA dans son travail quotidien</h1>
-  <div class="meta">
-    <span class="badge badge-level">Débutant</span>
-    <span class="badge badge-mode">Mode : Déterministe (template)</span>
-    <span class="badge badge-eurkai">Module EURKAI · training_generator v1.0.0</span>
+
+<!-- Header -->
+<div id="header">
+  <button id="menu-btn" onclick="toggleSidebar()">☰</button>
+  <div id="header-title">Formation</div>
+  <div id="header-progress">
+    <div id="progress-bar-wrap"><div id="progress-bar-fill" style="width:0%"></div></div>
+    <div id="progress-text">0%</div>
   </div>
-</header>
-<main>
-  <div class="summary-card">
-    <h2>Résumé</h2>
-    <p>Cette formation couvre Utiliser l'IA dans son travail quotidien selon 4 logiques pédagogiques (editorial, technical, operational, strategic). Elle s'adresse à un niveau beginner et vise à Comprendre ce qu'est l'IA et ce qu'elle peut faire concrètement.</p>
+</div>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <h2>Chapitres</h2>
+  <div id="ch-list"></div>
+  <div class="sidebar-footer">
+    <div class="stat" id="stat-tasks"></div>
+    <div class="stat" id="stat-duration"></div>
   </div>
-  
-        <div class="module">
-          <div class="module-header">
-            <span class="logic-badge">editorial</span>
-          </div>
-          
-            <div class="section">
-              <h3>Comprendre Utiliser l'IA dans son travail quotidien — les fondamentaux</h3>
-              <p class="desc">Introduction aux concepts clés de Utiliser l'IA dans son travail quotidien. Cette section pose les bases conceptuelles nécessaires pour progresser.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Définition et périmètre</li><li>Pourquoi c'est pertinent aujourd'hui</li><li>Mythes et réalités</li><li>Potentiel et limites</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Situation A : comprendre un concept complexe rapidement</li><li>Situation B : expliquer un sujet à un non-spécialiste</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>En 3 phrases, reformuler ce que vous avez compris de ce sujet</li><li>Identifier 2 idées reçues et les corriger</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Explique-moi Utiliser l'IA dans son travail quotidien comme si j'étais débutant, en 5 points clés</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Vocabulaire et repères essentiels</h3>
-              <p class="desc">Les termes et concepts incontournables pour parler de Utiliser l'IA dans son travail quotidien avec précision et confiance.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Lexique de base</li><li>Distinctions importantes</li><li>Repères temporels</li><li>Sources fiables</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Utiliser le bon vocabulaire dans un email professionnel</li><li>Comprendre une documentation sans formation préalable</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Créer un glossaire personnel de 10 termes</li><li>Reformuler 3 définitions dans vos propres mots</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Définis les 5 termes les plus importants liés à Utiliser l'IA dans son travail quotidien</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Communiquer efficacement autour de Utiliser l'IA dans son travail quotidien</h3>
-              <p class="desc">Savoir transmettre, expliquer et argumenter sur ce sujet dans un contexte professionnel.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Clarté du message</li><li>Adaptation au public</li><li>Argumentation structurée</li><li>Gestion des objections</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Présenter un sujet technique à une direction non spécialisée</li><li>Rédiger une synthèse claire et concise</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Préparer une explication de 2 minutes sur ce sujet</li><li>Rédiger un email de synthèse sur ce que vous avez appris</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Aide-moi à rédiger une explication simple de ce concept pour un collègue non spécialiste</code></li></ul></div>
-            </div>
-        </div>
-        <div class="module">
-          <div class="module-header">
-            <span class="logic-badge">technical</span>
-          </div>
-          
-            <div class="section">
-              <h3>Les outils et méthodes associés à Utiliser l'IA dans son travail quotidien</h3>
-              <p class="desc">Panorama des ressources techniques disponibles et comment les utiliser efficacement.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Catégories d'outils</li><li>Critères de choix</li><li>Interfaces et prise en main</li><li>Bonnes pratiques d'usage</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Choisir l'outil adapté à un besoin précis</li><li>Comparer deux solutions avant de décider</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Tester un outil pendant 15 minutes et noter vos observations</li><li>Lister les outils que vous utilisez déjà et identifier les lacunes</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Quels sont les meilleurs outils pour Utiliser l'IA dans son travail quotidien ? Compare-les selon critères : facilité, coût, performance</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Mise en place technique — premiers pas</h3>
-              <p class="desc">Comment configurer, paramétrer et démarrer concrètement, sans technicité excessive.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Configuration initiale</li><li>Paramètres essentiels</li><li>Premiers tests</li><li>Pièges courants</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Première utilisation d'un outil en moins de 30 minutes</li><li>Éviter les erreurs de débutant les plus fréquentes</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Suivre un tutoriel de démarrage rapide</li><li>Réaliser une première tâche concrète avec l'outil choisi</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Guide-moi pas à pas pour commencer à utiliser [outil] pour [objectif précis]</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Optimisation et montée en compétence</h3>
-              <p class="desc">Aller au-delà des fonctions de base pour gagner en efficacité et en maîtrise.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Fonctions avancées</li><li>Raccourcis et astuces</li><li>Intégration dans son flux de travail</li><li>Automatisation simple</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Réduire de 50% le temps passé sur une tâche récurrente</li><li>Créer un modèle réutilisable</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Identifier une tâche répétitive et automatiser une étape</li><li>Partager une astuce découverte avec un collègue</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Donne-moi 5 astuces avancées pour [outil] que la plupart des utilisateurs ne connaissent pas</code></li></ul></div>
-            </div>
-        </div>
-        <div class="module">
-          <div class="module-header">
-            <span class="logic-badge">operational</span>
-          </div>
-          
-            <div class="section">
-              <h3>Intégrer Utiliser l'IA dans son travail quotidien dans son quotidien professionnel</h3>
-              <p class="desc">Comment passer de la théorie à la pratique, immédiatement et sans friction.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Quick wins</li><li>Intégration progressive</li><li>Gestion du changement personnel</li><li>Habitudes durables</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Commencer par une seule tâche et l'améliorer progressivement</li><li>Remplacer une habitude existante par une nouvelle plus efficace</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Identifier la première tâche de votre quotidien où vous allez appliquer ce que vous avez appris</li><li>Planifier 3 utilisations concrètes cette semaine</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Comment puis-je intégrer Utiliser l'IA dans son travail quotidien dans mes tâches quotidiennes de façon simple et progressive ?</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Créer ses propres workflows et templates</h3>
-              <p class="desc">Construire des processus reproductibles pour gagner en efficacité sur le long terme.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Standardisation</li><li>Templates réutilisables</li><li>Documentation minimale</li><li>Amélioration continue</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Créer un template pour un rapport hebdomadaire</li><li>Documenter un processus en 5 étapes pour le partager</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Créer un template pour une tâche que vous faites au moins 1x/semaine</li><li>Documenter votre processus actuel pour le premier point d'amélioration identifié</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Aide-moi à créer un template réutilisable pour [tâche récurrente précise]</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Mesurer et améliorer en continu</h3>
-              <p class="desc">Mettre en place des boucles de feedback simples pour progresser régulièrement.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Mesure de l'efficacité</li><li>Rétrospective personnelle</li><li>Ajustements itératifs</li><li>Partage d'expérience</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Bilan hebdomadaire en 10 minutes</li><li>Identifier ce qui fonctionne vs ce qui freine</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Faire un bilan après 1 semaine de pratique : qu'est-ce qui a bien fonctionné ?</li><li>Identifier le 1 ajustement qui aurait le plus d'impact</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Aide-moi à analyser ce qui a fonctionné et ce qui n'a pas fonctionné cette semaine dans mon utilisation de [sujet]</code></li></ul></div>
-            </div>
-        </div>
-        <div class="module">
-          <div class="module-header">
-            <span class="logic-badge">strategic</span>
-          </div>
-          
-            <div class="section">
-              <h3>Enjeux et opportunités de Utiliser l'IA dans son travail quotidien pour votre organisation</h3>
-              <p class="desc">Comprendre pourquoi ce sujet est stratégique aujourd'hui et quelles opportunités il représente.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Tendances de fond</li><li>Avantages concurrentiels</li><li>Risques à ne pas ignorer</li><li>Horizon temporel</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Organisation A ayant pris de l'avance — résultats concrets</li><li>Organisation B ayant tardé — conséquences</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Identifier 3 opportunités concrètes pour votre contexte</li><li>Évaluer votre niveau de maturité actuel sur ce sujet</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Quels sont les enjeux stratégiques de Utiliser l'IA dans son travail quotidien pour une organisation comme la mienne en 2026 ?</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Prioriser et décider : comment arbitrer</h3>
-              <p class="desc">Méthodes pour prendre de bonnes décisions rapidement dans un environnement incertain.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Critères de priorisation</li><li>Matrice effort/impact</li><li>Décision avec information partielle</li><li>Test & apprentissage</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Choisir entre deux options sans toutes les données</li><li>Lancer un test à moindre coût avant d'investir</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Appliquer la matrice effort/impact à 5 actions possibles</li><li>Définir les 3 critères qui guident vos décisions sur ce sujet</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Aide-moi à prioriser ces actions selon leur impact potentiel et leur facilité de mise en œuvre : [liste]</code></li></ul></div>
-            </div>
-            <div class="section">
-              <h3>Construire un plan d'action réaliste</h3>
-              <p class="desc">Transformer une intention stratégique en étapes concrètes, planifiées et mesurables.</p>
-              <div class="cols">
-                <div><h4>Concepts clés</h4><ul><li>Objectifs SMART</li><li>Jalons et livrables</li><li>Indicateurs de succès</li><li>Révision et adaptation</li></ul></div>
-                <div><h4>Exemples</h4><ul><li>Plan 90 jours pour lancer une première initiative</li><li>Définir un succès mesurable pour éviter l'ambiguïté</li></ul></div>
-                <div><h4>Exercices</h4><ul><li>Rédiger un plan d'action sur 30/60/90 jours</li><li>Définir 3 indicateurs qui confirmeront que vous avancez dans le bon sens</li></ul></div>
-              </div>
-              <div class="prompts"><h4>Prompts</h4><ul><li><code>Génère un plan d'action sur 90 jours pour [objectif précis], avec jalons et indicateurs de succès</code></li></ul></div>
-            </div>
-        </div>
-  <div class="next-steps">
-    <h2>Prochaines étapes</h2>
-    <ul><li>Mettre en pratique sur un cas concret issu de votre contexte</li><li>Identifier 2 à 3 situations récurrentes où appliquer ce qui a été appris</li><li>Partager les apprentissages avec son équipe</li></ul>
-  </div>
+</nav>
+
+<!-- Main -->
+<main id="main">
+  <div id="content"></div>
 </main>
-<footer>
-  Généré par training_generator · Module EURKAI · 2026-04-29
-</footer>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const data = {"training_title": "Formation : Utiliser l'IA dans son travail quotidien", "level": "beginner", "estimated_duration": "2h30", "progression": {"total_chapters": 4, "total_lessons": 12, "total_tasks": 24, "completion_status": "not_started"}, "chapters": [{"chapter_id": "ch_1", "order": 1, "title": "Comprendre et communiquer sur Utiliser l'IA dans son travail quotidien", "logic_type": "editorial", "objective": "Maîtriser les fondamentaux de Utiliser l'IA dans son travail quotidien et savoir l'expliquer clairement.", "status": "available", "estimated_duration": "45min", "lessons": [{"lesson_id": "ls_1_1", "order": 1, "title": "Les fondamentaux — ce que vous devez savoir", "objective": "Comprendre ce qu'est Utiliser l'IA dans son travail quotidien, ce que ça change réellement, et corriger les idées reçues.", "status": "available", "content_blocks": [{"type": "theory", "title": "Qu'est-ce que Utiliser l'IA dans son travail quotidien ?", "content": "Utiliser l'IA dans son travail quotidien désigne un ensemble de méthodes, d'outils et de pratiques qui transforment la façon de travailler. L'essentiel : c'est un moyen, pas une fin. Ce qui compte, c'est ce que ça permet de faire concrètement."}, {"type": "example", "title": "Ce que ça change en pratique", "content": "Avec Utiliser l'IA dans son travail quotidien, une tâche qui prenait 1h peut être réduite à 10 minutes. L'exemple le plus universel : rédiger un document depuis une structure générée automatiquement, plutôt que depuis une page blanche."}, {"type": "warning", "title": "3 idées reçues à corriger maintenant", "content": "1. « C'est réservé aux experts » — FAUX : les outils actuels sont accessibles à tous.\n2. « Ça va remplacer mon travail » — NUANCÉ : certaines tâches, pas votre valeur ajoutée.\n3. « C'est trop long à apprendre » — FAUX : opérationnel en quelques heures."}], "interactive_tasks": [{"type": "self_assessment", "instruction": "Avant de continuer, évaluez votre niveau de connaissance actuel sur ce sujet (1 = débutant, 5 = expert).", "expected_user_action": "Choisir une note de 1 à 5", "validation_mode": "self_check", "success_criteria": ["Votre point de départ est noté"], "task_id": "task_1_1_1"}, {"type": "question", "instruction": "En 2-3 phrases, expliquez ce qu'est Utiliser l'IA dans son travail quotidien comme si vous deviez l'expliquer à un collègue non technique.", "expected_user_action": "Rédiger une explication simple, sans jargon", "validation_mode": "self_check", "success_criteria": ["Explication compréhensible sans connaissance préalable", "Pas de jargon inutile"], "task_id": "task_1_1_2"}], "completion_rules": {"required_tasks": ["task_1_1_1", "task_1_1_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_1_2", "order": 2, "title": "Expliquer et convaincre — construire son discours", "objective": "Savoir présenter Utiliser l'IA dans son travail quotidien clairement à différents interlocuteurs.", "status": "locked", "content_blocks": [{"type": "method", "title": "La structure en 3 temps pour tout expliquer", "content": "1. CONTEXTE : pourquoi ce sujet est pertinent maintenant ?\n2. CONCRET : qu'est-ce que ça change dans la pratique ?\n3. ACTION : qu'est-ce qu'on fait avec ça ?\n\nCette structure fonctionne pour 2 minutes comme pour 30 minutes."}, {"type": "prompt", "title": "Prompt à utiliser", "content": "Aide-moi à préparer une explication de 2 minutes sur Utiliser l'IA dans son travail quotidien pour [mon directeur / mon équipe / un client]. Je veux mettre en avant les bénéfices concrets sans jargon technique."}], "interactive_tasks": [{"type": "prompt_practice", "instruction": "Utilisez le prompt ci-dessus, adaptez-le à votre contexte, et notez la présentation générée.", "expected_user_action": "Lancer le prompt, lire le résultat, l'ajuster si besoin", "validation_mode": "self_check", "success_criteria": ["Présentation générée", "Dure moins de 2 minutes à lire"], "task_id": "task_1_2_1"}, {"type": "exercise", "instruction": "Préparez un retour d'expérience de 5 minutes à partager avec votre équipe après cette formation.", "expected_user_action": "Rédiger les 3 points clés à transmettre", "validation_mode": "self_check", "success_criteria": ["3 points identifiés", "Chaque point illustré par un exemple"], "task_id": "task_1_2_2"}], "completion_rules": {"required_tasks": ["task_1_2_1", "task_1_2_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_1_3", "order": 3, "title": "Synthétiser et documenter ses apprentissages", "objective": "Créer une ressource personnelle réutilisable.", "status": "locked", "content_blocks": [{"type": "method", "title": "La note de synthèse en 5 éléments", "content": "1. Définition en 1 phrase\n2. 3 bénéfices concrets\n3. 2 limites ou points de vigilance\n4. 1 exemple d'application dans votre contexte\n5. Prochaine étape recommandée\n\nFormat idéal : une page max, relisible en 3 minutes."}, {"type": "checklist", "title": "Checklist de validation", "content": "✓ J'ai défini le sujet en mes propres mots\n✓ J'ai identifié au moins 2 bénéfices pour mon contexte\n✓ J'ai noté une limite ou un point de vigilance\n✓ J'ai un exemple concret à partager\n✓ Je sais quelle est ma prochaine action"}], "interactive_tasks": [{"type": "exercise", "instruction": "Rédigez votre synthèse personnelle sur Utiliser l'IA dans son travail quotidien en suivant la structure en 5 éléments.", "expected_user_action": "Créer une fiche synthèse en moins d'une page", "validation_mode": "self_check", "success_criteria": ["Synthèse rédigée", "Les 5 éléments sont présents"], "task_id": "task_1_3_1"}, {"type": "self_assessment", "instruction": "Êtes-vous maintenant à l'aise pour expliquer ce sujet à un collègue ?", "expected_user_action": "Évaluer honnêtement votre niveau de confiance sur 5", "validation_mode": "self_check", "success_criteria": ["Progression évaluée"], "task_id": "task_1_3_2"}], "completion_rules": {"required_tasks": ["task_1_3_1", "task_1_3_2"], "minimum_score": null, "can_skip": false}}], "chapter_validation": {"type": "reflection", "instructions": "En quoi Utiliser l'IA dans son travail quotidien change-t-il quelque chose pour vous personnellement ou professionnellement ? Donnez un exemple concret en 5-10 phrases.", "success_criteria": ["Réponse rédigée", "Au moins un exemple concret", "Lien avec votre contexte personnel ou professionnel"]}}, {"chapter_id": "ch_2", "order": 2, "title": "Maîtriser les outils et méthodes liés à Utiliser l'IA dans son travail quotidien", "logic_type": "technical", "objective": "Choisir les bons outils, les prendre en main et adopter les bonnes pratiques.", "status": "locked", "estimated_duration": "50min", "lessons": [{"lesson_id": "ls_2_1", "order": 1, "title": "Panorama — quels outils pour quels besoins", "objective": "Comprendre l'écosystème disponible et identifier les outils pertinents.", "status": "available", "content_blocks": [{"type": "theory", "title": "Catégories d'outils à connaître", "content": "Pour Utiliser l'IA dans son travail quotidien, les outils se classent en :\n• Outils d'exploration : comprendre et découvrir\n• Outils de production : créer et générer\n• Outils d'organisation : structurer et gérer\n• Outils d'analyse : mesurer et optimiser"}, {"type": "checklist", "title": "Critères pour choisir un outil", "content": "✓ Opérationnel en moins de 30 minutes\n✓ Coût justifié par le gain de temps\n✓ Compatible avec vos outils existants\n✓ Données protégées (RGPD)\n✓ Support disponible si blocage"}, {"type": "warning", "title": "Pièges courants", "content": "❌ Changer d'outil toutes les semaines\n❌ Prendre le plus complexe par défaut\n❌ Ignorer la confidentialité des données\n❌ Vouloir tout maîtriser avant de commencer"}], "interactive_tasks": [{"type": "self_assessment", "instruction": "Listez les outils liés à Utiliser l'IA dans son travail quotidien que vous utilisez déjà et évaluez votre niveau pour chacun (1-5).", "expected_user_action": "État des lieux de ses outils actuels", "validation_mode": "self_check", "success_criteria": ["État des lieux réalisé"], "task_id": "task_2_1_1"}, {"type": "question", "instruction": "Quel est votre besoin prioritaire que vous aimeriez adresser avec un outil adapté ?", "expected_user_action": "Formuler son besoin principal en 1-2 phrases", "validation_mode": "self_check", "success_criteria": ["Besoin clairement formulé"], "task_id": "task_2_1_2"}], "completion_rules": {"required_tasks": ["task_2_1_1", "task_2_1_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_2_2", "order": 2, "title": "Premiers pas — prise en main pratique", "objective": "Être opérationnel sur un outil en moins de 30 minutes.", "status": "locked", "content_blocks": [{"type": "method", "title": "Méthode en 4 étapes pour tout outil", "content": "1. OBJECTIF SIMPLE : choisir UNE tâche à réaliser avec l'outil\n2. PREMIER TEST : essayer sans lire la doc (intuition)\n3. RÉSULTAT : noter ce qui a marché et ce qui a bloqué\n4. AMÉLIORATION : chercher la réponse à UN seul problème\n\nApproche itérative > approche exhaustive."}, {"type": "prompt", "title": "Prompt pour apprendre vite", "content": "Je veux apprendre à utiliser [nom de l'outil] pour [objectif précis]. Donne-moi les 5 étapes essentielles pour être opérationnel en 30 minutes."}], "interactive_tasks": [{"type": "exercise", "instruction": "Choisissez un outil lié à Utiliser l'IA dans son travail quotidien peu utilisé. Passez 15 minutes dessus et notez : qu'avez-vous réussi à faire ?", "expected_user_action": "Tester un outil et noter le résultat obtenu", "validation_mode": "self_check", "success_criteria": ["Un outil testé", "Au moins un résultat concret obtenu"], "task_id": "task_2_2_1"}, {"type": "prompt_practice", "instruction": "Utilisez le prompt ci-dessus pour obtenir un guide de démarrage rapide pour cet outil.", "expected_user_action": "Adapter le prompt et lancer", "validation_mode": "self_check", "success_criteria": ["Guide généré et consulté"], "task_id": "task_2_2_2"}], "completion_rules": {"required_tasks": ["task_2_2_1", "task_2_2_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_2_3", "order": 3, "title": "Optimiser — aller au-delà des bases", "objective": "Gagner en efficacité et éviter les erreurs courantes.", "status": "locked", "content_blocks": [{"type": "method", "title": "Règle des 20/80 appliquée aux outils", "content": "20% des fonctionnalités couvrent 80% des besoins.\nIdentifiez ces 20% pour votre usage spécifique :\nListez vos 5 tâches les plus fréquentes → cherchez la fonction qui les simplifie\n→ Maîtrisez ces 5 fonctions avant tout le reste."}, {"type": "example", "title": "Astuces universelles", "content": "• Créer des templates pour les tâches répétitives\n• Apprendre les raccourcis clavier dès le début\n• Tester en brouillon avant de finaliser\n• Tenir un fichier de notes avec ses astuces préférées"}], "interactive_tasks": [{"type": "exercise", "instruction": "Créez votre premier template réutilisable pour une tâche liée à Utiliser l'IA dans son travail quotidien que vous faites souvent.", "expected_user_action": "Créer et sauvegarder un template", "validation_mode": "self_check", "success_criteria": ["Template créé", "Sauvegardé et accessible"], "task_id": "task_2_3_1"}, {"type": "checklist", "instruction": "Validez l'adoption des bonnes pratiques techniques.", "expected_user_action": "Cocher les pratiques adoptées", "validation_mode": "self_check", "success_criteria": ["Au moins 3 pratiques adoptées sur 4"], "task_id": "task_2_3_2"}], "completion_rules": {"required_tasks": ["task_2_3_1", "task_2_3_2"], "minimum_score": null, "can_skip": false}}], "chapter_validation": {"type": "practical_case", "instructions": "Réalisez une vraie tâche liée à Utiliser l'IA dans son travail quotidien avec au moins un outil. Décrivez ce que vous avez fait, le résultat obtenu et ce que vous avez appris.", "success_criteria": ["Tâche réalisée avec un outil", "Résultat documenté", "Un apprentissage identifié"]}}, {"chapter_id": "ch_3", "order": 3, "title": "Intégrer Utiliser l'IA dans son travail quotidien dans son quotidien professionnel", "logic_type": "operational", "objective": "Passer de la théorie à la pratique : utiliser Utiliser l'IA dans son travail quotidien dans ses tâches réelles.", "status": "locked", "estimated_duration": "50min", "lessons": [{"lesson_id": "ls_3_1", "order": 1, "title": "Identifier ses quick wins — où commencer", "objective": "Trouver les 2-3 tâches où gagner immédiatement en efficacité.", "status": "available", "content_blocks": [{"type": "method", "title": "Chasse aux quick wins", "content": "Un quick win Utiliser l'IA dans son travail quotidien idéal :\n✓ Tâche répétitive (au moins 1x/semaine)\n✓ Prend du temps disproportionné\n✓ Résultat mesurable\n\nCandidats courants : rédaction d'emails, rapports récurrents,\nrecherches d'info, tri et classification."}, {"type": "checklist", "title": "Détection de quick wins", "content": "Parcourez votre semaine dernière :\n☐ Plus d'1h sur une tâche répétitive ?\n☐ Recherche d'info qui aurait pu être synthétisée ?\n☐ Document rédigé depuis une page blanche ?\n☐ Emails similaires envoyés plusieurs fois ?\n☐ Temps perdu à formater ou structurer ?"}], "interactive_tasks": [{"type": "checklist", "instruction": "Parcourez la checklist ci-dessus. Cochez les tâches candidates dans votre semaine dernière.", "expected_user_action": "Scanner sa semaine et cocher les candidats", "validation_mode": "self_check", "success_criteria": ["Au moins 1 tâche candidate identifiée"], "task_id": "task_3_1_1"}, {"type": "exercise", "instruction": "Choisissez votre quick win n°1 : la tâche sur laquelle tester Utiliser l'IA dans son travail quotidien dès aujourd'hui. Décrivez-la en 2 phrases.", "expected_user_action": "Choisir et décrire une tâche précise", "validation_mode": "self_check", "success_criteria": ["Quick win n°1 identifié et décrit"], "task_id": "task_3_1_2"}], "completion_rules": {"required_tasks": ["task_3_1_1", "task_3_1_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_3_2", "order": 2, "title": "Créer ses premiers templates", "objective": "Construire des templates réutilisables pour ses tâches récurrentes.", "status": "locked", "content_blocks": [{"type": "method", "title": "Anatomie d'un bon template", "content": "1. CONTEXTE : à quoi sert ce template ?\n2. VARIABLES : quelles infos sont adaptées à chaque usage ?\n3. STRUCTURE FIXE : les éléments qui ne changent pas\n4. EXEMPLE : 1 résultat attendu\n\nFormule : [contexte] + [variables] = résultat attendu"}, {"type": "prompt", "title": "Prompt pour créer un template", "content": "Aide-moi à créer un template pour [tâche précise]. Ce template sera utilisé [fréquence] pour [objectif]. Les variables à personnaliser sont : [liste]. Le résultat doit être [format]."}], "interactive_tasks": [{"type": "prompt_practice", "instruction": "Adaptez le prompt ci-dessus à votre quick win n°1 et générez votre premier template.", "expected_user_action": "Adapter le prompt et générer un template", "validation_mode": "self_check", "success_criteria": ["Template généré", "Testé sur un exemple réel"], "task_id": "task_3_2_1"}, {"type": "exercise", "instruction": "Sauvegardez votre template dans un endroit accessible et testez-le sur un cas réel.", "expected_user_action": "Sauvegarder et utiliser le template", "validation_mode": "self_check", "success_criteria": ["Template sauvegardé", "Testé au moins une fois"], "task_id": "task_3_2_2"}], "completion_rules": {"required_tasks": ["task_3_2_1", "task_3_2_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_3_3", "order": 3, "title": "Mesurer et améliorer — boucle d'itération", "objective": "Évaluer ce qui fonctionne et affiner progressivement.", "status": "locked", "content_blocks": [{"type": "method", "title": "Boucle d'amélioration en 4 étapes", "content": "1. FAIRE → réaliser la tâche avec la nouvelle approche\n2. NOTER → temps passé, qualité, difficultés\n3. COMPARER → vs votre ancienne méthode\n4. AJUSTER → modifier ce qui ne fonctionne pas\n\nFréquence : bilan rapide chaque semaine (10 min)."}, {"type": "checklist", "title": "Indicateurs simples à suivre", "content": "✓ Temps gagné par semaine (minutes)\n✓ Qualité du résultat (mieux / pareil / moins bien)\n✓ Difficulté ressentie (1-5)\n✓ Taux d'utilisation de ses templates\n✓ Satisfaction globale (envie de continuer ?)"}], "interactive_tasks": [{"type": "self_assessment", "instruction": "Après 1 semaine de pratique : évaluez l'impact de Utiliser l'IA dans son travail quotidien sur votre efficacité quotidienne.", "expected_user_action": "Remplir son bilan de première semaine", "validation_mode": "self_check", "success_criteria": ["Bilan réalisé sur les 5 indicateurs"], "task_id": "task_3_3_1"}, {"type": "exercise", "instruction": "Identifiez l'ajustement n°1 pour améliorer votre pratique la semaine prochaine.", "expected_user_action": "Définir un ajustement concret", "validation_mode": "self_check", "success_criteria": ["Ajustement identifié et planifié"], "task_id": "task_3_3_2"}], "completion_rules": {"required_tasks": ["task_3_3_1", "task_3_3_2"], "minimum_score": null, "can_skip": false}}], "chapter_validation": {"type": "practical_case", "instructions": "Montrez une réalisation concrète : un template créé, une tâche réalisée avec Utiliser l'IA dans son travail quotidien, ou votre bilan de première semaine.", "success_criteria": ["Réalisation concrète documentée", "Résultat mesurable obtenu", "Prochaine étape définie"]}}, {"chapter_id": "ch_4", "order": 4, "title": "Construire sa stratégie autour de Utiliser l'IA dans son travail quotidien", "logic_type": "strategic", "objective": "Comprendre les enjeux stratégiques de Utiliser l'IA dans son travail quotidien et construire un plan d'action.", "status": "locked", "estimated_duration": "55min", "lessons": [{"lesson_id": "ls_4_1", "order": 1, "title": "Comprendre les enjeux — où en est-on vraiment", "objective": "Avoir une vision claire des enjeux de Utiliser l'IA dans son travail quotidien et identifier sa propre position.", "status": "available", "content_blocks": [{"type": "theory", "title": "Pourquoi ce sujet est stratégique aujourd'hui", "content": "Utiliser l'IA dans son travail quotidien représente à la fois une opportunité et un risque selon la position qu'on adopte.\nEnjeux principaux :\n• Productivité et compétitivité\n• Attraction et rétention des talents\n• Conformité réglementaire\n• Qualité et rapidité de décision"}, {"type": "example", "title": "Ce que font les organisations en avance", "content": "Points communs des organisations qui ont de l'avance :\n• Un champion interne qui porte le sujet\n• Elles partent de problèmes réels, pas de la technologie\n• Elles forment et embarquent leurs équipes\n• Elles mesurent dès le début"}, {"type": "warning", "title": "Les risques à ne pas ignorer", "content": "❌ Attendre la solution parfaite\n❌ Partir de la technologie plutôt du problème\n❌ Ne pas impliquer les équipes\n⚠️ Le vrai risque : ne rien faire pendant que le monde change."}], "interactive_tasks": [{"type": "self_assessment", "instruction": "Notez votre organisation sur Utiliser l'IA dans son travail quotidien : Connaissance (1-5), Utilisation (1-5), Stratégie (1-5), Culture (1-5).", "expected_user_action": "Auto-évaluation sur 4 dimensions", "validation_mode": "self_check", "success_criteria": ["Évaluation sur 4 dimensions réalisée"], "task_id": "task_4_1_1"}, {"type": "question", "instruction": "Quel est le principal risque si votre organisation n'avance pas sur Utiliser l'IA dans son travail quotidien dans les 12 prochains mois ?", "expected_user_action": "Répondre en 2-3 phrases de façon concrète", "validation_mode": "self_check", "success_criteria": ["Risque principal identifié", "Formulé de façon concrète"], "task_id": "task_4_1_2"}], "completion_rules": {"required_tasks": ["task_4_1_1", "task_4_1_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_4_2", "order": 2, "title": "Prioriser et décider — mettre le bon focus", "objective": "Identifier les actions à fort impact et arbitrer sans attendre l'information parfaite.", "status": "locked", "content_blocks": [{"type": "method", "title": "La matrice Effort / Impact", "content": "Classez chaque action selon :\n• Impact estimé (fort / faible)\n• Effort nécessaire (fort / faible)\n\nPriorité 1 : Fort impact + Faible effort → Démarrez maintenant\nPriorité 2 : Fort impact + Fort effort → Planifiez\nÉvitez : Faible impact + Fort effort\n\nRègle : commencez par un quick win visible."}, {"type": "example", "title": "Décider avec information partielle", "content": "1. Identifiez ce que vous savez vs supposez\n2. Quelle est la décision la moins risquée ?\n3. Comment tester rapidement avant de vous engager ?\n4. Qu'est-ce que vous coûterait de ne pas décider ?\n\nL'indécision est une décision — souvent la plus coûteuse."}], "interactive_tasks": [{"type": "exercise", "instruction": "Listez 5 actions possibles pour avancer sur Utiliser l'IA dans son travail quotidien. Classez-les avec la matrice effort/impact.", "expected_user_action": "Créer un tableau 5 actions × 2 critères", "validation_mode": "self_check", "success_criteria": ["5 actions listées", "Classées sur effort et impact", "Action prioritaire identifiée"], "task_id": "task_4_2_1"}, {"type": "question", "instruction": "Quelle est votre action n°1 à lancer cette semaine ? Justifiez en 2 phrases.", "expected_user_action": "Identifier et justifier l'action prioritaire", "validation_mode": "self_check", "success_criteria": ["Action n°1 identifiée", "Justification claire"], "task_id": "task_4_2_2"}], "completion_rules": {"required_tasks": ["task_4_2_1", "task_4_2_2"], "minimum_score": null, "can_skip": false}}, {"lesson_id": "ls_4_3", "order": 3, "title": "Construire un plan d'action 30/60/90 jours", "objective": "Transformer sa stratégie en étapes concrètes, planifiées et mesurables.", "status": "locked", "content_blocks": [{"type": "method", "title": "Le plan 30/60/90 jours", "content": "30 JOURS — Quick wins\n• Actions immédiates, faible risque, résultats rapides\n• Objectif : créer de l'élan\n\n60 JOURS — Consolidation\n• S'appuyer sur les apprentissages du premier mois\n\n90 JOURS — Impact\n• Actions plus investies, basées sur les données\n\nRègle : révisez chaque mois. Le plan est vivant."}, {"type": "checklist", "title": "Un bon indicateur de succès est :", "content": "✓ Mesurable (chiffre ou état clair)\n✓ Atteignable dans le délai défini\n✓ Lié directement à l'action\n✓ Connu de toutes les parties prenantes\n✓ Révisable si le contexte change"}], "interactive_tasks": [{"type": "exercise", "instruction": "Rédigez votre plan 30/60/90 jours pour avancer sur Utiliser l'IA dans son travail quotidien. Minimum 1 action par horizon avec un indicateur de succès.", "expected_user_action": "Rédiger un plan structuré en 3 horizons", "validation_mode": "self_check", "success_criteria": ["3 horizons définis", "1 action minimum par horizon", "Indicateur de succès pour chaque action"], "task_id": "task_4_3_1"}, {"type": "checklist", "instruction": "Validez que votre plan est solide en cochant chaque critère.", "expected_user_action": "Vérifier les 5 critères d'un bon indicateur", "validation_mode": "self_check", "success_criteria": ["Plan validé sur les 5 critères"], "task_id": "task_4_3_2"}], "completion_rules": {"required_tasks": ["task_4_3_1", "task_4_3_2"], "minimum_score": null, "can_skip": false}}], "chapter_validation": {"type": "practical_case", "instructions": "Présentez votre plan d'action personnel sur Utiliser l'IA dans son travail quotidien en 1 page : contexte (où j'en suis), priorités (mes 3 actions), engagement (quand je commence).", "success_criteria": ["Contexte documenté", "3 actions prioritaires identifiées", "Date de début définie"]}}], "final_validation": {"type": "action_plan", "instructions": "Pour valider cette formation sur 'Utiliser l'IA dans son travail quotidien', rédigez votre plan d'action personnel : identifiez 3 actions concrètes à mettre en œuvre dans les 7 prochains jours, avec un responsable, une date et un indicateur de succès pour chacune.", "success_criteria": ["3 actions concrètes identifiées", "Chaque action est spécifique et mesurable", "Délai de mise en œuvre défini pour chaque action", "Premier pas clairement décidé"]}, "certificate_data": {"enabled": true, "requires_completion": true, "tracked_items": ["chapters_completed", "lessons_completed", "tasks_completed", "final_validation_completed"]}};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const STATE_KEY = 'training_state_' + (data.training_title || 'default').replace(/\W/g,'_').slice(0,40);
+
+let state = {
+  tasks:           {},   // taskId → true/false
+  taskValues:      {},   // taskId → string (textarea) or rating int
+  chValidated:     {},   // chapterId → true/false
+  chValText:       {},   // chapterId → string
+  finalValidated:  false,
+  finalText:       '',
+  activeChapter:   null,
+  openLessons:     {},   // lessonId → true/false
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STATE_KEY);
+    if (s) state = Object.assign(state, JSON.parse(s));
+  } catch(e) {}
+  if (!state.activeChapter) {
+    state.activeChapter = data.chapters[0].chapter_id;
+  }
+}
+
+function saveState() {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────────
+function calcProgress() {
+  const total = data.progression.total_tasks
+    + data.progression.total_chapters
+    + 1; // final validation
+  let done = 0;
+  done += Object.values(state.tasks).filter(Boolean).length;
+  done += Object.values(state.chValidated).filter(Boolean).length;
+  if (state.finalValidated) done++;
+  return { done, total, pct: total > 0 ? Math.round(done / total * 100) : 0 };
+}
+
+function updateProgressBar() {
+  const { done, total, pct } = calcProgress();
+  document.getElementById('progress-bar-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = pct + '%';
+  const prog = data.progression;
+  document.getElementById('stat-tasks').textContent =
+    done + ' / ' + total + ' étapes terminées';
+  document.getElementById('stat-duration').textContent =
+    '⏱ ' + (data.estimated_duration || '');
+}
+
+// ── Chapter unlock logic ──────────────────────────────────────────────────────
+function isChapterAvailable(ch) {
+  if (ch.order === 1) return true;
+  const prev = data.chapters.find(c => c.order === ch.order - 1);
+  return prev && state.chValidated[prev.chapter_id];
+}
+
+function isLessonAvailable(chOrder, lesson) {
+  if (!isChapterAvailable(data.chapters.find(c => c.order === chOrder))) return false;
+  if (lesson.order === 1) return true;
+  const ch = data.chapters.find(c => c.order === chOrder);
+  const prev = ch.lessons.find(l => l.order === lesson.order - 1);
+  return prev && isLessonCompleted(prev);
+}
+
+function isLessonCompleted(lesson) {
+  return lesson.completion_rules.required_tasks.every(tid => state.tasks[tid]);
+}
+
+function isChapterDone(ch) {
+  return ch.lessons.every(l => isLessonCompleted(l)) && state.chValidated[ch.chapter_id];
+}
+
+// ── Sidebar render ────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('ch-list');
+  list.innerHTML = '';
+  for (const ch of data.chapters) {
+    const avail    = isChapterAvailable(ch);
+    const done     = isChapterDone(ch);
+    const active   = state.activeChapter === ch.chapter_id;
+    const n_tasks  = ch.lessons.reduce((s,l) => s + l.interactive_tasks.length, 0);
+    const done_tasks = ch.lessons.reduce((s,l) =>
+      s + l.completion_rules.required_tasks.filter(t => state.tasks[t]).length, 0);
+
+    const icon  = done ? '✓' : avail ? '●' : '🔒';
+    const cls   = [
+      'ch-item',
+      active   ? 'active'    : '',
+      done     ? 'completed' : '',
+      !avail   ? 'locked'    : '',
+    ].filter(Boolean).join(' ');
+
+    const el = document.createElement('div');
+    el.className = cls;
+    el.innerHTML = `
+      <span class="ch-icon">${icon}</span>
+      <span class="ch-label">
+        ${esc(ch.title)}
+        <small>${done_tasks}/${n_tasks} tâches · ${ch.estimated_duration || ''}</small>
+      </span>`;
+    if (avail || done) {
+      el.onclick = () => { state.activeChapter = ch.chapter_id; saveState(); render(); };
+    }
+    list.appendChild(el);
+  }
+}
+
+// ── Main content render ───────────────────────────────────────────────────────
+function render() {
+  document.getElementById('header-title').textContent = data.training_title;
+  renderSidebar();
+  renderContent();
+  updateProgressBar();
+}
+
+function renderContent() {
+  const ch = data.chapters.find(c => c.chapter_id === state.activeChapter);
+  if (!ch) { document.getElementById('content').innerHTML = '<div class="empty-state"><h2>Sélectionnez un chapitre</h2></div>'; return; }
+
+  const avail = isChapterAvailable(ch);
+  if (!avail) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty-state">
+        <h2>🔒 Chapitre verrouillé</h2>
+        <p>Terminez le chapitre précédent pour débloquer celui-ci.</p>
+      </div>`;
+    return;
+  }
+
+  const logicLabel = {
+    editorial:'Comprendre & Communiquer', technical:'Maîtriser les Outils',
+    strategic:'Vision & Stratégie', operational:'Mise en Pratique',
+    cognitive:'Esprit Critique', collaborative:'Collaboration', creative:'Créativité',
+  }[ch.logic_type] || ch.logic_type;
+
+  const chDone = isChapterDone(ch);
+
+  let html = `
+  <div class="ch-header">
+    <h1>${esc(ch.title)}</h1>
+    <p class="objective">${esc(ch.objective)}</p>
+    <div class="meta">
+      <span class="badge badge-logic">${esc(logicLabel)}</span>
+      <span class="badge badge-duration">⏱ ${esc(ch.estimated_duration || '')}</span>
+      ${chDone ? '<span class="badge badge-status-completed">✓ Terminé</span>' : '<span class="badge badge-status-available">En cours</span>'}
+    </div>
+  </div>`;
+
+  for (const lesson of ch.lessons) {
+    html += renderLesson(ch, lesson);
+  }
+
+  // Chapter validation
+  if (!chDone) {
+    const allLessonsDone = ch.lessons.every(l => isLessonCompleted(l));
+    if (allLessonsDone) {
+      html += renderChValidation(ch);
+    }
+  } else {
+    html += `<div class="chapter-validated-banner">✓ Chapitre validé — Bien joué !</div>`;
+    // Final validation if last chapter
+    const lastCh = data.chapters[data.chapters.length - 1];
+    if (ch.chapter_id === lastCh.chapter_id) {
+      html += renderFinalValidation();
+    }
+  }
+
+  document.getElementById('content').innerHTML = html;
+  bindEvents(ch);
+}
+
+function renderLesson(ch, lesson) {
+  const avail      = isLessonAvailable(ch.order, lesson);
+  const completed  = isLessonCompleted(lesson);
+  const isOpen     = state.openLessons[lesson.lesson_id] !== false && avail;
+  const icon       = completed ? '✓' : avail ? '▶' : '🔒';
+  const headerCls  = avail ? '' : 'locked';
+  const toggleCls  = isOpen ? 'open' : '';
+
+  let html = `
+  <div class="lesson-card" id="${lesson.lesson_id}">
+    <div class="lesson-header ${headerCls}" onclick="toggleLesson('${lesson.lesson_id}', ${avail})">
+      <span class="lesson-status-icon" style="color:${completed?'var(--green)':avail?'var(--accent)':'#bbb'}">${icon}</span>
+      <div class="lesson-title-wrap">
+        <div class="lesson-title">${esc(lesson.title)}</div>
+        <div class="lesson-obj">${esc(lesson.objective)}</div>
+      </div>
+      <span class="lesson-toggle ${toggleCls}">▼</span>
+    </div>`;
+
+  if (avail && isOpen) {
+    html += `<div class="lesson-body">`;
+
+    for (const cb of lesson.content_blocks) {
+      html += renderContentBlock(cb);
+    }
+
+    html += `<hr class="section-divider">`;
+    html += `<div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:.75rem;">À faire</div>`;
+
+    for (const task of lesson.interactive_tasks) {
+      html += renderTask(task, lesson);
+    }
+
+    if (completed) {
+      html += `<div class="lesson-completed-banner">✓ Leçon terminée</div>`;
+    } else {
+      html += `<button class="validate-lesson-btn" onclick="validateLesson('${lesson.lesson_id}', '${ch.chapter_id}')">
+        Valider cette leçon →
+      </button>`;
+    }
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderContentBlock(cb) {
+  const cls = 'content-block cb-' + cb.type;
+  const typelabel = { theory:'Théorie', example:'Exemple', method:'Méthode',
+    warning:'Point de vigilance', prompt:'Prompt', checklist:'Checklist' }[cb.type] || cb.type;
+  let inner = `<div class="cb-label">${typelabel}</div>
+    <div class="cb-title">${esc(cb.title)}</div>
+    <div class="cb-content">${esc(cb.content)}</div>`;
+  if (cb.type === 'prompt') {
+    inner += `<button class="copy-btn" onclick="copyPrompt(this, ${JSON.stringify(cb.content)})">📋 Copier</button>`;
+  }
+  return `<div class="${cls}">${inner}</div>`;
+}
+
+function renderTask(task, lesson) {
+  const tid      = task.task_id;
+  const done     = !!state.tasks[tid];
+  const ttCls    = 'task-type-badge tt-' + task.type;
+  const typeLabel = { question:'Question', exercise:'Exercice', prompt_practice:'Pratique Prompt',
+    self_assessment:'Auto-évaluation', checklist:'Checklist' }[task.type] || task.type;
+
+  let inner = `<span class="${ttCls}">${typeLabel}</span>
+    <div class="task-instruction">${esc(task.instruction)}</div>`;
+
+  if (done) {
+    inner += `<div class="task-done-label">✓ Terminé</div>`;
+  } else if (task.type === 'self_assessment') {
+    const cur = state.taskValues[tid] || 0;
+    let btns = '';
+    for (let i = 1; i <= 5; i++) {
+      btns += `<button class="rating-btn ${cur===i?'selected':''}" onclick="setRating('${tid}', ${i})">${i}</button>`;
+    }
+    inner += `<div class="rating-wrap">${btns}</div>`;
+    inner += `<button class="done-btn" onclick="markDone('${tid}')">Valider</button>`;
+  } else if (task.type === 'checklist') {
+    const items = task.success_criteria || [];
+    let checkHtml = '<ul class="task-checklist-items">';
+    items.forEach((item, i) => {
+      const cid   = tid + '_c' + i;
+      const chked = state.taskValues[cid] || false;
+      checkHtml += `<li class="${chked?'checked':''}" onclick="toggleCheck('${tid}', '${cid}', ${items.length})">
+        <input type="checkbox" ${chked?'checked':''} onclick="event.stopPropagation();toggleCheck('${tid}','${cid}',${items.length})">
+        ${esc(item)}
+      </li>`;
+    });
+    checkHtml += '</ul>';
+    inner += checkHtml;
+  } else {
+    const val = state.taskValues[tid] || '';
+    inner += `<textarea class="task-input" id="ta_${tid}" placeholder="Votre réponse..."
+      onchange="saveTaskValue('${tid}', this.value)">${esc(val)}</textarea>`;
+    inner += `<button class="done-btn" onclick="markDone('${tid}')">Marquer comme terminé</button>`;
+  }
+
+  if (task.success_criteria && task.success_criteria.length && !done) {
+    const items = task.success_criteria.map(c => `<li>${esc(c)}</li>`).join('');
+    inner += `<div class="success-criteria"><strong>Critères :</strong><ul>${items}</ul></div>`;
+  }
+
+  return `<div class="task-block ${done?'completed':''}" id="tb_${tid}">${inner}</div>`;
+}
+
+function renderChValidation(ch) {
+  const val = ch.chapter_validation;
+  const typelabel = {quiz:'Quiz', practical_case:'Cas pratique', checklist:'Checklist', reflection:'Réflexion'}[val.type] || val.type;
+  const criteria = (val.success_criteria||[]).map(c=>`<li>${esc(c)}</li>`).join('');
+  const saved = state.chValText[ch.chapter_id] || '';
+  return `
+  <div class="ch-validation-card" id="chval_${ch.chapter_id}">
+    <div class="val-type">Validation du chapitre — ${typelabel}</div>
+    <h3>✍ Valider ce chapitre</h3>
+    <div class="val-instructions">${esc(val.instructions)}</div>
+    ${criteria ? `<div class="val-criteria"><strong>Critères de succès :</strong><ul>${criteria}</ul></div>` : ''}
+    <textarea class="task-input" id="chval_ta_${ch.chapter_id}" placeholder="Votre réponse..."
+      onchange="saveChValText('${ch.chapter_id}', this.value)">${esc(saved)}</textarea>
+    <button class="validate-chapter-btn" onclick="validateChapter('${ch.chapter_id}')">
+      ✓ Valider ce chapitre et continuer →
+    </button>
+  </div>`;
+}
+
+function renderFinalValidation() {
+  if (state.finalValidated) {
+    return renderCertificate();
+  }
+  const fv = data.final_validation;
+  const criteria = (fv.success_criteria||[]).map(c=>`<li>${esc(c)}</li>`).join('');
+  const typelabel = {practical_case:'Cas pratique', action_plan:'Plan d\'action', quiz:'Quiz'}[fv.type] || fv.type;
+  return `
+  <div class="final-card" id="final-validation">
+    <h2>🎯 Validation finale — ${typelabel}</h2>
+    <p>${esc(fv.instructions)}</p>
+    ${criteria ? `<ul style="margin-bottom:1rem;padding-left:1.2rem;opacity:.8;font-size:.88rem;">${criteria}</ul>` : ''}
+    <textarea placeholder="Votre plan d'action..." onchange="saveFinalText(this.value)">${esc(state.finalText)}</textarea>
+    <button class="final-validate-btn" onclick="validateFinal()">
+      ✓ Valider la formation et obtenir mon attestation
+    </button>
+  </div>`;
+}
+
+function renderCertificate() {
+  const d = new Date().toLocaleDateString('fr-FR', {year:'numeric',month:'long',day:'numeric'});
+  return `
+  <div id="certificate" class="show">
+    <div class="cert-icon">🎓</div>
+    <h2>Attestation de formation</h2>
+    <div class="cert-title">${esc(data.training_title)}</div>
+    <p>Formation complétée avec succès.</p>
+    <p>Durée estimée : ${esc(data.estimated_duration||'')}</p>
+    <p class="cert-date">Délivré le ${d}</p>
+    <p style="margin-top:1rem;font-size:.8rem;opacity:.6;">Généré par training_generator v2.0.0 — Module EURKAI</p>
+  </div>`;
+}
+
+// ── Event handlers ────────────────────────────────────────────────────────────
+function toggleLesson(lessonId, avail) {
+  if (!avail) return;
+  state.openLessons[lessonId] = !state.openLessons[lessonId];
+  saveState();
+  renderContent();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function copyPrompt(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copié !';
+    setTimeout(() => { btn.textContent = '📋 Copier'; }, 2000);
+  });
+}
+
+function setRating(tid, val) {
+  state.taskValues[tid] = val;
+  saveState();
+  renderContent();
+}
+
+function saveTaskValue(tid, val) {
+  state.taskValues[tid] = val;
+  saveState();
+}
+
+function saveChValText(chId, val) {
+  state.chValText[chId] = val;
+  saveState();
+}
+
+function saveFinalText(val) {
+  state.finalText = val;
+  saveState();
+}
+
+function toggleCheck(tid, cid, total) {
+  state.taskValues[cid] = !state.taskValues[cid];
+  // Auto-complete task if all checkboxes checked
+  const allDone = Array.from({length: total}, (_,i) => state.taskValues[tid + '_c' + i]).every(Boolean);
+  if (allDone) state.tasks[tid] = true;
+  saveState();
+  renderContent();
+}
+
+function markDone(tid) {
+  state.tasks[tid] = true;
+  saveState();
+  renderContent();
+}
+
+function validateLesson(lessonId, chId) {
+  const ch     = data.chapters.find(c => c.chapter_id === chId);
+  const lesson = ch.lessons.find(l => l.lesson_id === lessonId);
+  // Mark all required tasks as done
+  lesson.completion_rules.required_tasks.forEach(tid => { state.tasks[tid] = true; });
+  state.openLessons[lessonId] = false;
+  // Auto-open next lesson
+  const next = ch.lessons.find(l => l.order === lesson.order + 1);
+  if (next) state.openLessons[next.lesson_id] = true;
+  saveState();
+  render();
+}
+
+function validateChapter(chId) {
+  state.chValidated[chId] = true;
+  const ch = data.chapters.find(c => c.chapter_id === chId);
+  // Unlock next chapter in sidebar
+  const nextCh = data.chapters.find(c => c.order === ch.order + 1);
+  if (nextCh) {
+    state.activeChapter = nextCh.chapter_id;
+    state.openLessons[nextCh.lessons[0].lesson_id] = true;
+  }
+  saveState();
+  render();
+  window.scrollTo(0, 0);
+}
+
+function validateFinal() {
+  state.finalValidated = true;
+  saveState();
+  render();
+  // Scroll to certificate
+  setTimeout(() => {
+    const cert = document.getElementById('certificate');
+    if (cert) cert.scrollIntoView({ behavior: 'smooth' });
+  }, 100);
+}
+
+function bindEvents(ch) {
+  // Restore textarea values
+  for (const lesson of ch.lessons) {
+    for (const task of lesson.interactive_tasks) {
+      const tid = task.task_id;
+      const ta  = document.getElementById('ta_' + tid);
+      if (ta && state.taskValues[tid]) ta.value = state.taskValues[tid];
+    }
+  }
+  // Restore chapter validation textarea
+  const chTa = document.getElementById('chval_ta_' + ch.chapter_id);
+  if (chTa && state.chValText[ch.chapter_id]) chTa.value = state.chValText[ch.chapter_id];
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function esc(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadState();
+// Open first lesson of active chapter if nothing is open
+const activeCh = data.chapters.find(c => c.chapter_id === state.activeChapter);
+if (activeCh && activeCh.lessons.length > 0) {
+  const firstLesson = activeCh.lessons[0];
+  if (state.openLessons[firstLesson.lesson_id] === undefined) {
+    state.openLessons[firstLesson.lesson_id] = true;
+  }
+}
+render();
+</script>
 </body>
 </html>

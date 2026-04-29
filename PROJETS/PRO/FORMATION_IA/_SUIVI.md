@@ -39,33 +39,60 @@ Jamais au centre — toujours contextuelle.
 | **Démo (output JSON)** | https://github.com/EUREKAI25/BIG_BOFF/blob/main/PROJETS/PRO/FORMATION_IA/demo/output_demo.json |
 | **Démo (HTML)** | https://github.com/EUREKAI25/BIG_BOFF/blob/main/PROJETS/PRO/FORMATION_IA/demo/output_demo.html |
 
-## Architecture module EURKAI
+## Architecture module EURKAI v2.0.0
 
 ```
-training_generator
+training_generator v2.0.0
 ├── Input  : topic, level, objectives, logics, format, catalog
-├── Output : training { training_title, level, modules[], summary, next_steps }
-├── Logiques disponibles : editorial, technical, strategic, operational,
-│                          cognitive, collaborative, creative
-├── Modes  : LLM (avec catalog) | déterministe (fallback)
-└── Sections par format : short=2 | standard=3 | long=5
+├── Output : training {
+│     training_title, level, estimated_duration,
+│     progression { total_chapters, total_lessons, total_tasks },
+│     chapters [
+│       chapter_id, order, title, logic_type, objective, status,
+│       lessons [
+│         lesson_id, order, title, objective, status,
+│         content_blocks [ type, title, content ]
+│         interactive_tasks [ task_id, type, instruction, ... ]
+│         completion_rules
+│       ],
+│       chapter_validation
+│     ],
+│     final_validation,
+│     certificate_data
+│   }
+├── Logiques : editorial, technical, strategic, operational,
+│              cognitive, collaborative, creative
+├── Modes   : LLM (avec catalog) | déterministe (fallback)
+└── Format  : short=2 leçons/ch | standard=3 | long=5
 ```
 
 ## Historique
 
-### 2026-04-29 — Session création
+### 2026-04-29 — Session création v1.0.0
 
 - [x] Brief issu de conversation ChatGPT analysée
-- [x] Module `training_generator.py` créé dans EURKAI modules (agnostique, MVP)
+- [x] Module `training_generator.py` v1.0.0 créé (agnostique, modules/sections)
 - [x] Fichier `training_generator.erk` créé
 - [x] Smoke test validé (mode déterministe : 3 logiques × 3 sections)
 - [x] Projet FORMATION_IA créé (structure standard)
 - [x] Démo : formation "Utiliser l'IA dans son travail quotidien" générée
-- [x] Output démo : JSON + HTML consultable
+- [x] Output démo : JSON + HTML statique
 - [x] Commit + push GitHub
-- [ ] Manifests offre A/B/C (prochaine session)
-- [ ] Scénario EURKAI pour l'offre (prochaine session)
-- [ ] Stratégie d'acquisition / prospection (selon nouveaux prompts Nathalie)
+
+### 2026-04-29 — Session refactoring v2.0.0 (formation interactive)
+
+- [x] `training_generator.py` → v2.0.0 : structure chapitres > leçons > tâches interactives
+  - 7 templates de chapitres (editorial, technical, strategic, operational, cognitive, collaborative, creative)
+  - Chaque leçon : content_blocks (theory/example/method/warning/prompt/checklist) + interactive_tasks
+  - Smoke test validé : 3 ch / 9 leçons / 18 tâches (format standard)
+- [x] `run_demo.py` → mini-LMS interactif complet
+  - Sidebar chapitres avec statuts + barre de progression
+  - Déverrouillage progressif des leçons
+  - Tâches interactives (textarea, rating, checklist, copie de prompt)
+  - Sauvegarde localStorage
+  - Validation de chapitre + validation finale + attestation
+- [x] `training_generator.erk` → v2.0.0 : nouveaux schémas documentés
+- [x] output_demo.html généré : 4 ch / 12 leçons / 24 tâches — formation 2h30
 
 ## Prochaines étapes
 
