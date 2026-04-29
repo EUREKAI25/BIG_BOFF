@@ -49,6 +49,51 @@ Object:Module:training_generator:Input:catalog:
   .required = false
   .description = "Catalog EURKAI — présent = mode LLM, absent = mode déterministe"
 
+Object:Module:training_generator:Input:theme:
+  .type = dict
+  .required = false
+  .default = "DEFAULT_THEME (mode: default)"
+  .description = "Thème visuel optionnel. Si absent : default_theme utilisé. Le design final appartient au projet consommateur."
+  .note = "Les tokens fournis ne sont JAMAIS écrasés par les valeurs par défaut."
+  .schema = ThemeInput
+
+Object:Schema:ThemeInput:
+  .fields = [mode, tokens, layout]
+
+Object:Schema:ThemeInput:mode:
+  .type = string
+  .values = [default, custom]
+  .description = "default = thème interne minimal | custom = thème injecté par le projet"
+
+Object:Schema:ThemeInput:tokens:
+  .type = dict
+  .description = "Tokens CSS — tous optionnels. Seuls les fournis sont appliqués."
+  .fields = [primary, accent, background, surface, text, muted, border, radius, font_family]
+  .primary     = "Couleur principale (header, sidebar, boutons primaires)"
+  .accent      = "Couleur d'accent (progression, highlights, CTA)"
+  .background  = "Fond de page"
+  .surface     = "Fond des cartes / panneaux"
+  .text        = "Couleur du texte principal"
+  .muted       = "Couleur du texte secondaire"
+  .border      = "Couleur des bordures"
+  .radius      = "Border radius (ex: 8px, 12px, 0px)"
+  .font_family = "Police de caractères (valeur CSS complète)"
+
+Object:Schema:ThemeInput:layout:
+  .type = dict
+  .description = "Options de mise en page — déclaratives, implémentation selon le renderer."
+  .fields = [navigation, chapter_display, lesson_display]
+  .navigation      = "sidebar | topbar | compact"
+  .chapter_display = "accordion | timeline | cards"
+  .lesson_display  = "accordion | stepper | page"
+
+Object:Module:training_generator:ThemeContract:
+  .rule_1 = "Le module ne possède pas l'identité visuelle du projet consommateur"
+  .rule_2 = "DEFAULT_THEME est un thème de démonstration minimal, non un design final"
+  .rule_3 = "Seules les CSS custom properties (var(--xxx)) sont utilisées dans le rendu HTML"
+  .rule_4 = "Les couleurs sémantiques (types de blocs pédagogiques) sont fixes par conception"
+  .rule_5 = "Tout projet appelant peut injecter son propre thème via manifest ou paramètre"
+
 Object:Module:training_generator:Output:training:
   .type = dict
   .schema = InteractiveTrainingStructure

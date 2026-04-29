@@ -94,6 +94,19 @@ training_generator v2.0.0
 - [x] `training_generator.erk` → v2.0.0 : nouveaux schémas documentés
 - [x] output_demo.html généré : 4 ch / 12 leçons / 24 tâches — formation 2h30
 
+### 2026-04-29 — Séparation design / interaction / data
+
+- [x] Règle : le module ne possède pas l'identité visuelle du projet consommateur
+- [x] `DEFAULT_THEME` + `_resolve_theme()` dans training_generator.py
+  - Input optionnel `theme { mode, tokens, layout }` dans `run()`
+  - Les tokens du projet ne sont jamais écrasés par les défauts
+  - `meta.theme` inclus dans tous les outputs
+- [x] `run_demo.py` → générateur de CSS vars depuis les tokens du thème
+  - `_build_css_vars()` : injecte un bloc `:root {}` dynamique
+  - 0 couleur hex hardcodée hors `:root {}` (audité ✅)
+  - Brand colors : `var(--color-xxx)` | Sémantiques : `var(--sem-xxx)`
+- [x] `training_generator.erk` → contrat design documenté (5 règles)
+
 ## Prochaines étapes
 
 1. Créer les 3 manifests (offres A, B, C)

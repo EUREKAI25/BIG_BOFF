@@ -2,10 +2,17 @@
 run_demo.py — Démo FORMATION_IA interactive
 Génère une formation complète et un rendu HTML interactif (parcours LMS).
 
+Le rendu HTML utilise exclusivement des CSS custom properties pour les couleurs.
+Le thème visuel final appartient au projet consommateur, pas au module.
+
 Usage :
     python run_demo.py
-    → output_demo.json  (structure complète)
-    → output_demo.html  (mini-LMS interactif avec localStorage)
+    → output_demo.json  (structure + thème résolu)
+    → output_demo.html  (mini-LMS interactif, thème injecté via CSS vars)
+
+Injection de thème :
+    Passer un dict "theme" dans DEMO_INPUT pour surcharger le thème par défaut.
+    Seuls les tokens fournis sont appliqués — les autres gardent leurs valeurs par défaut.
 """
 
 import json
@@ -29,6 +36,17 @@ DEMO_INPUT = {
     "logics":  ["editorial", "technical", "operational", "strategic"],
     "format":  "standard",
     "catalog": None,
+    # "theme": {                        # décommenter pour tester un thème custom
+    #     "mode": "custom",
+    #     "tokens": {
+    #         "primary":    "#0f172a",
+    #         "accent":     "#6366f1",
+    #         "background": "#f8fafc",
+    #         "surface":    "#ffffff",
+    #         "border":     "#e2e8f0",
+    #         "radius":     "12px",
+    #     }
+    # }
 }
 
 OUT_DIR = Path(__file__).parent
@@ -44,6 +62,7 @@ def main():
 
     training = result["training"]
     mode     = result["meta"]["mode"]
+    theme    = result["meta"]["theme"]
     prog     = training.get("progression", {})
 
     json_path = OUT_DIR / "output_demo.json"
@@ -52,7 +71,7 @@ def main():
     print(f"✓ JSON  → {json_path}")
 
     html_path = OUT_DIR / "output_demo.html"
-    html      = _render_html(training, mode)
+    html      = _render_html(training, mode, theme)
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"✓ HTML  → {html_path}")
@@ -60,67 +79,173 @@ def main():
     print(f"\n{'─'*60}")
     print(f"  {training['training_title']}")
     print(f"  Niveau    : {training['level']}  |  Durée : {training.get('estimated_duration','')}")
-    print(f"  Mode      : {mode}")
+    print(f"  Mode      : {mode}  |  Thème : {theme['mode']}")
     print(f"  Structure : {prog.get('total_chapters')} chapitres / "
           f"{prog.get('total_lessons')} leçons / {prog.get('total_tasks')} tâches")
     print(f"{'─'*60}\n")
 
 
-# ── Rendu HTML ────────────────────────────────────────────────────────────────
+# ── Theme helpers ─────────────────────────────────────────────────────────────
 
-def _render_html(training, mode):
+def _darken(hex_color, factor=0.88):
+    """Assombrit un hex color d'un facteur. Retour gracieux si échec."""
+    try:
+        h = hex_color.lstrip('#')
+        if len(h) == 6:
+            r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+            return '#{:02x}{:02x}{:02x}'.format(
+                int(r * factor), int(g * factor), int(b * factor)
+            )
+    except Exception:
+        pass
+    return hex_color
+
+
+def _hex_to_rgb(hex_color):
+    """Retourne 'r, g, b' pour usage dans rgba(). Retour gracieux si échec."""
+    try:
+        h = hex_color.lstrip('#')
+        if len(h) == 6:
+            r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+            return f"{r}, {g}, {b}"
+    except Exception:
+        pass
+    return "0, 0, 0"
+
+
+_DEFAULT_FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+
+
+def _build_css_vars(theme):
+    """Génère le bloc de CSS custom properties à injecter dans :root {}.
+    Seuls les tokens du thème (fourni ou default) sont injectés.
+    Les couleurs sémantiques fixes sont dans le template statique."""
+    t        = theme["tokens"]
+    primary  = t.get("primary", "#1a1a2e")
+    accent   = t.get("accent",  "#e94560")
+    font     = t.get("font_family", _DEFAULT_FONT)
+
+    lines = [
+        f"  /* ── Tokens injectés par training_generator (thème : {theme['mode']}) ── */",
+        f"  --color-primary:     {primary};",
+        f"  --color-primary-rgb: {_hex_to_rgb(primary)};",
+        f"  --color-nav:         {_darken(primary, 0.88)};",
+        f"  --color-accent:      {accent};",
+        f"  --color-accent-rgb:  {_hex_to_rgb(accent)};",
+        f"  --color-accent-dark: {_darken(accent, 0.82)};",
+        f"  --color-bg:          {t.get('background', '#f0f2f5')};",
+        f"  --color-surface:     {t.get('surface', '#ffffff')};",
+        f"  --color-text:        {t.get('text', '#2d3436')};",
+        f"  --color-muted:       {t.get('muted', '#636e72')};",
+        f"  --color-border:      {t.get('border', '#e0e3e8')};",
+        f"  --radius:            {t.get('radius', '8px')};",
+        f"  --font:              {font};",
+    ]
+    return "\n".join(lines)
+
+
+# ── Rendu HTML ─────────────────────────────────────────────────────────────────
+
+def _render_html(training, mode, theme):
     training_json = json.dumps(training, ensure_ascii=False)
-    # Échappe pour embedding JS (pas d'injection de balise </script>)
     training_json = training_json.replace("</script>", "<\\/script>")
 
-    html = HTML_TEMPLATE.replace("/*TRAINING_DATA*/", training_json)
+    css_vars = _build_css_vars(theme)
+    html = HTML_TEMPLATE.replace("/*THEME_VARS*/", css_vars)
+    html = html.replace("/*TRAINING_DATA*/", training_json)
     return html
 
 
 # ── Template HTML ─────────────────────────────────────────────────────────────
-# Les accolades JS sont littérales (pas de f-string).
+# Règle : aucune couleur hardcodée hors du bloc :root {}.
+# Toutes les couleurs de marque passent par var(--color-xxx).
+# Les couleurs sémantiques (types de blocs pédagogiques) sont fixes par conception.
 
 HTML_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Formation IA — Parcours interactif</title>
+<title>Formation — Parcours interactif</title>
 <style>
 :root {
-  --navy:    #1a1a2e;
-  --navy2:   #16213e;
-  --accent:  #e94560;
-  --green:   #27ae60;
-  --orange:  #f39c12;
-  --purple:  #8e44ad;
-  --teal:    #16a085;
-  --blue:    #2980b9;
-  --bg:      #f0f2f5;
-  --card:    #ffffff;
-  --border:  #e0e3e8;
-  --text:    #2d3436;
-  --muted:   #636e72;
+/*THEME_VARS*/
+
+  /* ── Couleurs sémantiques — fixes, non thémables ──────────────────────────
+     Ces couleurs encodent le TYPE de contenu pédagogique (theory, warning…).
+     Elles ne font pas partie de l'identité visuelle du projet consommateur. */
+  --sem-success:    #27ae60;
+  --sem-success-bg: #e8f8f1;
+  --sem-success-bd: #b2dfdb;
+  --sem-warning:    #f39c12;
+  --sem-purple:     #8e44ad;
+  --sem-teal:       #16a085;
+  --sem-blue:       #2980b9;
+
+  /* Type blocs contenu */
+  --sem-theory-bg:  #e8f4fd;
+  --sem-example-bg: #e8f8f1;
+  --sem-method-bg:  #f3e8fd;
+  --sem-warn-bg:    #fef9e7;
+  --sem-check-bg:   #e8f5f4;
+
+  /* Bloc prompt (dark code style) */
+  --sem-code-bg:       #1e1e2e;
+  --sem-code-text:     #cdd3de;
+  --sem-code-muted:    #a8b3cf;
+  --sem-code-btn:      #3a3a5c;
+  --sem-code-btn-hover:#4a4a6c;
+  --sem-code-border:   #555;
+  --sem-code-title:    #e2e8f0;
+
+  /* UI états fixes */
+  --sem-locked-icon:   #bbb;
+  --sem-locked-bg:     #f5f5f5;
+  --sem-locked-fg:     #bbb;
+
+  /* Type badges tâches */
+  --sem-tt-question-bg:    #dbeafe;
+  --sem-tt-question-fg:    #1d4ed8;
+  --sem-tt-exercise-bg:    #ede9fe;
+  --sem-tt-exercise-fg:    #7c3aed;
+  --sem-tt-prompt-bg:      #1e1e2e;
+  --sem-tt-prompt-fg:      #a78bfa;
+  --sem-tt-assess-bg:      #fef3c7;
+  --sem-tt-assess-fg:      #d97706;
+  --sem-tt-checklist-bg:   #d1fae5;
+  --sem-tt-checklist-fg:   #059669;
+
+  /* Layout */
   --sidebar-w: 280px;
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-       background: var(--bg); color: var(--text); }
+body {
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
 
 /* ── Header ── */
 #header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: var(--navy); color: white;
+  background: var(--color-primary); color: var(--color-surface);
   display: flex; align-items: center; gap: 1.5rem;
   padding: .8rem 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
-#header-title { font-size: 1rem; font-weight: 700; flex: 1; white-space: nowrap;
-                overflow: hidden; text-overflow: ellipsis; }
+#header-title {
+  font-size: 1rem; font-weight: 700; flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 #header-progress { display: flex; align-items: center; gap: .75rem; min-width: 220px; }
-#progress-bar-wrap { flex: 1; height: 8px; background: rgba(255,255,255,.15);
-                     border-radius: 4px; overflow: hidden; }
-#progress-bar-fill { height: 100%; background: var(--accent); border-radius: 4px;
-                     transition: width .4s ease; }
+#progress-bar-wrap {
+  flex: 1; height: 8px; background: rgba(255,255,255,.15);
+  border-radius: var(--radius); overflow: hidden;
+}
+#progress-bar-fill {
+  height: 100%; background: var(--color-accent); border-radius: var(--radius);
+  transition: width .4s ease;
+}
 #progress-text { font-size: .8rem; color: rgba(255,255,255,.8); white-space: nowrap; }
 
 /* ── Layout ── */
@@ -129,26 +254,32 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 /* ── Sidebar ── */
 #sidebar {
   width: var(--sidebar-w); flex-shrink: 0;
-  background: var(--navy2); color: white;
+  background: var(--color-nav); color: var(--color-surface);
   position: fixed; top: 52px; bottom: 0; left: 0;
   overflow-y: auto; padding: 1rem 0;
 }
-#sidebar h2 { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
-              color: rgba(255,255,255,.4); padding: .5rem 1.2rem .25rem; }
+#sidebar h2 {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(255,255,255,.4); padding: .5rem 1.2rem .25rem;
+}
 .ch-item {
   display: flex; align-items: center; gap: .6rem;
   padding: .65rem 1.2rem; cursor: pointer;
-  transition: background .15s;
-  border-left: 3px solid transparent;
+  transition: background .15s; border-left: 3px solid transparent;
 }
 .ch-item:hover { background: rgba(255,255,255,.06); }
-.ch-item.active { background: rgba(233,69,96,.15); border-left-color: var(--accent); }
-.ch-item.completed .ch-icon { color: var(--green); }
+.ch-item.active {
+  background: rgba(var(--color-accent-rgb), .15);
+  border-left-color: var(--color-accent);
+}
+.ch-item.completed .ch-icon { color: var(--sem-success); }
 .ch-item.locked { opacity: .45; cursor: not-allowed; }
 .ch-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
 .ch-label { font-size: .85rem; line-height: 1.3; }
 .ch-label small { display: block; font-size: .72rem; color: rgba(255,255,255,.45); margin-top: .15rem; }
-.sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,.1); margin-top: .5rem; }
+.sidebar-footer {
+  padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,.1); margin-top: .5rem;
+}
 .sidebar-footer .stat { font-size: .78rem; color: rgba(255,255,255,.5); margin-bottom: .3rem; }
 
 /* ── Main content ── */
@@ -156,20 +287,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
 /* ── Chapter view ── */
 .ch-header { margin-bottom: 1.5rem; }
-.ch-header h1 { font-size: 1.4rem; color: var(--navy); margin-bottom: .4rem; }
-.ch-header .objective { color: var(--muted); font-size: .95rem; }
+.ch-header h1 { font-size: 1.4rem; color: var(--color-primary); margin-bottom: .4rem; }
+.ch-header .objective { color: var(--color-muted); font-size: .95rem; }
 .ch-header .meta { display: flex; gap: .75rem; margin-top: .75rem; flex-wrap: wrap; }
-.badge { display: inline-block; padding: .2rem .65rem; border-radius: 20px;
-         font-size: .75rem; font-weight: 600; }
-.badge-logic { background: var(--navy); color: white; }
-.badge-duration { background: rgba(0,0,0,.06); color: var(--muted); }
-.badge-status-available { background: #e8f5e9; color: var(--green); }
-.badge-status-locked { background: #f5f5f5; color: #bbb; }
-.badge-status-completed { background: #e8f5e9; color: var(--green); }
+.badge {
+  display: inline-block; padding: .2rem .65rem; border-radius: 20px;
+  font-size: .75rem; font-weight: 600;
+}
+.badge-logic { background: var(--color-primary); color: var(--color-surface); }
+.badge-duration { background: rgba(0,0,0,.06); color: var(--color-muted); }
+.badge-status-available { background: var(--sem-example-bg); color: var(--sem-success); }
+.badge-status-locked { background: var(--sem-locked-bg); color: var(--sem-locked-fg); }
+.badge-status-completed { background: var(--sem-example-bg); color: var(--sem-success); }
 
 /* ── Lesson card ── */
 .lesson-card {
-  background: var(--card); border-radius: 10px; margin-bottom: 1rem;
+  background: var(--color-surface); border-radius: var(--radius); margin-bottom: 1rem;
   box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden;
 }
 .lesson-header {
@@ -177,179 +310,182 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   padding: 1rem 1.25rem; cursor: pointer; user-select: none;
   transition: background .15s;
 }
-.lesson-header:hover { background: #fafafa; }
+.lesson-header:hover { background: rgba(0,0,0,.02); }
 .lesson-header.locked { cursor: not-allowed; opacity: .5; }
 .lesson-status-icon { font-size: 1.1rem; width: 24px; text-align: center; flex-shrink: 0; }
 .lesson-title-wrap { flex: 1; }
-.lesson-title { font-size: .95rem; font-weight: 600; color: var(--navy); }
-.lesson-obj { font-size: .8rem; color: var(--muted); margin-top: .1rem; }
-.lesson-toggle { color: var(--muted); transition: transform .2s; font-size: .8rem; }
+.lesson-title { font-size: .95rem; font-weight: 600; color: var(--color-primary); }
+.lesson-obj { font-size: .8rem; color: var(--color-muted); margin-top: .1rem; }
+.lesson-toggle { color: var(--color-muted); transition: transform .2s; font-size: .8rem; }
 .lesson-toggle.open { transform: rotate(180deg); }
-.lesson-body { padding: 0 1.25rem 1.25rem; border-top: 1px solid var(--border); }
+.lesson-body { padding: 0 1.25rem 1.25rem; border-top: 1px solid var(--color-border); }
 
 /* ── Content blocks ── */
 .content-block {
-  border-radius: 8px; padding: .9rem 1rem; margin: .85rem 0;
+  border-radius: var(--radius); padding: .9rem 1rem; margin: .85rem 0;
   border-left: 4px solid transparent;
 }
-.cb-theory   { background: #e8f4fd; border-color: var(--blue); }
-.cb-example  { background: #e8f8f1; border-color: var(--green); }
-.cb-method   { background: #f3e8fd; border-color: var(--purple); }
-.cb-warning  { background: #fef9e7; border-color: var(--orange); }
-.cb-prompt   { background: #1e1e2e; border-color: #555; color: #cdd3de; }
-.cb-checklist { background: #e8f5f4; border-color: var(--teal); }
+.cb-theory    { background: var(--sem-theory-bg);  border-color: var(--sem-blue); }
+.cb-example   { background: var(--sem-example-bg); border-color: var(--sem-success); }
+.cb-method    { background: var(--sem-method-bg);  border-color: var(--sem-purple); }
+.cb-warning   { background: var(--sem-warn-bg);    border-color: var(--sem-warning); }
+.cb-prompt    { background: var(--sem-code-bg);    border-color: var(--sem-code-border); color: var(--sem-code-text); }
+.cb-checklist { background: var(--sem-check-bg);   border-color: var(--sem-teal); }
 .cb-label {
-  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
-  opacity: .65; margin-bottom: .35rem;
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; opacity: .65; margin-bottom: .35rem;
 }
-.cb-theory .cb-label   { color: var(--blue); }
-.cb-example .cb-label  { color: var(--green); }
-.cb-method .cb-label   { color: var(--purple); }
-.cb-warning .cb-label  { color: var(--orange); }
-.cb-prompt .cb-label   { color: #7a8399; }
-.cb-checklist .cb-label { color: var(--teal); }
+.cb-theory .cb-label    { color: var(--sem-blue); }
+.cb-example .cb-label   { color: var(--sem-success); }
+.cb-method .cb-label    { color: var(--sem-purple); }
+.cb-warning .cb-label   { color: var(--sem-warning); }
+.cb-prompt .cb-label    { color: var(--sem-code-muted); }
+.cb-checklist .cb-label { color: var(--sem-teal); }
 .cb-title { font-size: .9rem; font-weight: 700; margin-bottom: .4rem; }
-.cb-prompt .cb-title { color: #e2e8f0; }
+.cb-prompt .cb-title { color: var(--sem-code-title); }
 .cb-content { font-size: .88rem; line-height: 1.65; white-space: pre-wrap; }
-.cb-prompt .cb-content { color: #a8b3cf; font-family: 'SF Mono', monospace; font-size: .82rem; }
+.cb-prompt .cb-content { color: var(--sem-code-muted); font-family: 'SF Mono', monospace; font-size: .82rem; }
 .copy-btn {
-  margin-top: .5rem; padding: .3rem .75rem; background: #3a3a5c; border: none;
-  color: #a8b3cf; border-radius: 5px; cursor: pointer; font-size: .78rem;
+  margin-top: .5rem; padding: .3rem .75rem; background: var(--sem-code-btn); border: none;
+  color: var(--sem-code-muted); border-radius: 5px; cursor: pointer; font-size: .78rem;
 }
-.copy-btn:hover { background: #4a4a6c; }
+.copy-btn:hover { background: var(--sem-code-btn-hover); }
 
 /* ── Interactive tasks ── */
 .task-block {
-  background: #f8f9fa; border-radius: 8px; padding: 1rem;
-  margin: .85rem 0; border: 1px solid var(--border);
+  background: var(--color-bg); border-radius: var(--radius); padding: 1rem;
+  margin: .85rem 0; border: 1px solid var(--color-border);
 }
-.task-block.completed { border-color: var(--green); background: #f0faf4; }
+.task-block.completed { border-color: var(--sem-success); background: var(--sem-success-bg); }
 .task-type-badge {
-  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
-  padding: .15rem .5rem; border-radius: 20px; margin-bottom: .5rem; display: inline-block;
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; padding: .15rem .5rem; border-radius: 20px;
+  margin-bottom: .5rem; display: inline-block;
 }
-.tt-question       { background: #dbeafe; color: #1d4ed8; }
-.tt-exercise       { background: #ede9fe; color: #7c3aed; }
-.tt-prompt_practice { background: #1e1e2e; color: #a78bfa; }
-.tt-self_assessment { background: #fef3c7; color: #d97706; }
-.tt-checklist      { background: #d1fae5; color: #059669; }
+.tt-question         { background: var(--sem-tt-question-bg); color: var(--sem-tt-question-fg); }
+.tt-exercise         { background: var(--sem-tt-exercise-bg); color: var(--sem-tt-exercise-fg); }
+.tt-prompt_practice  { background: var(--sem-tt-prompt-bg);   color: var(--sem-tt-prompt-fg); }
+.tt-self_assessment  { background: var(--sem-tt-assess-bg);   color: var(--sem-tt-assess-fg); }
+.tt-checklist        { background: var(--sem-tt-checklist-bg);color: var(--sem-tt-checklist-fg); }
 .task-instruction { font-size: .88rem; margin-bottom: .75rem; line-height: 1.5; }
 .task-input {
-  width: 100%; padding: .6rem .75rem; border: 1px solid var(--border);
-  border-radius: 6px; font-size: .87rem; resize: vertical; min-height: 80px;
-  font-family: inherit; background: white;
+  width: 100%; padding: .6rem .75rem; border: 1px solid var(--color-border);
+  border-radius: var(--radius); font-size: .87rem; resize: vertical; min-height: 80px;
+  font-family: inherit; background: var(--color-surface); color: var(--color-text);
 }
-.task-input:focus { outline: none; border-color: var(--accent); }
+.task-input:focus { outline: none; border-color: var(--color-accent); }
 .rating-wrap { display: flex; gap: .5rem; margin: .5rem 0; }
 .rating-btn {
-  width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--border);
-  background: white; cursor: pointer; font-size: .9rem; font-weight: 700;
+  width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--color-border);
+  background: var(--color-surface); cursor: pointer; font-size: .9rem; font-weight: 700;
   display: flex; align-items: center; justify-content: center; transition: all .15s;
 }
-.rating-btn:hover { border-color: var(--accent); color: var(--accent); }
-.rating-btn.selected { background: var(--accent); border-color: var(--accent); color: white; }
+.rating-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.rating-btn.selected { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-surface); }
 .task-checklist-items { list-style: none; margin: .5rem 0; }
 .task-checklist-items li {
   display: flex; align-items: center; gap: .5rem;
   padding: .3rem 0; font-size: .88rem; cursor: pointer;
 }
 .task-checklist-items li input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; }
-.task-checklist-items li.checked { color: var(--green); text-decoration: line-through; opacity: .7; }
+.task-checklist-items li.checked { color: var(--sem-success); text-decoration: line-through; opacity: .7; }
 .done-btn {
   margin-top: .75rem; padding: .5rem 1.25rem;
-  background: var(--navy); color: white; border: none;
-  border-radius: 6px; cursor: pointer; font-size: .85rem;
+  background: var(--color-primary); color: var(--color-surface); border: none;
+  border-radius: var(--radius); cursor: pointer; font-size: .85rem;
   transition: background .15s;
 }
-.done-btn:hover { background: var(--accent); }
-.done-btn:disabled { background: var(--green); cursor: default; }
+.done-btn:hover { background: var(--color-accent); }
+.done-btn:disabled { background: var(--sem-success); cursor: default; }
 .task-done-label {
-  color: var(--green); font-size: .85rem; font-weight: 600;
+  color: var(--sem-success); font-size: .85rem; font-weight: 600;
   display: flex; align-items: center; gap: .4rem;
 }
-.success-criteria { margin-top: .75rem; font-size: .8rem; color: var(--muted); }
+.success-criteria { margin-top: .75rem; font-size: .8rem; color: var(--color-muted); }
 .success-criteria ul { padding-left: 1.2rem; margin-top: .25rem; }
 .success-criteria li { margin-bottom: .2rem; }
 
 /* ── Lesson completion / chapter validation ── */
-.section-divider {
-  border: none; border-top: 1px dashed var(--border); margin: 1.25rem 0;
-}
+.section-divider { border: none; border-top: 1px dashed var(--color-border); margin: 1.25rem 0; }
 .validate-lesson-btn, .validate-chapter-btn {
   display: block; width: 100%; padding: .75rem 1rem;
-  background: var(--navy2); color: white; border: none;
-  border-radius: 8px; cursor: pointer; font-size: .9rem; font-weight: 600;
+  background: var(--color-nav); color: var(--color-surface); border: none;
+  border-radius: var(--radius); cursor: pointer; font-size: .9rem; font-weight: 600;
   text-align: center; margin-top: 1rem; transition: background .15s;
 }
-.validate-lesson-btn:hover { background: var(--accent); }
-.validate-chapter-btn { background: var(--accent); font-size: 1rem; padding: 1rem; }
-.validate-chapter-btn:hover { background: #c0392b; }
-.validate-chapter-btn:disabled { background: var(--green); cursor: default; }
+.validate-lesson-btn:hover { background: var(--color-accent); }
+.validate-chapter-btn {
+  background: var(--color-accent); font-size: 1rem; padding: 1rem;
+}
+.validate-chapter-btn:hover { background: var(--color-accent-dark); }
+.validate-chapter-btn:disabled { background: var(--sem-success); cursor: default; }
 .lesson-completed-banner {
-  background: #e8f8f1; border: 1px solid var(--green); border-radius: 8px;
-  padding: .75rem 1rem; color: var(--green); font-weight: 600; font-size: .9rem;
+  background: var(--sem-success-bg); border: 1px solid var(--sem-success);
+  border-radius: var(--radius); padding: .75rem 1rem;
+  color: var(--sem-success); font-weight: 600; font-size: .9rem;
   display: flex; align-items: center; gap: .5rem; margin-top: 1rem;
 }
 .chapter-validated-banner {
-  background: #e8f8f1; border: 2px solid var(--green); border-radius: 10px;
-  padding: 1rem 1.25rem; color: var(--green); font-weight: 700;
+  background: var(--sem-success-bg); border: 2px solid var(--sem-success);
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  color: var(--sem-success); font-weight: 700;
   display: flex; align-items: center; gap: .75rem; margin-top: 1.25rem;
 }
 
 /* ── Chapter validation form ── */
 .ch-validation-card {
-  background: var(--card); border-radius: 10px; padding: 1.5rem;
-  border: 2px solid var(--navy2); margin-top: 1.5rem;
+  background: var(--color-surface); border-radius: var(--radius); padding: 1.5rem;
+  border: 2px solid var(--color-nav); margin-top: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
-.ch-validation-card h3 { color: var(--navy); margin-bottom: .5rem; }
+.ch-validation-card h3 { color: var(--color-primary); margin-bottom: .5rem; }
 .ch-validation-card .val-type {
   font-size: .75rem; font-weight: 700; text-transform: uppercase;
-  color: var(--accent); letter-spacing: .07em; margin-bottom: .75rem;
+  color: var(--color-accent); letter-spacing: .07em; margin-bottom: .75rem;
 }
 .ch-validation-card .val-instructions {
-  font-size: .9rem; color: var(--text); margin-bottom: .75rem; line-height: 1.6;
+  font-size: .9rem; color: var(--color-text); margin-bottom: .75rem; line-height: 1.6;
 }
-.ch-validation-card .val-criteria { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
+.ch-validation-card .val-criteria { font-size: .82rem; color: var(--color-muted); margin-bottom: 1rem; }
 .ch-validation-card .val-criteria ul { padding-left: 1.2rem; margin-top: .3rem; }
 .ch-validation-card .val-criteria li { margin-bottom: .2rem; }
 
 /* ── Final validation ── */
 .final-card {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
-  color: white; border-radius: 12px; padding: 2rem; margin-top: 2rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-nav) 100%);
+  color: var(--color-surface); border-radius: var(--radius); padding: 2rem; margin-top: 2rem;
 }
 .final-card h2 { font-size: 1.3rem; margin-bottom: .5rem; }
 .final-card p  { opacity: .8; font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; }
 .final-card textarea {
   width: 100%; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
-  border-radius: 8px; color: white; padding: .75rem; font-size: .88rem;
-  resize: vertical; min-height: 120px; font-family: inherit;
+  border-radius: var(--radius); color: var(--color-surface); padding: .75rem;
+  font-size: .88rem; resize: vertical; min-height: 120px; font-family: inherit;
 }
 .final-card textarea::placeholder { color: rgba(255,255,255,.4); }
 .final-validate-btn {
-  margin-top: 1rem; padding: .85rem 2rem; background: var(--accent); color: white;
-  border: none; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 700;
-  transition: background .15s;
+  margin-top: 1rem; padding: .85rem 2rem; background: var(--color-accent);
+  color: var(--color-surface); border: none; border-radius: var(--radius);
+  cursor: pointer; font-size: .95rem; font-weight: 700; transition: background .15s;
 }
-.final-validate-btn:hover { background: #c0392b; }
-.final-validate-btn:disabled { background: var(--green); cursor: default; }
+.final-validate-btn:hover { background: var(--color-accent-dark); }
+.final-validate-btn:disabled { background: var(--sem-success); cursor: default; }
 
 /* ── Certificate ── */
 #certificate {
-  display: none; background: var(--card); border-radius: 12px;
-  border: 3px solid var(--accent); padding: 2.5rem; text-align: center;
-  margin-top: 2rem; box-shadow: 0 4px 20px rgba(233,69,96,.15);
+  display: none; background: var(--color-surface); border-radius: var(--radius);
+  border: 3px solid var(--color-accent); padding: 2.5rem; text-align: center;
+  margin-top: 2rem; box-shadow: 0 4px 20px rgba(var(--color-accent-rgb), .15);
 }
 #certificate.show { display: block; }
 #certificate .cert-icon { font-size: 3rem; margin-bottom: .75rem; }
-#certificate h2 { font-size: 1.6rem; color: var(--navy); margin-bottom: .5rem; }
-#certificate p { color: var(--muted); margin-bottom: .25rem; }
-#certificate .cert-title { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin: .75rem 0; }
-#certificate .cert-date { font-size: .85rem; color: var(--muted); }
+#certificate h2 { font-size: 1.6rem; color: var(--color-primary); margin-bottom: .5rem; }
+#certificate p { color: var(--color-muted); margin-bottom: .25rem; }
+#certificate .cert-title { font-size: 1.1rem; font-weight: 700; color: var(--color-accent); margin: .75rem 0; }
+#certificate .cert-date { font-size: .85rem; color: var(--color-muted); }
 
 /* ── Empty state ── */
-.empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--color-muted); }
 .empty-state h2 { font-size: 1.2rem; margin-bottom: .5rem; }
 
 /* ── Responsive ── */
@@ -360,7 +496,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   #main { margin-left: 0; padding: 1rem; }
   #menu-btn { display: flex !important; }
 }
-#menu-btn { display: none; background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
+#menu-btn { display: none; background: none; border: none; color: var(--color-surface); font-size: 1.3rem; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -438,7 +574,6 @@ function updateProgressBar() {
   const { done, total, pct } = calcProgress();
   document.getElementById('progress-bar-fill').style.width = pct + '%';
   document.getElementById('progress-text').textContent = pct + '%';
-  const prog = data.progression;
   document.getElementById('stat-tasks').textContent =
     done + ' / ' + total + ' étapes terminées';
   document.getElementById('stat-duration').textContent =
@@ -473,20 +608,16 @@ function renderSidebar() {
   const list = document.getElementById('ch-list');
   list.innerHTML = '';
   for (const ch of data.chapters) {
-    const avail    = isChapterAvailable(ch);
-    const done     = isChapterDone(ch);
-    const active   = state.activeChapter === ch.chapter_id;
-    const n_tasks  = ch.lessons.reduce((s,l) => s + l.interactive_tasks.length, 0);
+    const avail      = isChapterAvailable(ch);
+    const done       = isChapterDone(ch);
+    const active     = state.activeChapter === ch.chapter_id;
+    const n_tasks    = ch.lessons.reduce((s,l) => s + l.interactive_tasks.length, 0);
     const done_tasks = ch.lessons.reduce((s,l) =>
       s + l.completion_rules.required_tasks.filter(t => state.tasks[t]).length, 0);
 
-    const icon  = done ? '✓' : avail ? '●' : '🔒';
-    const cls   = [
-      'ch-item',
-      active   ? 'active'    : '',
-      done     ? 'completed' : '',
-      !avail   ? 'locked'    : '',
-    ].filter(Boolean).join(' ');
+    const icon = done ? '✓' : avail ? '●' : '🔒';
+    const cls  = ['ch-item', active?'active':'', done?'completed':'', !avail?'locked':'']
+      .filter(Boolean).join(' ');
 
     const el = document.createElement('div');
     el.className = cls;
@@ -513,7 +644,10 @@ function render() {
 
 function renderContent() {
   const ch = data.chapters.find(c => c.chapter_id === state.activeChapter);
-  if (!ch) { document.getElementById('content').innerHTML = '<div class="empty-state"><h2>Sélectionnez un chapitre</h2></div>'; return; }
+  if (!ch) {
+    document.getElementById('content').innerHTML = '<div class="empty-state"><h2>Sélectionnez un chapitre</h2></div>';
+    return;
+  }
 
   const avail = isChapterAvailable(ch);
   if (!avail) {
@@ -540,7 +674,9 @@ function renderContent() {
     <div class="meta">
       <span class="badge badge-logic">${esc(logicLabel)}</span>
       <span class="badge badge-duration">⏱ ${esc(ch.estimated_duration || '')}</span>
-      ${chDone ? '<span class="badge badge-status-completed">✓ Terminé</span>' : '<span class="badge badge-status-available">En cours</span>'}
+      ${chDone
+        ? '<span class="badge badge-status-completed">✓ Terminé</span>'
+        : '<span class="badge badge-status-available">En cours</span>'}
     </div>
   </div>`;
 
@@ -548,7 +684,6 @@ function renderContent() {
     html += renderLesson(ch, lesson);
   }
 
-  // Chapter validation
   if (!chDone) {
     const allLessonsDone = ch.lessons.every(l => isLessonCompleted(l));
     if (allLessonsDone) {
@@ -556,7 +691,6 @@ function renderContent() {
     }
   } else {
     html += `<div class="chapter-validated-banner">✓ Chapitre validé — Bien joué !</div>`;
-    // Final validation if last chapter
     const lastCh = data.chapters[data.chapters.length - 1];
     if (ch.chapter_id === lastCh.chapter_id) {
       html += renderFinalValidation();
@@ -568,38 +702,33 @@ function renderContent() {
 }
 
 function renderLesson(ch, lesson) {
-  const avail      = isLessonAvailable(ch.order, lesson);
-  const completed  = isLessonCompleted(lesson);
-  const isOpen     = state.openLessons[lesson.lesson_id] !== false && avail;
-  const icon       = completed ? '✓' : avail ? '▶' : '🔒';
-  const headerCls  = avail ? '' : 'locked';
-  const toggleCls  = isOpen ? 'open' : '';
+  const avail     = isLessonAvailable(ch.order, lesson);
+  const completed = isLessonCompleted(lesson);
+  const isOpen    = state.openLessons[lesson.lesson_id] !== false && avail;
+  const icon      = completed ? '✓' : avail ? '▶' : '🔒';
+  const iconColor = completed ? 'var(--sem-success)' : avail ? 'var(--color-accent)' : 'var(--sem-locked-icon)';
 
   let html = `
   <div class="lesson-card" id="${lesson.lesson_id}">
-    <div class="lesson-header ${headerCls}" onclick="toggleLesson('${lesson.lesson_id}', ${avail})">
-      <span class="lesson-status-icon" style="color:${completed?'var(--green)':avail?'var(--accent)':'#bbb'}">${icon}</span>
+    <div class="lesson-header ${avail ? '' : 'locked'}" onclick="toggleLesson('${lesson.lesson_id}', ${avail})">
+      <span class="lesson-status-icon" style="color:${iconColor}">${icon}</span>
       <div class="lesson-title-wrap">
         <div class="lesson-title">${esc(lesson.title)}</div>
         <div class="lesson-obj">${esc(lesson.objective)}</div>
       </div>
-      <span class="lesson-toggle ${toggleCls}">▼</span>
+      <span class="lesson-toggle ${isOpen ? 'open' : ''}">▼</span>
     </div>`;
 
   if (avail && isOpen) {
     html += `<div class="lesson-body">`;
-
     for (const cb of lesson.content_blocks) {
       html += renderContentBlock(cb);
     }
-
     html += `<hr class="section-divider">`;
-    html += `<div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:.75rem;">À faire</div>`;
-
+    html += `<div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--color-accent);margin-bottom:.75rem;">À faire</div>`;
     for (const task of lesson.interactive_tasks) {
       html += renderTask(task, lesson);
     }
-
     if (completed) {
       html += `<div class="lesson-completed-banner">✓ Leçon terminée</div>`;
     } else {
@@ -616,8 +745,10 @@ function renderLesson(ch, lesson) {
 
 function renderContentBlock(cb) {
   const cls = 'content-block cb-' + cb.type;
-  const typelabel = { theory:'Théorie', example:'Exemple', method:'Méthode',
-    warning:'Point de vigilance', prompt:'Prompt', checklist:'Checklist' }[cb.type] || cb.type;
+  const typelabel = {
+    theory:'Théorie', example:'Exemple', method:'Méthode',
+    warning:'Point de vigilance', prompt:'Prompt', checklist:'Checklist'
+  }[cb.type] || cb.type;
   let inner = `<div class="cb-label">${typelabel}</div>
     <div class="cb-title">${esc(cb.title)}</div>
     <div class="cb-content">${esc(cb.content)}</div>`;
@@ -631,8 +762,10 @@ function renderTask(task, lesson) {
   const tid      = task.task_id;
   const done     = !!state.tasks[tid];
   const ttCls    = 'task-type-badge tt-' + task.type;
-  const typeLabel = { question:'Question', exercise:'Exercice', prompt_practice:'Pratique Prompt',
-    self_assessment:'Auto-évaluation', checklist:'Checklist' }[task.type] || task.type;
+  const typeLabel = {
+    question:'Question', exercise:'Exercice', prompt_practice:'Pratique Prompt',
+    self_assessment:'Auto-évaluation', checklist:'Checklist'
+  }[task.type] || task.type;
 
   let inner = `<span class="${ttCls}">${typeLabel}</span>
     <div class="task-instruction">${esc(task.instruction)}</div>`;
@@ -677,7 +810,9 @@ function renderTask(task, lesson) {
 
 function renderChValidation(ch) {
   const val = ch.chapter_validation;
-  const typelabel = {quiz:'Quiz', practical_case:'Cas pratique', checklist:'Checklist', reflection:'Réflexion'}[val.type] || val.type;
+  const typelabel = {
+    quiz:'Quiz', practical_case:'Cas pratique', checklist:'Checklist', reflection:'Réflexion'
+  }[val.type] || val.type;
   const criteria = (val.success_criteria||[]).map(c=>`<li>${esc(c)}</li>`).join('');
   const saved = state.chValText[ch.chapter_id] || '';
   return `
@@ -695,12 +830,12 @@ function renderChValidation(ch) {
 }
 
 function renderFinalValidation() {
-  if (state.finalValidated) {
-    return renderCertificate();
-  }
+  if (state.finalValidated) return renderCertificate();
   const fv = data.final_validation;
   const criteria = (fv.success_criteria||[]).map(c=>`<li>${esc(c)}</li>`).join('');
-  const typelabel = {practical_case:'Cas pratique', action_plan:'Plan d\'action', quiz:'Quiz'}[fv.type] || fv.type;
+  const typelabel = {
+    practical_case:'Cas pratique', action_plan:"Plan d'action", quiz:'Quiz'
+  }[fv.type] || fv.type;
   return `
   <div class="final-card" id="final-validation">
     <h2>🎯 Validation finale — ${typelabel}</h2>
@@ -723,7 +858,9 @@ function renderCertificate() {
     <p>Formation complétée avec succès.</p>
     <p>Durée estimée : ${esc(data.estimated_duration||'')}</p>
     <p class="cert-date">Délivré le ${d}</p>
-    <p style="margin-top:1rem;font-size:.8rem;opacity:.6;">Généré par training_generator v2.0.0 — Module EURKAI</p>
+    <p style="margin-top:1rem;font-size:.8rem;opacity:.5;">
+      Généré par training_generator v2.0.0 — Module EURKAI
+    </p>
   </div>`;
 }
 
@@ -731,8 +868,7 @@ function renderCertificate() {
 function toggleLesson(lessonId, avail) {
   if (!avail) return;
   state.openLessons[lessonId] = !state.openLessons[lessonId];
-  saveState();
-  renderContent();
+  saveState(); renderContent();
 }
 
 function toggleSidebar() {
@@ -748,72 +884,55 @@ function copyPrompt(btn, text) {
 
 function setRating(tid, val) {
   state.taskValues[tid] = val;
-  saveState();
-  renderContent();
+  saveState(); renderContent();
 }
 
 function saveTaskValue(tid, val) {
-  state.taskValues[tid] = val;
-  saveState();
+  state.taskValues[tid] = val; saveState();
 }
 
 function saveChValText(chId, val) {
-  state.chValText[chId] = val;
-  saveState();
+  state.chValText[chId] = val; saveState();
 }
 
 function saveFinalText(val) {
-  state.finalText = val;
-  saveState();
+  state.finalText = val; saveState();
 }
 
 function toggleCheck(tid, cid, total) {
   state.taskValues[cid] = !state.taskValues[cid];
-  // Auto-complete task if all checkboxes checked
   const allDone = Array.from({length: total}, (_,i) => state.taskValues[tid + '_c' + i]).every(Boolean);
   if (allDone) state.tasks[tid] = true;
-  saveState();
-  renderContent();
+  saveState(); renderContent();
 }
 
 function markDone(tid) {
-  state.tasks[tid] = true;
-  saveState();
-  renderContent();
+  state.tasks[tid] = true; saveState(); renderContent();
 }
 
 function validateLesson(lessonId, chId) {
   const ch     = data.chapters.find(c => c.chapter_id === chId);
   const lesson = ch.lessons.find(l => l.lesson_id === lessonId);
-  // Mark all required tasks as done
   lesson.completion_rules.required_tasks.forEach(tid => { state.tasks[tid] = true; });
   state.openLessons[lessonId] = false;
-  // Auto-open next lesson
   const next = ch.lessons.find(l => l.order === lesson.order + 1);
   if (next) state.openLessons[next.lesson_id] = true;
-  saveState();
-  render();
+  saveState(); render();
 }
 
 function validateChapter(chId) {
   state.chValidated[chId] = true;
-  const ch = data.chapters.find(c => c.chapter_id === chId);
-  // Unlock next chapter in sidebar
+  const ch    = data.chapters.find(c => c.chapter_id === chId);
   const nextCh = data.chapters.find(c => c.order === ch.order + 1);
   if (nextCh) {
     state.activeChapter = nextCh.chapter_id;
     state.openLessons[nextCh.lessons[0].lesson_id] = true;
   }
-  saveState();
-  render();
-  window.scrollTo(0, 0);
+  saveState(); render(); window.scrollTo(0, 0);
 }
 
 function validateFinal() {
-  state.finalValidated = true;
-  saveState();
-  render();
-  // Scroll to certificate
+  state.finalValidated = true; saveState(); render();
   setTimeout(() => {
     const cert = document.getElementById('certificate');
     if (cert) cert.scrollIntoView({ behavior: 'smooth' });
@@ -821,15 +940,12 @@ function validateFinal() {
 }
 
 function bindEvents(ch) {
-  // Restore textarea values
   for (const lesson of ch.lessons) {
     for (const task of lesson.interactive_tasks) {
-      const tid = task.task_id;
-      const ta  = document.getElementById('ta_' + tid);
-      if (ta && state.taskValues[tid]) ta.value = state.taskValues[tid];
+      const ta = document.getElementById('ta_' + task.task_id);
+      if (ta && state.taskValues[task.task_id]) ta.value = state.taskValues[task.task_id];
     }
   }
-  // Restore chapter validation textarea
   const chTa = document.getElementById('chval_ta_' + ch.chapter_id);
   if (chTa && state.chValText[ch.chapter_id]) chTa.value = state.chValText[ch.chapter_id];
 }
@@ -844,7 +960,6 @@ function esc(s) {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 loadState();
-// Open first lesson of active chapter if nothing is open
 const activeCh = data.chapters.find(c => c.chapter_id === state.activeChapter);
 if (activeCh && activeCh.lessons.length > 0) {
   const firstLesson = activeCh.lessons[0];

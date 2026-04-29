@@ -94,7 +94,7 @@ MANIFEST = {
     "version":     "2.0.0",
     "type":        "module",
     "layer":       "generation",
-    "inputs":      ["topic", "level", "objectives", "logics", "format", "catalog"],
+    "inputs":      ["topic", "level", "objectives", "logics", "format", "catalog", "theme"],
     "outputs":     ["training"],
     "description": "Génère un parcours de formation interactif structuré en chapitres > leçons > tâches.",
 }
@@ -112,6 +112,40 @@ LOGIC_LABELS = {
 FORMAT_LESSONS  = {"short": 2, "standard": 3, "long": 5}
 FORMAT_DURATION = {"short": "1h30", "standard": "2h30", "long": "4h"}
 
+# Thème par défaut — utilisé si aucun thème n'est fourni.
+# Le design final appartient au projet consommateur du module.
+DEFAULT_THEME = {
+    "mode": "default",
+    "tokens": {
+        "primary":     "#1a1a2e",
+        "accent":      "#e94560",
+        "background":  "#f0f2f5",
+        "surface":     "#ffffff",
+        "text":        "#2d3436",
+        "muted":       "#636e72",
+        "border":      "#e0e3e8",
+        "radius":      "8px",
+        "font_family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    },
+    "layout": {
+        "navigation":      "sidebar",
+        "chapter_display": "accordion",
+        "lesson_display":  "accordion",
+    },
+}
+
+
+def _resolve_theme(theme_input):
+    """Fusionne le thème fourni avec DEFAULT_THEME.
+    Les tokens du projet ne sont jamais écrasés par les valeurs par défaut."""
+    if not theme_input:
+        return {k: (v.copy() if isinstance(v, dict) else v) for k, v in DEFAULT_THEME.items()}
+    return {
+        "mode":   theme_input.get("mode", "custom"),
+        "tokens": {**DEFAULT_THEME["tokens"], **theme_input.get("tokens", {})},
+        "layout": {**DEFAULT_THEME["layout"], **theme_input.get("layout", {})},
+    }
+
 
 # ── Point d'entrée ────────────────────────────────────────────────────────────
 
@@ -122,6 +156,9 @@ def run(input_data):
     logics     = input_data.get("logics") or ["editorial", "technical", "operational"]
     fmt        = input_data.get("format", "standard")
     catalog    = input_data.get("catalog")
+    theme      = input_data.get("theme")
+
+    resolved_theme = _resolve_theme(theme)
 
     if not topic:
         return {
@@ -132,9 +169,12 @@ def run(input_data):
     if catalog is not None:
         result = _generate_llm(topic, level, objectives, logics, fmt, catalog)
         if result["status"] == "success":
+            result["meta"]["theme"] = resolved_theme
             return result
 
-    return _generate_deterministic(topic, level, objectives, logics, fmt)
+    result = _generate_deterministic(topic, level, objectives, logics, fmt)
+    result["meta"]["theme"] = resolved_theme
+    return result
 
 
 # ── Mode LLM ──────────────────────────────────────────────────────────────────
