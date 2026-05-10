@@ -34,6 +34,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from catalog.load_catalog import load_catalog
+from core.context import _context_to_dict
 from agents.agent_generate_object import run as generate_object
 from agents.agent_generate_code    import run as generate_code
 from agents.agent_debug_fix        import run as debug_fix
@@ -45,7 +46,7 @@ from agents.agent_brief            import run as brief_agent
 
 # ── Main entry point ──────────────────────────────────────────────────────────
 
-def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True):
+def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True, context=None):
     """
     Orchestre la chaîne input → objet → code.
 
@@ -53,6 +54,7 @@ def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True)
     params       : dict libre — object_lineage, object_goal, object_type, target_language…
     catalog      : catalog EURKAI (chargé automatiquement si absent)
     model_type   : "llm" pour agent_generate_object, "deterministic" pour agent_generate_code
+    context      : ProjectExecutionContext | dict | None — contexte transverse (transport only)
     """
     params  = params or {}
     catalog = catalog or load_catalog()
@@ -60,9 +62,13 @@ def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True)
     meta  = {"steps": [], "usage": {}}
     brief = None
 
+    ctx_dict = _context_to_dict(context)
+    if ctx_dict is not None:
+        meta["context"] = ctx_dict
+
     # ── Étape 0a — Brief : structurer l'idée ─────────────────────────────────
     if params.get("idea"):
-        brief_step = _step_brief(params["idea"], verbose)
+        brief_step = _step_brief(params["idea"], verbose, ctx_dict)
         meta["steps"].append({"step": "brief", "status": brief_step["_step_status"]})
         if brief_step["_step_status"] == "ok":
             brief  = brief_step["brief"]
@@ -78,7 +84,7 @@ def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True)
                                                   if k not in resolved["params"]}}
 
     # ── Étape 0b — Architect : enrichir l'objet ───────────────────────────────
-    arch_result = _step_architect(params, verbose)
+    arch_result = _step_architect(params, verbose, ctx_dict)
     meta["steps"].append({"step": "architect", "status": arch_result["_step_status"]})
     if arch_result["_step_status"] == "ok":
         params       = arch_result["enriched"]
@@ -96,7 +102,7 @@ def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True)
 
     # ── Étape 2 — Générer le code ─────────────────────────────────────────────
     code_params = _build_code_params(params, generated_object)
-    code_result = _step_generate_code(schema_ident, code_params, catalog, verbose)
+    code_result = _step_generate_code(schema_ident, code_params, catalog, verbose, ctx_dict)
     meta["steps"].append({"step": "generate_code", "status": code_result["_step_status"],
                           "filename": code_result.get("filename", "")})
 
@@ -116,7 +122,7 @@ def run(schema_ident, params=None, catalog=None, model_type="llm", verbose=True)
             return _partial(generated_object, "", "generate_and_fix_both_failed", meta)
 
     # ── Étape 4 — Validation objet / code ────────────────────────────────────
-    val_result = _step_validate(generated_object, code, params, verbose)
+    val_result = _step_validate(generated_object, code, params, verbose, ctx_dict)
     meta["steps"].append({"step": "validate", "status": val_result["_step_status"],
                           "score": val_result.get("score", 0)})
     meta["validation"] = {"score": val_result.get("score", 0),
@@ -175,9 +181,9 @@ def _step_generate_object(schema_ident, params, catalog, model_type, verbose):
             "usage": result.get("usage", {})}
 
 
-def _step_brief(idea, verbose):
+def _step_brief(idea, verbose, ctx_dict=None):
     """Appelle agent_brief. Fallback propre si échec — n'est jamais bloquant."""
-    result = brief_agent({"idea": idea}, verbose=verbose)
+    result = brief_agent({"idea": idea}, verbose=verbose, context=ctx_dict)
     if result["status"] != "success":
         if verbose:
             print(f"  [SKIP]    brief — {result.get('reason')} — fallback sans brief")
@@ -185,9 +191,9 @@ def _step_brief(idea, verbose):
     return {"_step_status": "ok", "brief": result["brief"]}
 
 
-def _step_architect(params, verbose):
+def _step_architect(params, verbose, ctx_dict=None):
     """Enrichit l'objet via agent_architect. Fallback propre si échec."""
-    result = architect(params, verbose=verbose)
+    result = architect(params, verbose=verbose, context=ctx_dict)
     if result["status"] != "success":
         if verbose:
             print(f"  [SKIP]    architect — {result.get('reason')} — fallback params originaux")
@@ -216,10 +222,13 @@ def _step_debug_fix(code, error, params, verbose):
             "fix_applied":  result.get("fix_applied", "")}
 
 
-def _step_validate(obj, code, params, verbose):
+def _step_validate(obj, code, params, verbose, ctx_dict=None):
     """Valide la cohérence objet/code via agent_validator."""
     obj_for_val = obj or params
-    result = validate(obj_for_val, code, context=params, verbose=verbose)
+    val_context = dict(params) if params else {}
+    if ctx_dict is not None:
+        val_context["_execution_context"] = ctx_dict
+    result = validate(obj_for_val, code, context=val_context, verbose=verbose)
     step_status = "ok" if result.get("status") == "success" else "failure"
     return {"_step_status": step_status,
             "score":        result.get("score", 0),
@@ -227,9 +236,9 @@ def _step_validate(obj, code, params, verbose):
             "warnings":     result.get("warnings", [])}
 
 
-def _step_generate_code(schema_ident, code_params, catalog, verbose):
+def _step_generate_code(schema_ident, code_params, catalog, verbose, ctx_dict=None):
     result = generate_code(schema_ident, code_params, catalog,
-                           model_type="deterministic", verbose=verbose)
+                           model_type="deterministic", verbose=verbose, context=ctx_dict)
 
     step_status = {"ok": "ok", "partial": "partial", "error": "error"}.get(
         result.get("status", "error"), "error"

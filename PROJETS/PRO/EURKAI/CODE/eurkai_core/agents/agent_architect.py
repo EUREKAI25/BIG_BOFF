@@ -49,7 +49,7 @@ _DOMAIN_HINTS = {
 
 
 def run(obj, catalog=None, model_type="deterministic", verbose=True,
-        agent_ident="agent_architect"):
+        agent_ident="agent_architect", context=None):
     """
     Enrichit un objet issu de agent_intake.
 

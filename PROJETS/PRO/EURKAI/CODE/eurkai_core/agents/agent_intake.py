@@ -51,7 +51,7 @@ _STOPWORDS = {
 
 
 def run(idea, catalog=None, model_type="deterministic", verbose=True,
-        agent_ident="agent_intake"):
+        agent_ident="agent_intake", context=None):
     """
     Transforme une idée texte libre en objet structuré.
 

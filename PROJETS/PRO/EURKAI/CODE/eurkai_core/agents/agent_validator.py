@@ -98,12 +98,17 @@ def run(obj, code, context=None, verbose=True, agent_ident="agent_validator"):
             for w in warnings:
                 print(f"  [WARN]    {w}")
 
-    return {
+    result = {
         "status":   status,
         "score":    score,
         "issues":   issues,
         "warnings": warnings,
     }
+
+    if isinstance(context, dict) and "_execution_context" in context:
+        result["_execution_context"] = context["_execution_context"]
+
+    return result
 
 
 # ── Checks ────────────────────────────────────────────────────────────────────

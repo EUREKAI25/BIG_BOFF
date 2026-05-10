@@ -105,6 +105,19 @@ Ce noyau sert de garde-fou : il stabilise EURKAI en validant la conformité à c
 
 ## Journal
 
+### 2026-05-10 — Intégration ProjectExecutionContext (complète)
+- core/context.py créé : ProjectExecutionContext dataclass + _context_to_dict() helper
+- 5 scénarios mis à jour (context=None, meta["context"]) :
+  scenario_idea_to_brief, scenario_brief_to_cdc, scenario_cdc_to_specs,
+  scenario_specs_to_deliverable, scenario_orchestrate
+- scenario_orchestrate : ctx_dict propagé à _step_brief, _step_architect,
+  _step_generate_code, _step_validate ; _execution_context injecté dans val_context
+- 4 agents mis à jour (context=None) :
+  agent_brief, agent_intake, agent_architect, agent_generate_code
+- agent_validator : expose _execution_context dans le retour quand présent dans context
+- tests/test_project_execution_context.py créé — 4/4 tests passent
+- Backward compat confirmée : meta["context"] absent si context=None
+
 ### 2026-05-10 — Checkpoint pre-ProjectExecutionContext
 - Commit de sauvegarde avant ajout du context transverse (ProjectExecutionContext)
 - Fichiers concernés : scenario_idea_to_brief.py, scenario_debug_validate.py, scenario_specs_to_deliverable.py, catalog_core.json

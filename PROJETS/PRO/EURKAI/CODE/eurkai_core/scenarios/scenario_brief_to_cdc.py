@@ -32,6 +32,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from core.context import _context_to_dict
+
 
 # ── Templates par type de projet ──────────────────────────────────────────────
 
@@ -206,17 +208,21 @@ _USER_FLOW_TEMPLATES = {
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run(input_data, verbose=True, agent_ident="scenario_brief_to_cdc"):
+def run(input_data, verbose=True, agent_ident="scenario_brief_to_cdc", context=None):
     """
     Transforme un brief en CDC structuré.
 
     input_data : dict — doit contenir la clé "brief" (dict)
     verbose    : bool — affiche les logs de progression
+    context    : ProjectExecutionContext | dict | None — contexte transverse (transport only)
 
     Retourne un dict standardisé {status, from, to, data, meta}.
     Compatible avec le futur mécanisme brief.convert("cdc").
     """
     meta = {"steps": [], "errors": []}
+    ctx_dict = _context_to_dict(context)
+    if ctx_dict is not None:
+        meta["context"] = ctx_dict
 
     # ── Étape 1 — Validation de l'input ──────────────────────────────────────
     val = _validate_input(input_data)

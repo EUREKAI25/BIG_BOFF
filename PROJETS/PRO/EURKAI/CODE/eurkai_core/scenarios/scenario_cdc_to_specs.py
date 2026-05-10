@@ -31,6 +31,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from core.context import _context_to_dict
+
 
 # ── Templates d'architecture par type ────────────────────────────────────────
 
@@ -266,17 +268,21 @@ _TECH_CONSTRAINTS_BY_TYPE = {
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run(input_data, verbose=True, agent_ident="scenario_cdc_to_specs"):
+def run(input_data, verbose=True, agent_ident="scenario_cdc_to_specs", context=None):
     """
     Transforme un CDC en specs techniques structurées.
 
     input_data : dict — doit contenir la clé "cdc" (dict)
     verbose    : bool
+    context    : ProjectExecutionContext | dict | None — contexte transverse (transport only)
 
     Retourne un dict standardisé {status, from, to, data, meta}.
     Compatible futur cdc.convert("specs").
     """
     meta = {"steps": [], "errors": []}
+    ctx_dict = _context_to_dict(context)
+    if ctx_dict is not None:
+        meta["context"] = ctx_dict
 
     # ── Étape 1 — Validation ──────────────────────────────────────────────────
     val = _validate_input(input_data)

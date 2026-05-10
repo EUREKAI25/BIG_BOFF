@@ -37,19 +37,25 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from core.context import _context_to_dict
+
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run(input_data, verbose=True, agent_ident="scenario_specs_to_deliverable"):
+def run(input_data, verbose=True, agent_ident="scenario_specs_to_deliverable", context=None):
     """
     Transforme des specs en livrable du bon type.
 
     input_data : dict — doit contenir la clé "specs" (dict)
     verbose    : bool
+    context    : ProjectExecutionContext | dict | None — contexte transverse (transport only)
 
     Retourne {status, from, to, data: {deliverable_type, deliverable}, meta}.
     """
     meta = {"steps": [], "errors": []}
+    ctx_dict = _context_to_dict(context)
+    if ctx_dict is not None:
+        meta["context"] = ctx_dict
 
     # ── Étape 1 — Validation ──────────────────────────────────────────────────
     val = _validate_input(input_data)

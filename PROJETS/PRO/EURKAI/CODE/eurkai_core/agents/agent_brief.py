@@ -220,7 +220,7 @@ _CONSTRAINT_TEMPLATES = {
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run(input_data, model_type="deterministic", verbose=True, agent_ident="agent_brief"):
+def run(input_data, model_type="deterministic", verbose=True, agent_ident="agent_brief", context=None):
     """
     Transforme une idée en BRIEF structuré.
 

@@ -31,11 +31,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.runtime.execute import execute
+from core.context import _context_to_dict
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run(input_data, verbose=True, agent_ident="scenario_idea_to_brief"):
+def run(input_data, verbose=True, agent_ident="scenario_idea_to_brief", context=None):
     """
     Transforme une idée en brief structuré.
 
@@ -46,6 +47,9 @@ def run(input_data, verbose=True, agent_ident="scenario_idea_to_brief"):
     Compatible avec le futur mécanisme idea.convert("brief").
     """
     meta = {"steps": [], "errors": []}
+    ctx_dict = _context_to_dict(context)
+    if ctx_dict is not None:
+        meta["context"] = ctx_dict
 
     # ── Étape 1 — Validation de l'input ──────────────────────────────────────
     val = _validate_input(input_data)
