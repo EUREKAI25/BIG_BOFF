@@ -1,0 +1,118 @@
+# EURKAI ERK — brief_team_orchestrator (module de maturation)
+# Version: 0.1.0
+# Updated: 2026-05-10
+# Source: modules/brief_team_orchestrator.py
+
+Object:Module:brief_team_orchestrator:
+  .name = brief_team_orchestrator
+  .module_type = module
+  .version = "0.1.0"
+  .description = "Maturation d'une idée en brief structuré par équipe d'agents experts."
+  .inputs = [idea, context, mode]
+  .outputs = [brief, reports, meta]
+  .function_path = modules.brief_team_orchestrator.run
+  .layer = maturation
+  .mode = deterministic
+
+Object:Module:brief_team_orchestrator:Principles:
+  .rule = "Agents déterministes en mode stub — aucun LLM, aucune dépendance externe"
+  .rule = "Mode real = identique stub en v0 — LLM à brancher comme plugin ultérieurement"
+  .rule = "Aucun agent ne génère du code projet final — sortie = brief uniquement"
+  .rule = "13 sections de brief toujours présentes — aucun champ null"
+  .rule = "Scope_v0 et out_of_scope_v0 toujours distincts et non vides"
+  .rule = "Stateless — aucun état persisté entre appels"
+
+Object:Module:brief_team_orchestrator:Input:idea:
+  .type = string
+  .required = true
+  .description = "Idée de projet en langage naturel (fr ou en)"
+
+Object:Module:brief_team_orchestrator:Input:context:
+  .type = dict
+  .required = false
+  .description = "Contexte additionnel : project_name, domain, target_users, constraints…"
+
+Object:Module:brief_team_orchestrator:Input:mode:
+  .type = string
+  .values = [stub, real]
+  .default = stub
+  .required = false
+  .description = "stub → déterministe sans LLM | real → identique stub en v0"
+
+Object:Module:brief_team_orchestrator:Agents:
+  .agents = [product_agent, architecture_agent, ux_design_agent,
+             security_agent, performance_agent, business_agent,
+             validation_contracts_agent]
+  .selection_v0 = "Tous les agents appelés systématiquement"
+  .selection_v1 = "Sélection dynamique selon le profil de l'idée (futur)"
+
+Object:Module:brief_team_orchestrator:AgentOutput:
+  .schema = AgentReport
+  .fields = [agent, focus, recommendations, questions, risks, brief_additions]
+
+Object:Schema:AgentReport:
+  .agent = string        // nom de l'agent
+  .focus = string        // domaine de compétence
+  .recommendations = list[string]   // conseils concrets
+  .questions = list[string]         // zones d'ombre à clarifier
+  .risks = list[string]             // risques identifiés
+  .brief_additions = dict           // contributions au brief final
+
+Object:Module:brief_team_orchestrator:Output:brief:
+  .type = dict
+  .schema = StructuredBriefV0
+
+Object:Schema:StructuredBriefV0:
+  .fields = [project_name, vision, objective, target_users,
+             core_capabilities, expected_workflows, key_objects,
+             key_scenarios, constraints, success_criteria,
+             open_questions, scope_v0, out_of_scope_v0]
+  .guarantee = "Tous les champs présents — listes jamais nulles"
+
+Object:Schema:StructuredBriefV0:project_name:
+  .type = string
+  .extraction = "ALL_CAPS identifier > CamelCase > premiers mots significatifs > context.project_name"
+
+Object:Schema:StructuredBriefV0:vision:
+  .type = string
+  .extraction = "Première phrase de l'idée"
+
+Object:Schema:StructuredBriefV0:objective:
+  .type = string
+  .extraction = "Phrase contenant : objectif / but / vise / permet / transformer"
+
+Object:Schema:StructuredBriefV0:scope_v0:
+  .type = list[string]
+  .rule = "Doit contenir au moins 1 élément"
+  .rule = "Aucun chevauchement avec out_of_scope_v0"
+
+Object:Schema:StructuredBriefV0:out_of_scope_v0:
+  .type = list[string]
+  .rule = "Doit contenir au moins 1 élément"
+  .rule = "Contient toujours : optimisation avancée, sécurité production, UI graphique (v1+)"
+
+Object:Module:brief_team_orchestrator:Output:reports:
+  .type = dict
+  .description = "Dict {agent_name: AgentReport} — un rapport par agent appelé"
+
+Object:Module:brief_team_orchestrator:Output:meta:
+  .type = dict
+  .schema = OrchestrationMeta
+
+Object:Schema:OrchestrationMeta:
+  .steps = list[dict]          // trace d'exécution (step, status)
+  .mode = string               // mode d'exécution utilisé
+  .agents_called = list[string] // agents effectivement consultés
+
+Object:Module:brief_team_orchestrator:Integration:scenario_idea_to_brief:
+  .maps = "brief.project_name → scenario_idea_to_brief.brief.project_name"
+  .maps = "brief.vision       → scenario_idea_to_brief.brief.description"
+  .maps = "brief.target_users → scenario_idea_to_brief.brief.target_users"
+  .maps = "brief.scope_v0     → scenario_idea_to_brief.brief.core_features"
+  .note = "brief_team_orchestrator produit un brief plus riche — compatible downstream"
+
+Object:Module:brief_team_orchestrator:Roadmap:
+  .v0 = "Agents déterministes, analyse lexicale, stub/real identiques"
+  .v1 = "Sélection dynamique des agents selon profil de l'idée"
+  .v2 = "Agents LLM optionnels (plugin) avec fallback déterministe"
+  .v3 = "Multi-tours conversationnel avec mémorisation du contexte"

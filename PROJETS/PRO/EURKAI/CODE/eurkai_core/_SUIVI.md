@@ -105,6 +105,14 @@ Ce noyau sert de garde-fou : il stabilise EURKAI en validant la conformité à c
 
 ## Journal
 
+### 2026-05-10 — brief_team_orchestrator v0.1.0
+- modules/brief_team_orchestrator.py créé : orchestrateur + 7 agents experts (product, architecture, ux_design, security, performance, business, validation_contracts) + synthesis_agent
+- modules/brief_team_orchestrator.erk créé : descriptor EURKAI complet
+- modules/demo_brief_team_orchestrator.py créé : 5 cas de démo, génère EurkaiV0_Brief.json
+- tests/test_brief_team_orchestrator.py créé : 7/7 tests passent
+- Comportement : 100% déterministe (stub), aucun LLM, aucune dépendance externe
+- Brief EURKAI produit : project_name=EURKAI, 9 capabilities, 11 key_objects, 23 open_questions, scope_v0 / out_of_scope_v0 bien séparés
+
 ### 2026-05-10 — Intégration ProjectExecutionContext (complète)
 - core/context.py créé : ProjectExecutionContext dataclass + _context_to_dict() helper
 - 5 scénarios mis à jour (context=None, meta["context"]) :
