@@ -105,6 +105,11 @@ Ce noyau sert de garde-fou : il stabilise EURKAI en validant la conformité à c
 
 ## Journal
 
+### 2026-05-10 — Checkpoint pre-ProjectExecutionContext
+- Commit de sauvegarde avant ajout du context transverse (ProjectExecutionContext)
+- Fichiers concernés : scenario_idea_to_brief.py, scenario_debug_validate.py, scenario_specs_to_deliverable.py, catalog_core.json
+- Prochaine étape : intégrer rules/resources/mode/validation_level dans tous les scénarios et agents sans casser la backward compat
+
 ### 2026-04-02 — Session 1
 - Session de cadrage : lecture de tous les docs de référence
 - ERK_LANG_v1.md et FORMULAS_v1.md créés dans cadre/

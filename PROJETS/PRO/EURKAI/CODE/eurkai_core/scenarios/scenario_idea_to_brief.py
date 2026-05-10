@@ -30,7 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from agents.agent_brief import run as agent_brief
+from core.runtime.execute import execute
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
@@ -103,11 +103,14 @@ def _validate_input(input_data):
 
 def _generate_brief(idea, verbose):
     """
-    Appelle agent_brief et retourne le brief brut.
+    Appelle agent_brief via execute() et retourne le brief brut.
     Retourne : {ok, brief, error}
     """
-    result = agent_brief({"idea": idea}, verbose=verbose)
+    exc = execute("agent", "agent_brief", {"input_data": {"idea": idea}})
+    if exc["status"] != "ok":
+        return {"ok": False, "error": f"agent_brief_execute_failed:{exc['error']}"}
 
+    result = exc["result"]
     if result.get("status") != "success" or not result.get("brief"):
         return {"ok": False, "error": f"agent_brief_failed:{result.get('reason', 'unknown')}"}
 

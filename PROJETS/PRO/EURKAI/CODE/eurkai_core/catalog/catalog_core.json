@@ -1368,8 +1368,8 @@
         "scenario_ident": {
           "rule_condition": "AND(EXISTS(scenario_ident), IS_NOT_EMPTY(scenario_ident))"
         },
-        "scenario_how": {
-          "rule_condition": "AND(EXISTS(scenario_how), IS_NOT_EMPTY(scenario_how))"
+        "scenario_method": {
+          "rule_condition": "AND(EXISTS(scenario_method), IS_NOT_EMPTY(scenario_method))"
         }
       },
       "schema_validation_rule_list": {
@@ -1814,76 +1814,123 @@
   "catalog_scenario_list": {
     "scenario_debug_validate": {
       "scenario_ident": "scenario_debug_validate",
-      "scenario_description": "Valide tout objet exécuté contre son schema. S'exécute automatiquement via le hook after de toute MRG. Produit une entrée History.",
-      "scenario_execution_modality": "automatic",
-      "scenario_what": {
-        "object_lineage": "*"
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_debug_validate",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_debug_validate",
+      "scenario_contract": {
+        "scenario_input": {
+          "object_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_debug_validate.run"
       },
-      "scenario_how": "validate_object_vs_schema",
-      "scenario_validate": "validate_attending_result",
-      "scenario_render": "render_validation_result",
-      "scenario_hooks": {
-        "after": "history_update",
-        "on_success": "log_success",
-        "on_failure": "log_failure"
-      },
-      "scenario_attending_result": {
-        "success": true
-      },
-      "object_schema": "ScenarioSchema"
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_debug_validate.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
     },
     "scenario_validate": {
       "scenario_ident": "scenario_validate",
       "object_schema": "ScenarioSchema",
-      "scenario_description": "Valide un objet contre son schema. Scénario métier autonome.",
-      "scenario_what": {
-        "object_lineage": "*"
+      "object_lineage": "Object:Module:scenario_validate",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_validate",
+      "scenario_contract": {
+        "scenario_input": {
+          "object_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_validate.run"
       },
-      "scenario_how": "validate_object_vs_schema",
-      "scenario_hooks": {
-        "after": "history_update",
-        "on_success": "log_success",
-        "on_failure": "log_failure"
-      },
-      "scenario_attending_result": {
-        "success": true
-      }
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_validate.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
     },
     "scenario_get_create": {
       "scenario_ident": "scenario_get_create",
       "object_schema": "ScenarioSchema",
-      "scenario_description": "Cherche un objet (3 niveaux SuperGet). Si absent, le crée via agent puis valide.",
-      "scenario_what": {
-        "object_lineage": "*"
+      "object_lineage": "Object:Module:scenario_get_create",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_get_create",
+      "scenario_contract": {
+        "scenario_input": {
+          "object_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "lineage": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "schema_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "goal": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "modality": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_get_create.run"
       },
-      "scenario_how": "coming:get_or_create",
-      "scenario_steps": [
-        "super_get",
-        "coming:agent_generate_object",
-        "validate_object_vs_schema"
-      ],
-      "scenario_hooks": {
-        "after": "history_update",
-        "on_success": "log_success",
-        "on_failure": "log_failure"
-      },
-      "scenario_attending_result": {
-        "success": true
-      }
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_get_create.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
     },
     "scenario_check_rotation": {
       "scenario_ident": "scenario_check_rotation",
       "object_schema": "ScenarioSchema",
-      "scenario_description": "Vérifie les clés dont la rotation est échue. Alerte email (Brevo) + SMS (coming) au responsable sécurité. Fallback : EURKAI_EMAIL_NATHALIE + ALERT_PHONE.",
-      "scenario_what": {
-        "object_lineage": "Object:Env:EnvItem"
+      "object_lineage": "Object:Module:scenario_check_rotation",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_check_rotation",
+      "scenario_contract": {
+        "scenario_input": {
+          "dry_run": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_check_rotation.run"
       },
-      "scenario_how": "check_rotation",
-      "scenario_execution_modality": "cron:monthly",
-      "scenario_hooks": {
-        "after": "history_update",
-        "on_overdue": "alert_security"
-      }
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_check_rotation.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
     },
     "scenario_define_agent": {
       "scenario_ident": "scenario_define_agent",
@@ -1900,14 +1947,326 @@
     "scenario_extract_rules": {
       "scenario_ident": "scenario_extract_rules",
       "object_schema": "ScenarioSchema",
-      "scenario_what": {
-        "object_lineage": "Object:Rule"
+      "object_lineage": "Object:Module:scenario_extract_rules",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_extract_rules",
+      "scenario_contract": {
+        "scenario_input": {
+          "document_path": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_extract_rules.run"
       },
-      "scenario_how": "extract_rules",
-      "scenario_attending_result": {
-        "type": "rule_method_list"
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_extract_rules.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_brief_to_cdc": {
+      "scenario_ident": "scenario_brief_to_cdc",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_brief_to_cdc",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_brief_to_cdc",
+      "scenario_contract": {
+        "scenario_input": {
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_brief_to_cdc.run"
       },
-      "scenario_execution_modality": "L1"
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_brief_to_cdc.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_cdc_to_specs": {
+      "scenario_ident": "scenario_cdc_to_specs",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_cdc_to_specs",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_cdc_to_specs",
+      "scenario_contract": {
+        "scenario_input": {
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_cdc_to_specs.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_cdc_to_specs.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_deliverable_to_preprod": {
+      "scenario_ident": "scenario_deliverable_to_preprod",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_deliverable_to_preprod",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_deliverable_to_preprod",
+      "scenario_contract": {
+        "scenario_input": {
+          "deliverable_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "deliverable": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "base_path": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_deliverable_to_preprod.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_deliverable_to_preprod.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_idea_to_brief": {
+      "scenario_ident": "scenario_idea_to_brief",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_idea_to_brief",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_idea_to_brief",
+      "scenario_contract": {
+        "scenario_input": {
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_idea_to_brief.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_idea_to_brief.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_orchestrate": {
+      "scenario_ident": "scenario_orchestrate",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_orchestrate",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_orchestrate",
+      "scenario_contract": {
+        "scenario_input": {
+          "schema_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "params": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "catalog": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_orchestrate.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_orchestrate.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_preprod_to_prod": {
+      "scenario_ident": "scenario_preprod_to_prod",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_preprod_to_prod",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_preprod_to_prod",
+      "scenario_contract": {
+        "scenario_input": {
+          "preprod_env": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "path": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "files": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "run_result": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "ready": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "note": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_preprod_to_prod.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_preprod_to_prod.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_prod_to_backup": {
+      "scenario_ident": "scenario_prod_to_backup",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_prod_to_backup",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_prod_to_backup",
+      "scenario_contract": {
+        "scenario_input": {
+          "prod_env": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "deliverable_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "prod_path": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "release_manifest": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "deployment_plan": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "publication_targets": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "checks": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_prod_to_backup.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_prod_to_backup.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_prod_to_github": {
+      "scenario_ident": "scenario_prod_to_github",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_prod_to_github",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_prod_to_github",
+      "scenario_contract": {
+        "scenario_input": {
+          "prod_env": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "deliverable_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "prod_path": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "release_manifest": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "deployment_plan": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "publication_targets": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "checks": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_prod_to_github.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_prod_to_github.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scenario_specs_to_deliverable": {
+      "scenario_ident": "scenario_specs_to_deliverable",
+      "object_schema": "ScenarioSchema",
+      "object_lineage": "Object:Module:scenario_specs_to_deliverable",
+      "scenario_type": "scenario",
+      "scenario_version": "1.0.0",
+      "scenario_description": "scenario_specs_to_deliverable",
+      "scenario_contract": {
+        "scenario_input": {
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "scenario_output": {},
+        "scenario_function": "scenarios.scenario_specs_to_deliverable.run"
+      },
+      "scenario_active": true,
+      "scenario_source": "erk",
+      "scenario_source_file": "scenarios/scenario_specs_to_deliverable.erk",
+      "scenario_registered_at": "2026-04-08T01:49:34.849312"
     }
   },
   "catalog_ai_model_list": {
@@ -2051,20 +2410,337 @@
     "agent_generate_object": {
       "agent_ident": "agent_generate_object",
       "object_schema": "AgentSchema",
-      "agent_type": "generation",
-      "agent_role": "role_generation_agent",
-      "agent_goal": "Générer des objets EURKAI conformes depuis un schema et des règles.",
-      "agent_prompt_template": "template_generate_object",
-      "agent_active": true
+      "object_lineage": "Object:Module:agent_generate_object",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_generate_object",
+      "agent_contract": {
+        "agent_input": {
+          "schema_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "params": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "catalog": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_generate_object.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_generate_object.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "schema_ident",
+        "params",
+        "catalog"
+      ]
     },
     "agent_extract_rules": {
       "agent_ident": "agent_extract_rules",
       "object_schema": "AgentSchema",
-      "agent_type": "extraction",
-      "agent_role": "role_extraction_agent",
-      "agent_goal": "Extraire et normaliser les règles et méthodes depuis des documents de cadrage.",
-      "agent_prompt_template": "template_extract_rules",
-      "agent_active": true
+      "object_lineage": "Object:Module:agent_extract_rules",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_extract_rules",
+      "agent_contract": {
+        "agent_input": {
+          "source_document": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "catalog": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_extract_rules.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_extract_rules.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "source_document",
+        "catalog"
+      ]
+    },
+    "agent_architect": {
+      "agent_ident": "agent_architect",
+      "object_schema": "AgentSchema",
+      "object_lineage": "Object:Module:agent_architect",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_architect",
+      "agent_contract": {
+        "agent_input": {
+          "obj": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "catalog": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_architect.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_architect.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "obj",
+        "catalog"
+      ]
+    },
+    "agent_brief": {
+      "agent_ident": "agent_brief",
+      "object_schema": "AgentSchema",
+      "object_lineage": "Object:Module:agent_brief",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_brief",
+      "agent_contract": {
+        "agent_input": {
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_brief.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_brief.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "input_data"
+      ]
+    },
+    "agent_debug_fix": {
+      "agent_ident": "agent_debug_fix",
+      "object_schema": "AgentSchema",
+      "object_lineage": "Object:Module:agent_debug_fix",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_debug_fix",
+      "agent_contract": {
+        "agent_input": {
+          "code": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "error": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "context": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_debug_fix.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_debug_fix.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "code",
+        "error",
+        "context"
+      ]
+    },
+    "agent_generate_code": {
+      "agent_ident": "agent_generate_code",
+      "object_schema": "AgentSchema",
+      "object_lineage": "Object:Module:agent_generate_code",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_generate_code",
+      "agent_contract": {
+        "agent_input": {
+          "schema_ident": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "params": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "catalog": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_generate_code.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_generate_code.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "schema_ident",
+        "params",
+        "catalog"
+      ]
+    },
+    "agent_intake": {
+      "agent_ident": "agent_intake",
+      "object_schema": "AgentSchema",
+      "object_lineage": "Object:Module:agent_intake",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_intake",
+      "agent_contract": {
+        "agent_input": {
+          "idea": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "catalog": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "model_type": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_intake.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_intake.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "idea",
+        "catalog"
+      ]
+    },
+    "agent_validator": {
+      "agent_ident": "agent_validator",
+      "object_schema": "AgentSchema",
+      "object_lineage": "Object:Module:agent_validator",
+      "agent_type": "agent",
+      "agent_version": "1.0.0",
+      "agent_description": "agent_validator",
+      "agent_contract": {
+        "agent_input": {
+          "obj": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "code": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "context": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "verbose": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "agent_ident": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "agent_output": {},
+        "agent_function": "agents.agent_validator.run"
+      },
+      "agent_active": true,
+      "agent_source": "erk",
+      "agent_source_file": "agents/agent_validator.erk",
+      "agent_registered_at": "2026-04-08T01:49:34.849312",
+      "agent_call_args": [
+        "obj",
+        "code",
+        "context"
+      ]
     }
   },
   "catalog_role_list": {
@@ -2834,6 +3510,783 @@
       "query_function_name": "get_tree_by_object",
       "query_returns": "object_tree_list",
       "query_source_list": "owned_element_list.tree_list"
+    }
+  },
+  "catalog_module_list": {
+    "product_create": {
+      "module_ident": "product_create",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:product_create",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "Orchestre la création d'un produit logiciel depuis des specs.",
+      "module_contract": {
+        "module_input": {
+          "specs": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "module_output": {
+          "deliverable": {
+            "field_type": "dict"
+          }
+        },
+        "module_function": "modules.product_create.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/product_create.erk",
+      "module_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "mrg": {
+      "module_ident": "mrg",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:mrg",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "MRG — Machine Récursive Générique",
+      "module_contract": {
+        "module_input": {},
+        "module_output": {},
+        "module_function": "core.mrg.mrg"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "core/mrg.erk",
+      "module_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "backend_create": {
+      "module_ident": "backend_create",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:backend_create",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "Génère un module Python par composant backend/shared.",
+      "module_contract": {
+        "module_input": {
+          "components": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "architecture": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "module_output": {
+          "modules": {
+            "field_type": "dict"
+          }
+        },
+        "module_function": "modules.backend_create.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/backend_create.erk",
+      "module_registered_at": "2026-04-08T01:49:34.849312",
+      "module_execution_chain": [
+        "agent_generate_code",
+        "agent_debug_fix",
+        "agent_validator"
+      ]
+    },
+    "frontend_create": {
+      "module_ident": "frontend_create",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:frontend_create",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "Génère une classe Python par composant frontend.",
+      "module_contract": {
+        "module_input": {
+          "components": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "module_output": {
+          "modules": {
+            "field_type": "dict"
+          }
+        },
+        "module_function": "modules.frontend_create.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/frontend_create.erk",
+      "module_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "storage_create": {
+      "module_ident": "storage_create",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:storage_create",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "Génère une classe Python par data model (table).",
+      "module_contract": {
+        "module_input": {
+          "data_models": {
+            "field_type": "dict",
+            "field_required": true
+          }
+        },
+        "module_output": {
+          "modules": {
+            "field_type": "dict"
+          }
+        },
+        "module_function": "modules.storage_create.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/storage_create.erk",
+      "module_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "sales_compensation_policy": {
+      "module_ident": "sales_compensation_policy",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:sales_compensation_policy",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "Définit les règles de rémunération commerciale pour un projet/offre — NE gère PAS les commerciaux.",
+      "module_contract": {
+        "module_input": {
+          "offer": {
+            "field_type": "dict",
+            "field_required": true
+          },
+          "sales_force_strategy": {
+            "field_type": "dict",
+            "field_required": false
+          },
+          "project_context": {
+            "field_type": "dict",
+            "field_required": false
+          }
+        },
+        "module_output": {
+          "compensation_policy": {
+            "field_type": "dict"
+          }
+        },
+        "module_function": "modules.sales_compensation_policy.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/sales_compensation_policy.erk",
+      "module_registered_at": "2026-04-29T15:24:44.162280"
+    },
+    "agent_brief": {
+      "module_ident": "agent_brief",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:agent_brief",
+      "module_type": "module",
+      "module_version": "1.0.0",
+      "module_description": "Transforme un texte libre en brief structuré — point d'entrée du pipeline EURKAI.",
+      "module_contract": {
+        "module_input": {
+          "raw_input": {
+            "field_type": "string",
+            "field_required": true
+          }
+        },
+        "module_output": {
+          "brief": {
+            "field_type": "dict"
+          },
+          "meta": {
+            "field_type": "dict"
+          }
+        },
+        "module_function": "modules.agent_brief.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/agent_brief.erk",
+      "module_registered_at": "2026-04-29T15:38:44.122408+00:00",
+      "module_note": "Distinct de agents/agent_brief.py (brief technique). Ce module produit un brief commercial avec market_context."
+    },
+    "eurkai_console_architect": {
+      "module_ident": "eurkai_console_architect",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:eurkai_console_architect",
+      "module_type": "module",
+      "module_layer": "architecture",
+      "module_version": "1.0.0",
+      "module_description": "Définit l'architecture de la console centrale EURKAI (pages, sections, composants, sécurité ENV). Architecte — pas renderer.",
+      "module_contract": {
+        "module_input": {
+          "projects": {
+            "type": "list",
+            "required": false,
+            "default": []
+          },
+          "active_project_id": {
+            "type": "str",
+            "required": false,
+            "default": ""
+          },
+          "modules_registry": {
+            "type": "dict",
+            "required": false,
+            "default": {}
+          },
+          "permissions": {
+            "type": "dict",
+            "required": false,
+            "default": {}
+          },
+          "options": {
+            "type": "dict",
+            "required": false,
+            "default": {
+              "mvp_only": true
+            }
+          }
+        },
+        "module_output": {
+          "status": {
+            "type": "str",
+            "values": [
+              "success",
+              "error"
+            ]
+          },
+          "console_architecture": {
+            "global_pages": {
+              "type": "list",
+              "count": 4
+            },
+            "project_pages": {
+              "type": "list",
+              "count": 9
+            },
+            "navigation": {
+              "type": "dict"
+            },
+            "widgets": {
+              "type": "list",
+              "count": 12
+            },
+            "security_rules": {
+              "type": "list",
+              "count": 10
+            },
+            "env_keys_management": {
+              "type": "dict"
+            }
+          },
+          "meta": {
+            "projects_count": {
+              "type": "int"
+            },
+            "active_project_id": {
+              "type": "str"
+            },
+            "mvp_only": {
+              "type": "bool"
+            },
+            "errors": {
+              "type": "list"
+            },
+            "warnings": {
+              "type": "list"
+            }
+          }
+        },
+        "module_function": "modules.eurkai_console_architect.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/eurkai_console_architect.erk",
+      "module_registered_at": "2026-04-29T16:00:00.000000+00:00",
+      "module_note": "Architecte de la console centrale EURKAI. Produit la structure (pages/sections/composants/widgets/règles sécurité ENV). Ne génère ni HTML ni CSS."
+    },
+    "document_generator": {
+      "module_ident": "document_generator",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:document_generator",
+      "module_type": "module",
+      "module_layer": "generator",
+      "module_version": "1.0.0",
+      "module_description": "Génère des documents textuels structurés (TextDoc) : report, guide, use_case, training_content, other. Agnostique, anti-hallucination, compatible document_objects.",
+      "module_contract": {
+        "module_input": {
+          "document_type": {
+            "type": "str",
+            "required": true,
+            "values": [
+              "report",
+              "guide",
+              "use_case",
+              "training_content",
+              "other"
+            ]
+          },
+          "content_brief": {
+            "type": "str",
+            "required": true
+          },
+          "project_context": {
+            "type": "dict",
+            "required": false
+          },
+          "target_audience": {
+            "type": "str",
+            "required": false
+          },
+          "options": {
+            "format": {
+              "type": "str",
+              "values": [
+                "textdoc",
+                "raw"
+              ],
+              "default": "textdoc"
+            },
+            "level": {
+              "type": "str",
+              "values": [
+                "basic",
+                "advanced"
+              ],
+              "default": "basic"
+            }
+          }
+        },
+        "module_output": {
+          "status": {
+            "type": "str",
+            "values": [
+              "success",
+              "error"
+            ]
+          },
+          "document": {
+            "object_type": "text_document",
+            "document_type": {
+              "type": "str"
+            },
+            "title": {
+              "type": "str"
+            },
+            "structure": {
+              "title": {
+                "type": "str"
+              },
+              "sections": {
+                "type": "list",
+                "item_fields": [
+                  "section_id",
+                  "heading",
+                  "content",
+                  "type",
+                  "items"
+                ]
+              },
+              "metadata": {
+                "fields": [
+                  "target_audience",
+                  "level",
+                  "sections_count"
+                ]
+              }
+            },
+            "format": "TextDoc",
+            "renderable": true
+          },
+          "meta": {
+            "fields": [
+              "document_type",
+              "level",
+              "sections_count",
+              "warnings"
+            ]
+          }
+        },
+        "module_function": "modules.document_generator.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/document_generator.erk",
+      "module_registered_at": "2026-04-29T18:00:00.000000+00:00",
+      "module_note": "Generator de documents structurés TextDoc. Enregistré dans deliverable_registry (object_type=text_document) et deliverable_deployment._KNOWN_GENERATORS."
+    },
+    "generator_orchestrator_agent": {
+      "module_ident": "generator_orchestrator_agent",
+      "object_schema": "ModuleSchema",
+      "object_lineage": "Object:Module:generator_orchestrator_agent",
+      "module_type": "orchestrator",
+      "module_version": "1.0.0",
+      "module_description": "Agent orchestrateur EURKAI — logique get_create contrôlée de générateurs manquants.",
+      "module_contract": {
+        "module_input": {
+          "action": {
+            "field_type": "str",
+            "field_required": true
+          },
+          "generator_name": {
+            "field_type": "str",
+            "field_required": false
+          },
+          "missing_generators": {
+            "field_type": "list",
+            "field_required": false
+          },
+          "context": {
+            "field_type": "dict",
+            "field_required": false
+          },
+          "catalog_core": {
+            "field_type": "dict",
+            "field_required": false
+          },
+          "deliverable_registry": {
+            "field_type": "dict",
+            "field_required": false
+          },
+          "permissions": {
+            "field_type": "dict",
+            "field_required": false
+          }
+        },
+        "module_output": {
+          "existing_generators": {
+            "field_type": "list"
+          },
+          "reuse_recommendations": {
+            "field_type": "list"
+          },
+          "creation_plans": {
+            "field_type": "list"
+          },
+          "blocked_items": {
+            "field_type": "list"
+          }
+        },
+        "module_function": "modules.generator_orchestrator_agent.run"
+      },
+      "module_active": true,
+      "module_source": "erk",
+      "module_source_file": "modules/generator_orchestrator_agent.erk",
+      "module_registered_at": "2026-04-29T17:01:47.060381+00:00"
+    }
+  },
+  "catalog_catalog_list": {
+    "load_catalog": {
+      "catalog_ident": "load_catalog",
+      "object_schema": "CatalogSchema",
+      "object_lineage": "Object:Module:load_catalog",
+      "catalog_type": "catalog",
+      "catalog_version": "1.0.0",
+      "catalog_description": "load_catalog — charge catalog_core.json et injecte le storage.",
+      "catalog_contract": {
+        "catalog_input": {},
+        "catalog_output": {},
+        "catalog_function": "catalog.load_catalog.load_catalog"
+      },
+      "catalog_active": true,
+      "catalog_source": "erk",
+      "catalog_source_file": "catalog/load_catalog.erk",
+      "catalog_registered_at": "2026-04-08T01:49:34.849312"
+    }
+  },
+  "catalog_function_list": {
+    "catalog_extract": {
+      "function_ident": "catalog_extract",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:catalog_extract",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "catalog_extract — extrait un sous-catalog depuis le catalog complet.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.catalog_extract.catalog_extract"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/catalog_extract.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "function_registry": {
+      "function_ident": "function_registry",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:function_registry",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "function_registry — registre des fonctions disponibles pour la MRG.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.function_registry.get_function"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/function_registry.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "gev_compile": {
+      "function_ident": "gev_compile",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:gev_compile",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "gev_compile — compilateur GEV → dict catalog.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.gev_compile.gev_compile"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/gev_compile.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "placeholder_resolve": {
+      "function_ident": "placeholder_resolve",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:placeholder_resolve",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "placeholder_resolve — méthode universelle de résolution de placeholders.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.placeholder_resolve.placeholder_resolve"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/placeholder_resolve.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "prompt_execute": {
+      "function_ident": "prompt_execute",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:prompt_execute",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "prompt_execute — méthode universelle d'appel IA.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.prompt_execute.prompt_execute"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/prompt_execute.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "recursive_query": {
+      "function_ident": "recursive_query",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:recursive_query",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "recursive_query — moteur de requête récursif et composable sur le catalog EURKAI.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.recursive_query.recursive_query"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/recursive_query.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "scan_and_do": {
+      "function_ident": "scan_and_do",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:scan_and_do",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "scan_and_do — cœur de la MRG.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.scan_and_do.scan_and_do"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/scan_and_do.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "standard_queries": {
+      "function_ident": "standard_queries",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:standard_queries",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "standard_queries — 13 queries standard EURKAI.",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.standard_queries.get_attributes_by_object"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/standard_queries.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "triple_validate": {
+      "function_ident": "triple_validate",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:triple_validate",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "triple_validate — scenario_execution_modality",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.triple_validate.triple_validate"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/triple_validate.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "validate_object_vs_schema": {
+      "function_ident": "validate_object_vs_schema",
+      "object_schema": "FunctionSchema",
+      "object_lineage": "Object:Module:validate_object_vs_schema",
+      "function_type": "function",
+      "function_version": "1.0.0",
+      "function_description": "validate_object_vs_schema",
+      "function_contract": {
+        "function_input": {},
+        "function_output": {},
+        "function_function": "core.functions.validate_object_vs_schema.validate_object_vs_schema"
+      },
+      "function_active": true,
+      "function_source": "erk",
+      "function_source_file": "core/functions/validate_object_vs_schema.erk",
+      "function_registered_at": "2026-04-08T01:49:34.849312"
+    }
+  },
+  "catalog_hook_list": {
+    "history_update": {
+      "hook_ident": "history_update",
+      "object_schema": "HookSchema",
+      "object_lineage": "Object:Module:history_update",
+      "hook_type": "hook",
+      "hook_version": "1.0.0",
+      "hook_description": "history_update — hook after de toute MRG.",
+      "hook_contract": {
+        "hook_input": {},
+        "hook_output": {},
+        "hook_function": "core.hooks.history_update.history_update"
+      },
+      "hook_active": true,
+      "hook_source": "erk",
+      "hook_source_file": "core/hooks/history_update.erk",
+      "hook_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "log_hooks": {
+      "hook_ident": "log_hooks",
+      "object_schema": "HookSchema",
+      "object_lineage": "Object:Module:log_hooks",
+      "hook_type": "hook",
+      "hook_version": "1.0.0",
+      "hook_description": "log_success / log_failure — hooks conditionnels de la MRG.",
+      "hook_contract": {
+        "hook_input": {},
+        "hook_output": {},
+        "hook_function": "core.hooks.log_hooks.log_success"
+      },
+      "hook_active": true,
+      "hook_source": "erk",
+      "hook_source_file": "core/hooks/log_hooks.erk",
+      "hook_registered_at": "2026-04-08T01:49:34.849312"
+    }
+  },
+  "catalog_storage_list": {
+    "catalog_storage": {
+      "storage_ident": "catalog_storage",
+      "object_schema": "StorageSchema",
+      "object_lineage": "Object:Module:catalog_storage",
+      "storage_type": "storage",
+      "storage_version": "1.0.0",
+      "storage_description": "catalog_storage — accès unifié au catalog.",
+      "storage_contract": {
+        "storage_input": {},
+        "storage_output": {},
+        "storage_function": "core.storage.catalog_storage.get_storage"
+      },
+      "storage_active": true,
+      "storage_source": "erk",
+      "storage_source_file": "core/storage/catalog_storage.erk",
+      "storage_registered_at": "2026-04-08T01:49:34.849312"
+    }
+  },
+  "catalog_supermethod_list": {
+    "super_execute": {
+      "supermethod_ident": "super_execute",
+      "object_schema": "SupermethodSchema",
+      "object_lineage": "Object:Module:super_execute",
+      "supermethod_type": "supermethod",
+      "supermethod_version": "1.0.0",
+      "supermethod_description": "SuperExecute — exécute how sur what via scan_and_do.",
+      "supermethod_contract": {
+        "supermethod_input": {},
+        "supermethod_output": {},
+        "supermethod_function": "core.supermethods.super_execute.super_execute"
+      },
+      "supermethod_active": true,
+      "supermethod_source": "erk",
+      "supermethod_source_file": "core/supermethods/super_execute.erk",
+      "supermethod_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "super_get": {
+      "supermethod_ident": "super_get",
+      "object_schema": "SupermethodSchema",
+      "object_lineage": "Object:Module:super_get",
+      "supermethod_type": "supermethod",
+      "supermethod_version": "1.0.0",
+      "supermethod_description": "SuperGet — résout what et how.",
+      "supermethod_contract": {
+        "supermethod_input": {},
+        "supermethod_output": {},
+        "supermethod_function": "core.supermethods.super_get.super_get"
+      },
+      "supermethod_active": true,
+      "supermethod_source": "erk",
+      "supermethod_source_file": "core/supermethods/super_get.erk",
+      "supermethod_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "super_render": {
+      "supermethod_ident": "super_render",
+      "object_schema": "SupermethodSchema",
+      "object_lineage": "Object:Module:super_render",
+      "supermethod_type": "supermethod",
+      "supermethod_version": "1.0.0",
+      "supermethod_description": "SuperRender — produit la sortie exploitable.",
+      "supermethod_contract": {
+        "supermethod_input": {},
+        "supermethod_output": {},
+        "supermethod_function": "core.supermethods.super_render.super_render"
+      },
+      "supermethod_active": true,
+      "supermethod_source": "erk",
+      "supermethod_source_file": "core/supermethods/super_render.erk",
+      "supermethod_registered_at": "2026-04-08T01:49:34.849312"
+    },
+    "super_validate": {
+      "supermethod_ident": "super_validate",
+      "object_schema": "SupermethodSchema",
+      "object_lineage": "Object:Module:super_validate",
+      "supermethod_type": "supermethod",
+      "supermethod_version": "1.0.0",
+      "supermethod_description": "SuperValidate — valide what contre son schema.",
+      "supermethod_contract": {
+        "supermethod_input": {},
+        "supermethod_output": {},
+        "supermethod_function": "core.supermethods.super_validate.super_validate"
+      },
+      "supermethod_active": true,
+      "supermethod_source": "erk",
+      "supermethod_source_file": "core/supermethods/super_validate.erk",
+      "supermethod_registered_at": "2026-04-08T01:49:34.849312"
     }
   }
 }

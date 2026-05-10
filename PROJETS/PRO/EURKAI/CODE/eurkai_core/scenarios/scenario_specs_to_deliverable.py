@@ -193,16 +193,16 @@ def _normalize_output(deliverable_type, deliverable):
 
 def _generate_code(specs, verbose):
     """
-    Délègue à product_create (modules/product_create.py).
+    Délègue à product_create via execute() (catalog-driven).
     product_create orchestre backend_create + frontend_create + storage_create.
     """
-    try:
-        from modules.product_create import run as product_create
-    except ImportError as e:
-        return {"ok": False, "error": f"product_create_import_failed:{e}",
+    from core.runtime.execute import execute
+    exc = execute("module", "product_create", {"specs": specs})
+    if exc["status"] != "ok":
+        return {"ok": False, "error": f"product_create_execute_failed:{exc['error']}",
                 "deliverable": None}
 
-    result = product_create({"specs": specs})
+    result = exc["result"]
 
     if result["status"] == "error":
         return {"ok": False, "error": result.get("error", "product_create_failed"),
